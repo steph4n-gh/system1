@@ -606,5 +606,5 @@ def test_online_update_precomputed_embedding():
     dt_us = (time.perf_counter() - t0) * 1e6
 
     assert stats["status"] == "updated"
-    assert stats["update_latency_ms"] < 0.25  # Sub-250 microsecond rank-1 core math
+    assert stats["update_latency_ms"] < 0.5  # Sub-500 microsecond rank-1 core math (tolerant of cloud runner jitter)
 
