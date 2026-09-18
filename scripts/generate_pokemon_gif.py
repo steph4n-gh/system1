@@ -21,9 +21,16 @@ from examples.pokemon_battle_reflex import PyBoyMemoryBridge, System1BattleAgent
 
 
 def get_font(size: int = 14) -> ImageFont.ImageFont:
-    for name in ["Menlo.ttc", "Monaco.dfont", "Courier New.ttf"]:
+    font_candidates = [
+        "/System/Library/Fonts/Menlo.ttc",
+        "/System/Library/Fonts/SFNSMono.ttf",
+        "/Library/Fonts/Courier New.ttf",
+        "Menlo.ttc",
+        "Courier New.ttf",
+    ]
+    for path in font_candidates:
         try:
-            return ImageFont.truetype(name, size)
+            return ImageFont.truetype(path, size)
         except Exception:
             continue
     return ImageFont.load_default()
@@ -57,20 +64,28 @@ def main() -> None:
 
     captured_frames: List[Image.Image] = []
 
-    print("[3/4] Recording 60 FPS battle frames with live Reflex telemetry overlay...")
-
-    # Advance battle turns and record 70 frames
-    for i in range(140):
+    print("[3/4] Fast-forwarding battle intro dialogue to active combat menu...")
+    for t in range(1015):
         emulator.tick()
-
-        # Alternate 'a' button to confirm fight menu and advance dialogue
-        if i % 16 in (0, 1, 2, 3):
+        if t % 16 in (0, 1, 2):
             emulator.button_press("a")
-        elif i % 16 == 8:
+        elif t % 16 in (6, 7):
             emulator.button_release("a")
 
-        # Capture every 2nd tick (~30-60 effective animation FPS)
-        if i % 2 == 0:
+    print("[3/4] Recording 60 FPS battle frames with live Reflex telemetry overlay...")
+
+    # Advance battle turns and record 110 dynamic action frames
+    for i in range(330):
+        emulator.tick()
+
+        # Alternate 'a' button to navigate FIGHT -> TACKLE -> confirm move and execute
+        if i % 22 in (0, 1, 2):
+            emulator.button_press("a")
+        elif i % 22 in (9, 10):
+            emulator.button_release("a")
+
+        # Capture every 3rd tick (~20-30 effective animation FPS)
+        if i % 3 == 0:
             raw_screen = emulator.screen.image.copy()
             scaled_screen = raw_screen.resize((gb_w, gb_h), resample=Image.Resampling.NEAREST)
 
@@ -104,7 +119,7 @@ def main() -> None:
             draw.text((22, 14), "REFLEX", fill="#ffffff", font=font_bold)
 
             draw.text((102, 14), "MACHINE-NATIVE ON-METAL RUNTIME", fill="#38bdf8", font=font_title)
-            draw.text((16, 40), f"⚡ 60.0 FPS HARDWARE TICK   •   FORWARD PASS: {lat_us} µs   •   WAN EGRESS: 0 B", fill="#94a3b8", font=font_body)
+            draw.text((16, 40), f">> 60.0 FPS HARDWARE TICK   |   FORWARD PASS: {lat_us} us   |   WAN EGRESS: 0 B", fill="#94a3b8", font=font_body)
 
             # Footer HUD
             draw.rectangle([(0, gb_y + gb_h + 4), (canvas_w, canvas_h)], fill="#0f172a")
@@ -119,20 +134,20 @@ def main() -> None:
             else:
                 conf_str = "99.4%"
 
-            draw.text((16, gb_y + gb_h + 10), f"🎮 DECISION: {action} → {move_name} (Conf: {conf_str})", fill="#4ade80", font=font_bold)
-            draw.text((16, gb_y + gb_h + 28), "🛡️ CONFORMAL GATE: SAFE (α=0.05)   •   COST: $0.0000   •   RECEIPT: VERIFIED", fill="#94a3b8", font=font_body)
+            draw.text((16, gb_y + gb_h + 10), f"[ACTION] DECISION: {action} -> {move_name} (Conf: {conf_str})", fill="#4ade80", font=font_bold)
+            draw.text((16, gb_y + gb_h + 28), "SAFE CONFORMAL GATE (alpha=0.05)   |   COST: $0.0000   |   RECEIPT: VERIFIED", fill="#94a3b8", font=font_body)
 
             captured_frames.append(canvas)
 
     emulator.stop()
     print(f"[4/4] Compiling {len(captured_frames)} frames into optimized GIF at {output_path}...")
 
-    # Save animated GIF with duration 33ms (~30 FPS playback of 60 FPS emulation)
+    # Save animated GIF with duration 45ms (~22 FPS playback)
     captured_frames[0].save(
         output_path,
         save_all=True,
         append_images=captured_frames[1:],
-        duration=40,
+        duration=45,
         loop=0,
         optimize=True,
     )

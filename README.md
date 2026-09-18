@@ -30,6 +30,7 @@
   <a href="#-native-framework-integrations-mcp-fastapi-langchain">Integrations</a> •
   <a href="#-production-demo--benchmark-catalog-17-demos">Demos (17)</a> •
   <a href="#-privacy--zero-data-egress">Privacy</a> •
+  <a href="#-academic-paper--technical-deep-dive">Whitepaper & Specs</a> •
   <a href="#-1-line-typesafe-ai--jev-drop-in">TypeSafe Drop-in</a> •
   <a href="#-cli-reference">CLI</a>
 </p>
@@ -339,28 +340,9 @@ python3 examples/support_triage.py
 
 Reflex guarantees **Zero External Network Egress** and absolute local data isolation:
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        AIR-GAPPED LOCAL METAL                          │
-│                                                                        │
-│   Prompt / Action Proposal                                             │
-│              │                                                         │
-│              ▼                                                         │
-│   ┌──────────────────────┐                                             │
-│   │ Reflex Decision Core │  In-Memory Forward Pass (NumPy / Metal)     │
-│   └──────────┬───────────┘                                             │
-│              │ In-Process                                              │
-│              ▼                                                         │
-│   ┌──────────────────────┐    ┌──────────────────────────────────┐     │
-│   │ Local SQLite Ledger  │◄───│ On-Device Ed25519 Private Key     │     │
-│   │ (audit_trail.db)     │    │ (~/.system1/identity)            │     │
-│   └──────────────────────┘    └──────────────────────────────────┘     │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │
-                           XXXXXXXX │ XXXXXXXX
-                          NO OUTBOUND NETWORK SOCKETS
-                           (0 Bytes Ever Transmitted)
-```
+<p align="center">
+  <img src="assets/privacy-zero-egress.svg" alt="Reflex Zero Data Egress & Air-Gapped Privacy Runtime" width="100%" />
+</p>
 
 - **100% On-Device Execution**: All inference, calibration, and cryptographic receipt generation run in-process in host memory. Zero web sockets, zero telemetry pings, zero cloud dependencies.
 - **Enterprise Regulatory Compliance**:
@@ -445,9 +427,23 @@ All diagrams, branding, and vector media are maintained in [`assets/`](https://g
 |---|---|---|---|
 | [`reflex-hero.jpg`](assets/reflex-hero.jpg) | JPEG | 1376 × 768 | Obsidian & electric-cyan reflex impulse hero banner |
 | [`reflex-logo.jpg`](assets/reflex-logo.jpg) | JPEG | 1024 × 1024 | Cybernetic square emblem & icon |
-| [`architecture.svg`](assets/architecture.svg) / [`.png`](assets/architecture.png) | SVG / PNG | 1000 × 680 | Cognitive flow diagram (System 1 Reflex vs System 2 Governor) |
-| [`benchmark-chart.svg`](assets/benchmark-chart.svg) / [`.png`](assets/benchmark-chart.png) | SVG / PNG | 960 × 480 | Logarithmic empirical latency benchmark chart |
+| [`architecture.svg`](assets/architecture.svg) / [`.png`](assets/architecture.png) | SVG / PNG | 1260 × 680 | Cognitive flow diagram (System 1 Reflex vs System 2 Governor) |
+| [`benchmark-chart.svg`](assets/benchmark-chart.svg) / [`.png`](assets/benchmark-chart.png) | SVG / PNG | 1020 × 480 | Logarithmic empirical latency benchmark chart across architectures |
+| [`privacy-zero-egress.svg`](assets/privacy-zero-egress.svg) / [`.png`](assets/privacy-zero-egress.png) | SVG / PNG | 1160 × 640 | Zero data egress & air-gapped on-metal privacy infographic |
 | [`social-preview.png`](assets/social-preview.png) / [`.svg`](assets/social-preview.svg) | PNG / SVG | 1280 × 640 | OpenGraph 16:9 social card banner for GitHub preview |
+| [`pokemon-reflex-60fps.gif`](assets/pokemon-reflex-60fps.gif) | Animated GIF | 580 × 560 | 60 FPS Game Boy emulation with live Reflex on-metal telemetry HUD |
+| [`paperclips-cutover.gif`](assets/paperclips-cutover.gif) | Animated GIF | 640 × 440 | Universal Paperclips dual-pane cutover HUD (cloud to 100% local metal) |
+
+---
+
+## 📚 Academic Paper & Technical Deep Dive
+
+For researchers, systems architects, and infrastructure security teams:
+
+* **Academic Whitepaper**: [`docs/paper/reflex_whitepaper.md`](docs/paper/reflex_whitepaper.md)  
+  *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts* (Arrington, 2026). Contains formal mathematical proofs of finite-sample conformal coverage ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}(X)) \ge 1 - \alpha$), closed-form Ridge Regression distillation, sub-50µs Sherman-Morrison online rank-1 adaptation, contrastive whitening theorems, and real-world 60 FPS Game Boy emulation telemetry.
+* **Technical Architecture Specification**: [`docs/architecture/technical_specification.md`](docs/architecture/technical_specification.md)  
+  Exhaustive engineering specification covering the 4-tier memory hierarchy (L1 Cache $\to$ Metal BLAS $\to$ Conformal Gate $\to$ System 2 Governor), schema type system (`Choice`, `MultiChoice`, `Boolean`, `Score`), compiler binary container format (`.s1m`), SQLite WAL ActionLedger schema, Ed25519 signing envelope, and 1:1 twin-namespace parity.
 
 ---
 
