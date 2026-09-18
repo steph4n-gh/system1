@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-chart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16" />
+      <stop offset="50%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#0B0F19" />
+    </linearGradient>
+
+    <linearGradient id="bar-green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+
+    <linearGradient id="bar-cyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <linearGradient id="bar-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#60A5FA" />
+    </linearGradient>
+
+    <linearGradient id="bar-amber" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#FBBF24" />
+    </linearGradient>
+
+    <linearGradient id="bar-rose" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E11D48" />
+      <stop offset="100%" stop-color="#FB7185" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 700; fill: #F8FAFC; font-size: 20px; }
+    .sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 400; fill: #94A3B8; font-size: 13px; }
+    .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 600; font-size: 13px; fill: #E2E8F0; }
+    .meta { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; fill: #94A3B8; }
+    .val { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 700; font-size: 13px; }
+    .speedup { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 700; font-size: 11px; }
+  </style>
+
+  <rect width="960" height="480" rx="14" fill="url(#bg-chart)" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Header -->
+  <text x="40" y="44" class="title">EMPIRICAL LATENCY BENCHMARK</text>
+  <text x="40" y="66" class="sub">Logarithmic scale comparison: Decision SLA across architectures (Mac M-series / Linux Metal / WAN)</text>
+
+  <!-- Row 1: Reflex L1 Cache -->
+  <g transform="translate(40, 100)">
+    <text x="0" y="16" class="label">Reflex Tier 0 (L1 Cache Hit)</text>
+    <text x="0" y="32" class="meta">Zero egress • 100% on-device • $0.00</text>
+    <rect x="290" y="6" width="30" height="24" rx="4" fill="url(#bar-green)" />
+    <text x="330" y="23" class="val" fill="#34D399">0.01 ms (9.8 µs)</text>
+    <text x="500" y="23" class="speedup" fill="#34D399">85,000x FASTER THAN CLOUD</text>
+  </g>
+
+  <!-- Row 2: Reflex Metal BLAS Forward Pass -->
+  <g transform="translate(40, 160)">
+    <text x="0" y="16" class="label">Reflex System 1 Forward Pass</text>
+    <text x="0" y="32" class="meta">Single-pass BLAS/Metal • 0 token cost</text>
+    <rect x="290" y="6" width="70" height="24" rx="4" fill="url(#bar-cyan)" />
+    <text x="370" y="23" class="val" fill="#38BDF8">0.98 ms P50</text>
+    <text x="500" y="23" class="speedup" fill="#38BDF8">860x FASTER THAN CLOUD</text>
+  </g>
+
+  <!-- Row 3: Local 8B LLM -->
+  <g transform="translate(40, 220)">
+    <text x="0" y="16" class="label">Local 8B Model (Ollama / vLLM)</text>
+    <text x="0" y="32" class="meta">Autoregressive decoding • High VRAM</text>
+    <rect x="290" y="6" width="220" height="24" rx="4" fill="url(#bar-blue)" />
+    <text x="520" y="23" class="val" fill="#60A5FA">180.00 ms</text>
+  </g>
+
+  <!-- Row 4: Cloud Fast Inference API -->
+  <g transform="translate(40, 280)">
+    <text x="0" y="16" class="label">Cloud Fast API (Groq / Cerebras)</text>
+    <text x="0" y="32" class="meta">WAN transit + Token serialization</text>
+    <rect x="290" y="6" width="260" height="24" rx="4" fill="#6366F1" />
+    <text x="560" y="23" class="val" fill="#818CF8">220.00 ms</text>
+  </g>
+
+  <!-- Row 5: Frontier LLM (Cloud) -->
+  <g transform="translate(40, 340)">
+    <text x="0" y="16" class="label">Frontier Cloud LLM (Claude / GPT-4o)</text>
+    <text x="0" y="32" class="meta">WAN transit + Autoregressive reasoning</text>
+    <rect x="290" y="6" width="420" height="24" rx="4" fill="url(#bar-amber)" />
+    <text x="720" y="23" class="val" fill="#FBBF24">850.00 ms</text>
+  </g>
+
+  <!-- Row 6: Multi-turn Deliberative Agent -->
+  <g transform="translate(40, 400)">
+    <text x="0" y="16" class="label">ReAct / Multi-turn Cloud Agent</text>
+    <text x="0" y="32" class="meta">Tool loop + Multi-call LLM orchestration</text>
+    <rect x="290" y="6" width="560" height="24" rx="4" fill="url(#bar-rose)" />
+    <text x="860" y="23" class="val" fill="#FB7185">3,200 ms</text>
+  </g>
+</svg>

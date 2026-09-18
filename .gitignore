@@ -62,3 +62,27 @@ venv.bak/
 .DS_Store
 .AppleDouble
 .LSOverride
+._*
+
+# Local System 1 Runtime
+.system1/
+*.s1m
+
+# IDE & Editor artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Agent metadata
+.agents/
+
+# ROMs & Game Boy Cartridge Dumps (Never commit proprietary assets)
+roms/
+*.gb
+*.gbc
+*.sav
+
+# Temporary scratch directories
+scratch/
+

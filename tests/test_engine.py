@@ -3,8 +3,8 @@
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-import reflex
-from reflex import (
+import system1
+from system1 import (
     ActionLedger,
     BooleanField,
     ChoiceField,
@@ -75,8 +75,8 @@ def test_engine_decide_and_dynamic_attributes():
     assert res.latency_ms < 20.0
 
 
-def test_top_level_reflex_decide_api():
-    result = reflex.decide(
+def test_top_level_system1_decide_api():
+    result = system1.decide(
         "Deploy to free staging environment without enterprise SLA",
         schema=CompleteServiceSchema,
     )
@@ -207,7 +207,7 @@ def test_engine_prompt_type_validation():
         engine.decide(None)  # type: ignore
 
     with pytest.raises(TypeError, match="Prompt must be a string"):
-        reflex.decide(None, schema=CompleteServiceSchema)  # type: ignore
+        system1.decide(None, schema=CompleteServiceSchema)  # type: ignore
 
 
 def test_engine_invalid_choice_label_in_calibration():

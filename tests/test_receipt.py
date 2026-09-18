@@ -3,7 +3,7 @@
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from reflex.receipt import (
+from system1.receipt import (
     create_decision_receipt,
     public_key_bytes,
     verify_decision_witness_receipt,

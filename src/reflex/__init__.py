@@ -1,176 +1,239 @@
 """Reflex: Machine-Native System 1 Decision Runtime.
 
-High-performance, non-autoregressive decision engine with sub-2ms local execution,
-calibrated confidence scoring, split conformal prediction guarantees, and
-proof-carrying Ed25519 RunWitnessEnvelope decision receipts.
+Re-exports all public symbols and submodules from system1 for seamless drop-in compatibility.
 """
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Optional, Sequence, Type, Union
+from typing import Any
 
-from reflex.calibration import (
-    BrierDecomposition,
-    CalibrationMetrics,
-    ConformalPredictionSet,
-    ConformalPredictor,
-    DecisionCalibrator,
-    RegressionConformalInterval,
-    RegressionConformalPredictor,
-)
-from reflex.engine import (
-    BenchmarkReport,
-    DecisionResult,
+import system1
+from system1 import *
+from system1 import (
     ReflexEngine,
     SystemOneEngine,
-)
-from reflex.guard import (
-    ActionProposal,
-    ActionState,
-    DecisionOutcome,
-    DefaultGuardDecisionSchema,
-    EvidenceRef,
-    GuardInterceptionResult,
-    PolicyDecision,
-    ReflexGuardHook,
-    ResultStatus,
-    RiskLevel,
-    SystemOneGuardHook,
-)
-from reflex.ledger import (
-    ActionLedger,
-    IntegrityError,
-    LedgerError,
-)
-from reflex.model import (
-    DeterministicSemanticProjector,
-    ModelInferenceResult,
-    RawFieldEvaluation,
-    SystemOneModel,
-)
-from reflex.receipt import (
-    DECISION_WITNESS_PROFILE,
-    DecisionWitnessReceipt,
-    RunWitnessEnvelope,
-    canonical_bytes,
-    canonical_json,
-    compute_receipt_digest,
-    create_decision_receipt,
-    create_run_witness_envelope,
-    fingerprint,
-    load_private_key,
-    load_public_key,
-    public_key_bytes,
-    public_key_fingerprint,
-    sign_payload,
-    sign_run_witness_envelope,
-    verify_decision_witness_receipt,
-    verify_payload,
-    verify_run_witness_envelope,
-)
-from reflex.schema import (
-    BooleanField,
-    ChoiceField,
-    DecisionField,
+    System1Engine,
+    DecisionResult,
+    BenchmarkReport,
+    decide,
     DecisionSchema,
+    DecisionField,
+    ChoiceField,
+    BooleanField,
     MultiChoiceField,
     ScoreField,
+    SchemaMeta,
+    DecisionCalibrator,
+    CalibrationMetrics,
+    BrierDecomposition,
+    ConformalPredictor,
+    ConformalPredictionSet,
+    RegressionConformalPredictor,
+    RegressionConformalInterval,
+    DecisionWitnessReceipt,
+    create_decision_receipt,
+    verify_decision_witness_receipt,
+    compute_receipt_digest,
+    RunWitnessEnvelope,
+    create_run_witness_envelope,
+    sign_run_witness_envelope,
+    verify_run_witness_envelope,
+    canonical_json,
+    canonical_bytes,
+    fingerprint,
+    public_key_bytes,
+    public_key_fingerprint,
+    load_private_key,
+    load_public_key,
+    save_keypair,
+    save_private_key,
+    save_public_key,
+    sign_payload,
+    verify_payload,
+    DECISION_WITNESS_PROFILE,
+    ActionLedger,
+    LedgerError,
+    IntegrityError,
+    ReflexGuardHook,
+    SystemOneGuardHook,
+    DefaultGuardDecisionSchema,
+    GuardInterceptionResult,
+    ActionProposal,
+    PolicyDecision,
+    EvidenceRef,
+    DecisionOutcome,
+    RiskLevel,
+    ActionState,
+    ResultStatus,
+    SystemOneModel,
+    DecisionFieldHead,
+    DeterministicSemanticProjector,
+    LocalNeuralProjector,
+    HybridProjector,
+    HybridSemanticProjector,
+    SubwordSemanticEmbeddings,
+    ModelInferenceResult,
+    RawFieldEvaluation,
+    TypeSafeClient,
+    Client,
+    AsyncTypeSafeClient,
+    AsyncClient,
+    Choice,
+    MultiChoice,
+    Noul,
+    Score,
+    TypeSafeResponse,
+    SystemOneResponse,
+    ChoiceAnswer,
+    NoulAnswer,
+    ScoreAnswer,
+    MultiChoiceAnswer,
+    Usage,
+    system_one,
+    systemone,
+    batch_system_one,
+    batch_systemone,
+    patch_typesafe,
+    DotDict,
+    ReflexCompiler,
+    CompiledSystemOneModel,
+    SemanticReflexCache,
+    CacheEntry,
+    TelemetryProjector,
+    evaluate,
 )
+from system1 import __all__ as _system1_all
 
-__version__ = "0.1.0"
+__version__ = system1.__version__
+__all__ = list(_system1_all)
+
+_SUBMODULE_NAMES = {
+    "cache",
+    "calibration",
+    "cli",
+    "compat",
+    "compiler",
+    "core",
+    "embeddings",
+    "engine",
+    "guard",
+    "ledger",
+    "model",
+    "neural",
+    "receipt",
+    "schema",
+    "telemetry",
+}
+
+# Dynamic submodule and lazy symbol dispatch map
+_MODULE_MAP = {
+    # 15 submodules
+    "cache": "reflex.cache",
+    "calibration": "reflex.calibration",
+    "cli": "reflex.cli",
+    "compat": "reflex.compat",
+    "compiler": "reflex.compiler",
+    "core": "reflex.core",
+    "embeddings": "reflex.embeddings",
+    "engine": "reflex.engine",
+    "guard": "reflex.guard",
+    "ledger": "reflex.ledger",
+    "model": "reflex.model",
+    "neural": "reflex.neural",
+    "receipt": "reflex.receipt",
+    "schema": "reflex.schema",
+    "telemetry": "reflex.telemetry",
+    # cache (Lever 1)
+    "SemanticReflexCache": "reflex.cache",
+    "CacheEntry": "reflex.cache",
+    # telemetry (Lever 4)
+    "TelemetryProjector": "reflex.telemetry",
+    # engine
+    "ReflexEngine": "reflex.engine",
+    "SystemOneEngine": "reflex.engine",
+    "System1Engine": "reflex.engine",
+    "DecisionResult": "reflex.engine",
+    "BenchmarkReport": "reflex.engine",
+    # receipt
+    "DecisionWitnessReceipt": "reflex.receipt",
+    "create_decision_receipt": "reflex.receipt",
+    "verify_decision_witness_receipt": "reflex.receipt",
+    "compute_receipt_digest": "reflex.receipt",
+    "RunWitnessEnvelope": "reflex.receipt",
+    "create_run_witness_envelope": "reflex.receipt",
+    "sign_run_witness_envelope": "reflex.receipt",
+    "verify_run_witness_envelope": "reflex.receipt",
+    "canonical_json": "reflex.receipt",
+    "canonical_bytes": "reflex.receipt",
+    "fingerprint": "reflex.receipt",
+    "public_key_bytes": "reflex.receipt",
+    "public_key_fingerprint": "reflex.receipt",
+    "load_private_key": "reflex.receipt",
+    "load_public_key": "reflex.receipt",
+    "save_keypair": "reflex.receipt",
+    "save_private_key": "reflex.receipt",
+    "save_public_key": "reflex.receipt",
+    "sign_payload": "reflex.receipt",
+    "verify_payload": "reflex.receipt",
+    "DECISION_WITNESS_PROFILE": "reflex.receipt",
+    # ledger
+    "ActionLedger": "reflex.ledger",
+    "LedgerError": "reflex.ledger",
+    "IntegrityError": "reflex.ledger",
+    # guard
+    "ReflexGuardHook": "reflex.guard",
+    "SystemOneGuardHook": "reflex.guard",
+    "DefaultGuardDecisionSchema": "reflex.guard",
+    "GuardInterceptionResult": "reflex.guard",
+    "ActionProposal": "reflex.guard",
+    "PolicyDecision": "reflex.guard",
+    "EvidenceRef": "reflex.guard",
+    "DecisionOutcome": "reflex.guard",
+    "RiskLevel": "reflex.guard",
+    "ActionState": "reflex.guard",
+    "ResultStatus": "reflex.guard",
+    # compat
+    "TypeSafeClient": "reflex.compat.typesafe",
+    "Client": "reflex.compat.typesafe",
+    "AsyncTypeSafeClient": "reflex.compat.typesafe",
+    "AsyncClient": "reflex.compat.typesafe",
+    "Choice": "reflex.compat.typesafe",
+    "MultiChoice": "reflex.compat.typesafe",
+    "Noul": "reflex.compat.typesafe",
+    "Score": "reflex.compat.typesafe",
+    "TypeSafeResponse": "reflex.compat.typesafe",
+    "SystemOneResponse": "reflex.compat.typesafe",
+    "ChoiceAnswer": "reflex.compat.typesafe",
+    "NoulAnswer": "reflex.compat.typesafe",
+    "ScoreAnswer": "reflex.compat.typesafe",
+    "MultiChoiceAnswer": "reflex.compat.typesafe",
+    "Usage": "reflex.compat.typesafe",
+    "system_one": "reflex.compat.typesafe",
+    "systemone": "reflex.compat.typesafe",
+    "batch_system_one": "reflex.compat.typesafe",
+    "batch_systemone": "reflex.compat.typesafe",
+    "patch_typesafe": "reflex.compat.typesafe",
+    "DotDict": "reflex.compat.typesafe",
+    # compiler
+    "ReflexCompiler": "reflex.compiler",
+    "CompiledSystemOneModel": "reflex.compiler",
+}
 
 
-def decide(
-    prompt: str,
-    schema: Union[DecisionSchema, Type[DecisionSchema]],
-    *,
-    alpha: float = 0.05,
-    record_receipt: bool = True,
-    dimension: int = 384,
-    backend: str = "auto",
-) -> DecisionResult:
-    """One-liner functional API for evaluating a Reflex decision against a typed schema.
+def __getattr__(name: str) -> Any:
+    mod_name = _MODULE_MAP.get(name)
+    if mod_name is not None:
+        import importlib
 
-    Example:
-        import reflex
-
-        class RoutingSchema(reflex.DecisionSchema):
-            route = reflex.ChoiceField(options=["sales", "support", "billing"])
-            is_escalation = reflex.BooleanField()
-
-        result = reflex.decide("Customer invoice payment dispute", schema=RoutingSchema)
-        print(result.route)
-        print(result.confidences["route"])
-        print(result.conformal_sets["route"])
-    """
-    if not isinstance(prompt, str):
-        raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
-    engine = ReflexEngine(schema, dimension=dimension, backend=backend)
-    return engine.decide(prompt, alpha=alpha, record_receipt=record_receipt)
+        mod = importlib.import_module(mod_name)
+        if name in _SUBMODULE_NAMES:
+            val = mod
+        else:
+            val = getattr(mod, name)
+        globals()[name] = val
+        return val
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-__all__ = [
-    # Version
-    "__version__",
-    # Engine & Core Results
-    "ReflexEngine",
-    "SystemOneEngine",
-    "DecisionResult",
-    "BenchmarkReport",
-    "decide",
-    # Schemas & Fields
-    "DecisionSchema",
-    "DecisionField",
-    "ChoiceField",
-    "BooleanField",
-    "MultiChoiceField",
-    "ScoreField",
-    # Calibration & Conformal Prediction
-    "DecisionCalibrator",
-    "CalibrationMetrics",
-    "BrierDecomposition",
-    "ConformalPredictor",
-    "ConformalPredictionSet",
-    "RegressionConformalPredictor",
-    "RegressionConformalInterval",
-    # Proof-Carrying Evidence Receipts & Crypto
-    "DecisionWitnessReceipt",
-    "create_decision_receipt",
-    "verify_decision_witness_receipt",
-    "compute_receipt_digest",
-    "RunWitnessEnvelope",
-    "create_run_witness_envelope",
-    "sign_run_witness_envelope",
-    "verify_run_witness_envelope",
-    "canonical_json",
-    "canonical_bytes",
-    "fingerprint",
-    "public_key_bytes",
-    "public_key_fingerprint",
-    "load_private_key",
-    "load_public_key",
-    "sign_payload",
-    "verify_payload",
-    "DECISION_WITNESS_PROFILE",
-    # Action Ledger
-    "ActionLedger",
-    "LedgerError",
-    "IntegrityError",
-    # Reference Monitor & Guard
-    "ReflexGuardHook",
-    "SystemOneGuardHook",
-    "DefaultGuardDecisionSchema",
-    "GuardInterceptionResult",
-    "ActionProposal",
-    "PolicyDecision",
-    "EvidenceRef",
-    "DecisionOutcome",
-    "RiskLevel",
-    "ActionState",
-    "ResultStatus",
-    # Model & Projection
-    "SystemOneModel",
-    "DeterministicSemanticProjector",
-    "ModelInferenceResult",
-    "RawFieldEvaluation",
-]
+def __dir__() -> list[str]:
+    return sorted(set(globals().keys()) | set(__all__) | set(_MODULE_MAP.keys()))

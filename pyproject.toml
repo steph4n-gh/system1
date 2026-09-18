@@ -3,17 +3,16 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "reflex-runtime"
+name = "system1"
 version = "0.1.0"
-description = "Reflex: Machine-Native System 1 Decision Runtime with sub-2ms local execution, calibration, conformal prediction, and cryptographic receipts."
+description = "System 1: Machine-Native Decision Runtime with sub-2ms local execution, calibration, conformal prediction, and cryptographic receipts."
 readme = "README.md"
-license = {text = "Apache-2.0"}
-authors = [{name = "ASTROCYTE Authors"}]
+license = "Apache-2.0"
+authors = [{name = "System 1 Authors"}]
 requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -27,20 +26,33 @@ dependencies = [
     "cryptography>=41.0.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/steph4n-gh/reflex"
+Repository = "https://github.com/steph4n-gh/reflex.git"
+Documentation = "https://github.com/steph4n-gh/reflex#readme"
+
 [project.optional-dependencies]
 metal = [
     "mlx>=0.10.0",
+]
+neural = [
+    "mlx>=0.10.0",
+]
+gameboy = [
+    "pyboy>=2.0.0",
 ]
 dev = [
     "pytest>=7.0.0",
 ]
 
 [project.scripts]
+system1 = "system1.cli:main"
 reflex = "reflex.cli:main"
-system1 = "reflex.cli:main"
+
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["reflex*", "system1*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

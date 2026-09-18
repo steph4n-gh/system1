@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from reflex.calibration import ConformalPredictor
+from system1.calibration import ConformalPredictor
 
 
 def test_conformal_predictor_uncalibrated_fallback():

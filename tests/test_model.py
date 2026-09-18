@@ -4,8 +4,8 @@ import time
 import numpy as np
 import pytest
 
-from reflex.model import SystemOneModel
-from reflex.schema import (
+from system1.model import SystemOneModel
+from system1.schema import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
@@ -49,9 +49,9 @@ def test_model_single_pass_evaluation():
     schema = BenchmarkSchema()
     model = SystemOneModel(schema)
 
-    res = model.forward_single("Read local file from /src/reflex/cli.py")
+    res = model.forward_single("Read local file from /src/system1/cli.py")
 
-    assert res.prompt == "Read local file from /src/reflex/cli.py"
+    assert res.prompt == "Read local file from /src/system1/cli.py"
     assert "route" in res.fields
     assert "is_dangerous" in res.fields
     assert "risk_score" in res.fields

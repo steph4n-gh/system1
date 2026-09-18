@@ -9,11 +9,19 @@ Showcases 4 canonical software automation decision workloads highlighted by Type
 """
 
 import json
+import sys
 import time
+from pathlib import Path
 import numpy as np
 
-import reflex
-from reflex import (
+# Ensure src/ is on sys.path for direct script execution
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SRC_DIR = REPO_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+import system1
+from system1 import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
@@ -22,7 +30,7 @@ from reflex import (
     ScoreField,
     SystemOneEngine,
 )
-from reflex.ledger import ActionLedger
+from system1.ledger import ActionLedger
 
 
 def run_model_routing_demo():
@@ -293,8 +301,8 @@ def print_comparison_matrix():
     ]
     print(f"{'Feature':<22} | {'Reflex System 1':<36} | {'TypeSafe AI (Jev)':<34} | {'Outcome'}")
     print("-" * 115)
-    for feat, astro, jev, outcome in matrix:
-        print(f"{feat:<22} | {astro:<36} | {jev:<34} | {outcome}")
+    for feat, reflex_val, jev, outcome in matrix:
+        print(f"{feat:<22} | {reflex_val:<36} | {jev:<34} | {outcome}")
     print("=" * 76 + "\n")
 
 
