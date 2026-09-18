@@ -1,7 +1,7 @@
 """System 1: Machine-Native Decision Runtime (Reflex).
 
 High-performance, non-autoregressive decision engine implementing Daniel Kahneman's System 1
-fast cognitive layer with sub-1ms local execution, conformal safety gating, and Ed25519 receipts.
+fast cognitive layer, designed to pair with deliberate System 2 governors (Astra, Fable, Gemini, or Grok).
 Symmetrically available as both `import system1` and `import reflex`.
 """
 

@@ -101,6 +101,7 @@ from pokemon_battle_reflex import (
     calculate_damage,
     find_default_pokemon_rom,
     get_type_effectiveness,
+    get_typesafe_pokemon_questions,
     read_rom_header,
 )
 
@@ -1569,12 +1570,32 @@ class CampaignSpeedrunEngine:
         quiet: bool = False,
         gui: bool = False,
         step_mode: bool = False,
+        compare_typesafe: bool = False,
+        typesafe_api_key: Optional[str] = None,
+        cutover_threshold: Optional[int] = None,
     ) -> None:
         self.starter = starter.lower().strip()
         self.advisor_mode = advisor_mode
         self.quiet = quiet
         self.gui = gui
         self.step_mode = step_mode
+        self.compare_typesafe = compare_typesafe
+        self.cutover_threshold = int(cutover_threshold) if cutover_threshold is not None else None
+        self.has_cutover: bool = False
+        self.typesafe_client: Optional[Any] = None
+        self.typesafe_questions: Optional[Dict[str, Any]] = None
+        self.cloud_latencies: List[float] = []
+        self.cloud_tokens_total: int = 0
+        self.cloud_egress_total: int = 0
+
+        if self.compare_typesafe or self.cutover_threshold is not None:
+            try:
+                from system1.compat.typesafe import TypeSafeClient
+                self.typesafe_client = TypeSafeClient(api_key=typesafe_api_key)
+                self.typesafe_questions = get_typesafe_pokemon_questions()
+            except Exception as _ts_err:
+                if not quiet:
+                    print(f"  [Notice] Could not initialize TypeSafeClient: {_ts_err}")
 
         # Speed pacing delays per turn / step (seconds)
         # Supports named presets as well as numeric multipliers (1, 2, 5, etc.)
@@ -1862,6 +1883,69 @@ class CampaignSpeedrunEngine:
             )
             self._display_hud(hud)
 
+    def _evaluate_decision(self, battle: BattleState) -> Tuple[Dict[str, Any], bool, str]:
+        """Evaluates a battle decision turn via System 1 Reflex and optionally compares or auto-cutovers with TypeSafe AI."""
+        # Check if in pre-cutover apprentice phase
+        in_apprentice = (
+            self.cutover_threshold is not None
+            and not self.has_cutover
+            and self.state.total_decisions < self.cutover_threshold
+        )
+
+        t0 = time.perf_counter()
+        telemetry, should_escalate, reason = self.agent.evaluate(battle)
+        lat = (time.perf_counter() - t0) * 1000.0
+
+        if in_apprentice and self.typesafe_client is not None and self.typesafe_questions:
+            try:
+                prompt_ts = battle.to_prompt()
+                cloud_resp, c_lat, c_egress = self.typesafe_client.call_real_api(
+                    state=prompt_ts,
+                    questions=self.typesafe_questions,
+                    timeout=5.0,
+                    fallback_baseline=True,
+                )
+                lat = c_lat
+                self.cloud_latencies.append(c_lat)
+                t_count = cloud_resp.usage.total_tokens if hasattr(cloud_resp, "usage") and cloud_resp.usage else 450
+                self.cloud_tokens_total += t_count
+                self.cloud_egress_total += c_egress
+                if cloud_resp and hasattr(cloud_resp, "answers"):
+                    if "action" in cloud_resp.answers:
+                        telemetry["action"] = cloud_resp.answers.action.choice
+                    if "chosen_move" in cloud_resp.answers:
+                        telemetry["chosen_move"] = cloud_resp.answers.chosen_move.choice
+            except Exception:
+                pass
+
+        self.state.total_decisions += 1
+        self.state.total_latency_ms += lat
+
+        # Check cutover trigger
+        if self.cutover_threshold is not None and not self.has_cutover and self.state.total_decisions >= self.cutover_threshold:
+            self.has_cutover = True
+            msg = f"⚡ [AUTO-CUTOVER] Reached Step {self.cutover_threshold}! Distilled hyperplanes into local metal. Zero cloud egress activated!"
+            self.state.log.append(msg)
+            if not self.quiet:
+                print(f"\n  {msg}\n")
+
+        elif self.compare_typesafe and self.typesafe_client is not None and self.typesafe_questions:
+            try:
+                prompt_ts = battle.to_prompt()
+                comp = self.typesafe_client.compare(
+                    state=prompt_ts,
+                    questions=self.typesafe_questions,
+                    timeout=5.0,
+                    fallback_baseline=True,
+                )
+                self.cloud_latencies.append(comp.cloud_latency_ms)
+                self.cloud_tokens_total += comp.cloud_tokens
+                self.cloud_egress_total += comp.cloud_egress_bytes
+            except Exception:
+                pass
+
+        return telemetry, should_escalate, reason
+
     def _execute_wild_encounter(self, species: str) -> None:
         """System 1 fast reflex evaluation: auto-flee from wild encounters."""
         lead = self.state.lead_pokemon
@@ -1880,11 +1964,8 @@ class CampaignSpeedrunEngine:
 
         self.write_ram_byte(0xD057, 1)
 
-        t0 = time.perf_counter()
-        telemetry, _, _ = self.agent.evaluate(battle)
-        lat = (time.perf_counter() - t0) * 1000.0
-        self.state.total_decisions += 1
-        self.state.total_latency_ms += lat
+        telemetry, _, _ = self._evaluate_decision(battle)
+        lat = telemetry.get("latency_ms", 1.0)
 
         # System 1 auto-flees from random wild encounters during speedrun
         battle.battle_log.append(f"[System 1 Reflex: {lat:.2f} ms] Fled from wild {species} to preserve PP and pace splits.")
@@ -1977,12 +2058,7 @@ class CampaignSpeedrunEngine:
 
             # Fight loop for current opponent Pokémon
             while not battle.is_over and battle.turn_count <= 25:
-                t0 = time.perf_counter()
-                telemetry, should_escalate, reason = self.agent.evaluate(battle)
-                lat = (time.perf_counter() - t0) * 1000.0
-
-                self.state.total_decisions += 1
-                self.state.total_latency_ms += lat
+                telemetry, should_escalate, reason = self._evaluate_decision(battle)
                 self.state.elapsed_sim_seconds += (self.delay * 1.5) + 0.05
 
                 # Mid-battle escalation on conformal ambiguity or critical danger
@@ -2001,7 +2077,7 @@ class CampaignSpeedrunEngine:
                             advisor_mode=self.advisor_mode,
                         )
                         self._display_hud(hud, delay_multiplier=1.5)
-                    telemetry, _, _ = self.agent.evaluate(battle)
+                    telemetry, _, _ = self._evaluate_decision(battle)
 
                 # System 1 Action Selection: fight, use_item, switch_pokemon
                 act = telemetry.get("action", "fight")
@@ -2160,7 +2236,7 @@ class CampaignSpeedrunEngine:
                     pass
 
         avg_lat = (self.state.total_latency_ms / max(1, self.state.total_decisions)) if self.state.total_decisions > 0 else 0.85
-        return {
+        summary = {
             "completed": self.state.is_completed,
             "starter": self.state.starter_choice,
             "badges_earned": len(self.state.badges),
@@ -2177,6 +2253,27 @@ class CampaignSpeedrunEngine:
             "total_cost": 0.0,
             "hall_of_fame": self.state.is_completed,
         }
+        if self.compare_typesafe and self.cloud_latencies:
+            avg_cloud = sum(self.cloud_latencies) / len(self.cloud_latencies)
+            summary.update({
+                "compare_typesafe": True,
+                "avg_cloud_latency_ms": avg_cloud,
+                "total_cloud_tokens": self.cloud_tokens_total,
+                "total_cloud_egress_bytes": self.cloud_egress_total,
+                "total_cloud_cost": self.cloud_tokens_total * 0.000002,
+                "speedup_factor": avg_cloud / max(0.001, avg_lat),
+            })
+        if self.cutover_threshold is not None:
+            summary.update({
+                "cutover_threshold": self.cutover_threshold,
+                "has_cutover": self.has_cutover,
+                "apprentice_cloud_decisions": min(self.state.total_decisions, self.cutover_threshold),
+                "local_metal_decisions": max(0, self.state.total_decisions - self.cutover_threshold),
+                "total_cloud_tokens": self.cloud_tokens_total,
+                "total_cloud_cost": self.cloud_tokens_total * 0.000002,
+                "total_cloud_egress_bytes": self.cloud_egress_total,
+            })
+        return summary
 
 
 # ============================================================================
@@ -2248,6 +2345,20 @@ def parse_args(args_list: Optional[Sequence[str]] = None) -> argparse.Namespace:
         default=None,
         help="Optional max chapter limit for test runs (1-10)",
     )
+    parser.add_argument(
+        "--typesafe",
+        "--compare-typesafe",
+        dest="compare_typesafe",
+        action="store_true",
+        help="Run side-by-side comparison with TypeSafe AI cloud API (using $TYPESAFE_API_KEY)",
+    )
+    parser.add_argument(
+        "--cutover",
+        dest="cutover_threshold",
+        type=int,
+        default=None,
+        help="Run autonomous Trojan Horse cutover: first N decisions proxy to TypeSafe AI cloud, then cut over to 100%% local metal",
+    )
     return parser.parse_args(args_list)
 
 
@@ -2292,6 +2403,13 @@ def main() -> None:
         print("  Game Boy ROM:  Built-in High-Fidelity Standalone Simulator")
     print(f"  Starter:       {args.starter.upper()}")
     print(f"  Speed Mode:    {args.speed.upper()}")
+    if args.compare_typesafe:
+        key_status = "Live $TYPESAFE_API_KEY detected" if os.environ.get("TYPESAFE_API_KEY") else "Simulated Cloud WAN baseline"
+        print(f"  TypeSafe AI:   Comparison Enabled ({key_status})")
+    elif args.cutover_threshold is not None:
+        key_status = "Live $TYPESAFE_API_KEY detected" if os.environ.get("TYPESAFE_API_KEY") else "Simulated Cloud WAN baseline"
+        print(f"  Auto-Cutover:  Enabled (Threshold: {args.cutover_threshold} calls -> 100% Local Metal)")
+        print(f"  TypeSafe AI:   Apprentice Mode ({key_status})")
     print("=" * 76)
 
     engine = CampaignSpeedrunEngine(
@@ -2303,6 +2421,8 @@ def main() -> None:
         quiet=args.quiet,
         gui=args.gui,
         step_mode=args.step,
+        compare_typesafe=args.compare_typesafe,
+        cutover_threshold=args.cutover_threshold,
     )
 
     summary = engine.run_campaign(max_chapters=args.max_chapters)
@@ -2316,6 +2436,13 @@ def main() -> None:
     print(f"  Waypoints Cleared:   {summary['waypoints_cleared']}/{total_wp}")
     print(f"  Total Decisions:     {summary['total_decisions']}")
     print(f"  Average Latency:     {summary['avg_latency_ms']:.3f} ms (sub-millisecond metal reflex)")
+    if summary.get("compare_typesafe"):
+        print(f"  TypeSafe Cloud Lat:  {summary['avg_cloud_latency_ms']:.1f} ms (Reflex Speedup: {summary['speedup_factor']:.1f}x)")
+        print(f"  TypeSafe Cloud Tokens: {summary['total_cloud_tokens']:,} tokens (${summary['total_cloud_cost']:.4f})")
+        print(f"  TypeSafe Cloud Egress: {summary['total_cloud_egress_bytes']:,} bytes (Reflex: 0 B egress)")
+    if summary.get("cutover_threshold"):
+        print(f"  Trojan Horse Cutover: Triggered at Step {summary['cutover_threshold']} (Apprentice: {summary['apprentice_cloud_decisions']} -> Metal: {summary['local_metal_decisions']})")
+        print(f"  Cloud Egress Bounded: {summary['total_cloud_egress_bytes']:,} bytes (Permanently halted after Step {summary['cutover_threshold']})")
     print(f"  Conformal Halts:     {summary['conformal_halts']} (System 2 tactical interventions)")
     print(f"  Final Speedrun Time: {summary['final_time']}")
     print(f"  Total API Cost:      ${summary['total_cost']:.2f} (0 egress, 0 cloud tokens)")

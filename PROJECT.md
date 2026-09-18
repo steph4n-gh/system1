@@ -12,7 +12,7 @@ Key Architectural Pillars:
      - *Lever 3 (Margin Dominance Gating)*: Early rejection when leading option margin exceeds threshold.
      - *Lever 4 (Telemetry & Signal Fusion)*: Multi-head sensor/context integration.
    - **Conformal Safety Gate**: Finite-sample mathematical uncertainty guard ($1-\alpha$ coverage) detecting out-of-distribution ambiguity and halting for System 2 escalation.
-   - **System 2 (Deliberative Governor)**: Slow, analytical reasoning (cloud LLM, heuristic planner, human-in-the-loop) invoked only when System 1 halts or flags ambiguity.
+   - **System 2 (Deliberative Governor)**: Slow, analytical reasoning (Astra, Fable, Gemini, or Grok; heuristic planner; human-in-the-loop) invoked only when System 1 halts or flags ambiguity.
 2. **Reference Monitor & Audit Ledger**:
    - Fail-closed tool interception (`ReflexGuardHook`) before side effects take place.
    - Append-only cryptographic SQLite ledger (`ActionLedger`) with SHA-256 hash chaining.
