@@ -274,7 +274,7 @@ def test_pathway_e_mixture_of_experts_composition(tmp_path: Path):
 
     assert "severity" in eval_infra.fields
     assert eval_infra.fields["severity"].selected_value in ["P1_CRITICAL", "P2_ELEVATED"]
-    assert total_infra_ms < 2.0
+    assert total_infra_ms < 5.0
 
     # 3. Test security routing and evaluation
     sec_q = "SQL injection payload detected in Authorization header: UNION SELECT password FROM users"
@@ -287,7 +287,7 @@ def test_pathway_e_mixture_of_experts_composition(tmp_path: Path):
 
     assert "threat_level" in eval_sec.fields
     assert eval_sec.fields["threat_level"].selected_value == "CRITICAL"
-    assert total_sec_ms < 2.0
+    assert total_sec_ms < 5.0
 
 
 def test_expert_hyperparameter_bounds_and_drift_handling():

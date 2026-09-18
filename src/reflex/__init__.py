@@ -102,6 +102,7 @@ from system1 import (
     batch_systemone,
     patch_typesafe,
     DotDict,
+    ZeroEgressViolationError,
     ReflexCompiler,
     CompiledSystemOneModel,
     SemanticReflexCache,
@@ -240,6 +241,7 @@ _MODULE_MAP = {
     "batch_systemone": "reflex.compat.typesafe",
     "patch_typesafe": "reflex.compat.typesafe",
     "DotDict": "reflex.compat.typesafe",
+    "ZeroEgressViolationError": "reflex.compat.typesafe",
     # compiler
     "ReflexCompiler": "reflex.compiler",
     "CompiledSystemOneModel": "reflex.compiler",

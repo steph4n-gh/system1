@@ -732,6 +732,7 @@ def test_call_real_typesafe_api_baseline_fallback():
         api_key="test-key-invalid",
         timeout=1.0,
         fallback_baseline=True,
+        zero_egress=False,
     )
 
     assert resp is not None
@@ -741,9 +742,9 @@ def test_call_real_typesafe_api_baseline_fallback():
     assert resp.answers.tier.choice in ("small", "large")
 
 
-def test_typesafe_client_compare_side_by_side():
+def test_typesafe_client_compare():
     """Verify TypeSafeClient.compare executes local System 1 alongside cloud API comparison."""
-    client = TypeSafeClient()
+    client = TypeSafeClient(zero_egress=False, fallback_baseline=True)
 
     questions = {
         "target": Choice("Target tier", criteria={"fast": "Local small", "frontier": "Frontier cloud"}),
@@ -769,7 +770,7 @@ def test_typesafe_client_compare_side_by_side():
 @pytest.mark.asyncio
 async def test_async_typesafe_client_compare():
     """Verify AsyncTypeSafeClient.compare executes asynchronously."""
-    client = AsyncTypeSafeClient()
+    client = AsyncTypeSafeClient(zero_egress=False, fallback_baseline=True)
 
     questions = {
         "status": Choice("Status", criteria=["ok", "error"]),
@@ -789,7 +790,7 @@ def test_top_level_compare_convenience():
         "sentiment": Choice("Sentiment", criteria=["positive", "negative"]),
     }
 
-    comp = ts_compare("Great service, thank you!", questions)
+    comp = ts_compare("Great service, thank you!", questions, zero_egress=False, fallback_baseline=True)
     assert comp.speedup_factor > 1.0
     assert comp.local_response.answers.sentiment.choice in ("positive", "negative")
 
@@ -896,7 +897,7 @@ def test_typesafe_response_enrichment_for_live_cloud_format():
 
 def test_compare_flags_and_fallback_baseline_toggle():
     """Verify compare returns is_live and baseline_fallback flags and respects fallback_baseline."""
-    client = TypeSafeClient(api_key="")
+    client = TypeSafeClient(api_key="", zero_egress=False)
     questions = {"q": Choice("Q", criteria=["a", "b"])}
 
     # Without real API key, fallback_baseline=True produces baseline_fallback=True, is_live=False
@@ -966,7 +967,7 @@ def test_paperclips_compare_and_cutover_compatibility():
     state = '{"paperclips": 7323, "funds": 181.08, "wire": 1676, "operations": 1000}'
 
     # 1. Compare mode
-    client_comp = typesafe.Client()
+    client_comp = typesafe.Client(zero_egress=False, fallback_baseline=True)
     comp = client_comp.compare(
         state=state,
         questions={"next_action": q},
@@ -980,12 +981,20 @@ def test_paperclips_compare_and_cutover_compatibility():
     # 2. Auto-cutover mode
     ledger = ActionLedger(":memory:")
     signing_key = Ed25519PrivateKey.generate()
+    demo_policy = typesafe.PromotionPolicy(
+        min_agreement_threshold=0.5,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
     client_cut = typesafe.Client(
         mode="auto_cutover",
-        cutover_threshold=2,
+        cutover_threshold=3,
         min_agreement_threshold=0.5,
+        promotion_policy=demo_policy,
         ledger=ledger,
         signing_key=signing_key,
+        zero_egress=False,
+        fallback_baseline=True,
     )
     assert not client_cut.is_cutover
 
@@ -994,15 +1003,20 @@ def test_paperclips_compare_and_cutover_compatibility():
     assert r1.answers.next_action.choice in choices
     assert not client_cut.is_cutover
 
-    # Query 2 (triggers cutover)
-    r2 = client_cut.system_one(state=state, questions={"next_action": q})
+    # Query 2 (apprentice)
+    r2 = client_cut.system_one(state='{"paperclips": 7400, "funds": 190.00, "wire": 1600, "operations": 1050}', questions={"next_action": q})
     assert r2.answers.next_action.choice in choices
+    assert not client_cut.is_cutover
+
+    # Query 3 (triggers cutover: 3 disjoint samples, 1 train, 1 calib, 1 val)
+    r3 = client_cut.system_one(state='{"paperclips": 7500, "funds": 200.00, "wire": 1500, "operations": 1100}', questions={"next_action": q})
+    assert r3.answers.next_action.choice in choices
     assert client_cut.is_cutover
 
-    # Query 3 (100% local metal)
-    r3 = client_cut.system_one(state=state, questions={"next_action": q})
-    assert r3.answers.next_action.choice in choices
-    assert r3.local_execution is True
+    # Query 4 (100% local metal)
+    r4 = client_cut.system_one(state=state, questions={"next_action": q})
+    assert r4.answers.next_action.choice in choices
+    assert r4.local_execution is True
 
 
 

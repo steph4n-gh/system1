@@ -467,8 +467,28 @@ class ConformalPredictor:
             )
 
         n = len(self.calibration_scores)
+        sorted_indices = np.argsort(-probs)
+        top_prob = float(probs[sorted_indices[0]]) if len(sorted_indices) > 0 else 0.0
+        runner_up_prob = float(probs[sorted_indices[1]]) if len(sorted_indices) > 1 else 0.0
+        margin = float(top_prob - runner_up_prob) if len(sorted_indices) > 1 else 1.0
+
         if not self.is_calibrated or n == 0:
-            q_hat = 1.0 - alpha
+            if strict:
+                q_hat = 1.0
+                prediction_set: List[str] = list(self.options)
+            else:
+                q_hat = 1.0 - alpha
+                prediction_set = []
+                cum_mass = 0.0
+                total_mass = float(np.sum(probs))
+                if total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
+                    for idx in sorted_indices:
+                        opt = self.options[idx]
+                        p = float(probs[idx])
+                        prediction_set.append(opt)
+                        cum_mass += p
+                        if cum_mass >= q_hat - 1e-7:
+                            break
         else:
             k = int(math.ceil((n + 1) * (1.0 - alpha)))
             if k > n:
@@ -476,24 +496,18 @@ class ConformalPredictor:
             else:
                 q_hat = float(self.calibration_scores[k - 1])
 
-        sorted_indices = np.argsort(-probs)
-        prediction_set: List[str] = []
-        cum_mass = 0.0
-
-        top_prob = float(probs[sorted_indices[0]]) if len(sorted_indices) > 0 else 0.0
-        runner_up_prob = float(probs[sorted_indices[1]]) if len(sorted_indices) > 1 else 0.0
-        margin = float(top_prob - runner_up_prob) if len(sorted_indices) > 1 else 1.0
-
-        total_mass = float(np.sum(probs))
-        # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
-        if total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
-            for idx in sorted_indices:
-                opt = self.options[idx]
-                p = float(probs[idx])
-                prediction_set.append(opt)
-                cum_mass += p
-                if cum_mass >= q_hat - 1e-7:
-                    break
+            prediction_set = []
+            cum_mass = 0.0
+            total_mass = float(np.sum(probs))
+            # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
+            if total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
+                for idx in sorted_indices:
+                    opt = self.options[idx]
+                    p = float(probs[idx])
+                    prediction_set.append(opt)
+                    cum_mass += p
+                    if cum_mass >= q_hat - 1e-7:
+                        break
 
         p_values: Dict[str, float] = {}
         cum_masses: Dict[int, float] = {}
@@ -547,8 +561,12 @@ class ConformalPredictor:
             and (top_prob >= conf_floor)
             and (odds_ratio >= eff_gamma)
         )
-        is_ambiguous = raw_is_ambiguous and not margin_gate_active
-        needs_escalation = is_empty or is_ambiguous
+        if strict and (not self.is_calibrated or n == 0):
+            is_ambiguous = True
+            needs_escalation = True
+        else:
+            is_ambiguous = raw_is_ambiguous and not margin_gate_active
+            needs_escalation = is_empty or is_ambiguous
 
         return ConformalPredictionSet(
             field_name=self.field_name,
@@ -611,7 +629,13 @@ class RegressionConformalPredictor:
         self.residuals = np.sort(res)
         self.is_calibrated = True
 
-    def predict_interval(self, point_prediction: float, *, alpha: float = 0.05) -> RegressionConformalInterval:
+    def predict_interval(
+        self,
+        point_prediction: float,
+        *,
+        alpha: float = 0.05,
+        strict: bool = False,
+    ) -> RegressionConformalInterval:
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"Significance level alpha must be in (0, 1), got {alpha}")
         y_hat = float(point_prediction)
@@ -619,9 +643,14 @@ class RegressionConformalPredictor:
         n = len(self.residuals)
 
         if not self.is_calibrated or n == 0:
-            margin = val_range * ((1.0 - alpha) / 2.0)
-            low = max(self.min_value, y_hat - margin)
-            high = min(self.max_value, y_hat + margin)
+            if strict:
+                margin = val_range
+                low = self.min_value
+                high = self.max_value
+            else:
+                margin = val_range * ((1.0 - alpha) / 2.0)
+                low = max(self.min_value, y_hat - margin)
+                high = min(self.max_value, y_hat + margin)
         else:
             k = int(math.ceil((n + 1) * (1.0 - alpha)))
             if k > n:

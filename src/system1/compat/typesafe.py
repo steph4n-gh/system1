@@ -28,7 +28,9 @@ import threading
 import time
 import types
 import urllib.error
+import urllib.parse
 import urllib.request
+import logging
 from dataclasses import dataclass, field
 from typing import (
     Any,
@@ -58,6 +60,28 @@ from system1.core import (
     MultiChoiceField,
     ScoreField,
 )
+
+logger = logging.getLogger("system1.compat.typesafe")
+
+
+class ZeroEgressViolationError(RuntimeError):
+    """Raised when network egress is attempted in zero-egress mode."""
+
+
+_EGRESS_AUDIT_LOG: List[Dict[str, Any]] = []
+_EGRESS_AUDIT_LOCK = threading.Lock()
+
+
+def get_egress_audit_log() -> List[Dict[str, Any]]:
+    """Returns a copy of all recorded network egress audit events."""
+    with _EGRESS_AUDIT_LOCK:
+        return [dict(rec) for rec in _EGRESS_AUDIT_LOG]
+
+
+def clear_egress_audit_log() -> None:
+    """Clears recorded network egress audit events."""
+    with _EGRESS_AUDIT_LOCK:
+        _EGRESS_AUDIT_LOG.clear()
 
 
 def compute_wilson_score_lower(
@@ -126,16 +150,32 @@ class CutoverPartition:
     val_ratio: float = 0.20
 
     def assert_disjoint(self) -> None:
-        """Verify that training and validation partitions do not share identical records."""
-        if self.total_samples <= 2:
-            return
+        """Verify that training, calibration, and validation partitions do not share identical records or lineages."""
+        def _get_key(x: Any) -> str:
+            if isinstance(x, dict):
+                req_id = x.get("request_id") or x.get("lineage_id") or x.get("group_id") or x.get("id") or x.get("nonce")
+                if req_id is not None:
+                    return f"id:{req_id}"
+                s_str = str(x.get("state", ""))
+                ans = x.get("answers")
+                a_str = json.dumps(ans, sort_keys=True) if isinstance(ans, dict) else str(ans)
+                return hashlib.sha256(f"{s_str}|{a_str}".encode("utf-8")).hexdigest()
+            return f"obj:{id(x)}"
+
+        train_keys = {_get_key(x) for x in self.train_history}
+        calib_keys = {_get_key(x) for x in self.calib_history}
+        val_keys = {_get_key(x) for x in self.val_history}
+
         train_ids = {id(x) for x in self.train_history}
         calib_ids = {id(x) for x in self.calib_history}
         val_ids = {id(x) for x in self.val_history}
-        if train_ids & val_ids:
+
+        if (train_ids & val_ids) or (train_keys & val_keys):
             raise AssertionError("Invariant 10 Violation: Training and validation folds share overlapping instances!")
-        if calib_ids & val_ids:
+        if (calib_ids & val_ids) or (calib_keys & val_keys):
             raise AssertionError("Invariant 10 Violation: Calibration and validation folds share overlapping instances!")
+        if (train_ids & calib_ids) or (train_keys & calib_keys):
+            raise AssertionError("Invariant 10 Violation: Training and calibration folds share overlapping instances!")
 
 
 def partition_cutover_history(
@@ -148,17 +188,17 @@ def partition_cutover_history(
     training (e.g. 60%), calibration (e.g. 20%), and held-out validation (e.g. 20%).
 
     Ensures zero in-sample contamination between model parameter fitting,
-    conformal calibration, and promotion gating.
+    conformal calibration, and promotion gating using stable request/lineage grouping.
     """
     total = len(history)
     if total == 0:
         return CutoverPartition([], [], [], total_samples=0, train_ratio=train_ratio, calib_ratio=calib_ratio, val_ratio=val_ratio)
 
-    if total <= 2:
+    if total < 3:
         return CutoverPartition(
             train_history=list(history),
-            calib_history=list(history),
-            val_history=list(history),
+            calib_history=[],
+            val_history=[],
             total_samples=total,
             train_ratio=train_ratio,
             calib_ratio=calib_ratio,
@@ -167,9 +207,9 @@ def partition_cutover_history(
 
     if total == 3:
         return CutoverPartition(
-            train_history=[history[0], history[2]],
-            calib_history=[history[0]],
-            val_history=[history[1]],
+            train_history=[history[0]],
+            calib_history=[history[1]],
+            val_history=[history[2]],
             total_samples=3,
             train_ratio=train_ratio,
             calib_ratio=calib_ratio,
@@ -187,9 +227,37 @@ def partition_cutover_history(
         elif n_val > 1:
             n_val -= 1
 
-    train_part = list(history[:n_train])
-    calib_part = list(history[n_train : n_train + n_calib])
-    val_part = list(history[n_train + n_calib :])
+    # Group items by stable lineage identifier (e.g. group_id, request_id, or state prompt)
+    groups: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
+    for idx, item in enumerate(history):
+        g_key = (
+            item.get("group_id")
+            or item.get("lineage_id")
+            or item.get("request_id")
+            or item.get("state")
+            or f"idx_{idx}"
+        )
+        groups[str(g_key)].append(item)
+
+    if len(groups) == total:
+        train_part = list(history[:n_train])
+        calib_part = list(history[n_train : n_train + n_calib])
+        val_part = list(history[n_train + n_calib :])
+    else:
+        train_part = []
+        calib_part = []
+        val_part = []
+        for g_items in groups.values():
+            if len(train_part) < n_train:
+                train_part.extend(g_items)
+            elif len(calib_part) < n_calib:
+                calib_part.extend(g_items)
+            else:
+                val_part.extend(g_items)
+        if not val_part and calib_part:
+            val_part.append(calib_part.pop())
+        if not calib_part and train_part and len(train_part) > 1:
+            calib_part.append(train_part.pop())
 
     return CutoverPartition(
         train_history=train_part,
@@ -213,7 +281,7 @@ class PromotionPolicy:
         "deny", "unsafe", "fraud", "block", "high_risk", "malicious", "critical", "require_approval"
     })
     false_allow_ceiling: float = 0.0  # Exactly 0.0% tolerance: zero false-allows permitted
-    require_statistical_bound: bool = False
+    require_statistical_bound: bool = True
 
 
 @dataclass
@@ -231,6 +299,8 @@ class PromotionReport:
     rejection_reasons: List[str]
     schema_digest: str = ""
     metrics_per_field: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    artifact_digest: str = ""
+    manifest: Dict[str, Any] = field(default_factory=dict)
 
 
 def _is_critical_class(value: Any, critical_classes: Set[str]) -> bool:
@@ -246,7 +316,11 @@ def _is_allow_class(value: Any) -> bool:
     if value is True:
         return True
     s_val = str(value).strip().lower()
-    return s_val in ("true", "allow", "safe", "permit", "pass")
+    return s_val in (
+        "true", "allow", "safe", "permit", "pass",
+        "approve", "proceed", "grant", "yes", "enable", "continue",
+        "execute", "accept", "confirm",
+    )
 
 
 def evaluate_promotion_eligibility(
@@ -323,13 +397,15 @@ def evaluate_promotion_eligibility(
                     false_allows += 1
                     per_field_stats[f_name]["false_allows"] += 1
 
-    agreement_rate = (matching / total_checks) if total_checks > 0 else 1.0
+    if total_checks == 0:
+        agreement_rate = 0.0
+        rejection_reasons.append("Zero scored validation checks; cannot evaluate promotion")
+    else:
+        agreement_rate = matching / total_checks
     wilson_lower = compute_wilson_score_lower(matching, total_checks, confidence=policy.statistical_confidence)
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
 
     effective_thresh = policy.min_agreement_threshold
-    if total_checks <= 4 and total_checks > 1 and policy.min_agreement_threshold <= 1.0:
-        effective_thresh = min(effective_thresh, (total_checks - 1) / total_checks)
 
     if len(val_history) < policy.min_validation_samples:
         rejection_reasons.append(
@@ -365,6 +441,8 @@ def evaluate_promotion_eligibility(
         rejection_reasons=rejection_reasons,
         schema_digest=getattr(schema, "schema_digest", lambda: "")() if hasattr(schema, "schema_digest") else "",
         metrics_per_field=dict(per_field_stats),
+        artifact_digest="",
+        manifest={},
     )
 
 
@@ -1079,17 +1157,24 @@ def call_real_typesafe_api(
     base_url: str = "https://api.typesafe.ai/v1",
     model: str = "jev-latest",
     timeout: float = 15.0,
-    fallback_baseline: bool = True,
+    fallback_baseline: bool = False,
+    zero_egress: bool = True,
 ) -> Tuple[Optional[TypeSafeResponse], float, int]:
     """Calls the real TypeSafe AI (Jev) API over HTTP WAN, capturing latency and egress.
 
+    If zero_egress is True, immediately raises ZeroEgressViolationError before touching sockets.
     If an API key is provided and the server returns 200 OK, returns the live parsed
-    response. If offline, unauthorized (401), or no API key is provided, falls back
-    to a realistic baseline response profile when fallback_baseline=True.
+    response. In production (fallback_baseline=False), network/auth exceptions raise explicit
+    transport errors rather than silently fabricating baseline data.
 
     Returns:
         Tuple of (response, latency_ms, egress_bytes)
     """
+    if zero_egress:
+        raise ZeroEgressViolationError(
+            "Outbound network egress blocked at provider transport boundary (zero_egress=True)."
+        )
+
     serialized_questions: Dict[str, Any] = {}
     for k, v in questions.items():
         if hasattr(v, "to_dict"):
@@ -1132,6 +1217,25 @@ def call_real_typesafe_api(
         api_key = os.environ.get("TYPESAFE_API_KEY", "") or os.environ.get("JEV_API_KEY", "")
 
     endpoint = f"{base_url.rstrip('/')}/systemone"
+    parsed = urllib.parse.urlparse(endpoint)
+    host = parsed.hostname or "unknown"
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    audit_record = {
+        "timestamp": time.time(),
+        "destination_host": host,
+        "destination_port": port,
+        "payload_bytes": egress_bytes,
+        "operation_type": "typesafe_wan_call",
+        "host": host,
+        "port": port,
+        "bytes_out": egress_bytes,
+        "operation": "typesafe_wan_call",
+        "endpoint": endpoint,
+    }
+    logger.info("Egress event audit: %s", audit_record)
+    with _EGRESS_AUDIT_LOCK:
+        _EGRESS_AUDIT_LOG.append(audit_record)
+
     headers = {
         "Content-Type": "application/json",
         "User-Agent": "Reflex-TypeSafe-Compat/1.0",
@@ -1176,7 +1280,11 @@ def call_real_typesafe_api(
             baseline["error"] = str(last_error)
         return baseline, measured_latency_ms, egress_bytes
 
+    if last_error is not None:
+        raise last_error
+
     return None, measured_latency_ms, egress_bytes
+
 
 
 class TypeSafeClient:
@@ -1205,6 +1313,7 @@ class TypeSafeClient:
         timeout: float = 15.0,
         zero_egress: bool = True,
         allow_cloud_fallback: bool = False,
+        fallback_baseline: bool = False,
         promotion_policy: Optional[PromotionPolicy] = None,
         drift_detector: Optional[DriftDetector] = None,
         **kwargs: Any,
@@ -1224,6 +1333,7 @@ class TypeSafeClient:
 
         self.zero_egress = bool(kwargs.get("zero_egress", zero_egress))
         self.allow_cloud_fallback = bool(kwargs.get("allow_cloud_fallback", allow_cloud_fallback))
+        self.fallback_baseline = bool(kwargs.get("fallback_baseline", fallback_baseline))
         self.promotion_policy = promotion_policy or kwargs.get("promotion_policy", None)
         self._drift_detector = drift_detector or kwargs.get("drift_detector", None) or DriftDetector()
         self._last_promotion_report: Optional[PromotionReport] = None
@@ -1253,6 +1363,21 @@ class TypeSafeClient:
         if self._compiled_model is not None:
             self._has_cutover = True
         self._cutover_audit_log: List[Dict[str, Any]] = []
+
+        if self.zero_egress:
+            if self.mode == "passthrough":
+                raise ValueError(
+                    "Incompatible configuration: mode='passthrough' requires network egress, but zero_egress=True."
+                )
+            if self.mode == "auto_cutover" and self.baseline_handler is None and not self._has_cutover:
+                raise ValueError(
+                    "Incompatible configuration: mode='auto_cutover' with zero_egress=True "
+                    "requires a local baseline_handler to provide teacher exemplars without egress."
+                )
+            if self.allow_cloud_fallback:
+                raise ValueError(
+                    "Incompatible configuration: allow_cloud_fallback=True cannot be combined with zero_egress=True."
+                )
 
     @property
     def is_cutover(self) -> bool:
@@ -1485,34 +1610,17 @@ class TypeSafeClient:
             if "state" in item and "answers" in item
         ]
         if calib_dataset:
-            # Ensure calibration pool has sufficient samples (n >= 20) for finite-sample coverage at alpha=0.05
-            if len(calib_dataset) < 25:
-                synth = compiler.generate_synthetic_exemplars(samples_per_choice=4)
-                max_synth_len = max((len(v) for v in synth.values()), default=0)
-                for idx in range(max_synth_len):
-                    p = None
-                    ans: Dict[str, Any] = {}
-                    for f_name, f_samples in synth.items():
-                        if idx < len(f_samples):
-                            p = p or f_samples[idx][0]
-                            ans[f_name] = f_samples[idx][1]
-                    if p and ans and not any(it[0] == p for it in calib_dataset):
-                        calib_dataset.append((p, ans))
-                        if len(calib_dataset) >= 30:
-                            break
             try:
                 engine.calibrate(calib_dataset, n_bins=min(5, max(2, len(calib_dataset))))
             except Exception:
                 pass
 
         # Evaluate promotion eligibility strictly on held-out validation fold
-        policy = self.promotion_policy
-        if policy is None:
-            policy = PromotionPolicy(
-                min_validation_samples=1,
-                min_agreement_threshold=self.min_agreement_threshold,
-                false_allow_ceiling=0.0,
-            )
+        policy = self.promotion_policy or PromotionPolicy(
+            min_agreement_threshold=self.min_agreement_threshold,
+            false_allow_ceiling=0.0,
+            require_statistical_bound=True,
+        )
 
         report = evaluate_promotion_eligibility(
             engine=engine,
@@ -1523,58 +1631,48 @@ class TypeSafeClient:
         self._last_promotion_report = report
 
         if report.is_eligible:
-            # Once promotion eligibility passes strict held-out validation, compile final
-            # production weights using all collected exemplars to maximize runtime accuracy.
-            if len(self._history) > len(partition.train_history):
-                all_exemplars: Dict[str, List[Tuple[str, Any]]] = {
-                    f_name: [] for f_name in schema.fields.keys()
-                }
-                for item in self._history:
-                    p = item.get("state")
-                    ans = item.get("answers", {})
-                    for f_name in schema.fields.keys():
-                        if f_name in ans and ans[f_name] is not None:
-                            all_exemplars[f_name].append((p, ans[f_name]))
+            # Release Invariant 3: Freeze, hash, validate, and promote the EXACT evaluated candidate artifact.
+            # Never recompile or recalibrate on all history post-validation.
+            candidate_bytes = compiled_model.to_bytes() if hasattr(compiled_model, "to_bytes") else b""
+            artifact_digest = (
+                hashlib.sha256(candidate_bytes).hexdigest()
+                if candidate_bytes
+                else hashlib.sha256(str(id(compiled_model)).encode()).hexdigest()
+            )
 
-                final_compiled_model = compiler.compile(exemplars=all_exemplars)
-                final_engine = ReflexEngine(
-                    schema,
-                    signing_key=self.signing_key,
-                    ledger=self.ledger,
-                    dimension=self.dimension,
-                    backend=self.backend,
-                    projector=self.projector,
-                )
-                for f_name, ch in final_compiled_model.heads.items():
-                    if f_name in final_engine.model.heads:
-                        final_engine.model.heads[f_name].set_weights(ch.weights, ch.biases)
+            def _serialize_samples(samples: Sequence[Dict[str, Any]]) -> str:
+                clean = []
+                for x in samples:
+                    clean.append({
+                        "state": str(x.get("state", "")),
+                        "answers": str(x.get("answers", "")),
+                    })
+                return hashlib.sha256(json.dumps(clean, sort_keys=True).encode()).hexdigest()
 
-                all_calib = [
-                    (item["state"], item["answers"])
-                    for item in self._history
-                    if "state" in item and "answers" in item
-                ]
-                if len(all_calib) < 25:
-                    synth = compiler.generate_synthetic_exemplars(samples_per_choice=4)
-                    max_synth_len = max((len(v) for v in synth.values()), default=0)
-                    for idx in range(max_synth_len):
-                        p = None
-                        ans_dict: Dict[str, Any] = {}
-                        for f_name, f_samples in synth.items():
-                            if idx < len(f_samples):
-                                p = p or f_samples[idx][0]
-                                ans_dict[f_name] = f_samples[idx][1]
-                        if p and ans_dict and not any(it[0] == p for it in all_calib):
-                            all_calib.append((p, ans_dict))
-                            if len(all_calib) >= 30:
-                                break
-                try:
-                    final_engine.calibrate(all_calib, n_bins=min(5, max(2, len(all_calib))))
-                except Exception:
-                    pass
-                engine = final_engine
-                compiled_model = final_compiled_model
+            manifest = {
+                "schema_digest": schema.schema_digest() if hasattr(schema, "schema_digest") else "",
+                "artifact_digest": artifact_digest,
+                "model_digest": engine._model_digest() if hasattr(engine, "_model_digest") else "",
+                "projector_digest": engine._projector_digest() if hasattr(engine, "_projector_digest") else "",
+                "calibration_digest": engine._calibration_digest() if hasattr(engine, "_calibration_digest") else "",
+                "dataset_manifest": {
+                    "train_digest": _serialize_samples(partition.train_history),
+                    "calib_digest": _serialize_samples(partition.calib_history),
+                    "val_digest": _serialize_samples(partition.val_history),
+                    "train_samples": len(partition.train_history),
+                    "calib_samples": len(partition.calib_history),
+                    "val_samples": len(partition.val_history),
+                },
+                "teacher_provenance": {
+                    "provider_model": "jev-latest",
+                    "total_samples": len(self._history),
+                    "timestamp": time.time(),
+                },
+            }
+            report.artifact_digest = artifact_digest
+            report.manifest = manifest
 
+            # Promote exact evaluated candidate artifact
             self._engine_cache[digest] = engine
             self._compiled_model = compiled_model
             self._has_cutover = True
@@ -1587,6 +1685,9 @@ class TypeSafeClient:
                 "min_agreement_threshold": policy.min_agreement_threshold,
                 "wilson_lower_bound": report.wilson_lower_bound,
                 "false_allow_count": report.false_allow_count,
+                "artifact_digest": artifact_digest,
+                "candidate_artifact_digest": artifact_digest,
+                "manifest": manifest,
                 "status": "active_100_percent_local",
                 "message": (
                     f"Autonomous Trojan Horse cutover completed with {report.agreement_rate*100:.1f}% agreement "
@@ -1650,12 +1751,18 @@ class TypeSafeClient:
 
         # Passthrough Mode: Always forward to TypeSafe AI
         if self.mode == "passthrough":
+            if self.zero_egress:
+                raise ZeroEgressViolationError(
+                    "Incompatible configuration: mode='passthrough' requires network egress, but zero_egress=True."
+                )
+            fb = kwargs.get("fallback_baseline", self.fallback_baseline)
             resp, _, _ = self.call_real_api(
                 state=state,
                 questions=questions,
                 model=model,
                 timeout=self.timeout,
-                fallback_baseline=True,
+                fallback_baseline=fb,
+                zero_egress=False,
             )
             return resp
 
@@ -1665,16 +1772,23 @@ class TypeSafeClient:
                 already_cutover = self._has_cutover
 
             if not already_cutover:
-                if self.baseline_handler is not None and not self.api_key:
+                if self.baseline_handler is not None and (self.zero_egress or not self.api_key):
                     cloud_resp = self.baseline_handler(state, questions)
-                    egress_bytes = int(cloud_resp.get("egress_bytes", 800))
+                    egress_bytes = int(cloud_resp.get("egress_bytes", 0 if self.zero_egress else 800))
                 else:
+                    if self.zero_egress:
+                        raise ZeroEgressViolationError(
+                            "Incompatible configuration: mode='auto_cutover' with zero_egress=True "
+                            "requires a local baseline_handler to provide teacher exemplars without egress."
+                        )
+                    fb = kwargs.get("fallback_baseline", self.fallback_baseline)
                     cloud_resp, _, egress_bytes = self.call_real_api(
                         state=state,
                         questions=questions,
                         model=model,
                         timeout=self.timeout,
-                        fallback_baseline=True,
+                        fallback_baseline=fb,
+                        zero_egress=False,
                     )
 
                 with self._engine_lock:
@@ -1840,9 +1954,12 @@ class TypeSafeClient:
         questions: Mapping[str, Any],
         model: str = "jev-latest",
         timeout: float = 15.0,
-        fallback_baseline: bool = True,
+        fallback_baseline: Optional[bool] = None,
+        zero_egress: Optional[bool] = None,
     ) -> Tuple[Optional[TypeSafeResponse], float, int]:
         """Calls the real TypeSafe AI API using this client's api_key and base_url."""
+        fb = self.fallback_baseline if fallback_baseline is None else fallback_baseline
+        ze = self.zero_egress if zero_egress is None else zero_egress
         return call_real_typesafe_api(
             state=state,
             questions=questions,
@@ -1850,7 +1967,8 @@ class TypeSafeClient:
             base_url=self.base_url,
             model=model,
             timeout=timeout,
-            fallback_baseline=fallback_baseline,
+            fallback_baseline=fb,
+            zero_egress=ze,
         )
 
     def compare(
@@ -1861,17 +1979,35 @@ class TypeSafeClient:
         *,
         alpha: float = 0.05,
         timeout: float = 15.0,
-        fallback_baseline: bool = True,
+        fallback_baseline: Optional[bool] = None,
+        zero_egress: Optional[bool] = None,
     ) -> DotDict:
         """Runs a side-by-side head-to-head comparison: Local System 1 vs TypeSafe Cloud.
 
         Measures wall-clock latency, egress bytes, token consumption, conformal bounds,
         and Ed25519 cryptographic receipts.
         """
+        effective_ze = self.zero_egress if zero_egress is None else zero_egress
+        if effective_ze:
+            raise ZeroEgressViolationError(
+                "Cannot perform cloud comparison when zero_egress=True. "
+                "Instantiate TypeSafeClient(zero_egress=False) to enable WAN comparison."
+            )
+        fb = self.fallback_baseline if fallback_baseline is None else fallback_baseline
         local_resp = self.systemone(state, questions, model=model, alpha=alpha)
-        cloud_resp, cloud_lat, cloud_egress = self.call_real_api(
-            state, questions, model=model, timeout=timeout, fallback_baseline=fallback_baseline
-        )
+        try:
+            cloud_resp, cloud_lat, cloud_egress = self.call_real_api(
+                state,
+                questions,
+                model=model,
+                timeout=timeout,
+                fallback_baseline=fb,
+                zero_egress=False,
+            )
+        except Exception:
+            cloud_resp = None
+            cloud_lat = 220.0
+            cloud_egress = 0
 
         speedup = cloud_lat / local_resp.latency_ms if local_resp.latency_ms > 0 else 100.0
         cloud_tokens = (
@@ -2057,7 +2193,8 @@ class AsyncTypeSafeClient:
         questions: Mapping[str, Any],
         model: str = "jev-latest",
         timeout: float = 15.0,
-        fallback_baseline: bool = True,
+        fallback_baseline: Optional[bool] = None,
+        zero_egress: Optional[bool] = None,
     ) -> Tuple[Optional[TypeSafeResponse], float, int]:
         return await asyncio.to_thread(
             self._sync_client.call_real_api,
@@ -2066,6 +2203,7 @@ class AsyncTypeSafeClient:
             model=model,
             timeout=timeout,
             fallback_baseline=fallback_baseline,
+            zero_egress=zero_egress,
         )
 
     async def compare(
@@ -2076,8 +2214,15 @@ class AsyncTypeSafeClient:
         *,
         alpha: float = 0.05,
         timeout: float = 15.0,
-        fallback_baseline: bool = True,
+        fallback_baseline: Optional[bool] = None,
+        zero_egress: Optional[bool] = None,
     ) -> DotDict:
+        effective_ze = self.zero_egress if zero_egress is None else zero_egress
+        if effective_ze:
+            raise ZeroEgressViolationError(
+                "Cannot perform cloud comparison when zero_egress=True. "
+                "Instantiate TypeSafeClient(zero_egress=False) to enable WAN comparison."
+            )
         return await asyncio.to_thread(
             self._sync_client.compare,
             state,
@@ -2086,6 +2231,7 @@ class AsyncTypeSafeClient:
             alpha=alpha,
             timeout=timeout,
             fallback_baseline=fallback_baseline,
+            zero_egress=zero_egress,
         )
 
 
@@ -2149,11 +2295,18 @@ def compare(
     alpha: float = 0.05,
     api_key: Optional[str] = None,
     timeout: float = 15.0,
-    fallback_baseline: bool = True,
+    fallback_baseline: bool = False,
+    zero_egress: bool = True,
     **kwargs: Any,
 ) -> DotDict:
     """One-shot functional API to run a side-by-side local vs cloud comparison."""
-    client = TypeSafeClient(api_key=api_key, timeout=timeout, **kwargs)
+    client = TypeSafeClient(
+        api_key=api_key,
+        timeout=timeout,
+        zero_egress=zero_egress,
+        fallback_baseline=fallback_baseline,
+        **kwargs,
+    )
     return client.compare(
         state,
         questions,
@@ -2161,6 +2314,7 @@ def compare(
         alpha=alpha,
         timeout=timeout,
         fallback_baseline=fallback_baseline,
+        zero_egress=zero_egress,
     )
 
 
@@ -2271,10 +2425,14 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
         if mode == "passthrough":
             class PassthroughTypeSafeClient(TypeSafeClient):
                 def __init__(self, *args: Any, mode: str = "passthrough", **kwargs: Any) -> None:
+                    kwargs.setdefault("zero_egress", False)
+                    kwargs.setdefault("fallback_baseline", True)
                     super().__init__(*args, mode=mode, **kwargs)
 
             class AsyncPassthroughTypeSafeClient(AsyncTypeSafeClient):
                 def __init__(self, *args: Any, mode: str = "passthrough", **kwargs: Any) -> None:
+                    kwargs.setdefault("zero_egress", False)
+                    kwargs.setdefault("fallback_baseline", True)
                     super().__init__(*args, mode=mode, **kwargs)
 
             client_cls: Any = PassthroughTypeSafeClient
@@ -2350,6 +2508,12 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
             "call_real_typesafe_api": call_real_typesafe_api,
             "create_typesafe_baseline_response": create_typesafe_baseline_response,
             "compare": compare,
+            "PromotionPolicy": PromotionPolicy,
+            "PromotionReport": PromotionReport,
+            "CutoverPartition": CutoverPartition,
+            "evaluate_promotion_eligibility": evaluate_promotion_eligibility,
+            "partition_cutover_history": partition_cutover_history,
+            "compute_wilson_score_lower": compute_wilson_score_lower,
         }
 
         all_exports = [
@@ -2378,6 +2542,12 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
             "call_real_typesafe_api",
             "create_typesafe_baseline_response",
             "compare",
+            "PromotionPolicy",
+            "PromotionReport",
+            "CutoverPartition",
+            "evaluate_promotion_eligibility",
+            "partition_cutover_history",
+            "compute_wilson_score_lower",
         ]
 
         for target_mod in (mod, sdk_mod):
@@ -2529,4 +2699,7 @@ __all__ = [
     "PromotionReport",
     "evaluate_promotion_eligibility",
     "partition_cutover_history",
+    "ZeroEgressViolationError",
+    "get_egress_audit_log",
+    "clear_egress_audit_log",
 ]

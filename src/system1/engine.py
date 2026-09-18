@@ -8,9 +8,12 @@ and ActionLedger audit integration.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
+import math
 import secrets
 import statistics
+import threading
 import time
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -41,7 +44,7 @@ from system1.core import (
     SystemOneModel,
 )
 from system1.core.model import _stable_sigmoid
-from system1.cache import SemanticReflexCache
+from system1.cache import SemanticReflexCache, _validate_cache_inputs
 from system1.core.telemetry import TelemetryProjector
 from system1.ledger import ActionLedger, LedgerWriteError
 from system1.receipt import (
@@ -209,7 +212,9 @@ class ReflexEngine:
         self.recency_weighted = bool(recency_weighted)
         self.strict_mode = bool(strict_mode)
         self.policy_scope = str(policy_scope)
+        self.policy_epoch: int = 0
         self.model_version: int = 1
+        self._lock = threading.RLock()
 
         # Non-autoregressive decision model
         if model is not None:
@@ -299,6 +304,48 @@ class ReflexEngine:
                         )
                         self.regression_conformal_predictors[name].is_calibrated = True
 
+    def _model_digest(self) -> str:
+        """Computes deterministic digest of active model weights."""
+        if hasattr(self.model, "model_digest") and callable(self.model.model_digest):
+            return self.model.model_digest()
+        heads = getattr(self.model, "heads", getattr(self.model, "_field_heads", {}))
+        if not heads:
+            return f"v{self.model_version}"
+        h = hashlib.sha256(f"v:{self.model_version}".encode("utf-8"))
+        for fname in sorted(heads.keys()):
+            hd = heads[fname]
+            w = getattr(hd, "weights", None)
+            b = getattr(hd, "biases", None)
+            if w is not None:
+                h.update(np.asarray(w, dtype=np.float32).tobytes())
+            if b is not None:
+                h.update(np.asarray(b, dtype=np.float32).tobytes())
+        return h.hexdigest()
+
+    def _projector_digest(self) -> str:
+        """Computes deterministic digest of neural projector."""
+        if hasattr(self.projector, "projector_digest") and callable(self.projector.projector_digest):
+            return self.projector.projector_digest()
+        p_str = f"dim:{getattr(self.projector, 'dimension', self.dimension)}"
+        return hashlib.sha256(p_str.encode("utf-8")).hexdigest()
+
+    def _calibration_digest(self) -> str:
+        """Computes deterministic digest of calibration parameters and conformal nonconformity scores."""
+        h = hashlib.sha256()
+        for fname in sorted(self.schema.fields.keys()):
+            calib = self.calibrators.get(fname)
+            if calib is not None:
+                h.update(f"{fname}:temp:{calib.temperature:.6f}".encode("utf-8"))
+            cp = self.conformal_predictors.get(fname)
+            if cp is not None and getattr(cp, "is_calibrated", False):
+                scores = getattr(cp, "calibration_scores", np.array([]))
+                h.update(f"{fname}:cp_scores:{scores.tobytes()}".encode("utf-8"))
+            rcp = self.regression_conformal_predictors.get(fname)
+            if rcp is not None and getattr(rcp, "is_calibrated", False):
+                res = getattr(rcp, "residuals", np.array([]))
+                h.update(f"{fname}:rcp_res:{res.tobytes()}".encode("utf-8"))
+        return h.hexdigest()
+
     def encode(
         self,
         prompt: str,
@@ -333,8 +380,17 @@ class ReflexEngine:
         if not dataset:
             raise ValueError("Calibration dataset must contain at least one example")
 
-        prompts = [item[0] for item in dataset]
-        labels_list = [item[1] for item in dataset]
+        # Group observations by prompt to prevent prompt leakage across calibration splits
+        prompt_groups: Dict[str, List[Tuple[str, Mapping[str, Any]]]] = {}
+        for item in dataset:
+            prompt_groups.setdefault(item[0], []).append(item)
+
+        grouped_dataset: List[Tuple[str, Mapping[str, Any]]] = []
+        for p_key, items in prompt_groups.items():
+            grouped_dataset.extend(items)
+
+        prompts = [item[0] for item in grouped_dataset]
+        labels_list = [item[1] for item in grouped_dataset]
 
         # 1. Run forward pass across all calibration inputs
         inference_results = self.model.forward_batch(prompts)
@@ -360,13 +416,31 @@ class ReflexEngine:
                     logits_arr = np.array(all_logits, dtype=np.float64)
                     targets_arr = np.array(all_targets, dtype=np.int64)
 
+                    # Decouple temperature scaling fold and conformal prediction fold
+                    if len(all_logits) >= 2:
+                        n_samples = len(all_logits)
+                        n_half = max(1, n_samples // 2)
+                        rng = np.random.RandomState(42)
+                        idx = np.arange(n_samples)
+                        rng.shuffle(idx)
+                        f1, f2 = idx[:n_half], idx[n_half:]
+                        logits_temp = logits_arr[f1]
+                        targets_temp = targets_arr[f1]
+                        logits_conf = logits_arr[f2]
+                        str_targets_conf = [all_str_targets[i] for i in f2]
+                    else:
+                        logits_temp = logits_arr
+                        targets_temp = targets_arr
+                        logits_conf = logits_arr
+                        str_targets_conf = all_str_targets
+
                     calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(logits_arr, targets_arr, n_bins=n_bins)
+                    metric = calibrator.fit(logits_temp, targets_temp, n_bins=n_bins)
                     metrics_by_field[field_name] = metric
 
-                    calibrated_probs = calibrator.calibrate_logits(logits_arr)
+                    calibrated_probs = calibrator.calibrate_logits(logits_conf)
                     conformal = self.conformal_predictors[field_name]
-                    conformal.calibrate(calibrated_probs, all_str_targets)
+                    conformal.calibrate(calibrated_probs, str_targets_conf)
 
             elif isinstance(f_def, BooleanField):
                 all_logits: List[np.ndarray] = []
@@ -384,13 +458,32 @@ class ReflexEngine:
                 if all_logits:
                     logits_arr = np.array(all_logits, dtype=np.float64)
                     targets_arr = np.array(all_targets, dtype=np.int64)
+
+                    # Decouple temperature scaling fold and conformal prediction fold
+                    if len(all_logits) >= 2:
+                        n_samples = len(all_logits)
+                        n_half = max(1, n_samples // 2)
+                        rng = np.random.RandomState(42)
+                        idx = np.arange(n_samples)
+                        rng.shuffle(idx)
+                        f1, f2 = idx[:n_half], idx[n_half:]
+                        logits_temp = logits_arr[f1]
+                        targets_temp = targets_arr[f1]
+                        logits_conf = logits_arr[f2]
+                        str_targets_conf = [all_str_targets[i] for i in f2]
+                    else:
+                        logits_temp = logits_arr
+                        targets_temp = targets_arr
+                        logits_conf = logits_arr
+                        str_targets_conf = all_str_targets
+
                     calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(logits_arr, targets_arr, n_bins=n_bins)
+                    metric = calibrator.fit(logits_temp, targets_temp, n_bins=n_bins)
                     metrics_by_field[field_name] = metric
 
-                    calibrated_probs = calibrator.calibrate_logits(logits_arr)
+                    calibrated_probs = calibrator.calibrate_logits(logits_conf)
                     conformal = self.conformal_predictors[field_name]
-                    conformal.calibrate(calibrated_probs, all_str_targets)
+                    conformal.calibrate(calibrated_probs, str_targets_conf)
 
             elif isinstance(f_def, MultiChoiceField):
                 all_logits: List[np.ndarray] = []
@@ -413,6 +506,15 @@ class ReflexEngine:
                     metric = calibrator.fit(flat_logits, flat_targets, n_bins=n_bins)
                     metrics_by_field[field_name] = metric
 
+                    # Calibrate multilabel conformal predictor if available
+                    conformal = self.conformal_predictors.get(field_name)
+                    if conformal is not None and hasattr(conformal, "calibrate"):
+                        try:
+                            calibrated_probs = calibrator.calibrate_logits(logits_arr)
+                            conformal.calibrate(calibrated_probs, [list(seq) for seq in all_binary_targets])
+                        except Exception:
+                            pass
+
             elif isinstance(f_def, ScoreField):
                 all_logits: List[np.ndarray] = []
                 all_targets: List[float] = []
@@ -432,15 +534,15 @@ class ReflexEngine:
                     targets_arr = np.array(all_targets, dtype=np.float64)
                     binary_targets = (targets_arr >= 0.5).astype(np.int64)
                     calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(logits_arr, binary_targets, n_bins=n_bins)
-                    metrics_by_field[field_name] = metric
+                    if len(np.unique(binary_targets)) >= 2:
+                        metric = calibrator.fit(logits_arr, binary_targets, n_bins=n_bins)
+                        metrics_by_field[field_name] = metric
 
                     reg_conformal = self.regression_conformal_predictors.get(field_name)
                     if reg_conformal is not None:
                         actual_targets = [
-                            float(f_def.validate_value(labels_list[i][field_name]))
-                            for i in range(len(labels_list))
-                            if field_name in labels_list[i]
+                            f_def.min_value + (f_def.max_value - f_def.min_value) * nt
+                            for nt in all_targets
                         ]
                         reg_conformal.calibrate(raw_predictions, actual_targets)
 
@@ -466,6 +568,28 @@ class ReflexEngine:
         """Evaluates prompt against schema in a single non-autoregressive pass."""
         if not isinstance(prompt, str):
             raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
+        if not (0.0 < alpha < 1.0) or math.isnan(alpha) or math.isinf(alpha):
+            raise ValueError(f"alpha must be in (0, 1), got {alpha}")
+        if margin_threshold is not None and (margin_threshold < 0.0 or math.isnan(margin_threshold) or math.isinf(margin_threshold)):
+            raise ValueError(f"margin_threshold must be non-negative, got {margin_threshold}")
+        if relative_odds_ratio is not None and (relative_odds_ratio <= 0.0 or math.isnan(relative_odds_ratio) or math.isinf(relative_odds_ratio)):
+            raise ValueError(f"relative_odds_ratio must be strictly positive, got {relative_odds_ratio}")
+        if confidence_floor_tau0 is not None and (confidence_floor_tau0 < 0.0 or math.isnan(confidence_floor_tau0) or math.isinf(confidence_floor_tau0)):
+            raise ValueError(f"confidence_floor_tau0 must be non-negative, got {confidence_floor_tau0}")
+        if embedding is not None:
+            if not isinstance(embedding, (np.ndarray, list, tuple)):
+                raise TypeError(f"embedding must be array-like, got {type(embedding).__name__}")
+            arr_emb = np.asarray(embedding, dtype=np.float32).flatten()
+            if not np.all(np.isfinite(arr_emb)):
+                raise ValueError("embedding must contain only finite numbers (no NaN or Inf)")
+            if arr_emb.shape[0] != self.dimension:
+                raise ValueError(f"embedding dimension mismatch: expected {self.dimension}, got {arr_emb.shape[0]}")
+            query_emb = arr_emb
+        else:
+            query_emb = None
+        if telemetry is not None:
+            if not isinstance(telemetry, (dict, list, tuple, np.ndarray, float, int)):
+                raise TypeError(f"telemetry must be a dict, sequence, ndarray, or numeric, got {type(telemetry).__name__}")
 
         t_start = time.perf_counter()
 
@@ -488,8 +612,12 @@ class ReflexEngine:
                     raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
                 truth_ledger_head = ""
 
+        # Precompute snapshot digests for context binding
+        m_dig = self._model_digest()
+        p_dig = self._projector_digest()
+        c_dig = self._calibration_digest()
+
         # 1. Tier 0 Semantic Reflex Cache fast-path (<0.05ms)
-        query_emb: Optional[np.ndarray] = np.asarray(embedding, dtype=np.float32).flatten() if embedding is not None else None
         if self.use_cache:
             cached = self.cache.get(
                 prompt,
@@ -500,6 +628,14 @@ class ReflexEngine:
                 alpha=alpha,
                 margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
                 strict=is_strict,
+                relative_odds_ratio=eff_gamma,
+                confidence_floor_tau0=eff_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=m_dig,
+                projector_digest=p_dig,
+                calibration_digest=c_dig,
+                policy_epoch=self.policy_epoch,
+                enforce_durability=is_fail_closed,
             )
             if cached is None:
                 if query_emb is None:
@@ -514,12 +650,24 @@ class ReflexEngine:
                     alpha=alpha,
                     margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
                     strict=is_strict,
+                    relative_odds_ratio=eff_gamma,
+                    confidence_floor_tau0=eff_tau0,
+                    recency_weighted=recency_weighted,
+                    model_digest=m_dig,
+                    projector_digest=p_dig,
+                    calibration_digest=c_dig,
+                    policy_epoch=self.policy_epoch,
+                    enforce_durability=is_fail_closed,
                 )
 
             if cached is not None:
                 entry, sim = cached
                 if isinstance(entry.result, DecisionResult):
                     elapsed_ms = (time.perf_counter() - t_start) * 1000.0
+                    hit_is_ambiguous = bool(getattr(entry.result, "is_ambiguous", False))
+                    hit_ambiguous_fields = copy.deepcopy(getattr(entry.result, "ambiguous_fields", []))
+                    hit_escalated_fields = copy.deepcopy(getattr(entry.result, "escalated_fields", []))
+
                     hit_receipt = entry.result.receipt
                     if active_ledger is not None and record_receipt:
                         hit_receipt = create_decision_receipt(
@@ -531,7 +679,7 @@ class ReflexEngine:
                             conformal_sets=copy.deepcopy(entry.result.conformal_sets),
                             probabilities=copy.deepcopy(entry.result.probabilities),
                             latency_ms=elapsed_ms,
-                            is_ambiguous=False,
+                            is_ambiguous=hit_is_ambiguous,
                             truth_ledger_head=truth_ledger_head,
                             ledger_record_id=None,
                             signing_key=self.signing_key,
@@ -569,7 +717,7 @@ class ReflexEngine:
                         confidences=copy.deepcopy(entry.result.confidences),
                         conformal_sets=copy.deepcopy(entry.result.conformal_sets),
                         probabilities=copy.deepcopy(entry.result.probabilities),
-                        is_ambiguous=False,  # Certified execution bypasses ambiguity halts!
+                        is_ambiguous=hit_is_ambiguous,
                         latency_ms=elapsed_ms,
                         alpha=alpha,
                         receipt=hit_receipt,
@@ -579,26 +727,27 @@ class ReflexEngine:
                         odds_ratios=copy.deepcopy(getattr(entry.result, "odds_ratios", {})),
                         relative_odds_ratio_thresholds=copy.deepcopy(getattr(entry.result, "relative_odds_ratio_thresholds", {})),
                         confidence_floors=copy.deepcopy(getattr(entry.result, "confidence_floors", {})),
-                        ambiguous_fields=copy.deepcopy(getattr(entry.result, "ambiguous_fields", [])),
-                        escalated_fields=[],
+                        ambiguous_fields=hit_ambiguous_fields,
+                        escalated_fields=hit_escalated_fields,
                         telemetry=copy.deepcopy(telemetry) if telemetry is not None else None,
                         is_cache_hit=True,
                         embedding=entry.embedding if entry.embedding is not None else query_emb,
                     )
 
-        try:
-            raw_result = self.model.forward_single(
-                prompt,
-                telemetry=telemetry,
-                embedding=query_emb,
-                recency_weighted=recency_weighted,
-            )
-        except TypeError:
-            raw_result = self.model.forward_single(
-                prompt,
-                telemetry=telemetry,
-                embedding=query_emb,
-            )
+        with self._lock:
+            try:
+                raw_result = self.model.forward_single(
+                    prompt,
+                    telemetry=telemetry,
+                    embedding=query_emb,
+                    recency_weighted=recency_weighted,
+                )
+            except TypeError:
+                raw_result = self.model.forward_single(
+                    prompt,
+                    telemetry=telemetry,
+                    embedding=query_emb,
+                )
 
         values: Dict[str, Any] = {}
         confidences: Dict[str, float] = {}
@@ -726,24 +875,60 @@ class ReflexEngine:
                 probabilities[name] = {opt: float(probs[i]) for i, opt in enumerate(f_def.options)}
                 conformal_sets[name] = list(selected) if selected else [f_def.options[int(np.argmax(probs))]]
 
+                eff_boundary_margin = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.05
+                is_boundary_uncertain = any(
+                    abs(p - f_def.threshold) < eff_boundary_margin
+                    for p in probs
+                )
+                mc_ambiguous = False
+                if is_strict:
+                    mc_ambiguous = (len(selected) == 0) or is_boundary_uncertain or (not getattr(calibrator, "is_calibrated", True))
+
+                if mc_ambiguous:
+                    ambiguous_fields.append(name)
+                    if getattr(f_def, "escalate_on_ambiguity", True):
+                        is_ambiguous = True
+                        escalated_fields.append(name)
+
             elif isinstance(f_def, ScoreField):
-                calibrated_temp = calibrator.temperature
+                calibrator = self.calibrators.get(name)
+                calibrated_temp = calibrator.temperature if calibrator is not None else 1.0
                 scaled_logit = float(raw_eval.logits[0] / max(1e-4, calibrated_temp))
                 prob = float(_stable_sigmoid(np.array([scaled_logit]), temperature=1.0)[0])
                 val = f_def.min_value + (f_def.max_value - f_def.min_value) * prob
-                conf = float(max(prob, 1.0 - prob))
-                values[name] = float(val)
+                conf = float(getattr(raw_eval, "confidence", max(prob, 1.0 - prob)))
+                values[name] = val
                 confidences[name] = conf
                 probabilities[name] = {"score_ratio": prob}
                 reg_conformal = self.regression_conformal_predictors.get(name)
-                if reg_conformal is not None and reg_conformal.is_calibrated:
-                    interval = reg_conformal.predict_interval(val, alpha=alpha)
+                is_uncalibrated = reg_conformal is None or not reg_conformal.is_calibrated
+                if not is_uncalibrated:
+                    interval = reg_conformal.predict_interval(val, alpha=alpha, strict=is_strict)
                     conformal_sets[name] = [interval.to_interval_string()]
+                    interval_margin = interval.margin
                 else:
-                    margin = (f_def.max_value - f_def.min_value) * ((1.0 - alpha) / 2.0)
-                    low_b = max(f_def.min_value, val - margin)
-                    high_b = min(f_def.max_value, val + margin)
+                    if is_strict:
+                        interval_margin = f_def.max_value - f_def.min_value
+                        low_b = f_def.min_value
+                        high_b = f_def.max_value
+                    else:
+                        interval_margin = (f_def.max_value - f_def.min_value) * ((1.0 - alpha) / 2.0)
+                        low_b = max(f_def.min_value, val - interval_margin)
+                        high_b = min(f_def.max_value, val + interval_margin)
                     conformal_sets[name] = [f"[{low_b:.4f}, {high_b:.4f}]"]
+
+                score_range = max(1e-6, f_def.max_value - f_def.min_value)
+                normalized_margin = interval_margin / score_range
+                score_ambiguous = False
+                if is_strict:
+                    eff_score_thresh = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.5
+                    score_ambiguous = is_uncalibrated or (normalized_margin > eff_score_thresh)
+
+                if score_ambiguous:
+                    ambiguous_fields.append(name)
+                    if getattr(f_def, "escalate_on_ambiguity", True):
+                        is_ambiguous = True
+                        escalated_fields.append(name)
 
         validated_values = self.schema.validate_decision(values)
         total_latency_ms = (time.perf_counter() - t_start) * 1000.0
@@ -854,6 +1039,13 @@ class ReflexEngine:
                 alpha=alpha,
                 margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
                 strict=is_strict,
+                relative_odds_ratio=eff_gamma,
+                confidence_floor_tau0=eff_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=m_dig,
+                projector_digest=p_dig,
+                calibration_digest=c_dig,
+                policy_epoch=self.policy_epoch,
                 source="evaluation",
             )
 
@@ -905,51 +1097,78 @@ class ReflexEngine:
         Adapts the decision hyperplanes of ReflexEngine for resolved Tier 2 edge cases,
         and certifies the resolution in the Tier 0 Semantic Reflex Cache.
         """
-        eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
-        t0 = time.perf_counter()
+        with self._lock:
+            eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
+            t0 = time.perf_counter()
 
-        # Invariant 8: Bump model_version, evict prompt and invalidate prior versions before evaluation
-        self.model_version += 1
-        if hasattr(self.model, "model_version"):
-            self.model.model_version = self.model_version
+            if embedding is not None:
+                emb = np.asarray(embedding, dtype=np.float32).flatten()
+            else:
+                emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
+            x_aug = np.append(emb, 1.0).astype(np.float32)
 
-        if self.use_cache and self.cache is not None:
-            self.cache.evict_prompt(prompt)
-            self.cache.invalidate_prior_versions(self.model_version)
-
-        if hasattr(self.model, "cache") and self.model.cache is not None:
-            if hasattr(self.model.cache, "evict_prompt"):
-                self.model.cache.evict_prompt(prompt)
-            if hasattr(self.model.cache, "invalidate_prior_versions"):
-                self.model.cache.invalidate_prior_versions(self.model_version)
-
-        if embedding is not None:
-            emb = np.asarray(embedding, dtype=np.float32).flatten()
-        else:
-            emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
-        x_aug = np.append(emb, 1.0).astype(np.float32)
-
-        if hasattr(self.model, "learn_from_tier2"):
-            try:
-                res_dict = self.model.learn_from_tier2(
-                    prompt,
-                    target,
-                    telemetry=telemetry,
-                    embedding=emb,
-                    forgetting_factor=eff_forgetting,
-                    recency_weighted=recency_weighted,
-                )
-            except TypeError:
+            if hasattr(self.model, "learn_from_tier2"):
                 try:
                     res_dict = self.model.learn_from_tier2(
-                        prompt, target, telemetry=telemetry, embedding=emb, forgetting_factor=eff_forgetting
+                        prompt,
+                        target,
+                        telemetry=telemetry,
+                        embedding=emb,
+                        forgetting_factor=eff_forgetting,
+                        recency_weighted=recency_weighted,
                     )
                 except TypeError:
-                    res_dict = self.model.learn_from_tier2(
-                        prompt, target, telemetry=telemetry, embedding=emb
-                    )
-            updated_fields = res_dict.get("updated_fields", [])
-            rank1_ms = res_dict.get("update_latency_ms", 0.0)
+                    try:
+                        res_dict = self.model.learn_from_tier2(
+                            prompt, target, telemetry=telemetry, embedding=emb, forgetting_factor=eff_forgetting
+                        )
+                    except TypeError:
+                        res_dict = self.model.learn_from_tier2(
+                            prompt, target, telemetry=telemetry, embedding=emb
+                        )
+                updated_fields = res_dict.get("updated_fields", [])
+                rank1_ms = res_dict.get("update_latency_ms", 0.0)
+            else:
+                target_dict: Dict[str, Any]
+                if isinstance(target, Mapping):
+                    target_dict = dict(target)
+                else:
+                    first_field = next(iter(self.schema.fields.keys()))
+                    target_dict = {first_field: target}
+
+                updated_fields = []
+                update_durations_ms: List[float] = []
+                heads_dict = getattr(self.model, "_field_heads", getattr(self.model, "heads", {}))
+                for f_name, target_val in target_dict.items():
+                    if f_name in heads_dict:
+                        head = heads_dict[f_name]
+                        if hasattr(head, "format_target_vector") and hasattr(head, "online_update"):
+                            y_target = head.format_target_vector(target_val)
+                            try:
+                                dt = head.online_update(x_aug, y_target, forgetting_factor=eff_forgetting)
+                            except TypeError:
+                                dt = head.online_update(x_aug, y_target)
+                            update_durations_ms.append(dt)
+                            updated_fields.append(f_name)
+
+                rank1_ms = float(sum(update_durations_ms)) if update_durations_ms else 0.0
+
+            # Atomic version increment and cache invalidation AFTER weights are updated
+            self.model_version += 1
+            if hasattr(self.model, "model_version"):
+                self.model.model_version = self.model_version
+
+            if self.use_cache and self.cache is not None:
+                self.cache.evict_prompt(prompt)
+                self.cache.invalidate_prior_versions(self.model_version)
+
+            if hasattr(self.model, "cache") and self.model.cache is not None:
+                if hasattr(self.model.cache, "evict_prompt"):
+                    self.model.cache.evict_prompt(prompt)
+                if hasattr(self.model.cache, "invalidate_prior_versions"):
+                    self.model.cache.invalidate_prior_versions(self.model_version)
+
+            # Re-evaluate with updated weights
             res = self.decide(
                 prompt,
                 telemetry=telemetry,
@@ -959,8 +1178,13 @@ class ReflexEngine:
                 strict=self.strict_mode,
                 policy_scope=self.policy_scope,
             )
+
+            # Certify into cache
             if self.use_cache:
                 eff_m_thresh = self.margin_threshold
+                m_dig = self._model_digest()
+                p_dig = self._projector_digest()
+                c_dig = self._calibration_digest()
                 self.cache.put(
                     prompt,
                     res,
@@ -972,8 +1196,16 @@ class ReflexEngine:
                     alpha=0.05,
                     margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
                     strict=self.strict_mode,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    recency_weighted=recency_weighted,
                     source="tier2",
+                    model_digest=m_dig,
+                    projector_digest=p_dig,
+                    calibration_digest=c_dig,
+                    policy_epoch=self.policy_epoch,
                 )
+
             total_ms = (time.perf_counter() - t0) * 1000.0
             return {
                 "status": "updated",
@@ -981,64 +1213,6 @@ class ReflexEngine:
                 "total_latency_ms": round(total_ms, 4),
                 "updated_fields": updated_fields,
             }
-
-        target_dict: Dict[str, Any]
-        if isinstance(target, Mapping):
-            target_dict = dict(target)
-        else:
-            first_field = next(iter(self.schema.fields.keys()))
-            target_dict = {first_field: target}
-
-        updated_fields: List[str] = []
-        update_durations_ms: List[float] = []
-        heads_dict = getattr(self.model, "_field_heads", getattr(self.model, "heads", {}))
-        for f_name, target_val in target_dict.items():
-            if f_name in heads_dict:
-                head = heads_dict[f_name]
-                if hasattr(head, "format_target_vector") and hasattr(head, "online_update"):
-                    y_target = head.format_target_vector(target_val)
-                    try:
-                        dt = head.online_update(x_aug, y_target, forgetting_factor=eff_forgetting)
-                    except TypeError:
-                        dt = head.online_update(x_aug, y_target)
-                    update_durations_ms.append(dt)
-                    updated_fields.append(f_name)
-
-        rank1_ms = float(sum(update_durations_ms)) if update_durations_ms else 0.0
-        total_ms = (time.perf_counter() - t0) * 1000.0
-
-        # Execute decision pass to generate certified result and populate Tier 0 Cache
-        res = self.decide(
-            prompt,
-            telemetry=telemetry,
-            embedding=emb,
-            record_receipt=False,
-            recency_weighted=recency_weighted,
-            strict=self.strict_mode,
-            policy_scope=self.policy_scope,
-        )
-        if self.use_cache:
-            eff_m_thresh = self.margin_threshold
-            self.cache.put(
-                prompt,
-                res,
-                embedding=emb,
-                telemetry=telemetry,
-                schema_digest=self.schema.schema_digest(),
-                model_version=self.model_version,
-                policy_scope=self.policy_scope,
-                alpha=0.05,
-                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
-                strict=self.strict_mode,
-                source="tier2",
-            )
-
-        return {
-            "status": "updated",
-            "update_latency_ms": round(rank1_ms, 4),
-            "total_latency_ms": round(total_ms, 4),
-            "updated_fields": updated_fields,
-        }
 
     # Cognitive dual-process and execution pipeline aliases
     learn_from_system2 = learn_from_tier2

@@ -17,6 +17,7 @@ from system1.receipt import (
     canonical_json,
     fingerprint,
     utc_now,
+    verify_decision_witness_receipt,
 )
 
 _ZERO_HASH = "0" * 64
@@ -46,11 +47,18 @@ class ActionLedger:
         *,
         db_path: Optional[str | Path] = None,
         read_only: bool = False,
+        require_durable: bool = False,
+        enforce_durability: bool = False,
     ) -> None:
         self.path = str(db_path if db_path is not None else path)
         self.read_only = bool(read_only)
         if self.read_only and self.path == ":memory:":
             raise ValueError("Read-only ledger requires an existing durable database file")
+        if (require_durable or enforce_durability) and not self.is_durable:
+            raise ValueError(
+                "Enforcement profile requires a persistent, durable ActionLedger; in-memory storage is prohibited"
+            )
+
 
         uri = False
         database = self.path
@@ -78,7 +86,16 @@ class ActionLedger:
         if not self.read_only:
             self._initialize()
 
+    @property
+    def is_durable(self) -> bool:
+        """Returns True if the ledger writes to persistent disk storage, False if in-memory."""
+        p = str(self.path).strip()
+        if p == ":memory:" or p.startswith("file::memory:") or p.startswith(":memory:"):
+            return False
+        return True
+
     def _configure(self) -> None:
+
         with self._lock:
             self._connection.execute("PRAGMA journal_mode = WAL;")
             self._connection.execute("PRAGMA synchronous = NORMAL;")
@@ -191,6 +208,11 @@ class ActionLedger:
                 "receipt_digest": receipt_digest,
                 "is_ambiguous": payload.get("is_ambiguous"),
             }
+            if "envelope" in payload:
+                entry_payload["envelope"] = payload["envelope"]
+            if "signer_public_key" in payload:
+                entry_payload["signer_public_key"] = payload["signer_public_key"]
+            entry_payload["receipt"] = payload
 
             body = {
                 "event_id": event_id,
@@ -390,7 +412,7 @@ class ActionLedger:
             return entry_hash
 
     def verify_integrity(self, trusted_public_key: Optional[Any] = None) -> bool:
-        """Verifies the complete cryptographic hash chain and meta head."""
+        """Verifies the complete cryptographic hash chain and meta head, and validates entry signatures when trusted_public_key is supplied."""
         with self._lock:
             entries = self._connection.execute(
                 "SELECT * FROM audit_entries ORDER BY sequence ASC"
@@ -420,6 +442,31 @@ class ActionLedger:
                 if fingerprint(body) != row["entry_hash"]:
                     return False
 
+                # Cryptographic signature check if trusted_public_key is provided
+                if trusted_public_key is not None:
+                    target_receipt = None
+                    if isinstance(payload_data, dict):
+                        if isinstance(payload_data.get("receipt"), dict) and "envelope" in payload_data["receipt"]:
+                            target_receipt = payload_data["receipt"]
+                        elif "envelope" in payload_data:
+                            target_receipt = payload_data
+
+                    # If this is a decision receipt event, it MUST have a valid envelope signed by trusted_public_key
+                    if row["event_type"] in ("reflex_decision", "decision_receipt", "action_receipt"):
+                        if not target_receipt:
+                            return False
+                        try:
+                            if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
+                                return False
+                        except Exception:
+                            return False
+                    elif target_receipt is not None:
+                        try:
+                            if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
+                                return False
+                        except Exception:
+                            return False
+
                 previous = row["entry_hash"]
                 last_sequence = int(row["sequence"])
 
@@ -430,6 +477,7 @@ class ActionLedger:
                 return False
 
             return True
+
 
     def entries(self) -> List[Dict[str, Any]]:
         """Returns all audit entries ordered by sequence."""

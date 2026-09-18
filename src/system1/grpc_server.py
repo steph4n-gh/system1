@@ -14,6 +14,7 @@ Design notes:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -87,17 +88,30 @@ _BaseServicer = reflex_pb2_grpc.ReflexServiceServicer if _STUBS_AVAILABLE else o
 class ReflexServiceServicer(_BaseServicer):
     """Implements the four ReflexService RPCs on top of the in-process engine."""
 
-    def __init__(self, schemas: Optional[Dict[str, Any]] = None) -> None:
+    def __init__(
+        self,
+        schemas: Optional[Dict[str, Any]] = None,
+        signing_key: Optional[Any] = None,
+        ledger: Optional[Any] = None,
+        policy_engine: Optional[Any] = None,
+    ) -> None:
         from system1.engine import ReflexEngine
         from system1.guard import ReflexGuardHook
 
         self._custom_schemas = schemas or {}
+        self._signing_key = signing_key
+        self._ledger = ledger
+        self._policy_engine = policy_engine
         self._engines: Dict[str, ReflexEngine] = {}
         self._guard_hooks: Dict[str, ReflexGuardHook] = {}
 
         # Pre-warm engines for explicitly registered schemas.
         for name, schema in self._custom_schemas.items():
-            self._engines[name] = ReflexEngine(schema)
+            self._engines[name] = ReflexEngine(
+                schema,
+                signing_key=self._signing_key,
+                ledger=self._ledger,
+            )
 
     # -- helpers ----------------------------------------------------------
 
@@ -107,7 +121,11 @@ class ReflexServiceServicer(_BaseServicer):
         key = schema_name or "triage"
         if key not in self._engines:
             schema = _load_schema_by_name(key, self._custom_schemas)
-            self._engines[key] = ReflexEngine(schema)
+            self._engines[key] = ReflexEngine(
+                schema,
+                signing_key=self._signing_key,
+                ledger=self._ledger,
+            )
         return self._engines[key]
 
     def _get_guard_hook(self, schema_name: str):
@@ -115,8 +133,16 @@ class ReflexServiceServicer(_BaseServicer):
 
         key = schema_name or "guard"
         if key not in self._guard_hooks:
-            engine = self._get_engine(key)
-            self._guard_hooks[key] = ReflexGuardHook(engine=engine)
+            try:
+                engine = self._get_engine(key)
+            except Exception:
+                engine = self._get_engine("guard")
+            self._guard_hooks[key] = ReflexGuardHook(
+                engine=engine,
+                signing_key=self._signing_key,
+                ledger=self._ledger,
+                policy=self._policy_engine,
+            )
         return self._guard_hooks[key]
 
     # -- Decide -----------------------------------------------------------
@@ -164,16 +190,75 @@ class ReflexServiceServicer(_BaseServicer):
                 return _empty_guard_response(as_protobuf=is_proto)
 
             guard = self._get_guard_hook(schema_name)
-            engine = guard.engine
+            guard.alpha = alpha
+            from system1.guard import ActionProposal, DecisionOutcome
 
-            # The guard hook uses ActionProposal but for the simple gRPC
-            # API we only have a prompt string.  We run the engine's decide
-            # directly and apply guard logic inline.
-            decision = engine.decide(prompt, alpha=alpha, record_receipt=True)
+            proposal = ActionProposal.create(
+                tenant_id="default",
+                principal_id="grpc_client",
+                scope="execution",
+                tool=schema_name,
+                arguments={"prompt": prompt},
+                purpose=prompt or f"Evaluate proposal for {schema_name}",
+            )
 
-            outcome, reason = _apply_guard_logic(decision, guard.min_confidence, alpha)
+            res = guard.evaluate_proposal(proposal, context_prompt=prompt)
 
-            return _build_guard_response(outcome, reason, decision, as_protobuf=is_proto)
+            if res.outcome == DecisionOutcome.ALLOW:
+                outcome_str = _GUARD_OUTCOME_ALLOW
+            elif res.outcome == DecisionOutcome.DENY:
+                outcome_str = _GUARD_OUTCOME_DENY
+            else:
+                outcome_str = _GUARD_OUTCOME_REQUIRE_APPROVAL
+
+            reason = res.reason
+            decision = res.decision_result
+            if decision is None:
+                from system1.engine import DecisionResult
+                receipt = getattr(res, "receipt", None)
+                if receipt is None and getattr(res, "policy_decision", None) is not None:
+                    receipt = getattr(res.policy_decision, "receipt", None)
+                if receipt is None:
+                    from system1.receipt import create_decision_receipt
+                    chosen_profile = (
+                        "product_signed_v1"
+                        if self._signing_key is not None
+                        else "diagnostic_local"
+                    )
+                    receipt = create_decision_receipt(
+                        schema_name=schema_name,
+                        schema_digest=hashlib.sha256(schema_name.encode("utf-8")).hexdigest(),
+                        prompt=prompt,
+                        values={"policy_outcome": outcome_str},
+                        confidences={"policy": 1.0},
+                        conformal_sets={},
+                        probabilities={},
+                        latency_ms=0.1,
+                        is_ambiguous=False,
+                        truth_ledger_head=self._ledger.head_hash() if self._ledger else "",
+                        signing_key=self._signing_key,
+                        profile=chosen_profile,
+                    )
+                    if self._ledger is not None:
+                        try:
+                            self._ledger.record_decision_receipt(receipt)
+                        except Exception:
+                            pass
+                decision = DecisionResult(
+                    schema_name=schema_name,
+                    schema_digest="",
+                    prompt=prompt,
+                    values={"policy_outcome": outcome_str},
+                    confidences={},
+                    conformal_sets={},
+                    probabilities={},
+                    is_ambiguous=False,
+                    latency_ms=0.1,
+                    alpha=alpha,
+                    receipt=receipt,
+                )
+
+            return _build_guard_response(outcome_str, reason, decision, as_protobuf=is_proto)
 
         except Exception as exc:
             logger.exception("Guard RPC failed")
@@ -581,15 +666,21 @@ def _json_handler(method):
 # ---------------------------------------------------------------------------
 
 def serve(
+    host: str = "127.0.0.1",
     port: int = 50051,
     schemas: Optional[Dict[str, Any]] = None,
     max_workers: int = 10,
     block: bool = True,
+    signing_key: Optional[Any] = None,
+    ledger: Optional[Any] = None,
+    policy_engine: Optional[Any] = None,
 ) -> Any:
     """Start the Reflex gRPC server.
 
     Parameters
     ----------
+    host : str
+        Host address to bind to (default '127.0.0.1' for local loopback).
     port : int
         TCP port to listen on (default 50051).
     schemas : dict, optional
@@ -598,6 +689,12 @@ def serve(
         Thread-pool size for the gRPC server.
     block : bool
         If True, block until the server is terminated.
+    signing_key : Ed25519PrivateKey, optional
+        Cryptographic signing key for receipts.
+    ledger : ActionLedger, optional
+        Persistent audit ledger.
+    policy_engine : PolicyEngine, optional
+        Deterministic policy reference monitor.
 
     Returns
     -------
@@ -610,7 +707,12 @@ def serve(
             "pip install 'system1[grpc]'"
         )
 
-    servicer = ReflexServiceServicer(schemas=schemas)
+    servicer = ReflexServiceServicer(
+        schemas=schemas,
+        signing_key=signing_key,
+        ledger=ledger,
+        policy_engine=policy_engine,
+    )
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
 
     if _STUBS_AVAILABLE:
@@ -619,14 +721,15 @@ def serve(
         handler = _make_generic_handler(servicer)
         server.add_generic_rpc_handlers([handler])
 
-    listen_addr = f"[::]:{port}"
-    server.add_insecure_port(listen_addr)
+    listen_addr = f"{host}:{port}"
+    bound_port = server.add_insecure_port(listen_addr)
+    server.port = bound_port
     server.start()
 
     logger.info("Reflex gRPC server listening on %s", listen_addr)
     loaded = list((schemas or {}).keys()) or ["triage (default)"]
     logger.info("Loaded schemas: %s", ", ".join(loaded))
-    print(f"Reflex gRPC server started on port {port}")
+    print(f"Reflex gRPC server started on {listen_addr}")
     print(f"Loaded schemas: {', '.join(loaded)}")
 
     if block:

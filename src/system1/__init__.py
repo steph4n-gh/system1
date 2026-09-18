@@ -220,6 +220,7 @@ _MODULE_MAP = {
     "batch_systemone": "system1.compat.typesafe",
     "patch_typesafe": "system1.compat.typesafe",
     "DotDict": "system1.compat.typesafe",
+    "ZeroEgressViolationError": "system1.compat.typesafe",
     # compiler
     "ReflexCompiler": "system1.compiler",
     "CompiledSystemOneModel": "system1.compiler",
@@ -355,6 +356,7 @@ __all__ = [
     "batch_systemone",
     "patch_typesafe",
     "DotDict",
+    "ZeroEgressViolationError",
     # Compiler
     "ReflexCompiler",
     "CompiledSystemOneModel",

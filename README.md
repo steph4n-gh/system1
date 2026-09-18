@@ -52,18 +52,20 @@ Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency*
 | **Failure Mode** | Uncalibrated confidence; silent errors | **Conformal safety gate with fail-closed escalation** |
 | **Audit Trail** | Provider API logs (opaque) | **Ed25519 signed, SHA-256 hash-chained receipts** |
 
-Reflex handles **95% – 99%** of routine decisions locally. The remaining 1% – 5% genuine edge cases are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok) with full cryptographic audit trails.
+Reflex retains **95% – 99%** of routine decisions locally under calibrated empirical workloads and conformal prediction bounds (at user-selected significance $\alpha$). Actual local retention is workload- and distribution-dependent. The remaining 1% – 5% genuine edge cases or ambiguous distributions are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok)—or fail-closed via offline abstention—with full cryptographic audit trails.
 
-The project is also available as `import system1` — a 1:1 twin namespace for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
+The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import reflex` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
 
 ---
 
 ## ⚡ 5-Minute Quickstart
 
-Install Reflex in any Python 3.11+ environment:
+Install the `system1` package in any Python 3.11+ environment:
 
 ```bash
-pip install reflex
+pip install system1
+# Or install locally in editable mode:
+pip install -e .
 ```
 
 ### Protect an MCP Tool Server in 4 Lines
@@ -286,11 +288,12 @@ Benchmarked on Apple M3 Max (14-core CPU, 36 GB Unified Memory) across 10,000 in
 </p>
 
 - **100% On-Device Execution:** All inference, calibration, and cryptographic receipt generation run in-process. Zero web sockets, zero telemetry pings, zero cloud dependencies.
-- **HIPAA:** Protected Health Information never crosses a network boundary.
-- **GDPR:** PII evaluated on-premise without international data transfers.
-- **SOC 2 Type II:** Tamper-evident `DecisionWitnessReceipt` signed in software by on-device Ed25519 keys (RFC 8032) with SHA-256 SQLite Merkle hash chaining.
+- **Privacy & Governance Controls:** Reflex provides architectural controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures:
+  - **HIPAA Compliance Support:** Protected Health Information (PHI) stays strictly on-host without unauthorized network transmission.
+  - **GDPR Compliance Support:** PII is evaluated on-premise without unconsented cross-border or third-party data transfers.
+  - **SOC 2 Type II Controls:** Tamper-evident `DecisionWitnessReceipt` signed in software by on-device Ed25519 keys (RFC 8032) with SHA-256 SQLite Merkle hash chaining. Hardware enclave / HSM root-of-trust is supported as an architectural integration option.
 
-> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When Reflex escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic), those escalated queries traverse the network if fallback routing is enabled. In privacy-restricted zero-egress environments (`zero_egress=True`), Reflex executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
+> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When Reflex escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic depending on distribution and conformal significance $\alpha$), those escalated queries traverse the network only if fallback routing is explicitly configured. In privacy-restricted zero-egress environments (`zero_egress=True`), Reflex executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
 
 ---
 

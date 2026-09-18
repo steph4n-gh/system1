@@ -202,3 +202,86 @@ Integrity mode: development
 - [ ] All 10 baseline regression invariants and newly authored adversarial tests pass cleanly.
 - [ ] Full regression test suite (`tests/`) passes with 0 regressions.
 - [ ] A comprehensive `RELEASE_HARDENING_REPORT.md` is generated detailing current-HEAD root causes, patch locations, before/after evidence, independent challenger review, and verified commands.
+
+## 2026-09-18T18:26:21Z
+
+# Reflex / System 1 — Round 2: Close Enforcement, Attestation, and Promotion Gaps
+
+Requested team: Full engineering, integrator, and independent verification team with adversarial challenger
+
+Working directory: /Volumes/Storage/reflex
+Integrity mode: development
+
+## Core Objective
+Deliver one complete, trustworthy path:
+`request -> validated canonical action -> deterministic authorization -> required uncertainty checks -> authenticated durable authorization receipt -> execution of that exact action -> linked recorded outcome`
+
+Preserve the compact local runtime, online learning, System 1 / System 2 architecture, twin namespaces, and useful demonstrations.
+
+---
+
+## Release Invariants
+1. **No Execution Bypass:** No execution branch bypasses mandatory authorization, signing, or audit requirements.
+2. **Semantic Fidelity:** Optimizations preserve the decision and uncertainty semantics of the current model, calibration, policy, and input snapshot.
+3. **Artifact Promotion Integrity:** The deployed model artifact is the artifact whose promotion evidence was measured.
+
+---
+
+## Requirements (Gates A through F)
+
+### Gate A: Compositional Authorization (P0)
+- **Primary files:** `src/system1/guard.py`, `integrations/mcp.py`, `integrations/langchain.py`
+- Separate rule applicability from constraint evaluation. Enforce unambiguous composition where explicit denials and approval requirements strictly override permission grants regardless of rule evaluation order.
+- Evaluate every applicable constraint (`allowed_principals`, `argument_limits`); missing or incorrectly typed constrained arguments must fail closed.
+- An `ALLOW` grants eligibility to continue, not permission to skip signing or ledger recording.
+- Parse and canonicalize once. Dispatch the exact immutable action authorized, not a reread of mutable request parameters. Bind complete invocation schemas (defaults, positional parameters, nested structures) without character truncation.
+- Verify with harmless sentinel execution (positive and negative) across MCP dispatcher, MCP decorator, and LangChain sync/async wrappers.
+
+### Gate B: Authenticated Final Authorization & Durability (P0)
+- **Primary files:** `receipt.py`, `ledger.py`, `engine.py`, `guard.py`, integration adapters
+- Provide an explicit enforcement profile requiring a configured trusted signer, persistent ledger, valid policy/action binding, and durable authorization recording before side effects occur.
+- Version and sign a canonical final authorization record binding action/request digest, normalized arguments/target, authenticated principal/tenant/scope, permission outcome/risk, policy identity/epochs, and request identity (plus model/projector/calibration identities and effective alpha/gates when inference is used).
+- Ensure the receipt passed to execution covers the final policy decision (`_build_policy_decision`).
+- Enforce true durability: memory-only ledgers cannot satisfy persistent evidence requirements. Implement or remove the unused `trusted_public_key` in `verify_integrity()`.
+- Cryptographically link execution outcomes to prior authorizations; report partial effects or failed outcome recording as `INDETERMINATE` with reconciliation evidence.
+
+### Gate C: Cache & Uncertainty Lifecycle (P0)
+- **Primary files:** `engine.py`, `cache.py`, `compiler.py`, `calibration.py`
+- Validate all inputs before cache lookup. Remove unconditional cache-hit `is_ambiguous=False` and empty escalation-list overrides.
+- Use exact, collision-resistant context for cache keys: model/schema/projector/calibration snapshots, policy scope/epoch, alpha, margin, odds ratio, confidence floor, recency, embedding, and telemetry. Disable approximate semantic authorization in enforcement mode.
+- Publish model/calibration/cache versions atomically; reader/updater synchronization must prevent observing old weights under new version numbers.
+- Fit temperature and scoring independently of the final conformal calibration fold. Deduplicate/group observations before splitting. Validate categorical, Boolean, multilabel, and regression uncertainty separately.
+
+### Gate D: Validated Artifact Promotion (P1)
+- **Primary file:** `compat/typesafe.py`
+- Freeze, hash, validate, and promote the exact evaluated candidate artifact. Do not recompile or recalibrate on all history post-validation without generating new untouched evidence.
+- Remove `total_checks <= 4` threshold relaxation; reject zero scored labels. Make statistical acceptance mandatory (Wilson lower bounds, 0.0% false-allow ceiling on critical security classes).
+- Enforce disjoint train, calibration, and validation folds via stable request/group lineage. Bind promotion to schema/task, model, projector, calibration, teacher provenance, and dataset manifests.
+
+### Gate E: True Zero-Egress Enforcement (P1)
+- **Primary file:** `compat/typesafe.py`, transport entry points
+- Centralize outbound network checks at the actual provider transport boundary. Enforce `zero_egress=True` before any packet transmission across apprenticeship, passthrough, comparisons, fallbacks, and async calls.
+- Incompatible configurations must fail at construction or return explicit offline abstentions; remove silent simulated teacher fallback in production modes.
+- Verify via socket/DNS-blocked execution tests.
+
+### Gate F: Packaging, Protobuf Alignment & Documentation Truth (P1)
+- Align dependency lower bounds with generated protobuf assets (grpcio and protobuf versions). Test installed wheel and sdist in a clean environment outside the source tree.
+- Bind gRPC server to local-only defaults (e.g. `127.0.0.1`) rather than insecure `[::]` by default. Ensure gRPC endpoints apply the full authorization contract.
+- Reconcile `system1` distribution metadata with `pip install reflex` guidance.
+- Reconcile documentation claims: remove universal 95-99% local claims, guaranteed zero-wipe claims, and unsupported compliance assertions; distinguish software Ed25519 signatures from hardware enclaves.
+
+---
+
+## Acceptance Criteria
+- [ ] PolicyEngine enforces DENY over ALLOW regardless of rule order; unconstrained ALLOW cannot bypass signing/ledger.
+- [ ] LangChain and MCP adapters pass complete immutable requests without truncation, and sentinel executes 0 times on denials.
+- [ ] Receipts bind final policy authorization, canonical probabilities, and full request digests. Unauthenticated verification is rejected.
+- [ ] Ledger durability failure prevents tool execution; outcomes are cryptographically chained to authorization receipts.
+- [ ] Cache lookups validate inputs first; changing alpha, margin, or odds ratio forces cache miss/re-evaluation; online updates evict cache atomically.
+- [ ] Conformal calibration fits temperature on held-out folds; uncalibrated models abstain in strict mode.
+- [ ] Cutover promotes the exact validated artifact without post-validation refitting; rejects small-sample relaxation.
+- [ ] `zero_egress=True` strictly blocks outbound network calls across all sync and async modes before transmission.
+- [ ] gRPC server defaults to loopback interface and validates with a generated external client.
+- [ ] All new and existing regression tests pass with 0 regressions.
+- [ ] Deliverable `ROUND2_CLOSURE_REPORT.md` is produced with before/after evidence for each gate.
+

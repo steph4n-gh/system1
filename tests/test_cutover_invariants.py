@@ -271,6 +271,7 @@ def test_post_cutover_zero_egress_offline_abstention():
         cutover_threshold=2,
         zero_egress=True,
         allow_cloud_fallback=False,
+        baseline_handler=lambda s, q: {},
     )
     client._has_cutover = True
 

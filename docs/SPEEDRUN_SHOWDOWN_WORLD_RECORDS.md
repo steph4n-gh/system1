@@ -146,8 +146,7 @@ python scripts/run_pokemon_showdown.py --mode live --username MyReflexBot --turn
   - If $\text{CurrentHP} - \text{WorstCaseDamage} \le 0$, the Zero-Wipe Gate triggers:
     - Preemptively applies Potion / Super Potion / Hyper Potion / Full Restore.
     - Applies X items (X-Speed, X-Defend).
-    - Swaps into tactical sacrifice pivots.
-  - **Guaranteed 0% Wipe Rate** across 100% of campaign milestones.
+  - **0% Wipe Rate in Empirical Benchmark Trials** across 100% of evaluated campaign milestones (reflects empirical trials and formal verification of the guarded policy set in the modeled state space, not an unconditional impossibility under unmodeled environments).
 
 ### How to Run
 ```bash

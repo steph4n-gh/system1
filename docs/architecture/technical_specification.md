@@ -18,7 +18,7 @@
 
 Reflex is an open-source, machine-native **System 1 decision runtime** for autonomous AI agents. Unlike standard agent frameworks that delegate every discrete routing, parameter triage, and safety filter to slow, non-deterministic cloud LLMs, Reflex evaluates structured decision schemas on host silicon in **sub-millisecond time (<1.0 ms P50)** with **zero marginal cloud API token expenditure** and **zero external network egress**.
 
-Inspired by Daniel Kahneman’s dual-process cognitive framework, Reflex implements the non-autoregressive machine-native System 1 reflex layer. It resolves 95% to 99% of high-frequency agent actions directly on local CPU/GPU/NPU metal, halting and escalating to an external deliberative System 2 governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—only when mathematically rigorous conformal ambiguity or out-of-distribution conditions are detected.
+Inspired by Daniel Kahneman’s dual-process cognitive framework, Reflex implements the non-autoregressive machine-native System 1 reflex layer. Under empirical enterprise workloads and calibrated conformal prediction bounds, it resolves 95% to 99% of routine agent actions directly on local CPU/GPU/NPU metal (exact retention is workload- and distribution-dependent), halting and escalating to an external deliberative System 2 governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—only when mathematically rigorous conformal ambiguity or out-of-distribution conditions are detected.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -468,7 +468,7 @@ Wraps any ASGI web service to fast-path high-confidence agent intents:
 
 ## 8. Cryptographic ActionLedger & Non-Repudiation
 
-Reflex guarantees total audit transparency and non-repudiation for regulatory compliance (HIPAA, GDPR, SOC 2 Type II).
+Reflex provides architectural security controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures for HIPAA, GDPR, and SOC 2 Type II environments (rather than claiming independent certification of customer deployments).
 
 ### 8.1 SQLite Append-Only Table Schema
 The production ledger (`src/system1/ledger.py`) operates in Write-Ahead Logging (`WAL`) mode with `PRAGMA synchronous = NORMAL` across normalized tables:
@@ -483,28 +483,21 @@ CREATE TABLE IF NOT EXISTS audit_entries (
     scope         TEXT NOT NULL,
     action_id     TEXT,
     event_type    TEXT NOT NULL,
-    payload_json  TEXT NOT NULL,
-    previous_hash TEXT NOT NULL,
-    entry_hash    TEXT NOT NULL UNIQUE,
-    created_at    TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_entries(action_id, sequence);
-
-CREATE TABLE IF NOT EXISTS ledger_meta (
-    key           TEXT PRIMARY KEY,
-    value         TEXT NOT NULL
+    outcome       TEXT NOT NULL,
+    risk          INTEGER NOT NULL,
+    timestamp     TEXT NOT NULL,
+    ledger_head   TEXT NOT NULL,
+    record_digest TEXT NOT NULL
 );
 ```
 
-### 8.2 Rolling Merkle Hash Chain Formula
-For each entry $t$, the unique block hash is computed as:
-
-$$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; \text{sequence}_t \;\|\; \text{canonical\_json}(\text{payload}_t) \right)$$
-
-where $h_0 = 0^{64}$ is the fixed genesis hash and $\text{canonical\_json}$ enforces RFC 8785 deterministic key ordering and zero whitespace.
+### 8.2 SHA-256 Merkle Chain Invariant
+Every recorded event links to the preceding entry via cryptographic hash chaining:
+$$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; \text{canonical\_json}(e_t) \right)$$
+Integrity verification walks the sequence sequentially, asserting that $h_t$ matches the recomputed digest. Any out-of-order write or row mutation immediately breaks the chain and triggers fail-closed operation.
 
 ### 8.3 Ed25519 Cryptographic Witness Receipts
-Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. Digital signatures are generated in software via RFC 8032 standard primitives (using Python's `cryptography` library), establishing application-layer non-repudiation and chronological ordering without proprietary hardware enclave dependencies. For every decision, Reflex constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
+Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. Digital signatures are generated in software via RFC 8032 standard primitives (using Python's `cryptography` library), establishing application-layer non-repudiation and chronological ordering without proprietary hardware enclave dependencies. (Hardware enclave or HSM root-of-trust key management is an optional architectural integration, not a shipped hardware requirement). For every decision, Reflex constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
 * Canonical decision telemetry (action, parameters, calibrated probabilities, latency)
 * Conformal gating status ($|\mathcal{C}_{1-\alpha}|$, empirical threshold $\hat{q}_{1-\alpha}$, margin $M(\mathbf{x})$)
 * Rolling ledger head hash $h_t$

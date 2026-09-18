@@ -22,6 +22,7 @@ from system1.guard import (
 )
 from system1.ledger import ActionLedger
 from system1.receipt import DecisionWitnessReceipt, create_decision_receipt
+from system1.integrations.langchain import ReflexIndeterminateExecutionError
 
 
 class ReflexMCPBlockedError(PermissionError):
@@ -272,13 +273,31 @@ class ReflexMCPProxy:
             else str(req_id or "")
         )
         receipt_digest = ""
-        if interception and interception.decision_result and interception.decision_result.receipt:
-            receipt_digest = interception.decision_result.receipt.compute_digest()
+        receipt = (
+            interception.receipt
+            or (interception.decision_result.receipt if interception.decision_result else None)
+        )
+        if receipt:
+            receipt_digest = receipt.compute_digest()
+        elif interception and interception.decision_result and interception.decision_result.schema_digest:
+            receipt_digest = interception.decision_result.schema_digest
+
+        # Invariant 5: Dispatch exact frozen canonicalized proposal arguments
+        dispatch_args = (
+            dict(interception.proposal.arguments)
+            if (interception and interception.proposal and interception.proposal.arguments is not None)
+            else (arguments if isinstance(arguments, dict) else {})
+        )
+        dispatch_tool = (
+            interception.proposal.tool
+            if (interception and interception.proposal and interception.proposal.tool)
+            else tool_name
+        )
 
         exec_output = None
         exec_error = None
         try:
-            exec_output = executor(tool_name, arguments)
+            exec_output = executor(dispatch_tool, dispatch_args)
         except Exception as ex:
             exec_error = ex
 
@@ -305,7 +324,12 @@ class ReflexMCPProxy:
                         "error": {
                             "code": -32001,
                             "message": f"Execution completed but outcome audit recording failed (status: INDETERMINATE): {le}",
-                            "data": {"status": "INDETERMINATE", "raw_result": exec_output},
+                            "data": {
+                                "status": "INDETERMINATE",
+                                "raw_result": exec_output,
+                                "action_id": action_id,
+                                "receipt_digest": receipt_digest,
+                            },
                         },
                     }
 
@@ -367,12 +391,14 @@ def wrap_mcp_tool(
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Use inspect.signature to bind default parameter values and map positional *args into named arguments
             arguments: Dict[str, Any] = {}
+            bound = None
             if sig is not None:
                 try:
                     bound = sig.bind(*args, **kwargs)
                     bound.apply_defaults()
                     arguments = dict(bound.arguments)
                 except Exception:
+                    bound = None
                     arguments = dict(kwargs)
                     if args:
                         arguments["_args"] = list(args)
@@ -392,7 +418,83 @@ def wrap_mcp_tool(
             if interception.outcome != DecisionOutcome.ALLOW:
                 raise ReflexMCPBlockedError(interception)
 
-            return fn(*args, **kwargs)
+            # Invariant 5: Dispatch exact frozen canonicalized proposal arguments
+            prop = getattr(interception, "proposal", None)
+            if isinstance(prop, ActionProposal):
+                canon_args = dict(prop.arguments)
+            elif isinstance(getattr(interception, "proposal", None), (dict, Mapping)):
+                canon_args = dict(interception.proposal)
+            else:
+                canon_args = dict(arguments)
+
+            if sig is not None and bound is not None:
+                for k in list(bound.arguments.keys()):
+                    if k in canon_args:
+                        bound.arguments[k] = canon_args[k]
+                for p_name, p in sig.parameters.items():
+                    if p.kind == inspect.Parameter.VAR_KEYWORD and p_name in bound.arguments:
+                        var_kw = dict(bound.arguments[p_name])
+                        for k, v in canon_args.items():
+                            if k not in sig.parameters and k != "_args" and k != "purpose":
+                                var_kw[k] = v
+                        bound.arguments[p_name] = var_kw
+                call_args = bound.args
+                call_kwargs = bound.kwargs
+            else:
+                call_args = tuple(canon_args.get("_args", [])) if "_args" in canon_args else args
+                call_kwargs = {k: v for k, v in canon_args.items() if k != "_args" and k != "purpose"}
+
+            ledger = resolved_proxy.guard.ledger
+            action_id = (
+                interception.policy_decision.action_id
+                if (interception and interception.policy_decision)
+                else ""
+            )
+            receipt_digest = ""
+            receipt = (
+                interception.receipt
+                or (interception.decision_result.receipt if interception.decision_result else None)
+            )
+            if receipt:
+                receipt_digest = receipt.compute_digest()
+            elif interception and interception.decision_result and interception.decision_result.schema_digest:
+                receipt_digest = interception.decision_result.schema_digest
+
+            exec_output = None
+            exec_error = None
+            try:
+                exec_output = fn(*call_args, **call_kwargs)
+            except Exception as ex:
+                exec_error = ex
+
+            # Two-phase outcome recording in ledger if active
+            if ledger is not None and receipt_digest:
+                outcome_status = "FAILED" if exec_error is not None else "SUCCEEDED"
+                try:
+                    ledger.record_execution_outcome(
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        status=outcome_status,
+                        result_payload={"result": str(exec_output)[:500]} if exec_output is not None else None,
+                        error_message=str(exec_error) if exec_error is not None else None,
+                        tenant_id=resolved_proxy.tenant_id,
+                        principal_id=resolved_proxy.principal_id,
+                        scope="mcp:tool:wrap:outcome",
+                    )
+                except Exception as le:
+                    raise ReflexIndeterminateExecutionError(
+                        f"MCP wrapped tool executed but outcome recording failed (status: INDETERMINATE): {le}",
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        raw_result=exec_output,
+                        underlying_error=le,
+                        exec_error=exec_error,
+                    ) from le
+
+            if exec_error is not None:
+                raise exec_error
+
+            return exec_output
 
         wrapper.__name__ = getattr(fn, "__name__", "wrapper")
         wrapper.__doc__ = getattr(fn, "__doc__", "")
@@ -405,6 +507,7 @@ def wrap_mcp_tool(
 
 
 __all__ = [
+    "ReflexIndeterminateExecutionError",
     "ReflexMCPBlockedError",
     "ReflexMCPProxy",
     "wrap_mcp_tool",

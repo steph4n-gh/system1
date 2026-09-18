@@ -27,10 +27,44 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import (
 )
 
 DECISION_WITNESS_PROFILE = "reflex.witness.decision.v1"
+ENFORCEMENT_PROFILE_V1 = "reflex.witness.enforcement.v1"
 WITNESS_PROFILES = {
     "diagnostic_local": "reflex.witness.diagnostic_local.v1",
     "product_signed_v1": "reflex.witness.product_signed.v1",
+    "enforcement_v1": "reflex.witness.enforcement.v1",
+    "strict_attested_durable_v1": "reflex.witness.enforcement.v1",
 }
+
+
+@dataclass(frozen=True)
+class EnforcementProfile:
+    """Explicit enforcement configuration profile ensuring authentic, durable attestation."""
+
+    profile_id: str = "reflex.witness.enforcement.v1"
+    require_signer: bool = True
+    require_durable_ledger: bool = True
+    require_pre_execution_record: bool = True
+    fail_closed: bool = True
+
+    def validate_configuration(
+        self,
+        signing_key: Optional[Any] = None,
+        ledger: Optional[Any] = None,
+    ) -> None:
+        if self.require_signer and signing_key is None:
+            raise ValueError(
+                f"Enforcement profile '{self.profile_id}' requires a configured trusted Ed25519 signing key"
+            )
+        if self.require_durable_ledger:
+            if ledger is None:
+                raise ValueError(
+                    f"Enforcement profile '{self.profile_id}' requires an attached durable ActionLedger"
+                )
+            if hasattr(ledger, "is_durable") and not ledger.is_durable:
+                raise ValueError(
+                    f"Enforcement profile '{self.profile_id}' rejects in-memory ledger: persistent storage required"
+                )
+
 
 
 # ============================================================================
@@ -372,10 +406,28 @@ class DecisionWitnessReceipt:
     ledger_record_id: Optional[str] = None
     signer_public_key: Optional[str] = None
     envelope: Optional[RunWitnessEnvelope] = None
+    policy_decision: Optional[Dict[str, Any]] = None
+    action_id: Optional[str] = None
+    action_digest: Optional[str] = None
+    normalized_arguments: Optional[Dict[str, Any]] = None
+    canonical_target: Optional[str] = None
+    principal_id: Optional[str] = None
+    tenant_id: Optional[str] = None
+    scope: Optional[str] = None
+    outcome: Optional[str] = None
+    risk: Optional[Union[str, int]] = None
+    policy_id: Optional[str] = None
+    policy_epoch: Optional[Union[int, str]] = None
+    request_id: Optional[str] = None
+    model_identity: Optional[str] = None
+    projector_identity: Optional[str] = None
+    calibration_identity: Optional[str] = None
+    effective_alpha: Optional[float] = None
+    effective_gates: Optional[Dict[str, Any]] = None
 
     def unsigned_payload(self) -> Dict[str, Any]:
         """Returns deterministic dictionary representation for canonical hashing."""
-        return {
+        payload: Dict[str, Any] = {
             "decision_id": self.decision_id,
             "schema_name": self.schema_name,
             "schema_digest": self.schema_digest,
@@ -389,6 +441,43 @@ class DecisionWitnessReceipt:
             "timestamp": self.timestamp,
             "truth_ledger_head": self.truth_ledger_head,
         }
+        if self.policy_decision is not None:
+            payload["policy_decision"] = self.policy_decision
+        if self.action_id is not None:
+            payload["action_id"] = self.action_id
+        if self.action_digest is not None:
+            payload["action_digest"] = self.action_digest
+        if self.normalized_arguments is not None:
+            payload["normalized_arguments"] = self.normalized_arguments
+        if self.canonical_target is not None:
+            payload["canonical_target"] = self.canonical_target
+        if self.principal_id is not None:
+            payload["principal_id"] = self.principal_id
+        if self.tenant_id is not None:
+            payload["tenant_id"] = self.tenant_id
+        if self.scope is not None:
+            payload["scope"] = self.scope
+        if self.outcome is not None:
+            payload["outcome"] = self.outcome
+        if self.risk is not None:
+            payload["risk"] = self.risk
+        if self.policy_id is not None:
+            payload["policy_id"] = self.policy_id
+        if self.policy_epoch is not None:
+            payload["policy_epoch"] = self.policy_epoch
+        if self.request_id is not None:
+            payload["request_id"] = self.request_id
+        if self.model_identity is not None:
+            payload["model_identity"] = self.model_identity
+        if self.projector_identity is not None:
+            payload["projector_identity"] = self.projector_identity
+        if self.calibration_identity is not None:
+            payload["calibration_identity"] = self.calibration_identity
+        if self.effective_alpha is not None:
+            payload["effective_alpha"] = round(float(self.effective_alpha), 6)
+        if self.effective_gates is not None:
+            payload["effective_gates"] = self.effective_gates
+        return payload
 
     def compute_digest(self) -> str:
         """Computes SHA-256 hash over the canonical unsigned payload."""
@@ -426,12 +515,21 @@ class DecisionWitnessReceipt:
             d["signer_public_key"] = self.signer_public_key
         if self.envelope is not None:
             d["envelope"] = self.envelope.to_dict()
+        for k in (
+            "policy_decision", "action_id", "action_digest", "normalized_arguments",
+            "canonical_target", "principal_id", "tenant_id", "scope", "outcome",
+            "risk", "policy_id", "policy_epoch", "request_id", "model_identity",
+            "projector_identity", "calibration_identity", "effective_alpha", "effective_gates",
+        ):
+            val = getattr(self, k, None)
+            if val is not None:
+                d[k] = val
         return d
 
 
 def compute_receipt_digest(receipt_data: Mapping[str, Any]) -> str:
     """Computes canonical SHA-256 digest from a receipt dictionary or unsigned payload."""
-    payload = {
+    payload: Dict[str, Any] = {
         "decision_id": str(receipt_data.get("decision_id", "")),
         "schema_name": str(receipt_data.get("schema_name", "")),
         "schema_digest": str(receipt_data.get("schema_digest", "")),
@@ -445,6 +543,17 @@ def compute_receipt_digest(receipt_data: Mapping[str, Any]) -> str:
         "timestamp": str(receipt_data.get("timestamp", "")),
         "truth_ledger_head": str(receipt_data.get("truth_ledger_head", "")),
     }
+    for extra_k in (
+        "policy_decision", "action_id", "action_digest", "normalized_arguments",
+        "canonical_target", "principal_id", "tenant_id", "scope", "outcome",
+        "risk", "policy_id", "policy_epoch", "request_id", "model_identity",
+        "projector_identity", "calibration_identity", "effective_gates",
+    ):
+        if receipt_data.get(extra_k) is not None:
+            payload[extra_k] = receipt_data[extra_k]
+    if receipt_data.get("effective_alpha") is not None:
+        payload["effective_alpha"] = round(float(receipt_data["effective_alpha"]), 6)
+
     canonical_bytes_val = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
     return hashlib.sha256(canonical_bytes_val).hexdigest()
 
@@ -463,11 +572,76 @@ def create_decision_receipt(
     truth_ledger_head: str = "",
     ledger_record_id: Optional[str] = None,
     signing_key: Optional[Ed25519PrivateKey] = None,
+    policy_decision: Optional[Any] = None,
+    action_proposal: Optional[Any] = None,
+    action_id: Optional[str] = None,
+    action_digest: Optional[str] = None,
+    normalized_arguments: Optional[Mapping[str, Any]] = None,
+    canonical_target: Optional[str] = None,
+    principal_id: Optional[str] = None,
+    tenant_id: Optional[str] = None,
+    scope: Optional[str] = None,
+    outcome: Optional[Any] = None,
+    risk: Optional[Any] = None,
+    policy_id: Optional[str] = None,
+    policy_epoch: Optional[Union[int, str]] = None,
+    request_id: Optional[str] = None,
+    model_identity: Optional[str] = None,
+    projector_identity: Optional[str] = None,
+    calibration_identity: Optional[str] = None,
+    effective_alpha: Optional[float] = None,
+    effective_gates: Optional[Mapping[str, Any]] = None,
+    profile: Optional[str] = None,
 ) -> DecisionWitnessReceipt:
-    """Builds a DecisionWitnessReceipt and generates a signed RunWitnessEnvelope."""
+    """Builds a DecisionWitnessReceipt and generates a signed RunWitnessEnvelope with comprehensive Gate B claims."""
     decision_id = f"dec_{os.urandom(16).hex()}"
     prompt_digest = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
     ts = datetime.now(UTC).isoformat()
+
+    policy_decision_dict: Optional[Dict[str, Any]] = None
+    if policy_decision is not None:
+        if hasattr(policy_decision, "to_dict") and callable(policy_decision.to_dict):
+            policy_decision_dict = policy_decision.to_dict()
+        elif isinstance(policy_decision, dict):
+            policy_decision_dict = dict(policy_decision)
+
+        if policy_decision_dict:
+            action_id = action_id or policy_decision_dict.get("action_id")
+            action_digest = action_digest or policy_decision_dict.get("action_fingerprint")
+            canonical_target = canonical_target or policy_decision_dict.get("canonical_target")
+            principal_id = principal_id or policy_decision_dict.get("principal_id")
+            tenant_id = tenant_id or policy_decision_dict.get("tenant_id")
+            scope = scope or policy_decision_dict.get("scope")
+            outcome = outcome or policy_decision_dict.get("outcome")
+            risk = risk if risk is not None else policy_decision_dict.get("risk")
+            policy_id = policy_id or policy_decision_dict.get("policy_id")
+            policy_epoch = policy_epoch if policy_epoch is not None else policy_decision_dict.get("policy_epoch")
+            if normalized_arguments is None and "normalized_arguments" in policy_decision_dict:
+                normalized_arguments = policy_decision_dict["normalized_arguments"]
+
+    if action_proposal is not None:
+        action_id = action_id or getattr(action_proposal, "action_id", None)
+        action_digest = action_digest or getattr(action_proposal, "fingerprint", None)
+        canonical_target = canonical_target or getattr(action_proposal, "canonical_target", None)
+        principal_id = principal_id or getattr(action_proposal, "principal_id", None)
+        tenant_id = tenant_id or getattr(action_proposal, "tenant_id", None)
+        scope = scope or getattr(action_proposal, "scope", None)
+        if normalized_arguments is None and hasattr(action_proposal, "arguments"):
+            normalized_arguments = dict(action_proposal.arguments)
+
+    if outcome is not None and hasattr(outcome, "value"):
+        outcome = outcome.value
+    if risk is not None and hasattr(risk, "value"):
+        risk = risk.value
+
+    coerced_epoch = None
+    if policy_epoch is not None:
+        if isinstance(policy_epoch, int):
+            coerced_epoch = policy_epoch
+        elif isinstance(policy_epoch, str) and policy_epoch.isdigit():
+            coerced_epoch = int(policy_epoch)
+        else:
+            coerced_epoch = policy_epoch
 
     unbound_receipt = DecisionWitnessReceipt(
         decision_id=decision_id,
@@ -485,27 +659,93 @@ def create_decision_receipt(
         truth_ledger_head=truth_ledger_head,
         ledger_record_id=ledger_record_id,
         envelope=None,
+        policy_decision=policy_decision_dict,
+        action_id=action_id,
+        action_digest=action_digest,
+        normalized_arguments=dict(normalized_arguments) if normalized_arguments is not None else None,
+        canonical_target=str(canonical_target) if canonical_target is not None else None,
+        principal_id=str(principal_id) if principal_id is not None else None,
+        tenant_id=str(tenant_id) if tenant_id is not None else None,
+        scope=str(scope) if scope is not None else None,
+        outcome=str(outcome) if outcome is not None else None,
+        risk=risk,
+        policy_id=str(policy_id) if policy_id is not None else None,
+        policy_epoch=coerced_epoch,
+        request_id=str(request_id) if request_id is not None else None,
+        model_identity=str(model_identity) if model_identity is not None else None,
+        projector_identity=str(projector_identity) if projector_identity is not None else None,
+        calibration_identity=str(calibration_identity) if calibration_identity is not None else None,
+        effective_alpha=float(effective_alpha) if effective_alpha is not None else None,
+        effective_gates=dict(effective_gates) if effective_gates is not None else None,
     )
 
-    envelope_payload_mutation = {
+    envelope_payload_mutation: Dict[str, Any] = {
         "decision_id": decision_id,
         "schema_name": schema_name,
         "schema_digest": schema_digest,
         "prompt_digest": prompt_digest,
         "values": dict(values),
     }
+    if policy_decision_dict is not None:
+        envelope_payload_mutation["policy_decision"] = policy_decision_dict
+    if action_id is not None:
+        envelope_payload_mutation["action_id"] = str(action_id)
+    if action_digest is not None:
+        envelope_payload_mutation["action_digest"] = str(action_digest)
+    if normalized_arguments is not None:
+        envelope_payload_mutation["normalized_arguments"] = dict(normalized_arguments)
+    if canonical_target is not None:
+        envelope_payload_mutation["canonical_target"] = str(canonical_target)
+    if principal_id is not None:
+        envelope_payload_mutation["principal_id"] = str(principal_id)
+    if tenant_id is not None:
+        envelope_payload_mutation["tenant_id"] = str(tenant_id)
+    if scope is not None:
+        envelope_payload_mutation["scope"] = str(scope)
+    if outcome is not None:
+        envelope_payload_mutation["outcome"] = str(outcome)
+    if risk is not None:
+        envelope_payload_mutation["risk"] = risk
+    if policy_id is not None:
+        envelope_payload_mutation["policy_id"] = str(policy_id)
+    if coerced_epoch is not None:
+        envelope_payload_mutation["policy_epoch"] = coerced_epoch
+    if request_id is not None:
+        envelope_payload_mutation["request_id"] = str(request_id)
 
-    envelope_payload_guard = {
+    envelope_payload_guard: Dict[str, Any] = {
         "confidences": {k: float(v) for k, v in confidences.items()},
         "conformal_sets": {k: list(v) for k, v in conformal_sets.items()},
         "probabilities": _canonical_probabilities(probabilities),
         "is_ambiguous": is_ambiguous,
         "latency_ms": round(float(latency_ms), 4),
     }
+    if effective_alpha is not None:
+        envelope_payload_guard["effective_alpha"] = round(float(effective_alpha), 6)
+    if effective_gates is not None:
+        envelope_payload_guard["effective_gates"] = dict(effective_gates)
+    if model_identity is not None:
+        envelope_payload_guard["model_identity"] = str(model_identity)
+    if projector_identity is not None:
+        envelope_payload_guard["projector_identity"] = str(projector_identity)
+    if calibration_identity is not None:
+        envelope_payload_guard["calibration_identity"] = str(calibration_identity)
 
     signer_pub_hex: Optional[str] = None
     if signing_key is not None:
         signer_pub_hex = public_key_bytes(signing_key).hex()
+
+    chosen_profile: str
+    if profile is not None:
+        chosen_profile = (
+            ENFORCEMENT_PROFILE_V1
+            if profile in ("enforcement_v1", "strict_attested_durable_v1", ENFORCEMENT_PROFILE_V1)
+            else profile
+        )
+    elif signing_key is not None:
+        chosen_profile = "product_signed_v1"
+    else:
+        chosen_profile = "diagnostic_local"
 
     envelope = create_run_witness_envelope(
         mutation_intent=envelope_payload_mutation,
@@ -518,7 +758,7 @@ def create_decision_receipt(
         truth_ledger_head=truth_ledger_head,
         artifact_checksums={"schema_digest": schema_digest, "prompt_digest": prompt_digest},
         closure_receipt_fingerprint=unbound_receipt.compute_digest(),
-        profile="product_signed_v1" if signing_key is not None else "diagnostic_local",
+        profile=chosen_profile,
         signing_key=signing_key,
     )
 
@@ -539,7 +779,26 @@ def create_decision_receipt(
         ledger_record_id=ledger_record_id,
         signer_public_key=signer_pub_hex,
         envelope=envelope,
+        policy_decision=policy_decision_dict,
+        action_id=action_id,
+        action_digest=action_digest,
+        normalized_arguments=dict(normalized_arguments) if normalized_arguments is not None else None,
+        canonical_target=str(canonical_target) if canonical_target is not None else None,
+        principal_id=str(principal_id) if principal_id is not None else None,
+        tenant_id=str(tenant_id) if tenant_id is not None else None,
+        scope=str(scope) if scope is not None else None,
+        outcome=str(outcome) if outcome is not None else None,
+        risk=risk,
+        policy_id=str(policy_id) if policy_id is not None else None,
+        policy_epoch=coerced_epoch,
+        request_id=str(request_id) if request_id is not None else None,
+        model_identity=str(model_identity) if model_identity is not None else None,
+        projector_identity=str(projector_identity) if projector_identity is not None else None,
+        calibration_identity=str(calibration_identity) if calibration_identity is not None else None,
+        effective_alpha=float(effective_alpha) if effective_alpha is not None else None,
+        effective_gates=dict(effective_gates) if effective_gates is not None else None,
     )
+
 
 
 def verify_decision_witness_receipt(
@@ -739,7 +998,10 @@ def save_keypair(key: Ed25519PrivateKey, directory: str | Path) -> Tuple[Path, P
 __all__ = [
     "DECISION_WITNESS_PROFILE",
     "DecisionWitnessReceipt",
+    "ENFORCEMENT_PROFILE_V1",
+    "EnforcementProfile",
     "RunWitnessEnvelope",
+    "WITNESS_PROFILES",
     "canonical_bytes",
     "canonical_json",
     "compute_receipt_digest",
@@ -762,5 +1024,6 @@ __all__ = [
     "verify_payload",
     "verify_run_witness_envelope",
 ]
+
 
 

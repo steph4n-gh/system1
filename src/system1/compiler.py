@@ -99,6 +99,7 @@ class CompiledSystemOneModel:
         self.dimension = dimension
         self.backend = backend
         self.metadata = metadata or {}
+        self.created_at = float(self.metadata.get("created_at", 0.0))
         self.forgetting_factor = float(forgetting_factor)
         self.recency_weighted = bool(recency_weighted)
         self.projector = (
@@ -354,7 +355,7 @@ class CompiledSystemOneModel:
             "schema_dict": self.schema.to_dict(),
             "schema_digest": self.schema.schema_digest(),
             "dimension": self.dimension,
-            "created_at": time.time(),
+            "created_at": getattr(self, "created_at", 0.0),
             "metadata": {
                 **self.metadata,
                 "forgetting_factor": self.forgetting_factor,
@@ -374,7 +375,7 @@ class CompiledSystemOneModel:
                     "weights_shape": list(ch.weights.shape),
                     "biases_shape": list(ch.biases.shape),
                 }
-                for name, ch in self.heads.items()
+                for name, ch in sorted(self.heads.items())
             },
         }
         header_bytes = json.dumps(header_meta, sort_keys=True).encode("utf-8")
@@ -383,7 +384,7 @@ class CompiledSystemOneModel:
         # Pack numpy weights into compressed zip buffer
         npz_buf = io.BytesIO()
         arrays_to_save: Dict[str, np.ndarray] = {}
-        for name, ch in self.heads.items():
+        for name, ch in sorted(self.heads.items()):
             arrays_to_save[f"{name}_w"] = ch.weights.astype(np.float32)
             arrays_to_save[f"{name}_b"] = ch.biases.astype(np.float32)
             if hasattr(ch, "calibration_scores") and len(ch.calibration_scores) > 0:
@@ -934,27 +935,39 @@ class ReflexCompiler:
                     X_train, Y_train, self.regularization, return_covariance=True
                 )
 
-                # Calibrate temperature and conformal bounds
+                # Calibrate temperature and conformal bounds on independent held-out folds
                 logits_calib = (X_calib @ weights.T + biases) / 0.25
                 calib_labels = np.argmax(Y_calib, axis=1)
 
+                if len(calib_labels) >= 2:
+                    n_half = max(1, len(calib_labels) // 2)
+                    logits_temp = logits_calib[:n_half]
+                    labels_temp = calib_labels[:n_half]
+                    logits_conf = logits_calib[n_half:]
+                    labels_conf = calib_labels[n_half:]
+                else:
+                    logits_temp = logits_calib
+                    labels_temp = calib_labels
+                    logits_conf = logits_calib
+                    labels_conf = calib_labels
+
                 calibrator = DecisionCalibrator()
                 try:
-                    calibrator.fit(logits_calib, calib_labels)
+                    calibrator.fit(logits_temp, labels_temp)
                     learned_temp = float(calibrator.temperature)
                 except Exception:
                     learned_temp = 1.0
-                probs_calib = calibrator.calibrate_logits(logits_calib)
+                probs_calib = calibrator.calibrate_logits(logits_conf)
 
-                # Adaptive Prediction Sets (APS) scoring matching calibration.py
+                # Adaptive Prediction Sets (APS) scoring matching calibration.py on held-out conformal fold
                 nonconf_scores = []
                 error_margins = []
-                for i in range(len(calib_labels)):
+                for i in range(len(labels_conf)):
                     p_row = probs_calib[i]
                     s_idx = np.argsort(-p_row)
                     top_i = int(s_idx[0])
                     runner_i = int(s_idx[1]) if len(s_idx) > 1 else top_i
-                    true_c = int(calib_labels[i])
+                    true_c = int(labels_conf[i])
                     if top_i != true_c:
                         error_margins.append(float(p_row[top_i] - p_row[runner_i]))
 

@@ -46,6 +46,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from system1.compat.typesafe import (
     Choice,
     Noul,
+    PromotionPolicy,
     Score,
     TypeSafeClient,
     TypeSafeResponse,
@@ -693,14 +694,24 @@ def run_auto_cutover_showcase(
     ledger = ActionLedger(db_path)
 
     # 3. Instantiate TypeSafeClient in auto_cutover mode
+    # For fast illustrative showcase runs, provide explicit demo policy
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
+    effective_threshold = max(3, cutover_threshold) if cutover_threshold <= 2 and total_queries >= 3 else cutover_threshold
     client = TypeSafeClient(
         api_key=api_key,
         mode="auto_cutover",
-        cutover_threshold=cutover_threshold,
+        cutover_threshold=effective_threshold,
         min_agreement_threshold=0.8,
+        promotion_policy=demo_policy,
         signing_key=signing_key,
         ledger=ledger,
         timeout=3.0,
+        zero_egress=False,
+        fallback_baseline=True,
     )
 
     print("Initial Client State:")

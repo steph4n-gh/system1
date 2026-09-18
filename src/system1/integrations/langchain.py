@@ -49,6 +49,31 @@ class ReflexGuardBlockedException(PermissionError):
 ReflexSecurityException = ReflexGuardBlockedException
 
 
+class ReflexIndeterminateExecutionError(RuntimeError):
+    """Raised when a tool executed with potential side effects, but durable outcome audit recording failed.
+
+    Preserves reconciliation evidence (action_id, receipt_digest, raw_result) for governors.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        action_id: str,
+        receipt_digest: str,
+        raw_result: Any = None,
+        underlying_error: Optional[Exception] = None,
+        exec_error: Optional[Exception] = None,
+    ) -> None:
+        super().__init__(message)
+        self.status = "INDETERMINATE"
+        self.action_id = str(action_id)
+        self.receipt_digest = str(receipt_digest)
+        self.raw_result = raw_result
+        self.underlying_error = underlying_error
+        self.exec_error = exec_error
+
+
 class ReflexGuardCallbackHandler(_BaseCallbackHandler):
     """LangChain CallbackHandler enforcing sub-millisecond Reflex safety before tool execution."""
 
@@ -70,6 +95,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
         self.tenant_id = tenant_id
         self.principal_id = principal_id
         self.interceptions: List[GuardInterceptionResult] = []
+        self._active_runs: Dict[str, GuardInterceptionResult] = {}
 
     def on_tool_start(
         self,
@@ -104,9 +130,105 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
         context = f"{description}. Action: {tool_name} with {str(input_str)}."
         interception = self.guard.evaluate_proposal(proposal, context_prompt=context)
         self.interceptions.append(interception)
+        if run_id is not None:
+            self._active_runs[str(run_id)] = interception
 
         if interception.outcome != DecisionOutcome.ALLOW:
             raise ReflexGuardBlockedException(interception)
+
+    def on_tool_end(
+        self,
+        output: Any,
+        *,
+        run_id: Optional[Any] = None,
+        parent_run_id: Optional[Any] = None,
+        tags: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Called after a tool finishes execution to chain outcome to the authorization receipt."""
+        interception = (
+            self._active_runs.pop(str(run_id), None)
+            if run_id is not None
+            else (self.interceptions[-1] if self.interceptions else None)
+        )
+        ledger = self.guard.ledger
+        if ledger is not None and interception is not None:
+            receipt = interception.receipt or (
+                interception.decision_result.receipt if interception.decision_result else None
+            )
+            receipt_digest = receipt.compute_digest() if receipt else ""
+            action_id = (
+                interception.policy_decision.action_id
+                if interception.policy_decision
+                else (getattr(receipt, "decision_id", "") if receipt else str(run_id or ""))
+            )
+            if receipt_digest:
+                try:
+                    ledger.record_execution_outcome(
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        status="SUCCEEDED",
+                        result_payload={"result": str(output)[:500]},
+                        tenant_id=self.tenant_id,
+                        principal_id=str(run_id or self.principal_id),
+                        scope="langchain:tools:exec:outcome",
+                    )
+                except Exception as le:
+                    raise ReflexIndeterminateExecutionError(
+                        f"LangChain tool executed but outcome recording failed (status: INDETERMINATE): {le}",
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        raw_result=output,
+                        underlying_error=le,
+                    ) from le
+
+    def on_tool_error(
+        self,
+        error: BaseException,
+        *,
+        run_id: Optional[Any] = None,
+        parent_run_id: Optional[Any] = None,
+        tags: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> None:
+        """Called when a tool encounters an error during execution."""
+        interception = (
+            self._active_runs.pop(str(run_id), None)
+            if run_id is not None
+            else (self.interceptions[-1] if self.interceptions else None)
+        )
+        ledger = self.guard.ledger
+        if ledger is not None and interception is not None:
+            receipt = interception.receipt or (
+                interception.decision_result.receipt if interception.decision_result else None
+            )
+            receipt_digest = receipt.compute_digest() if receipt else ""
+            action_id = (
+                interception.policy_decision.action_id
+                if interception.policy_decision
+                else (getattr(receipt, "decision_id", "") if receipt else str(run_id or ""))
+            )
+            if receipt_digest:
+                try:
+                    ledger.record_execution_outcome(
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        status="FAILED",
+                        error_message=str(error),
+                        tenant_id=self.tenant_id,
+                        principal_id=str(run_id or self.principal_id),
+                        scope="langchain:tools:exec:outcome",
+                    )
+                except Exception as le:
+                    raise ReflexIndeterminateExecutionError(
+                        f"LangChain tool failed ({error}) AND outcome recording failed: {le}",
+                        action_id=action_id,
+                        receipt_digest=receipt_digest,
+                        raw_result=None,
+                        underlying_error=le,
+                        exec_error=error if isinstance(error, Exception) else None,
+                    ) from le
+
 
 
 class ReflexToolInterceptor:
@@ -138,12 +260,14 @@ class ReflexToolInterceptor:
             sig = None
 
         raw_args: Dict[str, Any] = {}
+        bound = None
         if sig is not None:
             try:
                 bound = sig.bind(*args, **kwargs)
                 bound.apply_defaults()
                 raw_args = dict(bound.arguments)
             except Exception:
+                bound = None
                 raw_args = dict(kwargs)
                 if args:
                     raw_args["_args"] = list(args)
@@ -180,18 +304,61 @@ class ReflexToolInterceptor:
             else ""
         )
         receipt_digest = ""
-        if interception and interception.decision_result and interception.decision_result.receipt:
-            receipt_digest = interception.decision_result.receipt.compute_digest()
+        receipt = (
+            interception.receipt
+            or (interception.decision_result.receipt if interception.decision_result else None)
+        )
+        if receipt:
+            receipt_digest = receipt.compute_digest()
+        elif interception and interception.decision_result and interception.decision_result.schema_digest:
+            receipt_digest = interception.decision_result.schema_digest
+
+        prop = getattr(interception, "proposal", None)
+        if isinstance(prop, ActionProposal):
+            canon_args = dict(prop.arguments)
+        elif isinstance(getattr(interception, "proposal", None), (dict, Mapping)):
+            canon_args = dict(interception.proposal)
+        else:
+            canon_args = dict(raw_args)
+
+        if sig is not None and bound is not None:
+            for k in list(bound.arguments.keys()):
+                if k in canon_args:
+                    bound.arguments[k] = canon_args[k]
+            for p_name, p in sig.parameters.items():
+                if p.kind == inspect.Parameter.VAR_KEYWORD and p_name in bound.arguments:
+                    var_kw = dict(bound.arguments[p_name])
+                    for k, v in canon_args.items():
+                        if k not in sig.parameters and k != "_args" and k != "purpose":
+                            var_kw[k] = v
+                    bound.arguments[p_name] = var_kw
+            dispatch_args = bound.args
+            dispatch_kwargs = bound.kwargs
+        else:
+            dispatch_args = tuple(canon_args.get("_args", [])) if "_args" in canon_args else args
+            dispatch_kwargs = {k: v for k, v in canon_args.items() if k != "_args" and k != "purpose"}
 
         exec_output = None
         exec_error = None
         try:
             if hasattr(self.tool, "invoke"):
-                exec_output = self.tool.invoke(*args, **kwargs)
+                try:
+                    exec_output = self.tool.invoke(*dispatch_args, **dispatch_kwargs)
+                except TypeError:
+                    if dispatch_kwargs and not dispatch_args:
+                        exec_output = self.tool.invoke(dispatch_kwargs)
+                    else:
+                        raise
             elif hasattr(self.tool, "run"):
-                exec_output = self.tool.run(*args, **kwargs)
+                try:
+                    exec_output = self.tool.run(*dispatch_args, **dispatch_kwargs)
+                except TypeError:
+                    if dispatch_kwargs and not dispatch_args:
+                        exec_output = self.tool.run(dispatch_kwargs)
+                    else:
+                        raise
             elif callable(self.tool):
-                exec_output = self.tool(*args, **kwargs)
+                exec_output = self.tool(*dispatch_args, **dispatch_kwargs)
             else:
                 raise TypeError(f"Target tool {self.tool!r} is neither callable nor implements invoke()/run()")
         except Exception as ex:
@@ -212,8 +379,14 @@ class ReflexToolInterceptor:
                     scope="langchain:tool:invoke:outcome",
                 )
             except Exception as le:
-                if exec_error is None:
-                    raise le
+                raise ReflexIndeterminateExecutionError(
+                    f"LangChain tool executed but outcome recording failed (status: INDETERMINATE): {le}",
+                    action_id=action_id,
+                    receipt_digest=receipt_digest,
+                    raw_result=exec_output,
+                    underlying_error=le,
+                    exec_error=exec_error,
+                ) from le
 
         if exec_error is not None:
             raise exec_error
@@ -229,12 +402,14 @@ class ReflexToolInterceptor:
             sig = None
 
         raw_args: Dict[str, Any] = {}
+        bound = None
         if sig is not None:
             try:
                 bound = sig.bind(*args, **kwargs)
                 bound.apply_defaults()
                 raw_args = dict(bound.arguments)
             except Exception:
+                bound = None
                 raw_args = dict(kwargs)
                 if args:
                     raw_args["_args"] = list(args)
@@ -271,20 +446,73 @@ class ReflexToolInterceptor:
             else ""
         )
         receipt_digest = ""
-        if interception and interception.decision_result and interception.decision_result.receipt:
-            receipt_digest = interception.decision_result.receipt.compute_digest()
+        receipt = (
+            interception.receipt
+            or (interception.decision_result.receipt if interception.decision_result else None)
+        )
+        if receipt:
+            receipt_digest = receipt.compute_digest()
+        elif interception and interception.decision_result and interception.decision_result.schema_digest:
+            receipt_digest = interception.decision_result.schema_digest
+
+        prop = getattr(interception, "proposal", None)
+        if isinstance(prop, ActionProposal):
+            canon_args = dict(prop.arguments)
+        elif isinstance(getattr(interception, "proposal", None), (dict, Mapping)):
+            canon_args = dict(interception.proposal)
+        else:
+            canon_args = dict(raw_args)
+
+        if sig is not None and bound is not None:
+            for k in list(bound.arguments.keys()):
+                if k in canon_args:
+                    bound.arguments[k] = canon_args[k]
+            for p_name, p in sig.parameters.items():
+                if p.kind == inspect.Parameter.VAR_KEYWORD and p_name in bound.arguments:
+                    var_kw = dict(bound.arguments[p_name])
+                    for k, v in canon_args.items():
+                        if k not in sig.parameters and k != "_args" and k != "purpose":
+                            var_kw[k] = v
+                    bound.arguments[p_name] = var_kw
+            dispatch_args = bound.args
+            dispatch_kwargs = bound.kwargs
+        else:
+            dispatch_args = tuple(canon_args.get("_args", [])) if "_args" in canon_args else args
+            dispatch_kwargs = {k: v for k, v in canon_args.items() if k != "_args" and k != "purpose"}
 
         exec_output = None
         exec_error = None
         try:
             if hasattr(self.tool, "ainvoke"):
-                exec_output = await self.tool.ainvoke(*args, **kwargs)
+                try:
+                    exec_output = await self.tool.ainvoke(*dispatch_args, **dispatch_kwargs)
+                except TypeError:
+                    if dispatch_kwargs and not dispatch_args:
+                        exec_output = await self.tool.ainvoke(dispatch_kwargs)
+                    else:
+                        raise
             elif hasattr(self.tool, "arun"):
-                exec_output = await self.tool.arun(*args, **kwargs)
+                try:
+                    exec_output = await self.tool.arun(*dispatch_args, **dispatch_kwargs)
+                except TypeError:
+                    if dispatch_kwargs and not dispatch_args:
+                        exec_output = await self.tool.arun(dispatch_kwargs)
+                    else:
+                        raise
             elif hasattr(self.tool, "invoke"):
-                exec_output = self.tool.invoke(*args, **kwargs)
+                try:
+                    exec_output = self.tool.invoke(*dispatch_args, **dispatch_kwargs)
+                except TypeError:
+                    if dispatch_kwargs and not dispatch_args:
+                        exec_output = self.tool.invoke(dispatch_kwargs)
+                    else:
+                        raise
             elif callable(self.tool):
-                exec_output = self.tool(*args, **kwargs)
+                res = self.tool(*dispatch_args, **dispatch_kwargs)
+                if inspect.isawaitable(res):
+                    exec_output = await res
+                else:
+                    exec_output = res
             else:
                 raise TypeError(f"Target tool {self.tool!r} is not callable asynchronously")
         except Exception as ex:
@@ -304,8 +532,14 @@ class ReflexToolInterceptor:
                     scope="langchain:tool:ainvoke:outcome",
                 )
             except Exception as le:
-                if exec_error is None:
-                    raise le
+                raise ReflexIndeterminateExecutionError(
+                    f"Tool executed asynchronously but outcome recording failed (status: INDETERMINATE): {le}",
+                    action_id=action_id,
+                    receipt_digest=receipt_digest,
+                    raw_result=exec_output,
+                    underlying_error=le,
+                    exec_error=exec_error,
+                ) from le
 
         if exec_error is not None:
             raise exec_error
@@ -327,6 +561,7 @@ def wrap_langchain_tool(
 
 __all__ = [
     "ReflexGuardBlockedException",
+    "ReflexIndeterminateExecutionError",
     "ReflexSecurityException",
     "ReflexGuardCallbackHandler",
     "ReflexToolInterceptor",

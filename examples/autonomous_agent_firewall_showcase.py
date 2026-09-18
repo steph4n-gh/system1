@@ -57,6 +57,7 @@ from system1.compat.typesafe import (
     ScoreAnswer,
     TypeSafeClient,
     TypeSafeResponse,
+    PromotionPolicy,
     Usage,
     create_typesafe_baseline_response,
     patch_typesafe,
@@ -1203,12 +1204,19 @@ def run_autonomous_firewall_showcase(
     baseline_handler = make_firewall_baseline_handler(dataset)
 
     # Instantiate TypeSafeClient in auto_cutover mode
+    # Fast illustrative demo runs use explicit demo policy without weakening production defaults
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
     projector = HybridProjector(dimension=384)
     client = TypeSafeClient(
         api_key=api_key,
         mode="auto_cutover",
         cutover_threshold=cutover_threshold,
         min_agreement_threshold=0.80,
+        promotion_policy=demo_policy,
         signing_key=signing_key,
         ledger=ledger,
         timeout=3.0,

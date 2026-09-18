@@ -521,11 +521,17 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     ledger = ActionLedger(":memory:")
 
     if mode == "cutover":
+        demo_policy = typesafe.PromotionPolicy(
+            min_agreement_threshold=0.5,
+            false_allow_ceiling=0.0,
+            require_statistical_bound=False,
+        )
         client = typesafe.Client(
             api_key=api_key or "",
             mode="auto_cutover",
-            cutover_threshold=threshold,
+            cutover_threshold=max(3, threshold),
             min_agreement_threshold=0.5,
+            promotion_policy=demo_policy,
             signing_key=signing_key,
             ledger=ledger,
         )

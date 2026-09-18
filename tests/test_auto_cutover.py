@@ -4,7 +4,7 @@ import asyncio
 from pathlib import Path
 import pytest
 
-from system1.compat.typesafe import AsyncTypeSafeClient, Choice, Noul, TypeSafeClient
+from system1.compat.typesafe import AsyncTypeSafeClient, Choice, Noul, PromotionPolicy, TypeSafeClient
 from system1.ledger import ActionLedger
 
 
@@ -15,10 +15,10 @@ def test_typesafe_client_modes_initialization():
     assert not client_local.is_cutover
     assert client_local.call_count == 0
 
-    client_pass = TypeSafeClient(mode="passthrough")
+    client_pass = TypeSafeClient(mode="passthrough", zero_egress=False, fallback_baseline=True)
     assert client_pass.mode == "passthrough"
 
-    client_cutover = TypeSafeClient(mode="auto_cutover", cutover_threshold=25)
+    client_cutover = TypeSafeClient(mode="auto_cutover", cutover_threshold=25, zero_egress=False, fallback_baseline=True)
     assert client_cutover.mode == "auto_cutover"
     assert client_cutover.cutover_threshold == 25
 
@@ -28,7 +28,7 @@ def test_typesafe_client_modes_initialization():
 
 def test_passthrough_mode_execution():
     """Verify mode='passthrough' proxies directly to cloud / baseline response."""
-    client = TypeSafeClient(mode="passthrough")
+    client = TypeSafeClient(mode="passthrough", zero_egress=False, fallback_baseline=True)
     questions = {
         "tier": Choice("Model tier", criteria={"fast": "Fast model", "smart": "Reasoning model"}),
     }
@@ -46,7 +46,14 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=threshold,
+        promotion_policy=PromotionPolicy(
+            min_agreement_threshold=0.75,
+            false_allow_ceiling=0.0,
+            require_statistical_bound=False,
+        ),
         ledger=ledger,
+        zero_egress=False,
+        fallback_baseline=True,
     )
 
     questions = {
@@ -109,6 +116,8 @@ def test_auto_cutover_respects_min_agreement_threshold():
         mode="auto_cutover",
         cutover_threshold=3,
         min_agreement_threshold=1.01,  # Impossible threshold to force deferral
+        zero_egress=False,
+        fallback_baseline=True,
     )
     questions = {
         "tier": Choice("Tier", criteria={"fast": "Fast model", "smart": "Smart reasoning model"}),
@@ -137,7 +146,14 @@ def test_auto_cutover_high_concurrency_thread_safety():
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=10,
+        promotion_policy=PromotionPolicy(
+            min_agreement_threshold=0.75,
+            false_allow_ceiling=0.0,
+            require_statistical_bound=False,
+        ),
         ledger=ledger,
+        zero_egress=False,
+        fallback_baseline=True,
     )
     questions = {
         "action": Choice("Action", criteria={"allow": "Allow", "deny": "Deny"}),
@@ -163,14 +179,28 @@ def test_auto_cutover_high_concurrency_thread_safety():
 
 def test_manual_distill_and_cutover():
     """Verify manual distill_and_cutover flips execution immediately."""
-    client = TypeSafeClient(mode="auto_cutover", cutover_threshold=100)
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
+    client = TypeSafeClient(
+        mode="auto_cutover",
+        cutover_threshold=100,
+        promotion_policy=demo_policy,
+        zero_egress=False,
+        fallback_baseline=True,
+    )
     questions = {
         "route": Choice("Route", criteria={"sales": "Sales", "support": "Support"}),
     }
 
-    # Execute 2 calls
+    # Execute calls to satisfy 3-way disjoint partition and train both classes
     client.systemone("Pricing question for enterprise", questions)
     client.systemone("Bug with API webhook", questions)
+    client.systemone("Enterprise sales quote", questions)
+    client.systemone("Technical support ticket", questions)
+    client.systemone("Another pricing quote", questions)
     assert not client.is_cutover
 
     # Manually trigger cutover early
@@ -187,7 +217,18 @@ def test_manual_distill_and_cutover():
 @pytest.mark.asyncio
 async def test_async_typesafe_client_auto_cutover():
     """Verify AsyncTypeSafeClient supports auto_cutover seamlessly."""
-    client = AsyncTypeSafeClient(mode="auto_cutover", cutover_threshold=3)
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
+    client = AsyncTypeSafeClient(
+        mode="auto_cutover",
+        cutover_threshold=3,
+        promotion_policy=demo_policy,
+        zero_egress=False,
+        fallback_baseline=True,
+    )
     questions = {
         "verdict": Choice("Verdict", criteria={"allow": "Allow action", "deny": "Deny action"}),
     }
@@ -210,8 +251,20 @@ async def test_auto_cutover_model_export(tmp_path: Path):
     """Verify distilled model can be accessed and exported via sync and async clients."""
     from system1.compiler import CompiledSystemOneModel
 
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
+
     # 1. Sync client export before cutover should return False
-    sync_client = TypeSafeClient(mode="auto_cutover", cutover_threshold=2)
+    sync_client = TypeSafeClient(
+        mode="auto_cutover",
+        cutover_threshold=3,
+        promotion_policy=demo_policy,
+        zero_egress=False,
+        fallback_baseline=True,
+    )
     assert sync_client.compiled_model is None
     sync_model_path = str(tmp_path / "sync_export.s1m")
     assert sync_client.export_model(sync_model_path) is False
@@ -219,8 +272,9 @@ async def test_auto_cutover_model_export(tmp_path: Path):
     questions = {
         "status": Choice("Status", criteria={"pass": "Success", "fail": "Failure"}),
     }
-    sync_client.systemone("Unit test running ok", questions)
-    sync_client.systemone("Unit test failed assertion", questions)
+    sync_client.systemone("Success test case 1", questions)
+    sync_client.systemone("Success test case 2", questions)
+    sync_client.systemone("Success test case 3", questions)
 
     assert sync_client.is_cutover is True
     assert sync_client.compiled_model is not None
@@ -232,12 +286,19 @@ async def test_auto_cutover_model_export(tmp_path: Path):
     assert "status" in res.fields
 
     # 2. Async client export
-    async_client = AsyncTypeSafeClient(mode="auto_cutover", cutover_threshold=2)
+    async_client = AsyncTypeSafeClient(
+        mode="auto_cutover",
+        cutover_threshold=3,
+        promotion_policy=demo_policy,
+        zero_egress=False,
+        fallback_baseline=True,
+    )
     async_model_path = str(tmp_path / "async_export.s1m")
     assert (await async_client.export_model(async_model_path)) is False
 
-    await async_client.systemone("First async check", questions)
-    await async_client.systemone("Second async check", questions)
+    await async_client.systemone("Success async case 1", questions)
+    await async_client.systemone("Success async case 2", questions)
+    await async_client.systemone("Success async case 3", questions)
 
     assert async_client.is_cutover is True
     assert async_client.compiled_model is not None

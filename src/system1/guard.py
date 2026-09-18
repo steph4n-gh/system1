@@ -11,19 +11,29 @@ import hashlib
 import os
 import re
 import sqlite3
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import IntEnum, StrEnum
-from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 from system1.engine import DecisionResult, ReflexEngine, SystemOneEngine
 from system1.ledger import ActionLedger, LedgerError, LedgerWriteError
-from system1.receipt import fingerprint, freeze, thaw, utc_now
+from system1.receipt import (
+    DecisionWitnessReceipt,
+    ENFORCEMENT_PROFILE_V1,
+    EnforcementProfile,
+    create_decision_receipt,
+    fingerprint,
+    freeze,
+    thaw,
+    utc_now,
+)
 from system1.core import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
     ScoreField,
 )
+
 
 _IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:/@-]{0,254}$")
 
@@ -363,6 +373,13 @@ class GuardInterceptionResult:
         """Return True iff the interception outcome is ALLOW."""
         return self.outcome == DecisionOutcome.ALLOW
 
+    @property
+    def receipt(self) -> Optional[DecisionWitnessReceipt]:
+        """Return the proof-carrying decision receipt if available."""
+        if self.decision_result is not None and getattr(self.decision_result, "receipt", None) is not None:
+            return self.decision_result.receipt
+        return None
+
 
 @dataclass(frozen=True)
 class PolicyRule:
@@ -395,168 +412,199 @@ class PolicyRule:
     argument_limits: Optional[Mapping[str, Any]] = None
     predicate: Optional[Callable[[ActionProposal], Optional[Tuple[DecisionOutcome, str]]]] = None
 
-    def evaluate(self, proposal: ActionProposal) -> Optional[Tuple[DecisionOutcome, RiskLevel, str, str]]:
-        """Evaluates proposal against this rule. Returns (outcome, risk, rule_id, reason) if triggered."""
-        effective_outcome = self.effect if self.effect is not None else self.outcome
+    def applies_to(self, proposal: ActionProposal) -> bool:
+        """Determines if this rule applies to the given proposal based on patterns and scoping filters."""
+        if self.tenant_pattern is not None and not re.search(self.tenant_pattern, proposal.tenant_id):
+            return False
+        if self.principal_pattern is not None and not re.search(self.principal_pattern, proposal.principal_id):
+            return False
+        if self.action_pattern is not None and not re.search(self.action_pattern, proposal.tool):
+            return False
+        if self.target_pattern is not None and not re.search(self.target_pattern, str(proposal.canonical_target)):
+            return False
 
-        # 0. Pattern checks (tenant, principal, action, target) - conjunctive matching
-        has_pattern = (
-            self.tenant_pattern is not None
-            or self.principal_pattern is not None
-            or self.action_pattern is not None
-            or self.target_pattern is not None
-        )
-        if has_pattern:
-            if self.tenant_pattern is not None and not re.search(self.tenant_pattern, proposal.tenant_id):
-                return None
-            if self.principal_pattern is not None and not re.search(self.principal_pattern, proposal.principal_id):
-                return None
-            if self.action_pattern is not None and not re.search(self.action_pattern, proposal.tool):
-                return None
-            if self.target_pattern is not None and not re.search(self.target_pattern, str(proposal.canonical_target)):
-                return None
-            return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
-                self.reason or f"Deterministic policy match for rule {self.rule_id}",
-            )
+        if self.tenants is not None and proposal.tenant_id not in self.tenants:
+            return False
+        if self.principals is not None and proposal.principal_id not in self.principals:
+            return False
+        if self.scopes is not None and proposal.scope not in self.scopes:
+            return False
+        if self.tools is not None and proposal.tool not in self.tools:
+            return False
 
-        # 1. Tenant checks
+        return True
+
+    def evaluate_constraints(self, proposal: ActionProposal) -> tuple[bool, str]:
+        """Evaluates all explicit constraints on this rule. Returns (True, "") if satisfied, or (False, reason) if violated."""
+        # 1. Tenant constraints
         if self.allowed_tenants is not None and proposal.tenant_id not in self.allowed_tenants:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: tenant {proposal.tenant_id!r} not in allowed_tenants",
             )
         if self.denied_tenants is not None and proposal.tenant_id in self.denied_tenants:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: tenant {proposal.tenant_id!r} is explicitly denied",
             )
-        if self.tenants is not None and proposal.tenant_id in self.tenants:
-            return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
-                self.reason or f"Deterministic policy match for tenant {proposal.tenant_id!r}",
-            )
 
-        # 2. Principal checks
+        # 2. Principal constraints
         if self.allowed_principals is not None and proposal.principal_id not in self.allowed_principals:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: principal {proposal.principal_id!r} not in allowed_principals",
             )
         if self.denied_principals is not None and proposal.principal_id in self.denied_principals:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: principal {proposal.principal_id!r} is explicitly denied",
             )
-        if self.principals is not None and proposal.principal_id in self.principals:
-            return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
-                self.reason or f"Deterministic policy match for principal {proposal.principal_id!r}",
-            )
 
-        # 3. Scope checks
+        # 3. Scope constraints
         if self.allowed_scopes is not None and proposal.scope not in self.allowed_scopes:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: scope {proposal.scope!r} not in allowed_scopes",
             )
         if self.denied_scopes is not None and proposal.scope in self.denied_scopes:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: scope {proposal.scope!r} is explicitly denied",
             )
-        if self.scopes is not None and proposal.scope in self.scopes:
-            return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
-                self.reason or f"Deterministic policy match for scope {proposal.scope!r}",
-            )
 
-        # 4. Tool / Action checks
+        # 4. Tool constraints
         if self.allowed_tools is not None and proposal.tool not in self.allowed_tools:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: tool {proposal.tool!r} not in allowed_tools",
             )
         if self.denied_tools is not None and proposal.tool in self.denied_tools:
             return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
+                False,
                 self.reason or f"Deterministic policy violation: tool {proposal.tool!r} is explicitly denied",
             )
-        if self.tools is not None and proposal.tool in self.tools:
-            return (
-                effective_outcome,
-                self.risk,
-                self.rule_id,
-                self.reason or f"Deterministic policy match for tool {proposal.tool!r}",
-            )
 
-        # 5. Target checks
+        # 5. Target constraints
         if self.denied_targets is not None:
             target_str = str(proposal.canonical_target).lower()
             for pattern in self.denied_targets:
                 if str(pattern).lower() in target_str:
                     return (
-                        effective_outcome,
-                        self.risk,
-                        self.rule_id,
+                        False,
                         self.reason or f"Deterministic policy violation: target {proposal.canonical_target!r} matches denied target pattern {pattern!r}",
                     )
 
-        # 6. Argument limits & checks
+        # 6. Argument limits & checks (Fail-Closed)
         if self.argument_limits is not None:
             raw_args = dict(proposal.arguments)
             for arg_key, limit_val in self.argument_limits.items():
-                if arg_key in raw_args:
-                    val = raw_args[arg_key]
-                    if isinstance(limit_val, (int, float)) and isinstance(val, (int, float)):
-                        if val > limit_val:
+                if arg_key not in raw_args:
+                    return (
+                        False,
+                        self.reason or f"Deterministic policy violation: missing required constrained argument {arg_key!r}",
+                    )
+                val = raw_args[arg_key]
+                if isinstance(limit_val, (int, float)) and not isinstance(limit_val, bool):
+                    if not isinstance(val, (int, float)) or isinstance(val, bool):
+                        return (
+                            False,
+                            self.reason or f"Deterministic policy violation: argument {arg_key!r} expected numeric, got {type(val).__name__}",
+                        )
+                    if val > limit_val:
+                        return (
+                            False,
+                            self.reason or f"Deterministic policy violation: argument {arg_key}={val} exceeds limit {limit_val}",
+                        )
+                elif isinstance(limit_val, (list, tuple, set, frozenset)):
+                    if val not in limit_val:
+                        return (
+                            False,
+                            self.reason or f"Deterministic policy violation: argument {arg_key}={val!r} not in allowed values",
+                        )
+                elif isinstance(limit_val, dict):
+                    if "max" in limit_val:
+                        max_v = limit_val["max"]
+                        if not isinstance(val, (int, float)) or isinstance(val, bool):
                             return (
-                                effective_outcome,
-                                self.risk,
-                                self.rule_id,
-                                self.reason or f"Deterministic policy violation: argument {arg_key}={val} exceeds limit {limit_val}",
+                                False,
+                                self.reason or f"Deterministic policy violation: argument {arg_key!r} expected numeric, got {type(val).__name__}",
                             )
-                    elif isinstance(limit_val, (list, tuple, set)):
-                        if val not in limit_val:
+                        if val > max_v:
                             return (
-                                effective_outcome,
-                                self.risk,
-                                self.rule_id,
-                                self.reason or f"Deterministic policy violation: argument {arg_key}={val!r} not in allowed values",
+                                False,
+                                self.reason or f"Deterministic policy violation: argument {arg_key}={val} exceeds max {max_v}",
                             )
+                    if "min" in limit_val:
+                        min_v = limit_val["min"]
+                        if not isinstance(val, (int, float)) or isinstance(val, bool):
+                            return (
+                                False,
+                                self.reason or f"Deterministic policy violation: argument {arg_key!r} expected numeric, got {type(val).__name__}",
+                            )
+                        if val < min_v:
+                            return (
+                                False,
+                                self.reason or f"Deterministic policy violation: argument {arg_key}={val} below min {min_v}",
+                            )
+                else:
+                    if val != limit_val:
+                        return (
+                            False,
+                            self.reason or f"Deterministic policy violation: argument {arg_key}={val!r} does not match expected {limit_val!r}",
+                        )
 
         # 7. Custom predicate
         if self.predicate is not None:
             pred_res = self.predicate(proposal)
             if pred_res is not None:
                 p_outcome, p_reason = pred_res
-                return (p_outcome, self.risk, self.rule_id, p_reason)
+                if p_outcome != DecisionOutcome.ALLOW:
+                    return (False, p_reason)
 
-        return None
+        return (True, "")
+
+    def evaluate(self, proposal: ActionProposal) -> Optional[Tuple[DecisionOutcome, RiskLevel, str, str]]:
+        """Evaluates proposal against this rule. Decouples pattern applicability from constraint evaluation."""
+        if not self.applies_to(proposal):
+            return None
+
+        # Rule is applicable; evaluate constraints first
+        sat, reason = self.evaluate_constraints(proposal)
+        if not sat:
+            return (DecisionOutcome.DENY, RiskLevel.IRREVERSIBLE, self.rule_id, reason)
+
+        effective_outcome = self.effect if self.effect is not None else self.outcome
+
+        # Check whether this rule defines explicit match/applicability criteria or is an explicit permit/deny
+        has_applicability_criteria = (
+            self.tenant_pattern is not None
+            or self.principal_pattern is not None
+            or self.action_pattern is not None
+            or self.target_pattern is not None
+            or self.tenants is not None
+            or self.principals is not None
+            or self.scopes is not None
+            or self.tools is not None
+        )
+
+        if has_applicability_criteria:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for rule {self.rule_id}",
+            )
+        else:
+            # Rule without applicability patterns (e.g. general constraint rule or unconditional rule)
+            if self.outcome != DecisionOutcome.DENY or self.effect is not None:
+                return (
+                    effective_outcome,
+                    self.risk,
+                    self.rule_id,
+                    self.reason or f"Deterministic policy match for rule {self.rule_id}",
+                )
+            # A DENY rule whose only role was constraint checking and all constraints passed
+            return None
 
 
 class PolicyEngine:
@@ -616,12 +664,31 @@ class PolicyEngine:
         self.rules.append(rule)
 
     def evaluate(self, proposal: ActionProposal) -> Optional[Tuple[DecisionOutcome, RiskLevel, str, str]]:
-        """Evaluates all rules sequentially. First veto match returns immediately."""
+        """Evaluates all rules deterministically and composes outcomes: DENY > REQUIRE_APPROVAL > ALLOW."""
+        matches: List[Tuple[DecisionOutcome, RiskLevel, str, str]] = []
         for rule in self.rules:
             res = rule.evaluate(proposal)
             if res is not None:
-                return res
-        return None
+                matches.append(res)
+
+        if not matches:
+            return None
+
+        # Compositional precedence: DENY strictly overrides REQUIRE_APPROVAL and ALLOW
+        for match in matches:
+            if match[0] == DecisionOutcome.DENY:
+                return match
+
+        for match in matches:
+            if match[0] == DecisionOutcome.REQUIRE_APPROVAL:
+                return match
+
+        for match in matches:
+            if match[0] == DecisionOutcome.ALLOW:
+                return match
+
+        return matches[0]
+
 
 
 DeterministicPolicyEngine = PolicyEngine
@@ -664,21 +731,41 @@ class ReflexGuardHook:
         policy_engine: Optional[PolicyEngine] = None,
         policy_rules: Optional[Sequence[PolicyRule]] = None,
         fail_closed_ledger: bool = True,
+        enforcement_profile: Optional[Union[str, EnforcementProfile, bool]] = None,
+        signing_key: Optional[Any] = None,
     ) -> None:
         self.fail_closed_ledger = bool(fail_closed_ledger)
+        if enforcement_profile is True:
+            self.enforcement_profile: Optional[EnforcementProfile] = EnforcementProfile()
+        elif isinstance(enforcement_profile, EnforcementProfile):
+            self.enforcement_profile = enforcement_profile
+        elif isinstance(enforcement_profile, str):
+            self.enforcement_profile = EnforcementProfile(profile_id=enforcement_profile)
+        else:
+            self.enforcement_profile = None
+
         if engine is None:
             self.engine = ReflexEngine(
                 DefaultGuardDecisionSchema,
                 ledger=ledger,
+                signing_key=signing_key,
                 fail_closed_ledger=self.fail_closed_ledger,
             )
             if auto_calibrate:
                 self.engine.calibrate(_DEFAULT_GUARD_CALIBRATION, n_bins=5)
         else:
             self.engine = engine
+            if signing_key is not None:
+                self.engine.signing_key = signing_key
         self.min_confidence = float(min_confidence)
         self.alpha = float(alpha)
         self.ledger = ledger or self.engine.ledger
+
+        if self.enforcement_profile is not None:
+            self.enforcement_profile.validate_configuration(
+                signing_key=self.engine.signing_key,
+                ledger=self.ledger,
+            )
 
         resolved_policy = policy or policy_engine
         if resolved_policy is not None:
@@ -742,9 +829,94 @@ class ReflexGuardHook:
     ) -> GuardInterceptionResult:
         """Evaluates an ActionProposal through Reflex fail-closed gates."""
         # 0. Deterministic policy evaluation BEFORE model inference and caching
-        det_result = self.evaluate_deterministic_policy(proposal)
-        if det_result is not None:
-            return det_result
+        if self.policy is not None:
+            pol_eval = self.policy.evaluate(proposal)
+            if pol_eval is not None:
+                p_outcome, p_risk, p_rule_id, p_reason = pol_eval
+                pol_dec = self._build_policy_decision(
+                    proposal, p_outcome, p_risk, p_rule_id, p_reason
+                )
+                if p_outcome != DecisionOutcome.ALLOW:
+                    # Explicit veto or approval required: stop immediately, 0 side effects
+                    return GuardInterceptionResult(
+                        outcome=p_outcome,
+                        reason=p_reason,
+                        decision_result=None,
+                        policy_decision=pol_dec,
+                        proposal=proposal,
+                    )
+                else:
+                    # Release Invariant 1: Deterministic ALLOW grants eligibility, NOT permission
+                    # to skip signing or ledger recording. Generate authenticated receipt and record in ledger.
+                    p_prompt = context_prompt or (
+                        f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
+                        f"Args: {dict(proposal.arguments)}. Purpose: {proposal.purpose}"
+                    )
+                    chosen_profile = (
+                        self.enforcement_profile.profile_id
+                        if self.enforcement_profile is not None
+                        else ("product_signed_v1" if self.engine.signing_key is not None else "diagnostic_local")
+                    )
+                    receipt = create_decision_receipt(
+                        schema_name="policy_deterministic_allow",
+                        schema_digest=hashlib.sha256(b"policy_deterministic_allow").hexdigest(),
+                        prompt=p_prompt,
+                        values={"is_safe": True, "policy_outcome": "ALLOW", "rule_id": p_rule_id},
+                        confidences={"is_safe": 1.0, "policy": 1.0},
+                        conformal_sets={"is_safe": ["True"]},
+                        probabilities={"is_safe": {"True": 1.0, "False": 0.0}},
+                        latency_ms=0.1,
+                        is_ambiguous=False,
+                        truth_ledger_head=self.ledger.head_hash() if self.ledger else "",
+                        signing_key=self.engine.signing_key,
+                        policy_decision=pol_dec,
+                        action_proposal=proposal,
+                        effective_alpha=self.alpha,
+                        profile=chosen_profile,
+                    )
+                    if self.ledger is not None:
+                        try:
+                            ledger_rec_id = self.ledger.record_decision_receipt(receipt)
+                            receipt = replace(receipt, ledger_record_id=ledger_rec_id)
+                        except Exception as ex:
+                            if self.fail_closed_ledger:
+                                outcome = DecisionOutcome.DENY
+                                reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
+                                pol_decision = self._build_policy_decision(
+                                    proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", reason
+                                )
+                                return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
+
+                    # Fail-closed ledger check
+                    if self.ledger is not None and not receipt.ledger_record_id:
+                        if self.fail_closed_ledger:
+                            outcome = DecisionOutcome.DENY
+                            reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
+                            pol_decision = self._build_policy_decision(
+                                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", reason
+                            )
+                            return GuardInterceptionResult(outcome, reason, None, pol_decision, proposal=proposal)
+
+                    dec_result = DecisionResult(
+                        schema_name=receipt.schema_name,
+                        schema_digest=receipt.schema_digest,
+                        prompt=receipt.prompt,
+                        values=receipt.values,
+                        confidences=receipt.confidences,
+                        conformal_sets=receipt.conformal_sets,
+                        probabilities=receipt.probabilities,
+                        is_ambiguous=False,
+                        latency_ms=receipt.latency_ms,
+                        alpha=self.alpha,
+                        receipt=receipt,
+                    )
+                    return GuardInterceptionResult(
+                        outcome=DecisionOutcome.ALLOW,
+                        reason=p_reason,
+                        decision_result=dec_result,
+                        policy_decision=pol_dec,
+                        proposal=proposal,
+                    )
 
         prompt = context_prompt or (
             f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
@@ -766,9 +938,16 @@ class ReflexGuardHook:
                 proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", reason
             )
             return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
+        except Exception as ex:
+            outcome = DecisionOutcome.DENY
+            reason = f"Reflex inference engine failure ({ex})"
+            pol_decision = self._build_policy_decision(
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_engine_failure", reason
+            )
+            return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
 
         # Fail-closed ledger check: if ledger is configured, durable recording MUST have succeeded
-        if self.ledger is not None and (decision.receipt is None or not decision.receipt.ledger_record_id):
+        if self.ledger is not None and (decision.receipt is None or not getattr(decision.receipt, "ledger_record_id", None)):
             outcome = DecisionOutcome.DENY
             reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
             pol_decision = self._build_policy_decision(
@@ -825,10 +1004,36 @@ class ReflexGuardHook:
 
         # 4. Safe and confident
         outcome = DecisionOutcome.ALLOW
-        reason = f"Reflex verified action with full conformal confidence in {decision.latency_ms:.2f}ms"
+        lat_str = f"{decision.latency_ms:.2f}" if isinstance(decision.latency_ms, (int, float)) else str(decision.latency_ms)
+        reason = f"Reflex verified action with full conformal confidence in {lat_str}ms"
         pol_decision = self._build_policy_decision(
             proposal, outcome, RiskLevel.READ_ONLY, "reflex_verified_allow", reason
         )
+
+        chosen_profile = (
+            self.enforcement_profile.profile_id
+            if self.enforcement_profile is not None
+            else ("product_signed_v1" if self.engine.signing_key is not None else "diagnostic_local")
+        )
+        final_receipt = create_decision_receipt(
+            schema_name=decision.schema_name,
+            schema_digest=decision.schema_digest,
+            prompt=decision.prompt or prompt,
+            values=decision.values,
+            confidences=decision.confidences,
+            conformal_sets=decision.conformal_sets,
+            probabilities=decision.probabilities,
+            latency_ms=decision.latency_ms if isinstance(decision.latency_ms, (int, float)) else 0.1,
+            is_ambiguous=decision.is_ambiguous,
+            truth_ledger_head=self.ledger.head_hash() if self.ledger else "",
+            signing_key=self.engine.signing_key,
+            policy_decision=pol_decision,
+            action_proposal=proposal,
+            effective_alpha=self.alpha,
+            profile=chosen_profile,
+            ledger_record_id=getattr(decision.receipt, "ledger_record_id", None) if decision.receipt else None,
+        )
+        decision = replace(decision, receipt=final_receipt)
         return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
 
@@ -841,6 +1046,8 @@ __all__ = [
     "DecisionOutcome",
     "DefaultGuardDecisionSchema",
     "DeterministicPolicyEngine",
+    "ENFORCEMENT_PROFILE_V1",
+    "EnforcementProfile",
     "EvidenceRef",
     "GuardInterceptionResult",
     "PolicyDecision",
@@ -851,4 +1058,5 @@ __all__ = [
     "RiskLevel",
     "SystemOneGuardHook",
 ]
+
 

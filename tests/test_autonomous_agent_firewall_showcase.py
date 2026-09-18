@@ -30,6 +30,7 @@ from system1.compat.typesafe import (
     Choice,
     MultiChoice,
     Noul,
+    PromotionPolicy,
     Score,
     TypeSafeClient,
 )
@@ -242,15 +243,21 @@ def test_firewall_classification_and_conformal_accuracy():
     stream = get_interleaved_query_stream(dataset)
 
     projector = HybridProjector(dimension=384)
+    demo_policy = PromotionPolicy(
+        min_agreement_threshold=0.75,
+        false_allow_ceiling=0.0,
+        require_statistical_bound=False,
+    )
+    handler = make_firewall_baseline_handler(dataset)
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=20,
         min_agreement_threshold=0.8,
+        promotion_policy=demo_policy,
         projector=projector,
         dimension=384,
+        baseline_handler=handler,
     )
-    handler = make_firewall_baseline_handler(dataset)
-    client.baseline_handler = handler
 
     # Run through full 48 stream
     responses = [client.systemone(q["prompt"], schema_dict) for q in stream]

@@ -14,6 +14,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import math
 import threading
 import time
 from collections import OrderedDict
@@ -44,6 +45,13 @@ class CacheEntry:
     margin_threshold: float = 0.0
     strict: bool = False
     context_digest: str = ""
+    relative_odds_ratio: Optional[float] = None
+    confidence_floor_tau0: Optional[float] = None
+    recency_weighted: bool = False
+    model_digest: str = ""
+    projector_digest: str = ""
+    calibration_digest: str = ""
+    policy_epoch: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes cache entry metadata (without raw numpy embedding)."""
@@ -66,7 +74,78 @@ class CacheEntry:
             "margin_threshold": self.margin_threshold,
             "strict": self.strict,
             "context_digest": self.context_digest,
+            "relative_odds_ratio": self.relative_odds_ratio,
+            "confidence_floor_tau0": self.confidence_floor_tau0,
+            "recency_weighted": self.recency_weighted,
+            "model_digest": self.model_digest,
+            "projector_digest": self.projector_digest,
+            "calibration_digest": self.calibration_digest,
+            "policy_epoch": self.policy_epoch,
         }
+
+
+def _validate_cache_inputs(
+    prompt: str,
+    *,
+    embedding: Optional[Any] = None,
+    telemetry: Optional[Any] = None,
+    alpha: Optional[float] = None,
+    margin_threshold: Optional[float] = None,
+    relative_odds_ratio: Optional[float] = None,
+    confidence_floor_tau0: Optional[float] = None,
+    odds_ratio: Optional[float] = None,
+) -> None:
+    """Validates decision and cache parameters prior to key formation or index traversal."""
+    if not isinstance(prompt, str):
+        raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
+
+    if alpha is not None:
+        try:
+            a_val = float(alpha)
+        except (ValueError, TypeError) as ex:
+            raise TypeError(f"alpha must be a real number, got {alpha}") from ex
+        if math.isnan(a_val) or not (0.0 < a_val < 1.0):
+            raise ValueError(f"Significance level alpha must be in (0, 1), got {alpha}")
+
+    if margin_threshold is not None:
+        try:
+            m_val = float(margin_threshold)
+        except (ValueError, TypeError) as ex:
+            raise TypeError(f"margin_threshold must be a real number, got {margin_threshold}") from ex
+        if math.isnan(m_val) or m_val < 0.0:
+            raise ValueError(f"margin_threshold must be non-negative, got {margin_threshold}")
+
+    eff_odds = odds_ratio if odds_ratio is not None else relative_odds_ratio
+    if eff_odds is not None:
+        try:
+            o_val = float(eff_odds)
+        except (ValueError, TypeError) as ex:
+            raise TypeError(f"relative_odds_ratio must be a real number, got {eff_odds}") from ex
+        if math.isnan(o_val) or o_val <= 0.0:
+            raise ValueError(f"relative_odds_ratio must be positive, got {eff_odds}")
+
+    if confidence_floor_tau0 is not None:
+        try:
+            c_val = float(confidence_floor_tau0)
+        except (ValueError, TypeError) as ex:
+            raise TypeError(f"confidence_floor_tau0 must be a real number, got {confidence_floor_tau0}") from ex
+        if math.isnan(c_val) or c_val < 0.0:
+            raise ValueError(f"confidence_floor_tau0 must be non-negative, got {confidence_floor_tau0}")
+
+    if telemetry is not None:
+        if not isinstance(telemetry, (Mapping, Sequence, np.ndarray)):
+            raise TypeError(f"telemetry must be a Mapping, Sequence, or ndarray, got {type(telemetry).__name__}")
+        if isinstance(telemetry, np.ndarray) and not np.all(np.isfinite(telemetry)):
+            raise ValueError("telemetry array contains NaN or infinite values")
+
+    if embedding is not None:
+        if not isinstance(embedding, (np.ndarray, Sequence)):
+            raise TypeError(f"embedding must be a sequence or ndarray, got {type(embedding).__name__}")
+        emb_arr = np.asarray(embedding, dtype=np.float32)
+        if emb_arr.ndim > 2 or (emb_arr.ndim == 2 and emb_arr.shape[0] != 1 and emb_arr.shape[1] != 1):
+            raise ValueError(f"embedding must be a 1D vector, got shape {emb_arr.shape}")
+        if not np.all(np.isfinite(emb_arr)):
+            raise ValueError("embedding contains NaN or infinite values")
 
 
 def _digest_prompt(prompt: str) -> str:
@@ -75,17 +154,22 @@ def _digest_prompt(prompt: str) -> str:
 
 
 def _digest_telemetry(telemetry: Optional[Any]) -> str:
-    """Computes deterministic digest for telemetry vectors or dicts."""
+    """Computes deterministic 64-hex SHA-256 digest for telemetry vectors or dicts."""
     if telemetry is None:
         return ""
     if isinstance(telemetry, Mapping):
-        sorted_pairs = sorted((str(k), float(v)) for k, v in telemetry.items())
+        def _canonical_val(val: Any) -> Any:
+            try:
+                return float(val)
+            except (ValueError, TypeError):
+                return str(val)
+        sorted_pairs = sorted((str(k), _canonical_val(v)) for k, v in telemetry.items())
         raw = json.dumps(sorted_pairs, separators=(",", ":"))
-        return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+        return hashlib.sha256(raw.encode("utf-8")).hexdigest()
     if isinstance(telemetry, (list, tuple, np.ndarray)):
         arr = np.asarray(telemetry, dtype=np.float32).flatten()
-        return hashlib.sha256(arr.tobytes()).hexdigest()[:16]
-    return hashlib.sha256(str(telemetry).encode("utf-8")).hexdigest()[:16]
+        return hashlib.sha256(arr.tobytes()).hexdigest()
+    return hashlib.sha256(str(telemetry).encode("utf-8")).hexdigest()
 
 
 def _format_context(
@@ -95,11 +179,28 @@ def _format_context(
     alpha: Optional[float] = 0.05,
     margin_threshold: Optional[float] = 0.0,
     strict: bool = False,
+    relative_odds_ratio: Optional[float] = None,
+    odds_ratio: Optional[float] = None,
+    confidence_floor_tau0: Optional[float] = None,
+    recency_weighted: Optional[bool] = None,
+    model_digest: str = "",
+    projector_digest: str = "",
+    calibration_digest: str = "",
+    policy_epoch: int = 0,
 ) -> str:
-    """Formats execution context string for cache key isolation."""
+    """Formats execution context string for collision-resistant cache key isolation."""
     a_val = float(alpha) if alpha is not None else 0.05
     m_val = float(margin_threshold) if margin_threshold is not None else 0.0
-    return f"s:{schema_digest}|v:{model_version}|sc:{policy_scope}|a:{a_val:.6f}|m:{m_val:.6f}|st:{1 if strict else 0}"
+    eff_odds = odds_ratio if odds_ratio is not None else relative_odds_ratio
+    o_val = float(eff_odds) if eff_odds is not None else 0.0
+    tau0_val = float(confidence_floor_tau0) if confidence_floor_tau0 is not None else 0.0
+    rec_val = 1 if recency_weighted else 0
+    st_val = 1 if strict else 0
+    return (
+        f"s:{schema_digest}|v:{model_version}|md:{model_digest}|pd:{projector_digest}|"
+        f"cd:{calibration_digest}|sc:{policy_scope}|pe:{policy_epoch}|a:{a_val:.6f}|"
+        f"m:{m_val:.6f}|or:{o_val:.6f}|cf:{tau0_val:.6f}|rw:{rec_val}|st:{st_val}"
+    )
 
 
 class SemanticReflexCache:
@@ -151,6 +252,14 @@ class SemanticReflexCache:
         alpha: Optional[float] = 0.05,
         margin_threshold: Optional[float] = 0.0,
         strict: bool = False,
+        relative_odds_ratio: Optional[float] = None,
+        odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
+        model_digest: str = "",
+        projector_digest: str = "",
+        calibration_digest: str = "",
+        policy_epoch: int = 0,
     ) -> str:
         p_dig = _digest_prompt(prompt)
         t_dig = _digest_telemetry(telemetry)
@@ -161,6 +270,14 @@ class SemanticReflexCache:
             alpha=alpha,
             margin_threshold=margin_threshold,
             strict=strict,
+            relative_odds_ratio=relative_odds_ratio,
+            odds_ratio=odds_ratio,
+            confidence_floor_tau0=confidence_floor_tau0,
+            recency_weighted=recency_weighted,
+            model_digest=model_digest,
+            projector_digest=projector_digest,
+            calibration_digest=calibration_digest,
+            policy_epoch=policy_epoch,
         )
         return f"{p_dig}::{t_dig}::{ctx}" if t_dig else f"{p_dig}::{ctx}"
 
@@ -175,15 +292,35 @@ class SemanticReflexCache:
         alpha: Optional[float] = 0.05,
         margin_threshold: Optional[float] = 0.0,
         strict: bool = False,
+        relative_odds_ratio: Optional[float] = None,
+        odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
+        model_digest: str = "",
+        projector_digest: str = "",
+        calibration_digest: str = "",
+        policy_epoch: int = 0,
+        enforce_durability: bool = False,
     ) -> Optional[Tuple[CacheEntry, float]]:
         """Queries the cache with exact match first, then cosine similarity search.
+
+        Pre-validates all inputs before forming keys or querying indices.
+        Disables semantic cosine search when strict or enforce_durability is True.
 
         Returns:
             Tuple of (CacheEntry, similarity_score) if hit (similarity == 1.0 for exact hit),
             or None if miss.
         """
-        if not isinstance(prompt, str):
-            raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
+        _validate_cache_inputs(
+            prompt,
+            embedding=embedding,
+            telemetry=telemetry,
+            alpha=alpha,
+            margin_threshold=margin_threshold,
+            relative_odds_ratio=relative_odds_ratio,
+            confidence_floor_tau0=confidence_floor_tau0,
+            odds_ratio=odds_ratio,
+        )
 
         with self._lock:
             self._total_queries += 1
@@ -196,6 +333,14 @@ class SemanticReflexCache:
                 alpha=alpha,
                 margin_threshold=margin_threshold,
                 strict=strict,
+                relative_odds_ratio=relative_odds_ratio,
+                odds_ratio=odds_ratio,
+                confidence_floor_tau0=confidence_floor_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=model_digest,
+                projector_digest=projector_digest,
+                calibration_digest=calibration_digest,
+                policy_epoch=policy_epoch,
             )
 
             # 1. Exact Match Lookup (O(1), <0.005ms)
@@ -209,7 +354,8 @@ class SemanticReflexCache:
                 return entry, 1.0
 
             # 2. Semantic Cosine Similarity Search (O(N) BLAS dot product, <0.03ms)
-            if embedding is not None and self._embeddings is not None and len(self._embedding_entries) > 0:
+            # Suppressed in strict or enforcement mode to ensure exact, collision-resistant deterministic retrieval
+            if not (strict or enforce_durability) and embedding is not None and self._embeddings is not None and len(self._embedding_entries) > 0:
                 q_emb = np.asarray(embedding, dtype=np.float32).flatten()
                 norm = float(np.linalg.norm(q_emb))
                 if norm > 1e-12:
@@ -225,6 +371,14 @@ class SemanticReflexCache:
                         alpha=alpha,
                         margin_threshold=margin_threshold,
                         strict=strict,
+                        relative_odds_ratio=relative_odds_ratio,
+                        odds_ratio=odds_ratio,
+                        confidence_floor_tau0=confidence_floor_tau0,
+                        recency_weighted=recency_weighted,
+                        model_digest=model_digest,
+                        projector_digest=projector_digest,
+                        calibration_digest=calibration_digest,
+                        policy_epoch=policy_epoch,
                     )
                     mask = np.array([
                         ((e.telemetry is not None) == has_query_telem)
@@ -249,6 +403,13 @@ class SemanticReflexCache:
                             alpha=entry.alpha,
                             margin_threshold=entry.margin_threshold,
                             strict=entry.strict,
+                            relative_odds_ratio=entry.relative_odds_ratio,
+                            confidence_floor_tau0=entry.confidence_floor_tau0,
+                            recency_weighted=entry.recency_weighted,
+                            model_digest=entry.model_digest,
+                            projector_digest=entry.projector_digest,
+                            calibration_digest=entry.calibration_digest,
+                            policy_epoch=entry.policy_epoch,
                         )
                         if entry_key in self._exact_index:
                             self._exact_index.move_to_end(entry_key)
@@ -271,10 +432,26 @@ class SemanticReflexCache:
         alpha: Optional[float] = 0.05,
         margin_threshold: Optional[float] = 0.0,
         strict: bool = False,
+        relative_odds_ratio: Optional[float] = None,
+        odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
+        model_digest: str = "",
+        projector_digest: str = "",
+        calibration_digest: str = "",
+        policy_epoch: int = 0,
     ) -> CacheEntry:
         """Stores or updates a result in the L1 cache."""
-        if not isinstance(prompt, str):
-            raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
+        _validate_cache_inputs(
+            prompt,
+            embedding=embedding,
+            telemetry=telemetry,
+            alpha=alpha,
+            margin_threshold=margin_threshold,
+            relative_odds_ratio=relative_odds_ratio,
+            confidence_floor_tau0=confidence_floor_tau0,
+            odds_ratio=odds_ratio,
+        )
 
         with self._lock:
             key = self._make_key(
@@ -286,6 +463,14 @@ class SemanticReflexCache:
                 alpha=alpha,
                 margin_threshold=margin_threshold,
                 strict=strict,
+                relative_odds_ratio=relative_odds_ratio,
+                odds_ratio=odds_ratio,
+                confidence_floor_tau0=confidence_floor_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=model_digest,
+                projector_digest=projector_digest,
+                calibration_digest=calibration_digest,
+                policy_epoch=policy_epoch,
             )
             p_dig = _digest_prompt(prompt)
             t_dig = _digest_telemetry(telemetry)
@@ -296,9 +481,20 @@ class SemanticReflexCache:
                 alpha=alpha,
                 margin_threshold=margin_threshold,
                 strict=strict,
+                relative_odds_ratio=relative_odds_ratio,
+                odds_ratio=odds_ratio,
+                confidence_floor_tau0=confidence_floor_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=model_digest,
+                projector_digest=projector_digest,
+                calibration_digest=calibration_digest,
+                policy_epoch=policy_epoch,
             )
             a_val = float(alpha) if alpha is not None else 0.05
             m_val = float(margin_threshold) if margin_threshold is not None else 0.0
+            eff_odds = odds_ratio if odds_ratio is not None else relative_odds_ratio
+            o_val = float(eff_odds) if eff_odds is not None else None
+            tau0_val = float(confidence_floor_tau0) if confidence_floor_tau0 is not None else None
 
             safe_result = copy.deepcopy(result)
 
@@ -321,6 +517,13 @@ class SemanticReflexCache:
                 entry.margin_threshold = m_val
                 entry.strict = bool(strict)
                 entry.context_digest = ctx
+                entry.relative_odds_ratio = o_val
+                entry.confidence_floor_tau0 = tau0_val
+                entry.recency_weighted = bool(recency_weighted)
+                entry.model_digest = model_digest
+                entry.projector_digest = projector_digest
+                entry.calibration_digest = calibration_digest
+                entry.policy_epoch = int(policy_epoch)
                 if norm_emb is not None:
                     entry.embedding = norm_emb
                     if key in self._key_to_emb_idx and self._embeddings is not None:
@@ -359,6 +562,13 @@ class SemanticReflexCache:
                 margin_threshold=m_val,
                 strict=bool(strict),
                 context_digest=ctx,
+                relative_odds_ratio=o_val,
+                confidence_floor_tau0=tau0_val,
+                recency_weighted=bool(recency_weighted),
+                model_digest=model_digest,
+                projector_digest=projector_digest,
+                calibration_digest=calibration_digest,
+                policy_epoch=int(policy_epoch),
             )
             self._exact_index[key] = entry
 
@@ -399,6 +609,13 @@ class SemanticReflexCache:
                     alpha=e.alpha,
                     margin_threshold=e.margin_threshold,
                     strict=e.strict,
+                    relative_odds_ratio=e.relative_odds_ratio,
+                    confidence_floor_tau0=e.confidence_floor_tau0,
+                    recency_weighted=e.recency_weighted,
+                    model_digest=e.model_digest,
+                    projector_digest=e.projector_digest,
+                    calibration_digest=e.calibration_digest,
+                    policy_epoch=e.policy_epoch,
                 )
                 self._key_to_emb_idx[k] = i
         return True
@@ -518,6 +735,14 @@ class SemanticReflexCache:
         alpha: Optional[float] = 0.05,
         margin_threshold: Optional[float] = 0.0,
         strict: bool = False,
+        relative_odds_ratio: Optional[float] = None,
+        odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
+        model_digest: str = "",
+        projector_digest: str = "",
+        calibration_digest: str = "",
+        policy_epoch: int = 0,
     ) -> bool:
         """Checks whether the exact query exists in the cache."""
         with self._lock:
@@ -530,11 +755,23 @@ class SemanticReflexCache:
                 alpha=alpha,
                 margin_threshold=margin_threshold,
                 strict=strict,
+                relative_odds_ratio=relative_odds_ratio,
+                odds_ratio=odds_ratio,
+                confidence_floor_tau0=confidence_floor_tau0,
+                recency_weighted=recency_weighted,
+                model_digest=model_digest,
+                projector_digest=projector_digest,
+                calibration_digest=calibration_digest,
+                policy_epoch=policy_epoch,
             )
             return key in self._exact_index
 
 
+validate_cache_inputs = _validate_cache_inputs
+
 __all__ = [
     "CacheEntry",
     "SemanticReflexCache",
+    "_validate_cache_inputs",
+    "validate_cache_inputs",
 ]

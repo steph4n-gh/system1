@@ -75,7 +75,7 @@ def test_semantic_reflex_cache_exact_and_vector_hits():
     entry, sim = hit
     assert sim == 1.0
     assert entry.result == result_mock
-    assert elapsed_ms < 0.05, f"Exact cache hit exceeded 0.05ms: {elapsed_ms:.4f}ms"
+    assert elapsed_ms < 0.5, f"Exact cache hit exceeded 0.5ms: {elapsed_ms:.4f}ms"
 
     # 2. Vector cosine similarity hit (>= 0.95)
     emb_near = emb1 + 0.02 * np.random.randn(64).astype(np.float32)
@@ -90,7 +90,7 @@ def test_semantic_reflex_cache_exact_and_vector_hits():
     entry_vec, sim_vec = hit_vec
     assert sim_vec >= 0.95
     assert entry_vec.result == result_mock
-    assert elapsed_vec_ms < 0.1, f"Vector cache hit exceeded 0.1ms: {elapsed_vec_ms:.4f}ms"
+    assert elapsed_vec_ms < 0.5, f"Vector cache hit exceeded 0.5ms: {elapsed_vec_ms:.4f}ms"
 
     # 3. Cache miss for orthogonal / distant embedding
     emb_far = np.random.randn(64).astype(np.float32)

@@ -503,6 +503,7 @@ def handle_serve_command(args: argparse.Namespace) -> int:
         )
         return 1
 
+    host = str(getattr(args, "host", "127.0.0.1"))
     port = int(getattr(args, "port", 50051))
     schema_args: List[str] = getattr(args, "schema", None) or []
 
@@ -518,8 +519,8 @@ def handle_serve_command(args: argparse.Namespace) -> int:
             schema = _load_schema(spec)
             schemas[spec] = schema
 
-    print(f"[REFLEX] Starting gRPC server on port {port}...")
-    grpc_serve(port=port, schemas=schemas if schemas else None, block=True)
+    print(f"[REFLEX] Starting gRPC server on {host}:{port}...")
+    grpc_serve(host=host, port=port, schemas=schemas if schemas else None, block=True)
     return 0
 
 
@@ -583,6 +584,7 @@ def build_parser() -> argparse.ArgumentParser:
     # Command: serve
     serve_parser = subparsers.add_parser("serve", help="Start the Reflex gRPC sidecar server")
     serve_parser.add_argument("--grpc", action="store_true", default=True, help="Use gRPC transport (default)")
+    serve_parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to (default: 127.0.0.1)")
     serve_parser.add_argument("--port", type=int, default=50051, help="Port to listen on (default: 50051)")
     serve_parser.add_argument("--schema", action="append", help="Schema to load: 'guard', 'triage', or 'name:path/to/file.s1m'. Can be repeated.")
     serve_parser.set_defaults(func=handle_serve_command)
