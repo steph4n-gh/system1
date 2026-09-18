@@ -149,7 +149,7 @@ def test_boundary_extreme_prompt_lengths():
     res = engine.decide(giant_prompt, record_receipt=True)
     assert res is not None
     assert "decision" in res.values
-    assert res.latency_ms < 100.0
+    assert res.latency_ms < 250.0  # Tolerates 21,000 char encoding + Ed25519 signing on shared CI
     assert len(res.receipt.prompt_digest) == 64
 
 

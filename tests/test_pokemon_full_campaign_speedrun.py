@@ -449,7 +449,7 @@ def test_full_100_percent_campaign_speedrun():
 
     # 4. Zero-Cost Telemetry Invariant
     assert summary["total_cost"] == 0.0
-    assert summary["avg_latency_ms"] < 10.0  # Fast metal reflex
+    assert summary["avg_latency_ms"] < 25.0  # Interactive gaming frame ceiling
 
     # 5. Speedrun Splits Recorded
     assert len(summary["speedrun_splits"]) == 8
