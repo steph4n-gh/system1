@@ -16,7 +16,7 @@
   <a href="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-366%20passed-brightgreen.svg" alt="366 Tests Passed" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-377%20passed-brightgreen.svg" alt="377 Tests Passed" /></a>
   <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-~1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
   <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/data_egress-0%25_(100%25_local)-success.svg" alt="Zero Data Egress" /></a>
 </p>
@@ -26,6 +26,8 @@
   <a href="#-30-second-quickstart">30s Quickstart</a> •
   <a href="#-dual-process-cognitive-architecture-2026-edition">2026 Cognitive Stack</a> •
   <a href="#-the-4-tier-1-architectural-levers">4 Levers</a> •
+  <a href="#-flagship-showcases">Visual Proof</a> •
+  <a href="#-native-framework-integrations-mcp-fastapi-langchain">Integrations</a> •
   <a href="#-production-demo--benchmark-catalog-17-demos">Demos (17)</a> •
   <a href="#-privacy--zero-data-egress">Privacy</a> •
   <a href="#-1-line-typesafe-ai--jev-drop-in">TypeSafe Drop-in</a> •
@@ -42,7 +44,7 @@ Developers often ask: *Is this project called Reflex or System 1?*
 |---|---|---|
 | **The Product & Runtime Brand** | **Reflex** | The official open-source package name, repo (`reflex`), CLI command (`reflex`), and framework brand. It captures the machine-native reaction speed (< 1ms on local metal) and non-autoregressive execution. |
 | **The Cognitive Paradigm** | **System 1** | Daniel Kahneman’s foundational framework (*Thinking, Fast and Slow*). Reflex implements the machine-native **System 1 (fast, instinctive reflex)** layer of the agentic cognitive stack, designed to pair with a deliberate **System 2 (slow governor)** like Astra, Fable, Gemini, or Grok. |
-| **Twin-Namespace Ergonomics** | `import reflex`<br>`import system1` | Full 1:1 symmetry. `import reflex` is the primary modern brand. `import system1` is a complete, first-class twin alias for cognitive architecture purists and backwards compatibility. Both share identical 92 exports and 15 submodules. |
+| **Twin-Namespace Ergonomics** | `import reflex`<br>`import system1` | Full 1:1 symmetry. `import reflex` is the primary modern brand. `import system1` is a complete, first-class twin alias for cognitive architecture purists and backwards compatibility. Both share identical 101 exports and 16 submodules. |
 
 ```python
 import reflex
@@ -177,6 +179,10 @@ res_crit = engine.evaluate("Worker node health", telemetry={"cpu": 99.2, "error_
 Game Boy emulators run at **60 frames per second (16.6ms per frame)**. Cloud LLMs take 300–1,500ms and cost real tokens per button press. 
 Reflex evaluates PyBoy Game Boy RAM directly, generating battle commands and overworld navigation in **~38 microseconds** on CPU metal (**25,000+ QPS**).
 
+<p align="center">
+  <img src="assets/pokemon-reflex-60fps.gif" alt="Reflex 60 FPS Game Boy Pokémon On-Metal Agent" width="75%" />
+</p>
+
 ```bash
 # Instant Live Combat Window (bypasses intro, starts in Rival 1 combat in 0.7s)
 python3 examples/pokemon_gameboy_gui.py --game red --mode battle --speed 1
@@ -191,6 +197,10 @@ Recreates Diogo Almeida's (CEO of TypeSafe AI / Jev) viral demo playing Frank La
 - **Dual-Pane ASCII HUD**: Visualizes manufacturing metrics on the left and calibrated probability bars on the right.
 - **4 Operational Modes**: `dropin` (100% local metal), `baseline` (simulated cloud), `compare` (head-to-head local vs WAN), and `cutover` (Trojan Horse apprentice-to-metal auto-transition).
 
+<p align="center">
+  <img src="assets/paperclips-cutover.gif" alt="Universal Paperclips Trojan Horse Auto-Cutover Dual-Pane HUD" width="85%" />
+</p>
+
 ```bash
 # Run local drop-in mode on Apple Silicon Metal
 python3 examples/paperclips_typesafe_dropin.py --mode dropin --steps 5
@@ -200,6 +210,70 @@ python3 examples/paperclips_typesafe_dropin.py --mode compare --steps 3
 
 # Run Trojan Horse auto-cutover (cloud apprentice -> 100% local metal)
 python3 examples/paperclips_typesafe_dropin.py --mode cutover --steps 5 --threshold 3
+```
+
+---
+
+## 🔌 Native Framework Integrations (MCP, FastAPI, LangChain)
+
+Reflex ships with native, zero-friction integration adapters for modern agent stacks:
+
+### 1. Model Context Protocol (MCP) Safety Proxy
+Intercept MCP tool execution JSON-RPC calls on local metal in **< 1ms** with fail-closed safety and cryptographic witness receipts:
+
+```python
+from reflex.integrations import ReflexMCPProxy, wrap_mcp_tool
+
+# Decorator wraps any standard Python function exposed as an MCP tool
+@wrap_mcp_tool(tool_name="read_file")
+def fetch_document(path: str) -> str:
+    """Inspect read-only project documentation."""
+    with open(path) as f:
+        return f.read()
+
+# Raw JSON-RPC interceptor for MCP servers
+proxy = ReflexMCPProxy(tenant_id="prod_cluster")
+allowed, err_resp, result = proxy.intercept_jsonrpc(mcp_request_json)
+if not allowed:
+    return err_resp  # Returns standard JSON-RPC 2.0 error (-32000) with Ed25519 audit proof
+```
+
+### 2. FastAPI / Starlette Gateway Middleware
+Intercept incoming agent / chat requests, resolve confident classifications locally in **< 1ms** ($0 token cost, 0 bytes egress), and escalate genuine edge cases to deliberate frontier governors (Astra, Fable, Gemini, Grok):
+
+```python
+from fastapi import FastAPI
+from reflex.integrations import add_reflex_gateway
+from reflex import DecisionSchema, ChoiceField
+
+app = FastAPI()
+
+class IntentRouter(DecisionSchema):
+    route = ChoiceField(
+        options=["technical_support", "billing_inquiry", "escalate_to_frontier"],
+        descriptions={
+            "technical_support": "Software setup, installation, or debugging questions",
+            "billing_inquiry": "Invoices, subscription plans, and refunds",
+            "escalate_to_frontier": "Complex reasoning, novel queries, or ambiguous disputes",
+        }
+    )
+
+# 1-line gateway middleware
+add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
+```
+
+### 3. LangChain & Autonomous Agent Guard
+Intercept agent tool calls before invocation, preventing destructive shell actions, credential theft, and prompt injection:
+
+```python
+from reflex.integrations import ReflexGuardCallbackHandler, wrap_langchain_tool
+
+# Register callback handler with any LangChain AgentExecutor
+guard_handler = ReflexGuardCallbackHandler()
+agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
+
+# Or guard specific tools directly
+guarded_tool = wrap_langchain_tool(bash_tool, tool_name="system_terminal")
 ```
 
 ---
