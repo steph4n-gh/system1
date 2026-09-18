@@ -8,7 +8,7 @@ import pytest
 import system1
 from system1.cli import build_parser
 
-ALL_15_SUBMODULES = [
+ALL_16_SUBMODULES = [
     "cache",
     "calibration",
     "cli",
@@ -18,6 +18,7 @@ ALL_15_SUBMODULES = [
     "embeddings",
     "engine",
     "guard",
+    "integrations",
     "ledger",
     "model",
     "neural",
@@ -108,16 +109,16 @@ def test_system1_namespace_exports():
 
 
 def test_system1_submodules():
-    """Verify all 15 submodules exist on system1, match disk discovery, and export valid symbols."""
+    """Verify all 16 submodules exist on system1, match disk discovery, and export valid symbols."""
     import types
     import pkgutil
 
     discovered = sorted([m.name for m in pkgutil.iter_modules(system1.__path__)])
-    assert discovered == ALL_15_SUBMODULES, (
-        f"Submodule inventory mismatch: discovered={discovered} vs expected={ALL_15_SUBMODULES}"
+    assert discovered == ALL_16_SUBMODULES, (
+        f"Submodule inventory mismatch: discovered={discovered} vs expected={ALL_16_SUBMODULES}"
     )
 
-    for sub in ALL_15_SUBMODULES:
+    for sub in ALL_16_SUBMODULES:
         assert hasattr(system1, sub), f"system1 missing submodule {sub}"
         submod = getattr(system1, sub)
         assert submod is not None, f"Submodule {sub} is None"
@@ -245,22 +246,17 @@ def test_reflex_package_parity():
     assert res.choice in ("a", "b")
 
 
-def test_reflex_all_15_submodules_import_and_parity():
-    """Verify all 15 submodules in system1 can be imported via reflex.<submodule> and __all__ matches."""
+def test_reflex_all_16_submodules_import_and_parity():
+    """Verify all 16 submodules in system1 can be imported via reflex.<submodule> and __all__ matches."""
     import importlib
     import pkgutil
     import system1
     import reflex
 
-    expected_15 = [
-        "cache", "calibration", "cli", "compat", "compiler",
-        "core", "embeddings", "engine", "guard", "ledger",
-        "model", "neural", "receipt", "schema", "telemetry",
-    ]
     discovered = sorted([m.name for m in pkgutil.iter_modules(system1.__path__)])
-    assert discovered == expected_15, f"Expected 15 submodules {expected_15}, discovered {discovered}"
+    assert discovered == ALL_16_SUBMODULES, f"Expected 16 submodules {ALL_16_SUBMODULES}, discovered {discovered}"
 
-    for sub in expected_15:
+    for sub in ALL_16_SUBMODULES:
         s_mod = importlib.import_module(f"system1.{sub}")
         r_mod = importlib.import_module(f"reflex.{sub}")
 
@@ -377,11 +373,11 @@ def test_reflex_cli_main_entrypoint(capsys):
 
 
 def test_system1_dynamic_submodule_getattr():
-    """Verify getattr(system1, submod) dynamically resolves all 15 submodules and __dir__ includes them."""
+    """Verify getattr(system1, submod) dynamically resolves all 16 submodules and __dir__ includes them."""
     import importlib
 
     system1_dir = dir(system1)
-    for sub in ALL_15_SUBMODULES:
+    for sub in ALL_16_SUBMODULES:
         assert hasattr(system1, sub), f"hasattr(system1, {sub!r}) returned False"
         mod = getattr(system1, sub)
         assert mod is not None, f"getattr(system1, {sub!r}) returned None"
@@ -492,18 +488,18 @@ def test_system1_and_reflex_negative_attribute_resolution():
 
 
 def test_submodule_inventory_and_module_map_completeness():
-    """Verify disk packages, _MODULE_MAP, and __dir__ match all 15 submodules across both namespaces."""
+    """Verify disk packages, _MODULE_MAP, and __dir__ match all 16 submodules across both namespaces."""
     import pkgutil
     import reflex
 
     s1_disk = set(m.name for m in pkgutil.iter_modules(system1.__path__))
     r_disk = set(m.name for m in pkgutil.iter_modules(reflex.__path__))
-    expected = set(ALL_15_SUBMODULES)
+    expected = set(ALL_16_SUBMODULES)
 
     assert s1_disk == expected, f"system1 disk submodules mismatch: {s1_disk ^ expected}"
     assert r_disk == expected, f"reflex disk submodules mismatch: {r_disk ^ expected}"
 
-    # Verify all 15 submodules appear in dir()
+    # Verify all 16 submodules appear in dir()
     assert expected.issubset(set(dir(system1))), f"Missing from dir(system1): {expected - set(dir(system1))}"
     assert expected.issubset(set(dir(reflex))), f"Missing from dir(reflex): {expected - set(dir(reflex))}"
 

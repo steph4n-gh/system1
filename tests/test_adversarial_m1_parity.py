@@ -22,7 +22,7 @@ from system1.guard import (
     SystemOneGuardHook,
 )
 
-ALL_15_SUBMODULES = [
+ALL_16_SUBMODULES = [
     "cache",
     "calibration",
     "cli",
@@ -32,6 +32,7 @@ ALL_15_SUBMODULES = [
     "embeddings",
     "engine",
     "guard",
+    "integrations",
     "ledger",
     "model",
     "neural",
@@ -42,8 +43,8 @@ ALL_15_SUBMODULES = [
 
 
 def test_static_and_dynamic_submodule_imports():
-    """Verify static and dynamic importability of all 15 submodules in reflex and system1."""
-    for sub in ALL_15_SUBMODULES:
+    """Verify static and dynamic importability of all 16 submodules in reflex and system1."""
+    for sub in ALL_16_SUBMODULES:
         # Dynamic import
         r_mod = importlib.import_module(f"reflex.{sub}")
         s_mod = importlib.import_module(f"system1.{sub}")
@@ -83,10 +84,10 @@ def test_toplevel_symbols_identity_across_all():
 
 
 def test_reflex_dynamic_submodule_getattr_and_hasattr():
-    """Verify hasattr(reflex, submod) and getattr(reflex, submod) for all 15 submodules."""
+    """Verify hasattr(reflex, submod) and getattr(reflex, submod) for all 16 submodules."""
     import reflex
 
-    for sub in ALL_15_SUBMODULES:
+    for sub in ALL_16_SUBMODULES:
         assert hasattr(reflex, sub), f"hasattr(reflex, {sub!r}) is False"
         mod = getattr(reflex, sub)
         expected = importlib.import_module(f"reflex.{sub}")
@@ -104,7 +105,7 @@ import system1
 
 submodules = [
     "cache", "calibration", "cli", "compat", "compiler",
-    "core", "embeddings", "engine", "guard", "ledger",
+    "core", "embeddings", "engine", "guard", "integrations", "ledger",
     "model", "neural", "receipt", "schema", "telemetry"
 ]
 

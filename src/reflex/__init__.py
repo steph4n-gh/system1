@@ -103,6 +103,15 @@ from system1 import (
     CacheEntry,
     TelemetryProjector,
     evaluate,
+    ReflexMCPProxy,
+    ReflexMCPBlockedError,
+    wrap_mcp_tool,
+    ReflexGatewayMiddleware,
+    add_reflex_gateway,
+    ReflexGuardCallbackHandler,
+    ReflexToolInterceptor,
+    ReflexGuardBlockedException,
+    wrap_langchain_tool,
 )
 from system1 import __all__ as _system1_all
 
@@ -119,6 +128,7 @@ _SUBMODULE_NAMES = {
     "embeddings",
     "engine",
     "guard",
+    "integrations",
     "ledger",
     "model",
     "neural",
@@ -129,7 +139,7 @@ _SUBMODULE_NAMES = {
 
 # Dynamic submodule and lazy symbol dispatch map
 _MODULE_MAP = {
-    # 15 submodules
+    # 16 submodules
     "cache": "reflex.cache",
     "calibration": "reflex.calibration",
     "cli": "reflex.cli",
@@ -139,6 +149,7 @@ _MODULE_MAP = {
     "embeddings": "reflex.embeddings",
     "engine": "reflex.engine",
     "guard": "reflex.guard",
+    "integrations": "reflex.integrations",
     "ledger": "reflex.ledger",
     "model": "reflex.model",
     "neural": "reflex.neural",
@@ -219,6 +230,16 @@ _MODULE_MAP = {
     # compiler
     "ReflexCompiler": "reflex.compiler",
     "CompiledSystemOneModel": "reflex.compiler",
+    # integrations
+    "ReflexMCPProxy": "reflex.integrations",
+    "ReflexMCPBlockedError": "reflex.integrations",
+    "wrap_mcp_tool": "reflex.integrations",
+    "ReflexGatewayMiddleware": "reflex.integrations",
+    "add_reflex_gateway": "reflex.integrations",
+    "ReflexGuardCallbackHandler": "reflex.integrations",
+    "ReflexToolInterceptor": "reflex.integrations",
+    "ReflexGuardBlockedException": "reflex.integrations",
+    "wrap_langchain_tool": "reflex.integrations",
 }
 
 
@@ -238,4 +259,4 @@ def __getattr__(name: str) -> Any:
 
 
 def __dir__() -> list[str]:
-    return sorted(set(globals().keys()) | set(__all__) | set(_MODULE_MAP.keys()))
+    return sorted(set(globals().keys()) | set(__all__) | set(_MODULE_MAP.keys()) | _SUBMODULE_NAMES)

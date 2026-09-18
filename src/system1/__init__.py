@@ -112,6 +112,7 @@ _SUBMODULE_NAMES = {
     "embeddings",
     "engine",
     "guard",
+    "integrations",
     "ledger",
     "model",
     "neural",
@@ -122,7 +123,7 @@ _SUBMODULE_NAMES = {
 
 # Lazy-loaded governance modules and symbols (cryptography, SQLite, reference monitor, compat)
 _MODULE_MAP = {
-    # 15 submodules
+    # 16 submodules
     "cache": "system1.cache",
     "calibration": "system1.calibration",
     "cli": "system1.cli",
@@ -132,6 +133,7 @@ _MODULE_MAP = {
     "embeddings": "system1.embeddings",
     "engine": "system1.engine",
     "guard": "system1.guard",
+    "integrations": "system1.integrations",
     "ledger": "system1.ledger",
     "model": "system1.model",
     "neural": "system1.neural",
@@ -212,6 +214,16 @@ _MODULE_MAP = {
     # compiler
     "ReflexCompiler": "system1.compiler",
     "CompiledSystemOneModel": "system1.compiler",
+    # integrations
+    "ReflexMCPProxy": "system1.integrations",
+    "ReflexMCPBlockedError": "system1.integrations",
+    "wrap_mcp_tool": "system1.integrations",
+    "ReflexGatewayMiddleware": "system1.integrations",
+    "add_reflex_gateway": "system1.integrations",
+    "ReflexGuardCallbackHandler": "system1.integrations",
+    "ReflexToolInterceptor": "system1.integrations",
+    "ReflexGuardBlockedException": "system1.integrations",
+    "wrap_langchain_tool": "system1.integrations",
 }
 
 
@@ -337,4 +349,14 @@ __all__ = [
     "CacheEntry",
     "TelemetryProjector",
     "evaluate",
+    # Framework Integrations (MCP, FastAPI, LangChain)
+    "ReflexMCPProxy",
+    "ReflexMCPBlockedError",
+    "wrap_mcp_tool",
+    "ReflexGatewayMiddleware",
+    "add_reflex_gateway",
+    "ReflexGuardCallbackHandler",
+    "ReflexToolInterceptor",
+    "ReflexGuardBlockedException",
+    "wrap_langchain_tool",
 ]
