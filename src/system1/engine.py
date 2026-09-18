@@ -745,6 +745,10 @@ class ReflexEngine:
             "updated_fields": updated_fields,
         }
 
+    # Cognitive dual-process and execution pipeline aliases
+    learn_from_system2 = learn_from_tier2
+    learn_from_tier3 = learn_from_tier2
+
     def decide_batch(
         self,
         prompts: Sequence[str],

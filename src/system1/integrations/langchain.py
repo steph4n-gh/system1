@@ -43,6 +43,10 @@ class ReflexGuardBlockedException(PermissionError):
         super().__init__(f"Reflex Guard Blocked Tool Execution: {self.outcome.value} - {self.reason}")
 
 
+# Alias matching Technical Specification Section 7.3
+ReflexSecurityException = ReflexGuardBlockedException
+
+
 class ReflexGuardCallbackHandler(_BaseCallbackHandler):
     """LangChain CallbackHandler enforcing sub-millisecond Reflex safety before tool execution."""
 
@@ -192,6 +196,7 @@ def wrap_langchain_tool(
 
 __all__ = [
     "ReflexGuardBlockedException",
+    "ReflexSecurityException",
     "ReflexGuardCallbackHandler",
     "ReflexToolInterceptor",
     "wrap_langchain_tool",

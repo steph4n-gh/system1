@@ -845,7 +845,8 @@ class TypeSafeClient:
             raise ValueError(f"Invalid mode {mode!r}. Expected one of: {', '.join(valid_modes)}")
         self.mode = mode
         self.cutover_threshold = int(cutover_threshold)
-        self.min_agreement_threshold = float(min_agreement_threshold)
+        agreement_alias = kwargs.get("agreement_threshold", min_agreement_threshold)
+        self.min_agreement_threshold = float(agreement_alias)
 
         self.signing_key = signing_key
         self.ledger = ledger

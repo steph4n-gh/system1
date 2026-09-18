@@ -267,6 +267,10 @@ class CompiledSystemOneModel:
                 "updated_fields": updated_fields,
             }
 
+    # Cognitive dual-process and execution pipeline aliases
+    learn_from_system2 = learn_from_tier2
+    learn_from_tier3 = learn_from_tier2
+
     def to_bytes(self, include_covariance: bool = False) -> bytes:
         """Serializes the compiled model into compact .s1m binary bytes.
 

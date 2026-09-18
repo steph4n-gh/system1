@@ -504,3 +504,30 @@ def test_submodule_inventory_and_module_map_completeness():
     assert expected.issubset(set(dir(reflex))), f"Missing from dir(reflex): {expected - set(dir(reflex))}"
 
 
+def test_spec_harmonization_aliases():
+    """Verify spec harmonization aliases for exceptions, TypeSafeClient, and engine learning methods."""
+    import reflex
+    import system1
+    from system1.integrations.langchain import ReflexSecurityException, ReflexGuardBlockedException
+    from reflex.integrations.langchain import ReflexSecurityException as ReflexSecurityExceptionReflex
+
+    # 1. Exception alias parity
+    assert ReflexSecurityException is ReflexGuardBlockedException
+    assert ReflexSecurityExceptionReflex is ReflexSecurityException
+
+    # 2. TypeSafeClient agreement_threshold alias
+    client = system1.compat.typesafe.TypeSafeClient(agreement_threshold=0.95)
+    assert client.min_agreement_threshold == 0.95
+    client_r = reflex.compat.typesafe.TypeSafeClient(agreement_threshold=0.92)
+    assert client_r.min_agreement_threshold == 0.92
+
+    # 3. Engine and Model System 2 / Tier 3 learning aliases
+    assert system1.ReflexEngine.learn_from_system2 is system1.ReflexEngine.learn_from_tier2
+    assert system1.ReflexEngine.learn_from_tier3 is system1.ReflexEngine.learn_from_tier2
+    assert reflex.ReflexEngine.learn_from_system2 is reflex.ReflexEngine.learn_from_tier2
+
+    assert system1.compiler.CompiledSystemOneModel.learn_from_system2 is system1.compiler.CompiledSystemOneModel.learn_from_tier2
+    assert system1.core.SystemOneModel.learn_from_system2 is system1.core.SystemOneModel.learn_from_tier2
+
+
+
