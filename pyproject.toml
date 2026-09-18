@@ -5,11 +5,24 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "system1"
 version = "0.1.0"
-description = "System 1: Machine-Native Decision Runtime with sub-2ms local execution, calibration, conformal prediction, and cryptographic receipts."
+description = "Reflex: Machine-Native System 1 Decision Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
-license = "Apache-2.0"
-authors = [{name = "System 1 Authors"}]
+license = {text = "Apache-2.0"}
+authors = [{name = "Reflex / System 1 Authors"}]
 requires-python = ">=3.11"
+keywords = [
+    "reflex",
+    "system1",
+    "decision-runtime",
+    "sub-millisecond",
+    "apple-silicon",
+    "mlx",
+    "conformal-prediction",
+    "dual-process",
+    "zero-egress",
+    "ed25519",
+    "audit-receipts",
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -30,6 +43,7 @@ dependencies = [
 Homepage = "https://github.com/steph4n-gh/reflex"
 Repository = "https://github.com/steph4n-gh/reflex.git"
 Documentation = "https://github.com/steph4n-gh/reflex#readme"
+"Issue Tracker" = "https://github.com/steph4n-gh/reflex/issues"
 
 [project.optional-dependencies]
 metal = [

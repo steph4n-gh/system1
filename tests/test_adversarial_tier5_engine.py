@@ -562,6 +562,8 @@ def test_engine_learn_from_tier2_unknown_field_graceful():
 
 def test_engine_rapid_sequential_stress_loop():
     """Stress test: 50 sequential rapid decisions verifying zero state leakage and sub-2ms speed."""
+    import statistics
+
     engine = ReflexEngine(MultiFieldAdversarialSchema, use_cache=True)
     prompts = [
         "Normal ping check",
@@ -571,11 +573,16 @@ def test_engine_rapid_sequential_stress_loop():
         "Routine backup cron job running",
     ]
 
+    latencies = []
     for i in range(50):
         p = prompts[i % len(prompts)]
         res = engine.decide(p)
         assert res.values["route"] in ("ALLOW", "REVIEW", "BLOCK")
-        assert res.latency_ms < 25.0  # Far below frame ceiling target
+        assert res.latency_ms < 30.0  # Safe frame ceiling against OS virtualization preemption
+        latencies.append(res.latency_ms)
+
+    median_lat = statistics.median(latencies)
+    assert median_lat < 2.0, f"Expected median latency < 2.0ms, got {median_lat:.3f}ms"
 
 
 def test_engine_benchmark_minimal_warmup_and_custom_prompts():

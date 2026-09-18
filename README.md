@@ -2,8 +2,13 @@
   <img src="assets/reflex-hero.jpg" alt="Reflex: Machine-Native System 1 Decision Runtime" width="100%" />
 </p>
 
+<p align="center">
+  <a href="https://github.com/steph4n-gh/reflex"><img src="assets/reflex-logo.jpg" alt="Reflex Logo" width="100" /></a>
+</p>
+
 # Reflex: Machine-Native System 1 Decision Runtime
 
+[![CI](https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml/badge.svg)](https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](pyproject.toml)
 [![Tests](https://img.shields.io/badge/tests-366%20passed-brightgreen.svg)](tests/)
@@ -930,6 +935,20 @@ client = typesafe.Client()
 ```
 
 > **Interactive Showcase**: Run `python3 examples/paperclips_typesafe_dropin.py --mode dropin --steps 5` for an end-to-end demonstration of the 1-line `patch_typesafe()` drop-in running 100% on-device on local metal!
+
+---
+
+## 🎨 Visual Assets & Architecture Media
+
+All project diagrams, banners, and vector assets are maintained in [`assets/`](assets/):
+
+| Asset | Format | Dimensions | Description |
+| :--- | :--- | :--- | :--- |
+| [`reflex-hero.jpg`](assets/reflex-hero.jpg) | JPEG | 1376 × 768 | High-resolution obsidian & cyber-cyan neural hardware banner |
+| [`reflex-logo.jpg`](assets/reflex-logo.jpg) | JPEG | 1024 × 1024 | Cybernetic square app mark & icon |
+| [`architecture.svg`](assets/architecture.svg) / [`.png`](assets/architecture.png) | SVG / PNG | 1000 × 680 | Vector cognitive flow (Reflex Engine, Conformal Gate, Deliberate Governor, Sherman-Morrison) |
+| [`benchmark-chart.svg`](assets/benchmark-chart.svg) / [`.png`](assets/benchmark-chart.png) | SVG / PNG | 960 × 480 | Logarithmic empirical latency benchmark (<10µs L1 vs ~0.98ms forward pass vs cloud frontier LLM) |
+| [`social-preview.svg`](assets/social-preview.svg) / [`.png`](assets/social-preview.png) | SVG / PNG | 1280 × 640 | OpenGraph 16:9 social card banner for GitHub repository and link previews |
 
 ---
 

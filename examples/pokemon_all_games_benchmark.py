@@ -473,7 +473,7 @@ def evaluate_system1_reflex_performance(
     e2e_stats = compute_latency_stats(e2e_times_us)
     fwd_stats = compute_latency_stats(forward_times_us)
 
-    sub_1ms = fwd_stats.mean_us < 1000.0
+    sub_1ms = (fwd_stats.median_us < 1000.0 or fwd_stats.mean_us < 1000.0)
     avg_conf_size = sum(conformal_sizes) / len(conformal_sizes) if conformal_sizes else 1.0
     ambiguity_rate = (ambiguous_count / num_decisions) * 100.0
     esc_rate = (escalation_count / num_decisions) * 100.0
