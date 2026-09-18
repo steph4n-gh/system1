@@ -164,6 +164,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
             )
             if receipt_digest:
                 try:
+                    pub_key = self.guard.engine.signing_key.public_key() if self.guard.engine.signing_key else None
                     ledger.record_execution_outcome(
                         action_id=action_id,
                         receipt_digest=receipt_digest,
@@ -172,6 +173,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         tenant_id=self.tenant_id,
                         principal_id=str(run_id or self.principal_id),
                         scope="langchain:tools:exec:outcome",
+                        trusted_public_key=pub_key,
                     )
                 except Exception as le:
                     raise ReflexIndeterminateExecutionError(
@@ -210,6 +212,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
             )
             if receipt_digest:
                 try:
+                    pub_key = self.guard.engine.signing_key.public_key() if self.guard.engine.signing_key else None
                     ledger.record_execution_outcome(
                         action_id=action_id,
                         receipt_digest=receipt_digest,
@@ -218,6 +221,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         tenant_id=self.tenant_id,
                         principal_id=str(run_id or self.principal_id),
                         scope="langchain:tools:exec:outcome",
+                        trusted_public_key=pub_key,
                     )
                 except Exception as le:
                     raise ReflexIndeterminateExecutionError(
@@ -310,8 +314,6 @@ class ReflexToolInterceptor:
         )
         if receipt:
             receipt_digest = receipt.compute_digest()
-        elif interception and interception.decision_result and interception.decision_result.schema_digest:
-            receipt_digest = interception.decision_result.schema_digest
 
         prop = getattr(interception, "proposal", None)
         if isinstance(prop, ActionProposal):
@@ -368,6 +370,7 @@ class ReflexToolInterceptor:
         if ledger is not None and receipt_digest:
             outcome_status = "FAILED" if exec_error is not None else "SUCCEEDED"
             try:
+                pub_key = self.guard.engine.signing_key.public_key() if self.guard.engine.signing_key else None
                 ledger.record_execution_outcome(
                     action_id=action_id,
                     receipt_digest=receipt_digest,
@@ -377,6 +380,7 @@ class ReflexToolInterceptor:
                     tenant_id="tenant_reflex_tool",
                     principal_id="agent_caller",
                     scope="langchain:tool:invoke:outcome",
+                    trusted_public_key=pub_key,
                 )
             except Exception as le:
                 raise ReflexIndeterminateExecutionError(
@@ -452,8 +456,6 @@ class ReflexToolInterceptor:
         )
         if receipt:
             receipt_digest = receipt.compute_digest()
-        elif interception and interception.decision_result and interception.decision_result.schema_digest:
-            receipt_digest = interception.decision_result.schema_digest
 
         prop = getattr(interception, "proposal", None)
         if isinstance(prop, ActionProposal):
@@ -521,6 +523,7 @@ class ReflexToolInterceptor:
         if ledger is not None and receipt_digest:
             outcome_status = "FAILED" if exec_error is not None else "SUCCEEDED"
             try:
+                pub_key = self.guard.engine.signing_key.public_key() if self.guard.engine.signing_key else None
                 ledger.record_execution_outcome(
                     action_id=action_id,
                     receipt_digest=receipt_digest,
@@ -530,6 +533,7 @@ class ReflexToolInterceptor:
                     tenant_id="tenant_reflex_tool",
                     principal_id="agent_caller",
                     scope="langchain:tool:ainvoke:outcome",
+                    trusted_public_key=pub_key,
                 )
             except Exception as le:
                 raise ReflexIndeterminateExecutionError(

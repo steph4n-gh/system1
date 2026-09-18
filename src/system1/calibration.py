@@ -245,7 +245,18 @@ class DecisionCalibrator:
         labels = np.asarray(labels, dtype=np.int64)
 
         if len(logits) == 0:
-            raise ValueError("Cannot fit calibrator on empty data")
+            self.temperature = 1.0
+            self.metrics = CalibrationMetrics(
+                expected_calibration_error=1.0,
+                maximum_calibration_error=1.0,
+                negative_log_likelihood=float('inf'),
+                brier=BrierDecomposition(1.0, 1.0, 0.0, 0.0, 1.0),
+                optimal_temperature=1.0,
+                bin_accuracies=tuple([0.0]*n_bins),
+                bin_confidences=tuple([0.0]*n_bins),
+                bin_counts=tuple([0]*n_bins),
+            )
+            return self.metrics
 
         if logits.ndim == 1:
             self.is_binary = True

@@ -829,94 +829,44 @@ class ReflexGuardHook:
     ) -> GuardInterceptionResult:
         """Evaluates an ActionProposal through Reflex fail-closed gates."""
         # 0. Deterministic policy evaluation BEFORE model inference and caching
+        pol_eval = None
         if self.policy is not None:
             pol_eval = self.policy.evaluate(proposal)
-            if pol_eval is not None:
-                p_outcome, p_risk, p_rule_id, p_reason = pol_eval
-                pol_dec = self._build_policy_decision(
-                    proposal, p_outcome, p_risk, p_rule_id, p_reason
+            
+        if pol_eval is not None:
+            p_outcome, p_risk, p_rule_id, p_reason = pol_eval
+            pol_dec = self._build_policy_decision(
+                proposal, p_outcome, p_risk, p_rule_id, p_reason
+            )
+            if p_outcome != DecisionOutcome.ALLOW:
+                # Explicit veto or approval required: stop immediately, 0 side effects
+                return GuardInterceptionResult(
+                    outcome=p_outcome,
+                    reason=p_reason,
+                    decision_result=None,
+                    policy_decision=pol_dec,
+                    proposal=proposal,
                 )
-                if p_outcome != DecisionOutcome.ALLOW:
-                    # Explicit veto or approval required: stop immediately, 0 side effects
-                    return GuardInterceptionResult(
-                        outcome=p_outcome,
-                        reason=p_reason,
-                        decision_result=None,
-                        policy_decision=pol_dec,
-                        proposal=proposal,
-                    )
-                else:
-                    # Release Invariant 1: Deterministic ALLOW grants eligibility, NOT permission
-                    # to skip signing or ledger recording. Generate authenticated receipt and record in ledger.
-                    p_prompt = context_prompt or (
-                        f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
-                        f"Args: {dict(proposal.arguments)}. Purpose: {proposal.purpose}"
-                    )
-                    chosen_profile = (
-                        self.enforcement_profile.profile_id
-                        if self.enforcement_profile is not None
-                        else ("product_signed_v1" if self.engine.signing_key is not None else "diagnostic_local")
-                    )
-                    receipt = create_decision_receipt(
-                        schema_name="policy_deterministic_allow",
-                        schema_digest=hashlib.sha256(b"policy_deterministic_allow").hexdigest(),
-                        prompt=p_prompt,
-                        values={"is_safe": True, "policy_outcome": "ALLOW", "rule_id": p_rule_id},
-                        confidences={"is_safe": 1.0, "policy": 1.0},
-                        conformal_sets={"is_safe": ["True"]},
-                        probabilities={"is_safe": {"True": 1.0, "False": 0.0}},
-                        latency_ms=0.1,
-                        is_ambiguous=False,
-                        truth_ledger_head=self.ledger.head_hash() if self.ledger else "",
-                        signing_key=self.engine.signing_key,
-                        policy_decision=pol_dec,
-                        action_proposal=proposal,
-                        effective_alpha=self.alpha,
-                        profile=chosen_profile,
-                    )
-                    if self.ledger is not None:
-                        try:
-                            ledger_rec_id = self.ledger.record_decision_receipt(receipt)
-                            receipt = replace(receipt, ledger_record_id=ledger_rec_id)
-                        except Exception as ex:
-                            if self.fail_closed_ledger:
-                                outcome = DecisionOutcome.DENY
-                                reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
-                                pol_decision = self._build_policy_decision(
-                                    proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", reason
-                                )
-                                return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
-
-                    # Fail-closed ledger check
-                    if self.ledger is not None and not receipt.ledger_record_id:
-                        if self.fail_closed_ledger:
-                            outcome = DecisionOutcome.DENY
-                            reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
-                            pol_decision = self._build_policy_decision(
-                                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", reason
-                            )
-                            return GuardInterceptionResult(outcome, reason, None, pol_decision, proposal=proposal)
-
-                    dec_result = DecisionResult(
-                        schema_name=receipt.schema_name,
-                        schema_digest=receipt.schema_digest,
-                        prompt=receipt.prompt,
-                        values=receipt.values,
-                        confidences=receipt.confidences,
-                        conformal_sets=receipt.conformal_sets,
-                        probabilities=receipt.probabilities,
-                        is_ambiguous=False,
-                        latency_ms=receipt.latency_ms,
-                        alpha=self.alpha,
-                        receipt=receipt,
-                    )
-                    return GuardInterceptionResult(
-                        outcome=DecisionOutcome.ALLOW,
-                        reason=p_reason,
-                        decision_result=dec_result,
-                        policy_decision=pol_dec,
-                        proposal=proposal,
-                    )
+            else:
+                # Rule-only authorization path
+                return self._finalize_authorization(
+                    proposal=proposal,
+                    outcome=DecisionOutcome.ALLOW,
+                    reason=p_reason,
+                    pol_decision=pol_dec,
+                    decision=None,
+                    context_prompt=context_prompt,
+                    rule_id=p_rule_id
+                )
+        else:
+            # No matching rule found
+            if self.enforcement_profile is not None:
+                outcome = DecisionOutcome.DENY
+                reason = "Fail-closed Reference Monitor: Enforcement profile requires an applicable deterministic permission grant."
+                pol_decision = self._build_policy_decision(
+                    proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_missing_grant", reason
+                )
+                return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
 
         prompt = context_prompt or (
             f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
@@ -965,7 +915,6 @@ class ReflexGuardHook:
                 proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_safety_deny", reason
             )
             return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
-
         # 2. Check conformal ambiguity (|C(x)| > 1) or OOD (|C(x)| == 0)
         for field_name, cset in decision.conformal_sets.items():
             f_def = self.engine.schema.fields.get(field_name)
@@ -990,6 +939,16 @@ class ReflexGuardHook:
                 )
                 return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
+        # 2.5 Check structured escalation state directly from the decision (catches regression/intervals)
+        if getattr(decision, "is_ambiguous", False) or getattr(decision, "escalated_fields", None):
+            outcome = DecisionOutcome.REQUIRE_APPROVAL
+            fields_str = ", ".join(getattr(decision, "escalated_fields", []) or [])
+            reason = f"Reflex structured escalation required due to ambiguity/uncertainty (fields: {fields_str})"
+            pol_decision = self._build_policy_decision(
+                proposal, outcome, RiskLevel.EXTERNAL, "reflex_structured_escalation", reason
+            )
+            return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
+
         # 3. Check minimum confidence threshold across all fields
         for field_name, conf in decision.confidences.items():
             if conf < self.min_confidence:
@@ -1010,31 +969,128 @@ class ReflexGuardHook:
             proposal, outcome, RiskLevel.READ_ONLY, "reflex_verified_allow", reason
         )
 
+        return self._finalize_authorization(
+            proposal=proposal,
+            outcome=outcome,
+            reason=reason,
+            pol_decision=pol_decision,
+            decision=decision,
+            context_prompt=prompt
+        )
+
+    def _finalize_authorization(
+        self,
+        proposal: ActionProposal,
+        outcome: DecisionOutcome,
+        reason: str,
+        pol_decision: PolicyDecision,
+        decision: Optional[DecisionResult] = None,
+        context_prompt: Optional[str] = None,
+        rule_id: Optional[str] = None,
+    ) -> GuardInterceptionResult:
+        p_prompt = context_prompt or (
+            f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
+            f"Args: {dict(proposal.arguments)}. Purpose: {proposal.purpose}"
+        )
         chosen_profile = (
             self.enforcement_profile.profile_id
             if self.enforcement_profile is not None
             else ("product_signed_v1" if self.engine.signing_key is not None else "diagnostic_local")
         )
+
+        if decision is not None:
+            schema_name = decision.schema_name
+            schema_digest = decision.schema_digest
+            prompt = decision.prompt or p_prompt
+            values = decision.values
+            confidences = decision.confidences
+            conformal_sets = decision.conformal_sets
+            probabilities = decision.probabilities
+            latency_ms = decision.latency_ms if isinstance(decision.latency_ms, (int, float)) else 0.1
+            is_ambiguous = decision.is_ambiguous
+            ledger_record_id = None
+        else:
+            schema_name = "policy_deterministic_allow"
+            schema_digest = hashlib.sha256(b"policy_deterministic_allow").hexdigest()
+            prompt = p_prompt
+            values = {"is_safe": True, "policy_outcome": outcome.value, "rule_id": rule_id}
+            confidences = {"is_safe": 1.0, "policy": 1.0}
+            conformal_sets = {"is_safe": ["True"]}
+            probabilities = {"is_safe": {"True": 1.0, "False": 0.0}}
+            latency_ms = 0.1
+            is_ambiguous = False
+            ledger_record_id = None
+
         final_receipt = create_decision_receipt(
-            schema_name=decision.schema_name,
-            schema_digest=decision.schema_digest,
-            prompt=decision.prompt or prompt,
-            values=decision.values,
-            confidences=decision.confidences,
-            conformal_sets=decision.conformal_sets,
-            probabilities=decision.probabilities,
-            latency_ms=decision.latency_ms if isinstance(decision.latency_ms, (int, float)) else 0.1,
-            is_ambiguous=decision.is_ambiguous,
+            schema_name=schema_name,
+            schema_digest=schema_digest,
+            prompt=prompt,
+            values=values,
+            confidences=confidences,
+            conformal_sets=conformal_sets,
+            probabilities=probabilities,
+            latency_ms=latency_ms,
+            is_ambiguous=is_ambiguous,
             truth_ledger_head=self.ledger.head_hash() if self.ledger else "",
             signing_key=self.engine.signing_key,
             policy_decision=pol_decision,
             action_proposal=proposal,
             effective_alpha=self.alpha,
             profile=chosen_profile,
-            ledger_record_id=getattr(decision.receipt, "ledger_record_id", None) if decision.receipt else None,
+            ledger_record_id=ledger_record_id,
         )
-        decision = replace(decision, receipt=final_receipt)
-        return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
+
+        if self.ledger is not None:
+            try:
+                if final_receipt.action_id != proposal.action_id:
+                    pass # Just a sanity check
+                pub_key = None
+                if self.enforcement_profile is not None and self.engine.signing_key is not None:
+                    pub_key = self.engine.signing_key.public_key()
+                ledger_rec_id = self.ledger.record_decision_receipt(final_receipt, trusted_public_key=pub_key)
+                final_receipt = replace(final_receipt, ledger_record_id=ledger_rec_id)
+            except Exception as ex:
+                if self.fail_closed_ledger:
+                    f_outcome = DecisionOutcome.DENY
+                    f_reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
+                    f_pol_decision = self._build_policy_decision(
+                        proposal, f_outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", f_reason
+                    )
+                    return GuardInterceptionResult(f_outcome, f_reason, decision_result=None, policy_decision=f_pol_decision, proposal=proposal)
+
+        if self.ledger is not None and not final_receipt.ledger_record_id:
+            if self.fail_closed_ledger:
+                f_outcome = DecisionOutcome.DENY
+                f_reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
+                f_pol_decision = self._build_policy_decision(
+                    proposal, f_outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", f_reason
+                )
+                return GuardInterceptionResult(f_outcome, f_reason, None, f_pol_decision, proposal=proposal)
+
+        if decision is not None:
+            dec_result = replace(decision, receipt=final_receipt)
+        else:
+            dec_result = DecisionResult(
+                schema_name=final_receipt.schema_name,
+                schema_digest=final_receipt.schema_digest,
+                prompt=final_receipt.prompt,
+                values=final_receipt.values,
+                confidences=final_receipt.confidences,
+                conformal_sets=final_receipt.conformal_sets,
+                probabilities=final_receipt.probabilities,
+                is_ambiguous=False,
+                latency_ms=final_receipt.latency_ms,
+                alpha=self.alpha,
+                receipt=final_receipt,
+            )
+
+        return GuardInterceptionResult(
+            outcome=outcome,
+            reason=reason,
+            decision_result=dec_result,
+            policy_decision=pol_decision,
+            proposal=proposal,
+        )
 
 
 # Compatibility alias

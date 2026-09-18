@@ -649,9 +649,9 @@ class TestAttack4DocumentationRigorAndPackagingParity:
         content = pyproject_path.read_text()
 
         # Dependencies
-        assert "protobuf>=5.26.1" in content, "pyproject.toml must enforce protobuf>=5.26.1"
-        assert "grpcio>=1.62.0" in content, "pyproject.toml must enforce grpcio>=1.62.0"
-        assert "grpcio-tools>=1.62.0" in content, "pyproject.toml must enforce grpcio-tools>=1.62.0"
+        assert "protobuf>=6.31.1" in content, "pyproject.toml must enforce protobuf>=6.31.1"
+        assert "grpcio>=1.80.0" in content, "pyproject.toml must enforce grpcio>=1.80.0"
+        assert "grpcio-tools>=1.80.0" in content, "pyproject.toml must enforce grpcio-tools>=1.80.0"
 
         # Project name and script entry points
         assert 'name = "system1"' in content, "PyPI package name must be 'system1'"

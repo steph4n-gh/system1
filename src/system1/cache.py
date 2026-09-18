@@ -198,8 +198,8 @@ def _format_context(
     st_val = 1 if strict else 0
     return (
         f"s:{schema_digest}|v:{model_version}|md:{model_digest}|pd:{projector_digest}|"
-        f"cd:{calibration_digest}|sc:{policy_scope}|pe:{policy_epoch}|a:{a_val:.6f}|"
-        f"m:{m_val:.6f}|or:{o_val:.6f}|cf:{tau0_val:.6f}|rw:{rec_val}|st:{st_val}"
+        f"cd:{calibration_digest}|sc:{policy_scope}|pe:{policy_epoch}|a:{float.hex(a_val)}|"
+        f"m:{float.hex(m_val)}|or:{float.hex(o_val)}|cf:{float.hex(tau0_val)}|rw:{rec_val}|st:{st_val}"
     )
 
 
@@ -229,6 +229,7 @@ class SemanticReflexCache:
         self._lock = threading.RLock()
         # Exact match index: full_key -> CacheEntry (OrderedDict for LRU)
         self._exact_index: OrderedDict[str, CacheEntry] = OrderedDict()
+        self._base_to_key: Dict[str, str] = {}
 
         # Semantic index: parallel array of normalized embeddings and entries
         self._embeddings: Optional[np.ndarray] = None  # shape: (N, D)
@@ -246,6 +247,7 @@ class SemanticReflexCache:
         self,
         prompt: str,
         telemetry: Optional[Any] = None,
+        embedding: Optional[np.ndarray] = None,
         schema_digest: str = "",
         model_version: int = 0,
         policy_scope: str = "",
@@ -263,6 +265,7 @@ class SemanticReflexCache:
     ) -> str:
         p_dig = _digest_prompt(prompt)
         t_dig = _digest_telemetry(telemetry)
+        e_dig = hashlib.sha256(np.asarray(embedding, dtype=np.float32).tobytes()).hexdigest() if embedding is not None else ""
         ctx = _format_context(
             schema_digest=schema_digest,
             model_version=model_version,
@@ -279,7 +282,8 @@ class SemanticReflexCache:
             calibration_digest=calibration_digest,
             policy_epoch=policy_epoch,
         )
-        return f"{p_dig}::{t_dig}::{ctx}" if t_dig else f"{p_dig}::{ctx}"
+        base = f"{p_dig}::{t_dig}::{ctx}" if t_dig else f"{p_dig}::{ctx}"
+        return f"{base}::e:{e_dig}" if e_dig else base
 
     def get(
         self,
@@ -327,6 +331,7 @@ class SemanticReflexCache:
             key = self._make_key(
                 prompt,
                 telemetry=telemetry,
+                embedding=embedding,
                 schema_digest=schema_digest,
                 model_version=model_version,
                 policy_scope=policy_scope,
@@ -352,6 +357,15 @@ class SemanticReflexCache:
                 self._exact_index.move_to_end(key)
                 self._exact_hits += 1
                 return entry, 1.0
+            elif embedding is None and key in self._base_to_key:
+                real_key = self._base_to_key[key]
+                if real_key in self._exact_index:
+                    entry = self._exact_index[real_key]
+                    entry.hit_count += 1
+                    entry.last_accessed_at = time.time()
+                    self._exact_index.move_to_end(real_key)
+                    self._exact_hits += 1
+                    return entry, 1.0
 
             # 2. Semantic Cosine Similarity Search (O(N) BLAS dot product, <0.03ms)
             # Suppressed in strict or enforcement mode to ensure exact, collision-resistant deterministic retrieval
@@ -397,6 +411,7 @@ class SemanticReflexCache:
                         entry_key = self._make_key(
                             entry.prompt,
                             telemetry=entry.telemetry,
+                            embedding=entry.embedding,
                             schema_digest=entry.schema_digest,
                             model_version=entry.model_version,
                             policy_scope=entry.policy_scope,
@@ -457,6 +472,7 @@ class SemanticReflexCache:
             key = self._make_key(
                 prompt,
                 telemetry=telemetry,
+                embedding=embedding,
                 schema_digest=schema_digest,
                 model_version=model_version,
                 policy_scope=policy_scope,
@@ -571,6 +587,27 @@ class SemanticReflexCache:
                 policy_epoch=int(policy_epoch),
             )
             self._exact_index[key] = entry
+            if norm_emb is not None:
+                base_key = self._make_key(
+                    prompt,
+                    telemetry=telemetry,
+                    embedding=None,
+                    schema_digest=schema_digest,
+                    model_version=model_version,
+                    policy_scope=policy_scope,
+                    alpha=alpha,
+                    margin_threshold=margin_threshold,
+                    strict=strict,
+                    relative_odds_ratio=relative_odds_ratio,
+                    odds_ratio=odds_ratio,
+                    confidence_floor_tau0=confidence_floor_tau0,
+                    recency_weighted=recency_weighted,
+                    model_digest=model_digest,
+                    projector_digest=projector_digest,
+                    calibration_digest=calibration_digest,
+                    policy_epoch=policy_epoch,
+                )
+                self._base_to_key[base_key] = key
 
             # Append to semantic vector index if embedding present
             if norm_emb is not None:
@@ -603,6 +640,7 @@ class SemanticReflexCache:
                 k = self._make_key(
                     e.prompt,
                     telemetry=e.telemetry,
+                    embedding=e.embedding,
                     schema_digest=e.schema_digest,
                     model_version=e.model_version,
                     policy_scope=e.policy_scope,
@@ -675,6 +713,7 @@ class SemanticReflexCache:
                 k = self._make_key(
                     e.prompt,
                     telemetry=e.telemetry,
+                    embedding=e.embedding,
                     schema_digest=e.schema_digest,
                     model_version=e.model_version,
                     policy_scope=e.policy_scope,
@@ -728,6 +767,7 @@ class SemanticReflexCache:
     def contains_exact(
         self,
         prompt: str,
+        embedding: Optional[np.ndarray] = None,
         telemetry: Optional[Any] = None,
         schema_digest: str = "",
         model_version: int = 0,
@@ -749,6 +789,7 @@ class SemanticReflexCache:
             key = self._make_key(
                 prompt,
                 telemetry=telemetry,
+                embedding=embedding,
                 schema_digest=schema_digest,
                 model_version=model_version,
                 policy_scope=policy_scope,

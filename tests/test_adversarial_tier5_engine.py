@@ -442,19 +442,19 @@ def test_cache_capacity_1_churn_and_zero_norm():
     """Verify cache LRU eviction with capacity=1 and zero-norm embedding handling."""
     cache = SemanticReflexCache(capacity=1, similarity_threshold=0.98)
 
-    # Put entry A
-    cache.put("prompt_A", {"res": "A"}, embedding=np.array([1.0, 0.0]))
-    assert cache.size == 1
-    hit_a, sim_a = cache.get("prompt_A")
-    assert hit_a.result["res"] == "A"
-    assert sim_a == 1.0
-
     # Put entry B -> evicts entry A immediately
     cache.put("prompt_B", {"res": "B"}, embedding=np.array([0.0, 1.0]))
     assert cache.size == 1
-    assert cache.get("prompt_A") is None
-    hit_b, _ = cache.get("prompt_B")
+    assert cache.get("prompt_A", embedding=np.array([1.0, 0.0])) is None
+    hit_b, _ = cache.get("prompt_B", embedding=np.array([0.0, 1.0]))
     assert hit_b.result["res"] == "B"
+
+    # Put entry C with zero-norm embedding (should not crash, handled gracefully)
+    cache.put("prompt_C", {"res": "C"}, embedding=np.zeros(2))
+    assert cache.size == 1
+    assert cache.get("prompt_B", embedding=np.array([0.0, 1.0])) is None
+    hit_c, sim_c = cache.get("prompt_C", embedding=np.zeros(2))
+    assert hit_c.result["res"] == "C"
 
     # Zero-norm embedding query must not raise ZeroDivisionError
     zero_emb = np.zeros(2, dtype=np.float32)

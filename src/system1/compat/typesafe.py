@@ -151,20 +151,23 @@ class CutoverPartition:
 
     def assert_disjoint(self) -> None:
         """Verify that training, calibration, and validation partitions do not share identical records or lineages."""
-        def _get_key(x: Any) -> str:
+        def _get_keys(x: Any) -> set:
             if isinstance(x, dict):
-                req_id = x.get("request_id") or x.get("lineage_id") or x.get("group_id") or x.get("id") or x.get("nonce")
-                if req_id is not None:
-                    return f"id:{req_id}"
+                keys = set()
+                for field in ("group_id", "lineage_id", "request_id", "id", "nonce"):
+                    val = x.get(field)
+                    if val is not None:
+                        keys.add(f"{field}:{val}")
                 s_str = str(x.get("state", ""))
                 ans = x.get("answers")
                 a_str = json.dumps(ans, sort_keys=True) if isinstance(ans, dict) else str(ans)
-                return hashlib.sha256(f"{s_str}|{a_str}".encode("utf-8")).hexdigest()
-            return f"obj:{id(x)}"
+                keys.add(hashlib.sha256(f"{s_str}|{a_str}".encode("utf-8")).hexdigest())
+                return keys
+            return {f"obj:{id(x)}"}
 
-        train_keys = {_get_key(x) for x in self.train_history}
-        calib_keys = {_get_key(x) for x in self.calib_history}
-        val_keys = {_get_key(x) for x in self.val_history}
+        train_keys = set().union(*(_get_keys(x) for x in self.train_history)) if self.train_history else set()
+        calib_keys = set().union(*(_get_keys(x) for x in self.calib_history)) if self.calib_history else set()
+        val_keys = set().union(*(_get_keys(x) for x in self.val_history)) if self.val_history else set()
 
         train_ids = {id(x) for x in self.train_history}
         calib_ids = {id(x) for x in self.calib_history}
@@ -239,7 +242,9 @@ def partition_cutover_history(
         )
         groups[str(g_key)].append(item)
 
-    if len(groups) == total:
+    if len(groups) < 3:
+        raise ValueError("Insufficient evidence: distinct groups cannot supply the 3 required folds")
+    elif len(groups) == total:
         train_part = list(history[:n_train])
         calib_part = list(history[n_train : n_train + n_calib])
         val_part = list(history[n_train + n_calib :])
@@ -254,10 +259,6 @@ def partition_cutover_history(
                 calib_part.extend(g_items)
             else:
                 val_part.extend(g_items)
-        if not val_part and calib_part:
-            val_part.append(calib_part.pop())
-        if not calib_part and train_part and len(train_part) > 1:
-            calib_part.append(train_part.pop())
 
     return CutoverPartition(
         train_history=train_part,
@@ -402,7 +403,10 @@ def evaluate_promotion_eligibility(
         rejection_reasons.append("Zero scored validation checks; cannot evaluate promotion")
     else:
         agreement_rate = matching / total_checks
-    wilson_lower = compute_wilson_score_lower(matching, total_checks, confidence=policy.statistical_confidence)
+        
+    effective_n = len(val_history)
+    effective_matching = agreement_rate * effective_n
+    wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
 
     effective_thresh = policy.min_agreement_threshold
@@ -1349,9 +1353,11 @@ class TypeSafeClient:
 
         self._engine_cache: Dict[str, ReflexEngine] = {}
         self._engine_lock = threading.Lock()
-        self._call_count: int = 0
-        self._history: List[Dict[str, Any]] = []
+        self._call_count: Dict[str, int] = collections.defaultdict(int)
+        self._history: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
         self._has_cutover: bool = False
+        self._has_cutover_schemas: Set[str] = set()
+        self._compiled_models: Dict[str, Any] = {}
         self._compiled_model: Optional[Any] = kwargs.get("compiled_model", None)
         if self._compiled_model is None and kwargs.get("model_path") is not None:
             from system1.compiler import CompiledSystemOneModel
@@ -1382,12 +1388,12 @@ class TypeSafeClient:
     @property
     def is_cutover(self) -> bool:
         """Whether the client has automatically cut over to 100% local execution."""
-        return self._has_cutover
+        return self._has_cutover or bool(self._has_cutover_schemas)
 
     @property
     def call_count(self) -> int:
         """Total number of queries evaluated by this client."""
-        return self._call_count
+        return sum(self._call_count.values())
 
     @property
     def cutover_audit_log(self) -> List[Dict[str, Any]]:
@@ -1398,6 +1404,8 @@ class TypeSafeClient:
     def compiled_model(self) -> Optional[Any]:
         """Returns the most recently distilled CompiledSystemOneModel, or None."""
         with self._engine_lock:
+            if self._compiled_models:
+                return list(self._compiled_models.values())[-1]
             return self._compiled_model
 
     @property
@@ -1412,11 +1420,11 @@ class TypeSafeClient:
 
     def export_model(self, path: Union[str, Path]) -> bool:
         """Exports the distilled closed-form model as a static .s1m binary."""
-        with self._engine_lock:
-            if self._compiled_model is None:
-                return False
-            self._compiled_model.save(path)
-            return True
+        cm = self.compiled_model
+        if cm is None:
+            return False
+        cm.save(path)
+        return True
 
     def _get_engine(self, questions: Mapping[str, Any]) -> ReflexEngine:
         schema = _build_dynamic_schema(questions)
@@ -1431,10 +1439,11 @@ class TypeSafeClient:
                     backend=self.backend,
                     projector=self.projector,
                 )
-                if self._compiled_model is not None:
+                cm = self._compiled_models.get(digest) or self._compiled_model
+                if cm is not None:
                     import numpy as np
                     from system1.schema import ChoiceField
-                    for f_name, ch in self._compiled_model.heads.items():
+                    for f_name, ch in cm.heads.items():
                         if f_name in engine.model.heads:
                             target_head = engine.model.heads[f_name]
                             f_def = schema.fields.get(f_name)
@@ -1457,9 +1466,10 @@ class TypeSafeClient:
                                             aligned_b[tgt_idx] = target_head.biases[tgt_idx]
                                     target_head.set_weights(aligned_w, aligned_b)
                             else:
-                                if target_head.weights.shape == ch.weights.shape:
-                                    target_head.set_weights(ch.weights, ch.biases)
+                                target_head.set_weights(ch.weights, ch.biases)
                 self._engine_cache[digest] = engine
+            else:
+                engine = self._engine_cache[digest]
             return self._engine_cache[digest]
 
     def _execute_local(
@@ -1569,8 +1579,9 @@ class TypeSafeClient:
 
         # Decouple history into train (60%), calib (20%), and val (20%) partitions
         # Invariant 10: Training, calibration, and promotion validation must be strictly disjoint!
-        partition = partition_cutover_history(self._history)
-        if len(self._history) >= 2:
+        schema_history = self._history[digest]
+        partition = partition_cutover_history(schema_history)
+        if len(schema_history) >= 2:
             partition.assert_disjoint()
 
         exemplars: Dict[str, List[Tuple[str, Any]]] = {
@@ -1649,12 +1660,13 @@ class TypeSafeClient:
                     })
                 return hashlib.sha256(json.dumps(clean, sort_keys=True).encode()).hexdigest()
 
-            manifest = {
-                "schema_digest": schema.schema_digest() if hasattr(schema, "schema_digest") else "",
-                "artifact_digest": artifact_digest,
-                "model_digest": engine._model_digest() if hasattr(engine, "_model_digest") else "",
-                "projector_digest": engine._projector_digest() if hasattr(engine, "_projector_digest") else "",
-                "calibration_digest": engine._calibration_digest() if hasattr(engine, "_calibration_digest") else "",
+            # The exact calibration state, schema digest, and evaluated artifacts are verified
+            report.artifact_digest = artifact_digest
+            report.schema_digest = digest
+            report.manifest = {
+                "training_set_digest": _serialize_samples(partition.train_history),
+                "calibration_set_digest": _serialize_samples(partition.calib_history),
+                "validation_set_digest": _serialize_samples(partition.val_history),
                 "dataset_manifest": {
                     "train_digest": _serialize_samples(partition.train_history),
                     "calib_digest": _serialize_samples(partition.calib_history),
@@ -1665,29 +1677,44 @@ class TypeSafeClient:
                 },
                 "teacher_provenance": {
                     "provider_model": "jev-latest",
-                    "total_samples": len(self._history),
+                    "total_samples": len(schema_history),
                     "timestamp": time.time(),
                 },
             }
-            report.artifact_digest = artifact_digest
-            report.manifest = manifest
+
+            if self.ledger is not None:
+                self.ledger.record_action(
+                    action="auto_cutover_promotion",
+                    proposal={
+                        "schema_digest": digest,
+                        "artifact_digest": artifact_digest,
+                        "metrics": {
+                            "total_validation_checks": report.total_validation_checks,
+                            "agreement_rate": report.agreement_rate,
+                            "wilson_lower_bound": report.wilson_lower_bound,
+                            "critical_class_count": report.critical_class_count,
+                            "false_allow_rate": report.false_allow_rate,
+                        },
+                        "manifest": report.manifest,
+                    },
+                )
 
             # Promote exact evaluated candidate artifact
             self._engine_cache[digest] = engine
-            self._compiled_model = compiled_model
-            self._has_cutover = True
+            self._compiled_models[digest] = compiled_model
+            self._has_cutover_schemas.add(digest)
             event = {
                 "event": "trojan_horse_cutover",
                 "timestamp": time.time(),
-                "call_count": self._call_count,
-                "samples_collected": len(self._history),
+                "call_count": self._call_count[digest],
+                "samples_collected": len(schema_history),
                 "agreement_rate": report.agreement_rate,
                 "min_agreement_threshold": policy.min_agreement_threshold,
                 "wilson_lower_bound": report.wilson_lower_bound,
                 "false_allow_count": report.false_allow_count,
                 "artifact_digest": artifact_digest,
                 "candidate_artifact_digest": artifact_digest,
-                "manifest": manifest,
+                "manifest": report.manifest,
                 "status": "active_100_percent_local",
                 "message": (
                     f"Autonomous Trojan Horse cutover completed with {report.agreement_rate*100:.1f}% agreement "
@@ -1729,11 +1756,14 @@ class TypeSafeClient:
         """Manually triggers distillation and flips client to 100% local execution."""
         with self._engine_lock:
             if questions is None and self._history:
-                questions = self._history[0].get("questions", {})
+                first_digest = next(iter(self._history))
+                if self._history[first_digest]:
+                    questions = self._history[first_digest][0].get("questions", {})
             if not questions:
                 return False
             self._distill_and_cutover_locked(questions)
-            return self._has_cutover
+            schema = _build_dynamic_schema(questions)
+            return self._has_cutover or (schema.schema_digest() in self._has_cutover_schemas)
 
     def systemone(
         self,
@@ -1768,8 +1798,11 @@ class TypeSafeClient:
 
         # Auto-Cutover Mode (The Trojan Horse)
         if self.mode == "auto_cutover":
+            schema = _build_dynamic_schema(questions)
+            digest = schema.schema_digest()
+
             with self._engine_lock:
-                already_cutover = self._has_cutover
+                already_cutover = self._has_cutover or (digest in self._has_cutover_schemas)
 
             if not already_cutover:
                 if self.baseline_handler is not None and (self.zero_egress or not self.api_key):
@@ -1792,8 +1825,8 @@ class TypeSafeClient:
                     )
 
                 with self._engine_lock:
-                    self._call_count += 1
-                    current_count = self._call_count
+                    self._call_count[digest] += 1
+                    current_count = self._call_count[digest]
                     sample_record = {
                         "state": state,
                         "questions": dict(questions),
@@ -1803,7 +1836,7 @@ class TypeSafeClient:
                         },
                         "timestamp": time.time(),
                     }
-                    self._history.append(sample_record)
+                    self._history[digest].append(sample_record)
 
                     if self.ledger is not None:
                         try:
@@ -1818,10 +1851,10 @@ class TypeSafeClient:
                         except Exception:
                             pass
 
-                    if current_count >= self.cutover_threshold and not self._has_cutover:
+                    if current_count >= self.cutover_threshold and digest not in self._has_cutover_schemas:
                         self._distill_and_cutover_locked(questions)
 
-                    current_cutover = self._has_cutover
+                    current_cutover = self._has_cutover or (digest in self._has_cutover_schemas)
 
                 cloud_resp["auto_cutover_active"] = True
                 cloud_resp["is_cutover"] = current_cutover

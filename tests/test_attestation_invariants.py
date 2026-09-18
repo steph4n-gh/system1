@@ -332,6 +332,7 @@ def test_execution_outcome_chaining_success(tmp_path):
         latency_ms=1.0,
         is_ambiguous=False,
         signing_key=signing_key,
+        action_id="act_exec_001",
     )
     receipt_hash = ledger.append(receipt)
     assert receipt_hash
@@ -380,6 +381,7 @@ def test_execution_outcome_chaining_failure(tmp_path):
         latency_ms=1.0,
         is_ambiguous=False,
         signing_key=signing_key,
+        action_id="act_exec_fail_002",
     )
     ledger.append(receipt)
     receipt_digest = receipt.compute_digest()

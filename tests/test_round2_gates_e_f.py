@@ -182,9 +182,9 @@ class TestPackagingAndProtobufAlignment:
         assert pyproject_path.exists()
         content = pyproject_path.read_text()
 
-        assert "protobuf>=5.26.1" in content
-        assert "grpcio>=1.62.0" in content
-        assert "grpcio-tools>=1.62.0" in content
+        assert "protobuf>=6.31.1" in content
+        assert "grpcio>=1.80.0" in content
+        assert "grpcio-tools>=1.80.0" in content
 
     def test_grpc_server_serve_default_loopback_and_cli_host(self):
         """Feature F23: serve() defaults to 127.0.0.1 and CLI supports --host."""

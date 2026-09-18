@@ -224,17 +224,17 @@ def test_cache_version_invalidation_methods():
     )
 
     # Cache hit at version 1
-    hit = cache.get("deploy staging", model_version=1)
+    hit = cache.get("deploy staging", embedding=emb, model_version=1)
     assert hit is not None
     assert hit[0].result == mock_result
 
     # Cache miss at version 2
-    miss_v2 = cache.get("deploy staging", model_version=2)
+    miss_v2 = cache.get("deploy staging", embedding=emb, model_version=2)
     assert miss_v2 is None
 
     # Invalidate prior versions up to 2
     cache.invalidate_prior_versions(min_version=2)
-    assert cache.get("deploy staging", model_version=1) is None
+    assert cache.get("deploy staging", embedding=emb, model_version=1) is None
 
     # Insert prompt at version 2, then evict specifically
     cache.put(
@@ -243,10 +243,10 @@ def test_cache_version_invalidation_methods():
         embedding=emb,
         model_version=2,
     )
-    assert cache.get("reboot node", model_version=2) is not None
+    assert cache.get("reboot node", embedding=emb, model_version=2) is not None
 
     cache.evict_prompt("reboot node")
-    assert cache.get("reboot node", model_version=2) is None
+    assert cache.get("reboot node", embedding=emb, model_version=2) is None
 
 
 def test_twin_namespace_parity_for_cache_components():

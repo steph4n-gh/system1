@@ -88,7 +88,7 @@ class ActionLedger:
 
     @property
     def is_durable(self) -> bool:
-        """Returns True if the ledger writes to persistent disk storage, False if in-memory."""
+        """Returns True if the ledger writes to persistent disk storage with full synchronous durability."""
         p = str(self.path).strip()
         if p == ":memory:" or p.startswith("file::memory:") or p.startswith(":memory:"):
             return False
@@ -98,7 +98,8 @@ class ActionLedger:
 
         with self._lock:
             self._connection.execute("PRAGMA journal_mode = WAL;")
-            self._connection.execute("PRAGMA synchronous = NORMAL;")
+            # Require FULL synchronous commit for stated durability/recovery model
+            self._connection.execute("PRAGMA synchronous = FULL;")
             self._connection.execute("PRAGMA busy_timeout = 5000;")
             self._connection.execute("PRAGMA foreign_keys = ON;")
 
@@ -177,6 +178,70 @@ class ActionLedger:
         """Returns the current audit head hash string."""
         return self.audit_head()[1]
 
+    def _verify_integrity_locked(self, connection: sqlite3.Connection, trusted_public_key: Optional[Any] = None) -> bool:
+        """Internal helper to verify full cryptographic chain integrity under a coherent transaction/snapshot."""
+        entries = connection.execute(
+            "SELECT * FROM audit_entries ORDER BY sequence ASC"
+        ).fetchall()
+        previous = _ZERO_HASH
+        last_sequence = 0
+
+        for row in entries:
+            if row["previous_hash"] != previous:
+                return False
+            try:
+                payload_data = json.loads(row["payload_json"])
+                body = {
+                    "event_id": row["event_id"],
+                    "tenant_id": row["tenant_id"],
+                    "principal_id": row["principal_id"],
+                    "scope": row["scope"],
+                    "action_id": row["action_id"],
+                    "event_type": row["event_type"],
+                    "payload": payload_data,
+                    "previous_hash": row["previous_hash"],
+                    "created_at": row["created_at"],
+                }
+            except (TypeError, ValueError, json.JSONDecodeError):
+                return False
+
+            if fingerprint(body) != row["entry_hash"]:
+                return False
+
+            if trusted_public_key is not None:
+                target_receipt = None
+                if isinstance(payload_data, dict):
+                    if isinstance(payload_data.get("receipt"), dict) and "envelope" in payload_data["receipt"]:
+                        target_receipt = payload_data["receipt"]
+                    elif "envelope" in payload_data:
+                        target_receipt = payload_data
+
+                if row["event_type"] in ("reflex_decision", "decision_receipt", "action_receipt"):
+                    if not target_receipt:
+                        return False
+                    try:
+                        if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
+                            return False
+                    except Exception:
+                        return False
+                elif target_receipt is not None:
+                    try:
+                        if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
+                            return False
+                    except Exception:
+                        return False
+
+            previous = row["entry_hash"]
+            last_sequence = int(row["sequence"])
+
+        meta = dict(connection.execute("SELECT key, value FROM ledger_meta").fetchall())
+        if meta.get("audit_head_hash") != previous:
+            return False
+        if int(meta.get("audit_head_sequence", "-1")) != last_sequence:
+            return False
+
+        return True
+
     def append(
         self,
         receipt: Mapping[str, Any] | Any,
@@ -184,9 +249,16 @@ class ActionLedger:
         tenant_id: str = "reflex",
         principal_id: str = "engine",
         scope: str = "decision",
+        trusted_public_key: Optional[Any] = None,
     ) -> str:
-        """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
+        """Appends a Reflex decision receipt to the tamper-evident audit ledger.
+        
+        Performs full historical chain validation under a coherent transaction snapshot.
+        """
         with self._transaction() as connection:
+            if not self._verify_integrity_locked(connection, trusted_public_key):
+                raise IntegrityError("Ledger cryptographic integrity validation failed during append.")
+
             payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt)
             decision_id = payload.get("decision_id")
             receipt_digest = payload.get("receipt_digest") or (
@@ -219,7 +291,7 @@ class ActionLedger:
                 "tenant_id": tenant_id,
                 "principal_id": principal_id,
                 "scope": scope,
-                "action_id": decision_id,
+                "action_id": payload.get("action_id") or decision_id,
                 "event_type": event_type,
                 "payload": entry_payload,
                 "previous_hash": previous_hash,
@@ -239,7 +311,7 @@ class ActionLedger:
                     tenant_id,
                     principal_id,
                     scope,
-                    decision_id,
+                    payload.get("action_id") or decision_id,
                     event_type,
                     canonical_json(entry_payload),
                     previous_hash,
@@ -266,9 +338,10 @@ class ActionLedger:
         tenant_id: str = "reflex",
         principal_id: str = "engine",
         scope: str = "decision",
+        trusted_public_key: Optional[Any] = None,
     ) -> str:
         """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
-        return self.append(receipt, tenant_id=tenant_id, principal_id=principal_id, scope=scope)
+        return self.append(receipt, tenant_id=tenant_id, principal_id=principal_id, scope=scope, trusted_public_key=trusted_public_key)
 
     def record_execution_outcome(
         self,
@@ -281,9 +354,34 @@ class ActionLedger:
         tenant_id: str = "reflex",
         principal_id: str = "engine",
         scope: str = "execution_outcome",
+        trusted_public_key: Optional[Any] = None,
     ) -> str:
         """Records an execution outcome linked cryptographically to prior authorization receipt."""
         with self._transaction() as connection:
+            if not self._verify_integrity_locked(connection, trusted_public_key):
+                raise IntegrityError("Ledger cryptographic integrity validation failed during outcome recording.")
+
+            valid_statuses = {"SUCCEEDED", "FAILED", "ERROR", "CANCELLED", "ABORTED", "INDETERMINATE"}
+            if str(status).upper() not in valid_statuses:
+                raise LedgerWriteError(f"Invalid execution outcome status: {status}")
+
+            prior = connection.execute(
+                "SELECT * FROM audit_entries WHERE action_id = ? AND event_type IN ('reflex_decision', 'decision_receipt', 'action') ORDER BY sequence DESC LIMIT 1",
+                (action_id,)
+            ).fetchone()
+
+            if not prior:
+                raise LedgerWriteError(f"Orphan execution outcome: no prior authorization found for action_id {action_id}")
+
+            try:
+                prior_p = json.loads(prior["payload_json"])
+                found_digest = prior_p.get("receipt_digest") or prior_p.get("receipt", {}).get("receipt_digest")
+            except Exception:
+                found_digest = None
+
+            if found_digest and found_digest != receipt_digest:
+                raise LedgerWriteError(f"Wrong action association: outcome receipt_digest {receipt_digest} does not match prior {found_digest}")
+
             meta = dict(connection.execute("SELECT key, value FROM ledger_meta").fetchall())
             previous_hash = meta.get("audit_head_hash", _ZERO_HASH)
             previous_sequence = int(meta.get("audit_head_sequence", "0"))
@@ -353,9 +451,13 @@ class ActionLedger:
         tenant_id: str = "reflex",
         principal_id: str = "engine",
         scope: str = "action",
+        trusted_public_key: Optional[Any] = None,
     ) -> str:
         """Appends an arbitrary action proposal or audit event to the tamper-evident ledger."""
         with self._transaction() as connection:
+            if not self._verify_integrity_locked(connection, trusted_public_key):
+                raise IntegrityError("Ledger cryptographic integrity validation failed during action recording.")
+
             payload = dict(proposal) if isinstance(proposal, Mapping) else {"proposal": str(proposal)}
             act_id = action_id or payload.get("action_id") or payload.get("id") or f"act_{fingerprint([action, str(payload)])[:16]}"
 

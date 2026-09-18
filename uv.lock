@@ -724,7 +724,7 @@ wheels = [
 
 [[package]]
 name = "system1"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -734,6 +734,12 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "grpcio" },
+    { name = "grpcio-tools" },
+    { name = "opentelemetry-api" },
+    { name = "opentelemetry-sdk" },
+    { name = "prometheus-client" },
+    { name = "protobuf" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
@@ -762,15 +768,21 @@ otel = [
 [package.metadata]
 requires-dist = [
     { name = "cryptography", specifier = ">=41.0.0" },
-    { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.60.0" },
-    { name = "grpcio-tools", marker = "extra == 'grpc'", specifier = ">=1.60.0" },
+    { name = "grpcio", marker = "extra == 'dev'", specifier = ">=1.80.0" },
+    { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.80.0" },
+    { name = "grpcio-tools", marker = "extra == 'dev'", specifier = ">=1.80.0" },
+    { name = "grpcio-tools", marker = "extra == 'grpc'", specifier = ">=1.80.0" },
     { name = "mlx", marker = "extra == 'metal'", specifier = ">=0.10.0" },
     { name = "mlx", marker = "extra == 'neural'", specifier = ">=0.10.0" },
     { name = "numpy", specifier = ">=1.24.0" },
+    { name = "opentelemetry-api", marker = "extra == 'dev'", specifier = ">=1.20.0" },
     { name = "opentelemetry-api", marker = "extra == 'otel'", specifier = ">=1.20.0" },
+    { name = "opentelemetry-sdk", marker = "extra == 'dev'", specifier = ">=1.20.0" },
     { name = "opentelemetry-sdk", marker = "extra == 'otel'", specifier = ">=1.20.0" },
+    { name = "prometheus-client", marker = "extra == 'dev'", specifier = ">=0.17.0" },
     { name = "prometheus-client", marker = "extra == 'observability'", specifier = ">=0.17.0" },
-    { name = "protobuf", marker = "extra == 'grpc'", specifier = ">=4.25.0" },
+    { name = "protobuf", marker = "extra == 'dev'", specifier = ">=5.29.0" },
+    { name = "protobuf", marker = "extra == 'grpc'", specifier = ">=5.29.0" },
     { name = "pyboy", marker = "extra == 'gameboy'", specifier = ">=2.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.21.0" },

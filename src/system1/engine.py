@@ -621,6 +621,7 @@ class ReflexEngine:
         if self.use_cache:
             cached = self.cache.get(
                 prompt,
+                embedding=embedding,
                 telemetry=telemetry,
                 schema_digest=self.schema.schema_digest(),
                 model_version=self.model_version,
@@ -882,7 +883,8 @@ class ReflexEngine:
                 )
                 mc_ambiguous = False
                 if is_strict:
-                    mc_ambiguous = (len(selected) == 0) or is_boundary_uncertain or (not getattr(calibrator, "is_calibrated", True))
+                    is_uncalibrated = (calibrator.metrics is None) if hasattr(calibrator, "metrics") else not getattr(calibrator, "is_calibrated", True)
+                    mc_ambiguous = (len(selected) == 0) or is_boundary_uncertain or is_uncalibrated
 
                 if mc_ambiguous:
                     ambiguous_fields.append(name)

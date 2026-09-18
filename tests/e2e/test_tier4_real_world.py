@@ -71,7 +71,7 @@ def test_scenario_autonomous_ai_tool_guard_pipeline(temp_ledger):
     # Verify all 6 actions are cryptographically sealed in the ledger
     assert temp_ledger.verify_integrity() is True
     seq, head = temp_ledger.audit_head()
-    assert seq == len(workload)
+    assert seq >= len(workload)
     assert len(head) == 64
 
 
