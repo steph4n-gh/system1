@@ -441,7 +441,7 @@ All diagrams, branding, and vector media are maintained in [`assets/`](https://g
 For researchers, systems architects, and infrastructure security teams:
 
 * **Academic Whitepaper**: [`docs/paper/reflex_whitepaper.md`](docs/paper/reflex_whitepaper.md)  
-  *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts* (Arrington, 2026). Contains formal mathematical proofs of finite-sample conformal coverage ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}(X)) \ge 1 - \alpha$), closed-form Ridge Regression distillation, sub-50µs Sherman-Morrison online rank-1 adaptation, contrastive whitening theorems, and real-world 60 FPS Game Boy emulation telemetry.
+  *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts* (steph4n, 2026). Contains formal mathematical proofs of finite-sample conformal coverage ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}(X)) \ge 1 - \alpha$), closed-form Ridge Regression distillation, sub-50µs Sherman-Morrison online rank-1 adaptation, contrastive whitening theorems, and real-world 60 FPS Game Boy emulation telemetry.
 * **Technical Architecture Specification**: [`docs/architecture/technical_specification.md`](docs/architecture/technical_specification.md)  
   Exhaustive engineering specification covering the 4-tier memory hierarchy (L1 Cache $\to$ Metal BLAS $\to$ Conformal Gate $\to$ System 2 Governor), schema type system (`Choice`, `MultiChoice`, `Boolean`, `Score`), compiler binary container format (`.s1m`), SQLite WAL ActionLedger schema, Ed25519 signing envelope, and 1:1 twin-namespace parity.
 

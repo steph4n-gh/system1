@@ -1,8 +1,8 @@
 # Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts
 
-**Stephane Arrington**  
+**steph4n**  
 *Reflex Core Research Team*  
-`stephane@reflex.dev` • September 2026
+X: [`@steph4n`](https://x.com/steph4n) • September 2026
 
 ---
 
