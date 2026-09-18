@@ -504,7 +504,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
                 assert h_resp.status == adv_pb2.HealthCheckResponse.SERVING
-                assert h_resp.version == "0.1.0"
+                assert h_resp.version == "0.1.1"
 
                 # 2. Decide with numeric telemetry features
                 d_req = adv_pb2.DecideRequest(

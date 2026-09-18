@@ -52,7 +52,7 @@ from system1 import (
     schema,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 def decide(

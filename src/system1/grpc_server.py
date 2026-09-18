@@ -550,16 +550,20 @@ def _build_verify_response(verified: bool, decision_id: str = "", receipt_digest
 
 
 def _build_health_response(schemas: List[str], as_protobuf: bool = False):
+    try:
+        from system1 import __version__ as _ver
+    except ImportError:
+        _ver = "0.1.1"
     if as_protobuf and _STUBS_AVAILABLE:
         return reflex_pb2.HealthCheckResponse(
             status=reflex_pb2.HealthCheckResponse.SERVING,
             loaded_schemas=schemas or [],
-            version="0.1.0",
+            version=_ver,
         )
     return _SimpleNamespace(
         status=1,  # SERVING
         loaded_schemas=schemas,
-        version="0.1.0",
+        version=_ver,
     )
 
 
