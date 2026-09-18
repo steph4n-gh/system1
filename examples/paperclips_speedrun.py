@@ -396,23 +396,27 @@ class Paperclips3PhasePolicy:
             return "buy_wire", None, 0.01
 
         # 5. Price Elasticity Tuning (Dynamic PID)
+        # Prevent bankruptcy: if current margin * 1000 is less than or equal to wire cost, we are losing money!
+        if obs.margin * 1000 <= obs.wire_cost:
+            return "raise_price", None, 0.10
+
         # Optimal revenue/demand equilibrium: keep unsold clips near 50-200
         if obs.clips > 50:
-            if obs.unsold_clips > obs.demand * 1.8 and obs.margin > 0.02:
+            if obs.unsold_clips > obs.demand * 1.8 and obs.margin > 0.02 and (obs.margin - 0.01) * 1000 > obs.wire_cost:
                 return "lower_price", None, 0.10
             elif obs.unsold_clips < obs.demand * 0.3 and obs.margin < 0.50:
                 return "raise_price", None, 0.10
 
         # 6. MegaClippers ROI scaling
-        if obs.megaclipper_cost > 0 and obs.funds >= obs.megaclipper_cost:
+        if obs.megaclipper_cost > 0 and obs.funds >= obs.megaclipper_cost + obs.wire_cost * 2:
             return "buy_megaclipper", None, 0.05
 
         # 7. Marketing Expansion (Demand driver)
-        if obs.funds >= obs.marketing_cost * 1.5 and obs.marketing_level < 15:
+        if obs.funds >= obs.marketing_cost * 1.5 + obs.wire_cost * 2 and obs.marketing_level < 15:
             return "buy_marketing", None, 0.08
 
         # 8. AutoClippers Scaling
-        if obs.funds >= obs.autoclipper_cost * 1.2 and obs.autoclipper_cost < 300.0:
+        if obs.funds >= obs.autoclipper_cost * 1.2 + obs.wire_cost * 2 and obs.autoclipper_cost < 300.0:
             return "buy_autoclipper", None, 0.05
 
         # 9. Replenish wire buffer

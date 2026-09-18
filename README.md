@@ -16,7 +16,7 @@
   <a href="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-377%20passed-brightgreen.svg" alt="377 Tests Passed" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-458%20passed-brightgreen.svg" alt="458 Tests Passed" /></a>
   <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-~1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
   <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/data_egress-0%25_(100%25_local)-success.svg" alt="Zero Data Egress" /></a>
 </p>
@@ -27,8 +27,9 @@
   <a href="#-dual-process-cognitive-architecture-2026-edition">2026 Cognitive Stack</a> •
   <a href="#-the-4-tier-1-architectural-levers">4 Levers</a> •
   <a href="#-flagship-showcases">Visual Proof</a> •
+  <a href="#-training--distilling-domain-experts-guide">Training Experts Guide</a> •
   <a href="#-native-framework-integrations-mcp-fastapi-langchain">Integrations</a> •
-  <a href="#-production-demo--benchmark-catalog-17-demos">Demos (17)</a> •
+  <a href="#-production-demo--benchmark-catalog-18-demos">Demos (18)</a> •
   <a href="#-privacy--zero-data-egress">Privacy</a> •
   <a href="#-academic-paper--technical-deep-dive">Whitepaper & Specs</a> •
   <a href="#-1-line-typesafe-ai--jev-drop-in">TypeSafe Drop-in</a> •
@@ -215,6 +216,29 @@ python3 examples/paperclips_typesafe_dropin.py --mode cutover --steps 5 --thresh
 
 ---
 
+## 🎓 Training & Distilling Domain Experts Guide
+
+Reflex provides a comprehensive, end-to-end developer guide for training, distilling, and deploying specialized domain experts:
+
+👉 **[Training, Distilling, and Deploying Reflex Domain Experts](docs/guides/training_experts.md)**
+
+### Key Topics Covered in the Guide:
+- **What a Reflex Expert Is:** A compiled, portable `<20KB` `.s1m` decision runtime with sub-millisecond execution on local silicon.
+- **The 4 Training Pathways:**
+  1. *Zero-Shot Seed Expert:* Instant deployment from schema definitions and contrastive option whitening without training data.
+  2. *Synthetic Teacher Distillation:* Closed-form Ridge Regression bootstrapping via frontier reasoning models (Astra, GPT-6, Claude Opus 5, Fable 5.1, Gemini 3.1, Grok).
+  3. *Supervised Dataset Compilation:* Direct closed-form compilation from historical JSON/CSV logs or benchmark splits.
+  4. *Live Autonomous Cutover (`mode="auto_cutover"`):* Zero-downtime Trojan horse migration from SaaS APIs to 100% on-metal execution.
+- **Continuous Online Adaptation:** Microsecond-grade Sherman-Morrison rank-1 updates with exponential forgetting ($\lambda_f = 0.995$) and regularized covariance bounding.
+- **2-Tier Mixture of Experts (MoE):** Composing a high-speed Router Expert dispatching to specialized Domain Experts (< 0.7ms end-to-end).
+- **Hyperparameter Tuning Guide:** Practical calibration tables for regularization $\lambda$, dimension $D$, forgetting factor $\lambda_f$, relative odds ratio $\gamma$, and confidence floors $\tau_0$.
+- **Runnable Reference Example:** Try [`examples/train_expert.py`](examples/train_expert.py) to run all 5 pathways on your machine in seconds:
+  ```bash
+  python3 examples/train_expert.py
+  ```
+
+---
+
 ## 🔌 Native Framework Integrations (MCP, FastAPI, LangChain)
 
 Reflex ships with native, zero-friction integration adapters for modern agent stacks:
@@ -279,9 +303,9 @@ guarded_tool = wrap_langchain_tool(bash_tool, tool_name="system_terminal")
 
 ---
 
-## 🚀 Production Demo & Benchmark Catalog (17 Demos)
+## 🚀 Production Demo & Benchmark Catalog (18 Demos)
 
-Reflex includes **17 production demonstrations and empirical benchmarks** organized across 4 domains:
+Reflex includes **18 production demonstrations and empirical benchmarks** organized across 4 domains:
 
 | # | Demo / Benchmark | Script | Primary Domain | Latency / Highlights |
 |:---:|---|---|---|---|
@@ -302,9 +326,10 @@ Reflex includes **17 production demonstrations and empirical benchmarks** organi
 | **15** | **Pure NumPy Standalone Evaluator** | `examples/core_standalone_evaluator.py` | Embedded / Zero-Dep | Pure NumPy `<0.5ms` forward pass, 0 crypto/SQLite deps |
 | **16** | **Front-Line AI Gateway Router** | `examples/model_routing.py` | AI Gateway Routing | Cache vs local vs frontier routing with conformal bounds |
 | **17** | **Customer Support Ticket Triage** | `examples/support_triage.py` | NLP Classification | Department routing, urgency, frustration index in ~1ms |
+| **18** | **Domain Expert Training & MoE Showcase** | `examples/train_expert.py` | Distillation & MoE | 5 training pathways, <20KB .s1m, sub-50µs adaptation |
 
 <details>
-<summary><strong>Expand Execution Commands for All 17 Demos</strong></summary>
+<summary><strong>Expand Execution Commands for All 18 Demos</strong></summary>
 
 ```bash
 # Gaming & Control
@@ -331,6 +356,9 @@ python3 examples/four_levers_benchmark.py
 python3 examples/core_standalone_evaluator.py
 python3 examples/model_routing.py
 python3 examples/support_triage.py
+
+# Distillation, Domain Experts & Mixture of Experts (MoE)
+python3 examples/train_expert.py
 ```
 </details>
 
@@ -440,6 +468,8 @@ All diagrams, branding, and vector media are maintained in [`assets/`](https://g
 
 For researchers, systems architects, and infrastructure security teams:
 
+* **Comprehensive Practitioner Guide**: [`docs/guides/training_experts.md`](docs/guides/training_experts.md)  
+  *Training, Distilling, and Deploying Reflex Domain Experts*. Complete practitioner and mathematical guide covering the 4 training pathways (Zero-Shot Seed, Synthetic Teacher Distillation, Supervised Compilation, Autonomous Cutover), continuous Sherman-Morrison rank-1 online adaptation ($\lambda_f = 0.995$), 2-tier Mixture of Experts (MoE) dispatching, and hyperparameter tuning.
 * **Academic Whitepaper**: [`docs/paper/reflex_whitepaper.md`](docs/paper/reflex_whitepaper.md)  
   *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts* (steph4n, 2026). Contains formal mathematical proofs of finite-sample conformal coverage ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}(X)) \ge 1 - \alpha$), closed-form Ridge Regression distillation, sub-50µs Sherman-Morrison online rank-1 adaptation, contrastive whitening theorems, and real-world 60 FPS Game Boy emulation telemetry.
 * **Technical Architecture Specification**: [`docs/architecture/technical_specification.md`](docs/architecture/technical_specification.md)  
