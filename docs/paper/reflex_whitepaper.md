@@ -1,13 +1,12 @@
-# Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts
+# Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts
 
-**steph4n (2026)**  
+**steph4n** (`@steph4n` on X)  
 *Reflex Core Research Team*  
-Contact: [`@steph4n`](https://x.com/steph4n) on X (Twitter)  
 Repository: [`https://github.com/steph4n-gh/reflex`](https://github.com/steph4n-gh/reflex)  
-September 2026
+March 2026
 
 > **Suggested Citation:**  
-> steph4n (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts*. Reflex Core Research Team. Available at: `https://github.com/steph4n-gh/reflex`.
+> steph4n (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. Reflex Core Research Team. Available at: `https://github.com/steph4n-gh/reflex`.
 
 ---
 
@@ -192,6 +191,8 @@ $$\left\| \sum_{k=1}^K \mathbf{u}_k \right\|_2^2 = \sum_{j=1}^K \sum_{k=1}^K \la
 Because there are $K(K-1)$ off-diagonal pairs:
 $$\max_{j \ne k} \langle \mathbf{u}_j, \mathbf{u}_k \rangle \ge \frac{1}{K(K-1)} \sum_{j \ne k} \langle \mathbf{u}_j, \mathbf{u}_k \rangle \ge \frac{-K}{K(K-1)} = -\frac{1}{K - 1}$$
 Equality holds if and only if $\sum_{k=1}^K \mathbf{u}_k = \mathbf{0}$ and all pairwise inner products are identical. Since $\sum_{k=1}^K \tilde{\mathbf{w}}_k = \mathbf{0}$ and $\langle \tilde{\mathbf{w}}_j, \tilde{\mathbf{w}}_k \rangle = -\frac{1}{K-1}$ uniformly for all $j \ne k$, the configuration constructed by Contrastive Centering & Whitening strictly achieves the theoretical minimum possible pairwise correlation in Euclidean geometry. $\blacksquare$
+
+*Remark (Simplex Optimality in Practice)*: While the theoretical Welch bound minimum cosine similarity ($-\frac{1}{K-1}$) is achieved when distinctive prototype components $\{\mathbf{v}_k\}$ are mutually orthogonal with equal norm, high-dimensional natural language text embeddings in practice exhibit non-zero semantic correlations. In such real-world feature spaces, contrastive centering eliminates background bias $\mathbf{b}$ and maximally widens angular separation into an approximate equiangular simplex configuration, yielding substantial empirical margin gains.
 
 ---
 
@@ -394,8 +395,8 @@ $$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; t \;\|\; \text{canonical\_json}(\tex
 
 Where $h_0 = 0^{64}$ is the fixed genesis digest and $\text{canonical\_json}$ enforces RFC 8785 deterministic key ordering and zero whitespace. The entry payload incorporates the decision identifier, schema hash, prompt hash, prediction set cardinality, and timestamp. If an adversary modifies, inserts, or deletes a historical row $j < t$, the recurrence relation fails for all subsequent rows $k > j$, rendering any unauthorized tampering mathematically detectable.
 
-### 5.2 Ed25519 Hardware Witness Receipts
-Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair generated and stored in `~/.system1/identity/`. For every evaluated decision, Reflex produces a signed `RunWitnessEnvelope` containing:
+### 5.2 Ed25519 Cryptographic Witness Receipts
+Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair generated and stored in `~/.system1/identity/`. Reflex executes pure software Ed25519 digital signatures via RFC 8032 standard primitives (using Python's `cryptography` library). Unlike hardware enclave architectures (e.g. Intel SGX or AMD SEV) that require specialized hypervisor attestation and virtualization overhead, Reflex provides non-repudiation and cryptographic chronological ordering at the application runtime layer. For every evaluated decision, Reflex produces a signed `RunWitnessEnvelope` containing:
 * Canonical decision telemetry (action, parameters, calibrated probabilities, latency)
 * Conformal gating status ($|\mathcal{C}_{1-\alpha}|$, empirical threshold $\hat{q}_{1-\alpha}$, margin $M(\mathbf{x})$)
 * Rolling ledger head hash $h_t$
@@ -411,7 +412,7 @@ Reflex is engineered under a zero-external-dependency constraint. The core runti
 * No low-level networking sockets (`import socket`) or IPC telemetry daemons are instantiated during local inference.
 * All matrix computations, conformal evaluations, and SQLite ledger writes execute strictly within host process memory and local disk.
 
-This architectural invariant guarantees that **zero network packets are transmitted across external interfaces during System 1 inference**, satisfying the rigorous data boundary requirements of HIPAA (Protected Health Information), GDPR (cross-border data sovereignty), and SOC 2 Type II compliance.
+**Clarification of Egress Paths:** 100% zero network egress applies strictly to local System 1 decisions. When conformal gating detects an ambiguous or out-of-distribution input, fallback routing to an upstream System 2 governor represents an intentional WAN egress path. If zero-egress mode is enforced (`zero_egress=True`), the runtime executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets transmitted, satisfying the rigorous data boundary requirements of HIPAA (Protected Health Information), GDPR (cross-border data sovereignty), and SOC 2 Type II compliance.
 
 ---
 
@@ -576,4 +577,4 @@ Reflex addresses the acute latency, economic, and data privacy bottlenecks of co
 6. Leviathan, Y., Kalman, M., & Matias, Y. (2023). *Fast Inference from Large Language Models via Speculative Decoding*. International Conference on Machine Learning (ICML).
 7. Booch, G., Fabiano, F., Horesh, L., et al. (2021). *Thinking Fast and Slow in AI*. Proceedings of the AAAI Conference on Human Computation and Crowdsourcing.
 8. Weinberger, K., Dasgupta, A., Langford, J., Smola, A., & Attenberg, J. (2009). *Feature Hashing for Large Scale Multitask Learning*. International Conference on Machine Learning (ICML).
-9. steph4n. (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts*. Reflex Core Research Team. `https://github.com/steph4n-gh/reflex`.
+9. steph4n. (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. Reflex Core Research Team. `https://github.com/steph4n-gh/reflex`.

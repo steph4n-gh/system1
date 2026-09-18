@@ -7,7 +7,7 @@ name = "system1"
 version = "0.1.0"
 description = "Reflex: Machine-Native System 1 Decision Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 authors = [{name = "Reflex / System 1 Authors"}]
 requires-python = ">=3.11"
 keywords = [
@@ -55,9 +55,27 @@ neural = [
 gameboy = [
     "pyboy>=2.0.0",
 ]
+observability = [
+    "prometheus_client>=0.17.0",
+]
+otel = [
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
+    "grpcio>=1.60.0",
+    "grpcio-tools>=1.60.0",
+    "protobuf>=4.25.0",
+    "prometheus_client>=0.17.0",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+]
+grpc = [
+    "grpcio>=1.60.0",
+    "grpcio-tools>=1.60.0",
+    "protobuf>=4.25.0",
 ]
 
 [project.scripts]
@@ -68,6 +86,10 @@ reflex = "reflex.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["reflex*", "system1*"]
+
+[tool.setuptools.package-data]
+"system1" = ["proto/*.proto", "proto/*.py"]
+"reflex" = ["proto/*.proto", "proto/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

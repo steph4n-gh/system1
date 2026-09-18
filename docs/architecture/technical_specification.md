@@ -63,7 +63,7 @@ Inspired by Daniel Kahneman’s dual-process cognitive framework, Reflex impleme
 │   │ Local Execution & Cryptographic Attestation                    │   │ Tier 3: System 2 Governor │   │
 │   │ • ActionLedger SQLite WAL (audit_entries)                      │   │ • Frontier Reasoning Proxy│   │
 │   │ • Rolling SHA-256 Merkle Chain                                 │   │   (OpenAI Astra / GPT-6,  │   │
-│   │ • Ed25519 Hardware Witness Receipt                             │   │    Claude Opus 5 / Fable, │   │
+│   │ • Ed25519 Cryptographic Witness Receipt                        │   │    Claude Opus 5 / Fable, │   │
 │   └────────────────────────────────────────────────────────────────┘   │    Gemini 3.1, xAI Grok)  │   │
 │                                                                        │ • Multi-turn reasoning    │   │
 │                                                                        └─────────────┬─────────────┘   │
@@ -503,8 +503,8 @@ $$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; \text{sequence}_t \;\|\; \text{canon
 
 where $h_0 = 0^{64}$ is the fixed genesis hash and $\text{canonical\_json}$ enforces RFC 8785 deterministic key ordering and zero whitespace.
 
-### 8.3 Ed25519 Hardware Witness Receipts
-Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. For every decision, Reflex constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
+### 8.3 Ed25519 Cryptographic Witness Receipts
+Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. Digital signatures are generated in software via RFC 8032 standard primitives (using Python's `cryptography` library), establishing application-layer non-repudiation and chronological ordering without proprietary hardware enclave dependencies. For every decision, Reflex constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
 * Canonical decision telemetry (action, parameters, calibrated probabilities, latency)
 * Conformal gating status ($|\mathcal{C}_{1-\alpha}|$, empirical threshold $\hat{q}_{1-\alpha}$, margin $M(\mathbf{x})$)
 * Rolling ledger head hash $h_t$
@@ -517,7 +517,7 @@ Reflex enforces a strict zero-dependency architectural constraint. The core runt
 * No low-level networking sockets (`import socket`) are instantiated during local inference.
 * All matrix evaluations, conformal checks, and SQLite ledger writes execute strictly within host process memory and local disk.
 
-This guarantees that **zero network packets are transmitted across external interfaces during System 1 inference**, fulfilling strict HIPAA (PHI boundary) and GDPR data sovereignty mandates.
+**Clarification of Egress Paths:** 100% zero network egress applies strictly to local System 1 decisions. When conformal gating detects an ambiguous or out-of-distribution input, fallback routing to an upstream System 2 governor represents an intentional WAN egress path. If zero-egress mode is enforced (`zero_egress=True`), the runtime executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets transmitted, fulfilling strict HIPAA (PHI boundary) and GDPR data sovereignty mandates.
 
 ---
 
@@ -551,7 +551,7 @@ assert reflex.__version__ == system1.__version__ == "0.1.0"
 | **Tier 1 Metal Cold Forward Pass** | $< 2.0\,\text{ms}$ | **$0.98\,\text{ms}$ P50** ($0.72 - 1.45\,\text{ms}$, P99: $1.34\,\text{ms}$) | `examples/deep_jev_benchmark.py` |
 | **Sherman-Morrison Online Update** | $< 100\,\mu\text{s}$ | **$38.4\,\mu\text{s}$** | `examples/four_levers_benchmark.py` |
 | **Conformal Coverage ($1-\alpha$)** | $\ge 95.0\%$ | **$96.8\%$** realized ($100.0\%$ in firewall benchmark) | `examples/autonomous_agent_firewall_showcase.py` / `tests/test_conformal.py` |
-| **Real-Time Emulation Rate** | $\ge 60\,\text{FPS}$ | **$10,400+\,\text{FPS}$** (Headless PyBoy) | `examples/pokemon_all_games_benchmark.py` |
+| **Real-Time Emulation Rate** | $\ge 60\,\text{FPS}$ | **$10,400+\,\text{FPS}$** (Headless PyBoy) | `examples/gaming/pokemon_all_games_benchmark.py` |
 | **Concurrent Throughput** | $> 500\,\text{QPS}$ | **$> 1,240\,\text{QPS}$** (up to $2,281.1\,\text{QPS}$ in-line) | `examples/enterprise_stress_showcase.py` |
 | **External WAN Egress** | **0 Bytes** | **0 Bytes (Air-gapped)** | Packet inspection socket audit |
 
@@ -573,7 +573,7 @@ Benchmarked on Apple Silicon (M3 Max, 14-core CPU, 36 GB Unified Memory) running
 ### 10.3 Real-Time 60 FPS Emulation Testbed (Pokémon Red/Blue)
 To test Reflex under rigid real-time constraints, the runtime was interfaced with the `PyBoy` Game Boy hardware emulator running *Pokémon Red* at 60.0 Hz (16.6 ms per frame):
 * **Frame Budget Allocation:** A cloud LLM forward pass ($850\,\text{ms}$) causes **51 dropped frames**. Reflex evaluates in $0.98\,\text{ms}$, consuming only **5.9% of the 16.6 ms hardware frame budget**, permitting up to **16 evaluations per frame**.
-* **Memory-Mapped RAM Offsets:** Verified in `examples/pokemon_battle_reflex.py`:
+* **Memory-Mapped RAM Offsets:** Verified in `examples/gaming/pokemon_battle_reflex.py`:
   - Battle Mode: `$D057` (`wIsInBattle`)
   - Player HP: `$D015` (`wBattleMonHP`)
   - Opponent HP: `$CFE6` (`wEnemyMonHP`)

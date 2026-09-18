@@ -38,8 +38,11 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = REPO_ROOT / "examples"
+GAMING_DIR = EXAMPLES_DIR / "gaming"
 if str(EXAMPLES_DIR) not in sys.path:
     sys.path.insert(0, str(EXAMPLES_DIR))
+if str(GAMING_DIR) not in sys.path:
+    sys.path.insert(0, str(GAMING_DIR))
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 

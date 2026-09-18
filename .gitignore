@@ -86,3 +86,6 @@ roms/
 # Temporary scratch directories
 scratch/
 
+# Audit bundle
+REFLEX_AUDIT_CODEBASE.txt
+

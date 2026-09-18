@@ -59,7 +59,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
 # Ensure src/ is on sys.path for direct script execution
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SRC_DIR = REPO_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -2050,9 +2050,9 @@ def run_battle_simulation(
 def find_default_pokemon_rom() -> Optional[Path]:
     """Finds an official Pokémon Red/Blue Game Boy ROM in downloads if available."""
     candidates = [
-        Path(__file__).resolve().parent.parent / "roms" / "pokemon_red.gb",
-        Path(__file__).resolve().parent.parent / "roms" / "pokemon_blue.gb",
-        Path(__file__).resolve().parent.parent / "roms" / "pokemon_yellow.gb",
+        Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_red.gb",
+        Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_blue.gb",
+        Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_yellow.gb",
         Path("/Volumes/Storage/reflex/roms/pokemon_red.gb"),
         Path("/Users/sarrington/Downloads/game-boy-and-game-boy-color-complete-collection/game-boy-and-game-boy-color-complete-collection/Pokemon Red Version (USA) (SGB Enhanced).gb"),
         Path("/Users/sarrington/Downloads/game-boy-and-game-boy-color-complete-collection/game-boy-and-game-boy-color-complete-collection/Pokemon Blue Version (USA) (SGB Enhanced).gb"),

@@ -576,6 +576,8 @@ class DomainMetrics:
     data_egress_bytes: int
     conformal_escalations: int
     verified_witness_receipts: int
+    provenance: str = "MEASURED_LIVE"
+    is_synthetic: bool = False
 
 
 @dataclass
@@ -588,6 +590,7 @@ class BenchmarkComparison:
     cost_savings_usd: float
     tokens_saved: int
     egress_saved_bytes: int
+    baseline_provenance: str = "SYNTHETIC_SIMULATED"
 
 
 # =====================================================================
@@ -603,11 +606,12 @@ def calculate_percentile(data: List[float], p: float) -> float:
     return sorted_data[idx]
 
 
-def simulate_cloud_call(query: str, domain: str) -> Tuple[float, int, int]:
-    """Generates realistic empirical cloud WAN + LLM inference profile.
+def simulate_cloud_call(query: str, domain: str) -> Tuple[float, int, int, str]:
+    """Generates empirical cloud WAN + LLM inference profile with clear provenance.
 
-    Based on empirical TypeSafe Cloud speedrun profile:
-    - Round-trip latency: Mean ~350ms (Normal distribution sigma=40ms, min=220ms)
+    When TYPESAFE_API_KEY is configured and live call succeeds, returns live metrics (MEASURED_LIVE).
+    Otherwise, returns calibrated synthetic Gaussian WAN simulation (SYNTHETIC_SIMULATED):
+    - Round-trip latency: Mean ~350ms (Normal distribution sigma=38ms, min=220ms)
     - Tokens consumed: ~240 tokens per query (system prompt + schema + query + response)
     - Egress payload: ~1050 bytes HTTP POST payload
     """
@@ -620,15 +624,15 @@ def simulate_cloud_call(query: str, domain: str) -> Tuple[float, int, int]:
             # Live test call if enabled
             res = client.decide(query, schema={"type": "object"})
             latency = (time.perf_counter() - t0) * 1000.0
-            return latency, 240, 1050
+            return latency, 240, 1050, "MEASURED_LIVE"
         except Exception:
             pass
 
-    # Calibrated empirical cloud model
+    # Calibrated empirical cloud model (SYNTHETIC_SIMULATED)
     latency = max(220.0, random.gauss(345.0, 38.0))
     tokens = 240
     egress = len(query.encode("utf-8")) + 980
-    return latency, tokens, egress
+    return latency, tokens, egress, "SYNTHETIC_SIMULATED"
 
 
 def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
@@ -662,10 +666,11 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
             verified_receipts += 1
 
         # Cloud baseline evaluation
-        c_lat, c_tok, c_egr = simulate_cloud_call(cmd, "openhands")
+        c_lat, c_tok, c_egr, c_prov = simulate_cloud_call(cmd, "openhands")
         cloud_latencies.append(c_lat)
         cloud_tokens += c_tok
         cloud_egress += c_egr
+        cloud_prov = c_prov
 
     # Reflex metrics
     r_mean = statistics.mean(reflex_latencies)
@@ -691,6 +696,8 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=0,
         conformal_escalations=conformal_escalations,
         verified_witness_receipts=verified_receipts,
+        provenance="MEASURED_LIVE",
+        is_synthetic=False,
     )
 
     # Cloud metrics
@@ -717,6 +724,8 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=cloud_egress,
         conformal_escalations=0,
         verified_witness_receipts=0,
+        provenance=cloud_prov,
+        is_synthetic=(cloud_prov == "SYNTHETIC_SIMULATED"),
     )
 
     speedup = c_mean / r_mean if r_mean > 0 else 1.0
@@ -730,6 +739,7 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cost_savings_usd=c_cost,
         tokens_saved=cloud_tokens,
         egress_saved_bytes=cloud_egress,
+        baseline_provenance=cloud_prov,
     )
 
 
@@ -761,10 +771,11 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         if triage.receipt and verify_decision_witness_receipt(triage.receipt.to_dict()):
             verified_receipts += 1
 
-        c_lat, c_tok, c_egr = simulate_cloud_call(text, "instructor")
+        c_lat, c_tok, c_egr, c_prov = simulate_cloud_call(text, "instructor")
         cloud_latencies.append(c_lat)
         cloud_tokens += c_tok
         cloud_egress += c_egr
+        cloud_prov = c_prov
 
     r_mean = statistics.mean(reflex_latencies)
     r_p50 = calculate_percentile(reflex_latencies, 50)
@@ -789,6 +800,8 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=0,
         conformal_escalations=conformal_escalations,
         verified_witness_receipts=verified_receipts,
+        provenance="MEASURED_LIVE",
+        is_synthetic=False,
     )
 
     c_mean = statistics.mean(cloud_latencies)
@@ -814,6 +827,8 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=cloud_egress,
         conformal_escalations=0,
         verified_witness_receipts=0,
+        provenance=cloud_prov,
+        is_synthetic=(cloud_prov == "SYNTHETIC_SIMULATED"),
     )
 
     speedup = c_mean / r_mean if r_mean > 0 else 1.0
@@ -827,6 +842,7 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cost_savings_usd=c_cost,
         tokens_saved=cloud_tokens,
         egress_saved_bytes=cloud_egress,
+        baseline_provenance=cloud_prov,
     )
 
 
@@ -858,10 +874,11 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         if choice.receipt and verify_decision_witness_receipt(choice.receipt.to_dict()):
             verified_receipts += 1
 
-        c_lat, c_tok, c_egr = simulate_cloud_call(query, "semantic_router")
+        c_lat, c_tok, c_egr, c_prov = simulate_cloud_call(query, "semantic_router")
         cloud_latencies.append(c_lat)
         cloud_tokens += c_tok
         cloud_egress += c_egr
+        cloud_prov = c_prov
 
     r_mean = statistics.mean(reflex_latencies)
     r_p50 = calculate_percentile(reflex_latencies, 50)
@@ -886,6 +903,8 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=0,
         conformal_escalations=conformal_escalations,
         verified_witness_receipts=verified_receipts,
+        provenance="MEASURED_LIVE",
+        is_synthetic=False,
     )
 
     c_mean = statistics.mean(cloud_latencies)
@@ -911,6 +930,8 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         data_egress_bytes=cloud_egress,
         conformal_escalations=0,
         verified_witness_receipts=0,
+        provenance=cloud_prov,
+        is_synthetic=(cloud_prov == "SYNTHETIC_SIMULATED"),
     )
 
     speedup = c_mean / r_mean if r_mean > 0 else 1.0
@@ -924,6 +945,7 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cost_savings_usd=c_cost,
         tokens_saved=cloud_tokens,
         egress_saved_bytes=cloud_egress,
+        baseline_provenance=cloud_prov,
     )
 
 
@@ -933,15 +955,15 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
 
 def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
     lines = []
-    lines.append("=" * 108)
-    lines.append("TRIPLE-CROWN OPEN-SOURCE BENCHMARK SCORECARD: REFLEX SYSTEM 1 vs. CLOUD BASELINE")
-    lines.append("=" * 108)
+    lines.append("=" * 128)
+    lines.append("TRIPLE-CROWN OPEN-SOURCE BENCHMARK SCORECARD: REFLEX SYSTEM 1 (MEASURED_LIVE) vs. CLOUD BASELINE (SYNTHETIC_SIMULATED)")
+    lines.append("=" * 128)
     header = (
-        f"{'Benchmark Target':<28} | {'Reflex P50':<11} | {'Cloud P50':<11} | "
+        f"{'Benchmark Target':<28} | {'Reflex P50 [LIVE]':<17} | {'Cloud P50 [SYNTHETIC_SIMULATED]':<31} | "
         f"{'Speedup':<9} | {'Reflex Acc':<10} | {'Tokens Saved':<13} | {'Egress Saved':<12}"
     )
     lines.append(header)
-    lines.append("-" * 108)
+    lines.append("-" * 128)
 
     total_tokens = 0
     total_cost = 0.0
@@ -958,8 +980,8 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
 
         row = (
             f"{c.target_repo:<28} | "
-            f"{c.reflex.latency_p50_ms:>7.3f} ms | "
-            f"{c.cloud_baseline.latency_p50_ms:>7.1f} ms | "
+            f"{c.reflex.latency_p50_ms:>13.3f} ms | "
+            f"{c.cloud_baseline.latency_p50_ms:>27.1f} ms | "
             f"{c.speedup_factor:>7.1f}x | "
             f"{c.reflex.accuracy_pct:>8.1f}% | "
             f"{c.tokens_saved:>11,d} | "
@@ -967,24 +989,25 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
         )
         lines.append(row)
 
-    lines.append("-" * 108)
+    lines.append("-" * 128)
     avg_speedup = statistics.mean(speedups)
     avg_acc = statistics.mean(accuracies)
     summary_row = (
         f"{'AGGREGATE TOTALS':<28} | "
-        f"{'Sub-1ms':<11} | "
-        f"{'~350ms':<11} | "
+        f"{'Sub-1ms [LIVE]':<17} | "
+        f"{'~350ms [SYNTHETIC_SIMULATED]':<31} | "
         f"{avg_speedup:>7.1f}x | "
         f"{avg_acc:>8.1f}% | "
         f"{total_tokens:>11,d} | "
         f"{total_egress / 1024:>9.1f} KB"
     )
     lines.append(summary_row)
-    lines.append("=" * 108)
+    lines.append("=" * 128)
     lines.append(f"  * Total Estimated Cloud Cost Saved: ${total_cost:.4f}")
     lines.append(f"  * Total WAN Network Egress Eliminated: {total_egress:,} bytes (100% On-Device Privacy)")
     lines.append("  * Training Epochs Required: 0 (Zero-Shot Semantic Hyperplane Compilation)")
-    lines.append("=" * 108)
+    lines.append("  * Benchmark Provenance: Reflex System 1 = MEASURED_LIVE; Cloud Baseline = SYNTHETIC_SIMULATED (calibrated Gaussian model)")
+    lines.append("=" * 128)
 
     return "\n".join(lines)
 
@@ -1018,12 +1041,19 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
     results_data = {
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "iterations_per_domain": iterations,
+        "provenance_metadata": {
+            "reflex_provenance": "MEASURED_LIVE",
+            "cloud_baseline_provenance": "SYNTHETIC_SIMULATED",
+            "description": "Reflex System 1 latencies are measured live on local hardware. Cloud baseline latencies are generated via a calibrated empirical Gaussian model (SYNTHETIC_SIMULATED).",
+        },
         "aggregate": {
             "mean_speedup_factor": statistics.mean([c.speedup_factor for c in comparisons]),
             "mean_accuracy_pct": statistics.mean([c.reflex.accuracy_pct for c in comparisons]),
             "total_tokens_saved": sum(c.tokens_saved for c in comparisons),
             "total_cost_saved_usd": sum(c.cost_savings_usd for c in comparisons),
             "total_egress_saved_bytes": sum(c.egress_saved_bytes for c in comparisons),
+            "reflex_provenance": "MEASURED_LIVE",
+            "cloud_baseline_provenance": "SYNTHETIC_SIMULATED",
         },
         "domains": [
             {
@@ -1033,6 +1063,7 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
                 "cost_savings_usd": round(c.cost_savings_usd, 6),
                 "tokens_saved": c.tokens_saved,
                 "egress_saved_bytes": c.egress_saved_bytes,
+                "baseline_provenance": c.baseline_provenance,
                 "reflex": asdict(c.reflex),
                 "cloud_baseline": asdict(c.cloud_baseline),
             }

@@ -69,6 +69,7 @@ class CompiledHeadWeights:
     relative_odds_ratio: float = 1.5
     confidence_floor_tau0: float = 0.15
     escalate_on_ambiguity: bool = True
+    calibration_scores: Tuple[float, ...] = ()
 
 
 class CompiledSystemOneModel:
@@ -113,6 +114,7 @@ class CompiledSystemOneModel:
             capacity=cache_capacity,
             similarity_threshold=cache_threshold,
         )
+        self.model_version: int = 1
         self.telemetry_projector = TelemetryProjector(embedding_dim=self.dimension)
         self._lock = threading.RLock()
 
@@ -177,8 +179,16 @@ class CompiledSystemOneModel:
             emb = self.encode(prompt, telemetry=telemetry, recency_weighted=use_recency)
 
         # Check Tier 0 Semantic Reflex Cache
+        cur_version = getattr(self, "model_version", 1)
+        schema_dig = self.schema.schema_digest()
         if self.use_cache:
-            hit = self.cache.get(prompt, embedding=emb, telemetry=telemetry)
+            hit = self.cache.get(
+                prompt,
+                embedding=emb,
+                telemetry=telemetry,
+                schema_digest=schema_dig,
+                model_version=cur_version,
+            )
             if hit is not None:
                 entry, sim = hit
                 if isinstance(entry.result, ModelInferenceResult):
@@ -202,7 +212,15 @@ class CompiledSystemOneModel:
         )
 
         if self.use_cache:
-            self.cache.put(prompt, result, embedding=emb, telemetry=telemetry, source="evaluation")
+            self.cache.put(
+                prompt,
+                result,
+                embedding=emb,
+                telemetry=telemetry,
+                schema_digest=schema_dig,
+                model_version=cur_version,
+                source="evaluation",
+            )
 
         return result
 
@@ -249,6 +267,15 @@ class CompiledSystemOneModel:
         """
         with self._lock:
             t0 = time.perf_counter()
+
+            # Bump model_version and evict prompt before certified evaluation
+            self.model_version = getattr(self, "model_version", 1) + 1
+            if self.use_cache and self.cache is not None:
+                if hasattr(self.cache, "evict_prompt"):
+                    self.cache.evict_prompt(prompt)
+                if hasattr(self.cache, "invalidate_prior_versions"):
+                    self.cache.invalidate_prior_versions(self.model_version)
+
             if embedding is not None:
                 emb = np.asarray(embedding, dtype=np.float32).flatten()
             else:
@@ -294,7 +321,15 @@ class CompiledSystemOneModel:
                 inference_latency_ms=rank1_ms,
             )
             if self.use_cache:
-                self.cache.put(prompt, inference_res, embedding=emb, telemetry=telemetry, source="tier2")
+                self.cache.put(
+                    prompt,
+                    inference_res,
+                    embedding=emb,
+                    telemetry=telemetry,
+                    schema_digest=self.schema.schema_digest(),
+                    model_version=self.model_version,
+                    source="tier2",
+                )
 
             return {
                 "status": "updated",
@@ -351,6 +386,8 @@ class CompiledSystemOneModel:
         for name, ch in self.heads.items():
             arrays_to_save[f"{name}_w"] = ch.weights.astype(np.float32)
             arrays_to_save[f"{name}_b"] = ch.biases.astype(np.float32)
+            if hasattr(ch, "calibration_scores") and len(ch.calibration_scores) > 0:
+                arrays_to_save[f"{name}_calib_scores"] = np.asarray(ch.calibration_scores, dtype=np.float32)
             if include_covariance:
                 if ch.P is not None:
                     arrays_to_save[f"{name}_P"] = ch.P.astype(np.float32)
@@ -407,6 +444,8 @@ class CompiledSystemOneModel:
             b = npz_file[f"{name}_b"]
             p_mat = npz_file[f"{name}_P"] if f"{name}_P" in npz_file else None
             b_mat = npz_file[f"{name}_B"] if f"{name}_B" in npz_file else None
+            calib_scores_arr = npz_file[f"{name}_calib_scores"] if f"{name}_calib_scores" in npz_file else None
+            calib_scores = tuple(float(s) for s in calib_scores_arr) if calib_scores_arr is not None else ()
             heads[name] = CompiledHeadWeights(
                 field_name=name,
                 field_type=h_info["field_type"],
@@ -422,6 +461,7 @@ class CompiledSystemOneModel:
                 relative_odds_ratio=float(h_info.get("relative_odds_ratio", 1.5)),
                 confidence_floor_tau0=float(h_info.get("confidence_floor_tau0", 0.15)),
                 escalate_on_ambiguity=bool(h_info.get("escalate_on_ambiguity", True)),
+                calibration_scores=calib_scores,
             )
 
         saved_meta = meta.get("metadata", {})
@@ -896,33 +936,51 @@ class ReflexCompiler:
 
                 # Calibrate temperature and conformal bounds
                 logits_calib = (X_calib @ weights.T + biases) / 0.25
-                probs_calib = _stable_softmax(logits_calib, temperature=1.0)
                 calib_labels = np.argmax(Y_calib, axis=1)
 
-                # Non-conformity scores: s_i = 1 - P(y_i | x_i)
-                nonconf_scores = [
-                    float(1.0 - probs_calib[i, calib_labels[i]])
-                    for i in range(len(calib_labels))
-                ]
+                calibrator = DecisionCalibrator()
+                try:
+                    calibrator.fit(logits_calib, calib_labels)
+                    learned_temp = float(calibrator.temperature)
+                except Exception:
+                    learned_temp = 1.0
+                probs_calib = calibrator.calibrate_logits(logits_calib)
+
+                # Adaptive Prediction Sets (APS) scoring matching calibration.py
+                nonconf_scores = []
                 error_margins = []
                 for i in range(len(calib_labels)):
                     p_row = probs_calib[i]
                     s_idx = np.argsort(-p_row)
-                    top_i, runner_i = int(s_idx[0]), int(s_idx[1]) if len(s_idx) > 1 else int(s_idx[0])
-                    if top_i != calib_labels[i]:
+                    top_i = int(s_idx[0])
+                    runner_i = int(s_idx[1]) if len(s_idx) > 1 else top_i
+                    true_c = int(calib_labels[i])
+                    if top_i != true_c:
                         error_margins.append(float(p_row[top_i] - p_row[runner_i]))
+
+                    cum_sum = 0.0
+                    score_val = 1.0
+                    for c_i in s_idx:
+                        cum_sum += float(p_row[c_i])
+                        if c_i == true_c:
+                            score_val = cum_sum
+                            break
+                    nonconf_scores.append(score_val)
+
                 m_thresh = float(np.clip(np.quantile(error_margins, 0.95) + 0.05, 0.15, 0.85)) if error_margins else 0.20
 
+                sorted_calib_scores = np.sort(np.asarray(nonconf_scores, dtype=np.float64))
                 alpha = 0.05
-                q_level = min(1.0, (1.0 - alpha) * (1.0 + 1.0 / max(1, len(nonconf_scores))))
-                conformal_q = float(np.quantile(nonconf_scores, min(1.0, q_level)))
+                n_scores = len(sorted_calib_scores)
+                k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
+                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
                     field_type=f_def.field_type,
                     weights=weights,
                     biases=biases,
-                    temperature=1.0,
+                    temperature=learned_temp,
                     conformal_quantile=conformal_q,
                     options=f_def.options,
                     P=P_mat,
@@ -932,6 +990,7 @@ class ReflexCompiler:
                     relative_odds_ratio=self.relative_odds_ratio,
                     confidence_floor_tau0=self.confidence_floor_tau0,
                     escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
+                    calibration_scores=tuple(float(s) for s in sorted_calib_scores),
                 )
 
             elif isinstance(f_def, BooleanField):
@@ -956,22 +1015,35 @@ class ReflexCompiler:
                 logits_calib = (X_calib @ weights.T + biases).flatten()
                 probs_calib = _stable_sigmoid(logits_calib, temperature=0.25)
                 calib_bools = [bool(lab) for lab in (raw_labels[num_train:] if num_calib > 0 else raw_labels[:num_train])]
-                nonconf_scores = [
-                    float(1.0 - probs_calib[i] if calib_bools[i] else probs_calib[i])
-                    for i in range(len(calib_bools))
-                ]
+                nonconf_scores = []
                 error_margins_bool = []
                 for i in range(len(calib_bools)):
                     p_true = float(probs_calib[i])
                     p_false = 1.0 - p_true
+                    p_row = [p_false, p_true]
+                    true_idx = 1 if calib_bools[i] else 0
                     top_b = p_true >= 0.5
                     if top_b != calib_bools[i]:
                         error_margins_bool.append(abs(p_true - p_false))
+
+                    # APS score
+                    s_idx = np.argsort(-np.array(p_row))
+                    cum_s = 0.0
+                    score_val = 1.0
+                    for c_i in s_idx:
+                        cum_s += p_row[c_i]
+                        if c_i == true_idx:
+                            score_val = cum_s
+                            break
+                    nonconf_scores.append(score_val)
+
                 m_thresh_bool = float(np.clip(np.quantile(error_margins_bool, 0.95) + 0.05, 0.15, 0.85)) if error_margins_bool else 0.20
 
+                sorted_calib_scores = np.sort(np.asarray(nonconf_scores, dtype=np.float64))
                 alpha = 0.05
-                q_level = min(1.0, (1.0 - alpha) * (1.0 + 1.0 / max(1, len(nonconf_scores))))
-                conformal_q = float(np.quantile(nonconf_scores, min(1.0, q_level)))
+                n_scores = len(sorted_calib_scores)
+                k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
+                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -988,6 +1060,7 @@ class ReflexCompiler:
                     relative_odds_ratio=self.relative_odds_ratio,
                     confidence_floor_tau0=self.confidence_floor_tau0,
                     escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
+                    calibration_scores=tuple(float(s) for s in sorted_calib_scores),
                 )
 
             elif isinstance(f_def, MultiChoiceField):
@@ -1032,9 +1105,11 @@ class ReflexCompiler:
                         for k, opt in enumerate(f_def.options)
                     ]
                     nonconf_scores.append(float(np.max(scores_i)) if scores_i else 0.05)
+                sorted_calib_scores = np.sort(np.asarray(nonconf_scores, dtype=np.float64))
                 alpha = 0.05
-                q_level = min(1.0, (1.0 - alpha) * (1.0 + 1.0 / max(1, len(nonconf_scores))))
-                conformal_q = float(np.quantile(nonconf_scores, min(1.0, q_level)))
+                n_scores = len(sorted_calib_scores)
+                k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
+                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1050,6 +1125,7 @@ class ReflexCompiler:
                     relative_odds_ratio=self.relative_odds_ratio,
                     confidence_floor_tau0=self.confidence_floor_tau0,
                     escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
+                    calibration_scores=tuple(float(s) for s in sorted_calib_scores),
                 )
 
             elif isinstance(f_def, ScoreField):
@@ -1063,18 +1139,20 @@ class ReflexCompiler:
                     X_train, Z_train, self.regularization, return_covariance=True
                 )
 
-                # Calibrate normalized residual bounds on X_calib
+                # Calibrate residual bounds on X_calib
                 logits_calib = (X_calib @ weights.T + biases).flatten()
                 probs_calib = _stable_sigmoid(logits_calib, temperature=0.25)
                 pred_vals = f_def.min_value + val_range * probs_calib
                 true_calib_floats = raw_floats[num_train:].flatten() if num_calib > 0 else raw_floats[:num_train].flatten()
                 residuals = [
-                    float(abs(pred_vals[i] - true_calib_floats[i]) / val_range)
+                    float(abs(pred_vals[i] - true_calib_floats[i]))
                     for i in range(len(pred_vals))
                 ]
+                sorted_residuals = np.sort(np.asarray(residuals, dtype=np.float64))
                 alpha = 0.05
-                q_level = min(1.0, (1.0 - alpha) * (1.0 + 1.0 / max(1, len(residuals))))
-                conformal_q = float(np.quantile(residuals, min(1.0, q_level)))
+                n_res = len(sorted_residuals)
+                k = int(math.ceil((n_res + 1) * (1.0 - alpha)))
+                conformal_q = float(val_range) if k > n_res else float(sorted_residuals[k - 1])
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1090,6 +1168,7 @@ class ReflexCompiler:
                     relative_odds_ratio=self.relative_odds_ratio,
                     confidence_floor_tau0=self.confidence_floor_tau0,
                     escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
+                    calibration_scores=tuple(float(s) for s in sorted_residuals),
                 )
 
         return CompiledSystemOneModel(

@@ -111,6 +111,21 @@ def fingerprint(value: Any) -> str:
     return hashlib.sha256(canonical_bytes(value)).hexdigest()
 
 
+def _canonical_probabilities(
+    probs: Optional[Mapping[str, Any]]
+) -> Dict[str, Dict[str, float]]:
+    """Normalizes and canonicalizes probability distributions deterministically."""
+    if not probs or not isinstance(probs, MappingABC):
+        return {}
+    result: Dict[str, Dict[str, float]] = {}
+    for field_name, p_dist in sorted(probs.items()):
+        if isinstance(p_dist, MappingABC):
+            result[str(field_name)] = {
+                str(opt): round(float(p), 12) for opt, p in sorted(p_dist.items())
+            }
+    return result
+
+
 def public_key_bytes(key: Ed25519PrivateKey | Ed25519PublicKey) -> bytes:
     """Extract raw 32 bytes from an Ed25519 private or public key."""
     public = key.public_key() if isinstance(key, Ed25519PrivateKey) else key
@@ -368,6 +383,7 @@ class DecisionWitnessReceipt:
             "values": self.values,
             "confidences": self.confidences,
             "conformal_sets": self.conformal_sets,
+            "probabilities": _canonical_probabilities(self.probabilities),
             "latency_ms": round(self.latency_ms, 4),
             "is_ambiguous": self.is_ambiguous,
             "timestamp": self.timestamp,
@@ -423,6 +439,7 @@ def compute_receipt_digest(receipt_data: Mapping[str, Any]) -> str:
         "values": receipt_data.get("values", {}),
         "confidences": {k: float(v) for k, v in (receipt_data.get("confidences") or {}).items()},
         "conformal_sets": {k: list(v) for k, v in (receipt_data.get("conformal_sets") or {}).items()},
+        "probabilities": _canonical_probabilities(receipt_data.get("probabilities")),
         "latency_ms": round(float(receipt_data.get("latency_ms", 0.0)), 4),
         "is_ambiguous": bool(receipt_data.get("is_ambiguous", False)),
         "timestamp": str(receipt_data.get("timestamp", "")),
@@ -481,6 +498,7 @@ def create_decision_receipt(
     envelope_payload_guard = {
         "confidences": {k: float(v) for k, v in confidences.items()},
         "conformal_sets": {k: list(v) for k, v in conformal_sets.items()},
+        "probabilities": _canonical_probabilities(probabilities),
         "is_ambiguous": is_ambiguous,
         "latency_ms": round(float(latency_ms), 4),
     }
@@ -544,8 +562,17 @@ def verify_decision_witness_receipt(
     if "envelope_digest" in envelope_data and envelope_data["envelope_digest"] != expected_digest:
         return False
 
-    # 2. If signed, verify Ed25519 signature
-    if envelope.signature is not None:
+    # 2. Verify Ed25519 signature and enforce authentication profile
+    if envelope.signature is None or envelope.signature == "":
+        # Unsigned envelope: reject if caller expected a signed receipt or if profile requires signing
+        if public_key is not None:
+            return False
+        if envelope.profile == "product_signed_v1":
+            return False
+        if envelope.profile != "diagnostic_local":
+            return False
+    else:
+        # Signed envelope
         key_obj: Optional[Ed25519PublicKey] = None
         if public_key is not None:
             if isinstance(public_key, Ed25519PublicKey):
@@ -593,8 +620,27 @@ def verify_decision_witness_receipt(
                 except Exception:
                     pass
 
-        if key_obj is None:
-            raise ValueError("Receipt is cryptographically signed; valid public_key is required for verification")
+            if key_obj is None:
+                raise ValueError("Receipt is cryptographically signed; valid public_key is required for verification")
+
+        # Anti-substitution check: if signer_public_key is declared in receipt, it must match key_obj
+        if receipt_data.get("signer_public_key"):
+            try:
+                declared_bytes = bytes.fromhex(str(receipt_data["signer_public_key"]))
+                if declared_bytes != public_key_bytes(key_obj):
+                    return False
+            except Exception:
+                return False
+
+        # Anti-substitution check: if effect_observation declares signer_public_key, it must match key_obj
+        if envelope.effect_observation and envelope.effect_observation.get("signer_public_key"):
+            try:
+                obs_bytes = bytes.fromhex(str(envelope.effect_observation["signer_public_key"]))
+                if obs_bytes != public_key_bytes(key_obj):
+                    return False
+            except Exception:
+                return False
+
         unsigned = envelope.unsigned_payload()
         if not verify_payload(unsigned, envelope.signature, key_obj):
             return False
@@ -621,6 +667,9 @@ def verify_decision_witness_receipt(
         return False
     if "is_ambiguous" in guard and bool(guard.get("is_ambiguous")) != bool(receipt_data.get("is_ambiguous")):
         return False
+    if "probabilities" in guard:
+        if _canonical_probabilities(guard.get("probabilities")) != _canonical_probabilities(receipt_data.get("probabilities")):
+            return False
 
     # 4. Verify prompt hash integrity if prompt text is present
     if "prompt" in receipt_data and "prompt_digest" in receipt_data:

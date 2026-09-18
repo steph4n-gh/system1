@@ -35,13 +35,16 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 import numpy as np
 
 # Ensure src/ and examples/ are on sys.path for direct execution
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SRC_DIR = REPO_ROOT / "src"
 EXAMPLES_DIR = REPO_ROOT / "examples"
+GAMING_DIR = EXAMPLES_DIR / "gaming"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 if str(EXAMPLES_DIR) not in sys.path:
     sys.path.insert(0, str(EXAMPLES_DIR))
+if str(GAMING_DIR) not in sys.path:
+    sys.path.insert(0, str(GAMING_DIR))
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from system1 import (

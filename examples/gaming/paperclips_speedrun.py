@@ -40,7 +40,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 # Ensure src/ is on sys.path for direct script execution
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SRC_DIR = REPO_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
@@ -316,6 +316,15 @@ class Paperclips3PhasePolicy:
         self.preferred_projects = [
             "Creativity",
             "Limerick",
+            "Lexical Processing",
+            "Combinatory Harmonics",
+            "The Hadwiger Problem",
+            "The Tóth Sausage Conjecture",
+            "Donkey Space",
+            "Algorithmic Trading",
+            "Quantum Computing",
+            "Photonic Chip",
+            "MegaClippers",
             "Improved AutoClippers",
             "Even Better AutoClippers",
             "Optimized AutoClippers",
@@ -374,22 +383,21 @@ class Paperclips3PhasePolicy:
         # 3. Trust Allocation (Processors vs Memory)
         available_trust = obs.trust - (obs.processors + obs.memory)
         if available_trust > 0:
-            # Optimal speedrun memory breakpoints:
-            # - Need 10 memory (10,000 maxOps) early for Algorithmic Trading / Photonic Chip
-            # - Need 70 memory (70,000 maxOps) for Release the HypnoDrones
-            if obs.memory < 10:
-                return "buy_memory", None, 0.05
-            elif obs.memory < 70 and obs.processors >= 5:
-                # Balance: 1 memory every 2 processors
-                if obs.memory * 2 <= obs.processors:
-                    return "buy_memory", None, 0.05
-                else:
+            if obs.memory < 12:
+                # We need exactly 12 Memory for MegaClippers (12,000 ops)
+                # Keep processors low (e.g. 2) to rush memory
+                if obs.processors < 2:
                     return "buy_processor", None, 0.05
-            elif obs.memory >= 70:
-                # Once 70 memory reached for Hypnodrones, put rest into Processors
-                return "buy_processor", None, 0.01
+                else:
+                    return "buy_memory", None, 0.05
+            elif obs.memory < 70:
+                # Balance after 12 memory
+                if obs.processors < obs.memory // 2:
+                    return "buy_processor", None, 0.05
+                else:
+                    return "buy_memory", None, 0.05
             else:
-                return "buy_processor", None, 0.05
+                return "buy_processor", None, 0.01
 
         # 4. Critical Wire Starvation Prevention
         if obs.wire < 500 and obs.funds >= obs.wire_cost:
@@ -541,8 +549,8 @@ class MockPaperclipsBrowserController:
                 "can_afford": False,
             },
             {
-                "id": "projectButton14",
-                "title": "Photonic Chip",
+                "id": "projectButton50",
+                "title": "Quantum Computing",
                 "ops_cost": 10000,
                 "creat_cost": 0,
                 "can_afford": False,
@@ -719,7 +727,7 @@ class MockPaperclipsBrowserController:
                     obs.creativity -= p.get("creat_cost", 0)
                     obs.active_projects.pop(i)
 
-                    if "Photonic" in title:
+                    if "Quantum Computing" in title:
                         obs.q_comp_unlocked = True
                     elif "Hypnodrones" in title:
                         obs.phase = 2
@@ -849,9 +857,7 @@ class PlaywrightPaperclipsController:
                 }
             }
 
-            // q_comp unlocked only when qFlag is 1 (or element is visible)
-            const qCompEl = document.getElementById('qCompDisplay');
-            const qUnlocked = (window.qFlag === 1) || (qCompEl ? (qCompEl.style.display !== 'none' && qCompEl.offsetParent !== null) : false);
+            const qUnlocked = (typeof window.qFlag !== 'undefined' && window.qFlag === 1);
 
             return {
                 phase: (window.spaceFlag === 1) ? 3 : (window.humanFlag === 0 ? 2 : 1),

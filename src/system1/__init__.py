@@ -112,11 +112,13 @@ _SUBMODULE_NAMES = {
     "core",
     "embeddings",
     "engine",
+    "grpc_server",
     "guard",
     "integrations",
     "ledger",
     "model",
     "neural",
+    "proto",
     "receipt",
     "schema",
     "telemetry",
@@ -124,7 +126,7 @@ _SUBMODULE_NAMES = {
 
 # Lazy-loaded governance modules and symbols (cryptography, SQLite, reference monitor, compat)
 _MODULE_MAP = {
-    # 16 submodules
+    # 18 submodules
     "cache": "system1.cache",
     "calibration": "system1.calibration",
     "cli": "system1.cli",
@@ -133,11 +135,13 @@ _MODULE_MAP = {
     "core": "system1.core",
     "embeddings": "system1.embeddings",
     "engine": "system1.engine",
+    "grpc_server": "system1.grpc_server",
     "guard": "system1.guard",
     "integrations": "system1.integrations",
     "ledger": "system1.ledger",
     "model": "system1.model",
     "neural": "system1.neural",
+    "proto": "system1.proto",
     "receipt": "system1.receipt",
     "schema": "system1.schema",
     "telemetry": "system1.telemetry",
@@ -177,10 +181,14 @@ _MODULE_MAP = {
     # ledger
     "ActionLedger": "system1.ledger",
     "LedgerError": "system1.ledger",
+    "LedgerWriteError": "system1.ledger",
     "IntegrityError": "system1.ledger",
     # guard
     "ReflexGuardHook": "system1.guard",
     "SystemOneGuardHook": "system1.guard",
+    "PolicyRule": "system1.guard",
+    "PolicyEngine": "system1.guard",
+    "DeterministicPolicyEngine": "system1.guard",
     "DefaultGuardDecisionSchema": "system1.guard",
     "GuardInterceptionResult": "system1.guard",
     "ActionProposal": "system1.guard",
@@ -298,10 +306,14 @@ __all__ = [
     # Action Ledger
     "ActionLedger",
     "LedgerError",
+    "LedgerWriteError",
     "IntegrityError",
     # Reference Monitor & Guard
     "ReflexGuardHook",
     "SystemOneGuardHook",
+    "PolicyRule",
+    "PolicyEngine",
+    "DeterministicPolicyEngine",
     "DefaultGuardDecisionSchema",
     "GuardInterceptionResult",
     "ActionProposal",

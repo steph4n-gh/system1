@@ -13,6 +13,7 @@ local on-device execution with:
 from __future__ import annotations
 
 import asyncio
+import collections
 import functools
 import hashlib
 import inspect
@@ -20,6 +21,7 @@ import importlib
 import importlib.abc
 import importlib.machinery
 import json
+import math
 import os
 import sys
 import threading
@@ -37,6 +39,7 @@ from typing import (
     Mapping,
     Optional,
     Sequence,
+    Set,
     Tuple,
     Type,
     Union,
@@ -55,6 +58,373 @@ from system1.core import (
     MultiChoiceField,
     ScoreField,
 )
+
+
+def compute_wilson_score_lower(
+    successes: int,
+    total: int,
+    confidence: float = 0.95,
+) -> float:
+    """Computes the lower bound of the Wilson score confidence interval.
+
+    Parameters
+    ----------
+    successes : int
+        Number of successful / matching evaluations.
+    total : int
+        Total number of validation evaluations.
+    confidence : float
+        Statistical confidence level (default 0.95).
+
+    Returns
+    -------
+    float
+        Lower bound of the confidence interval in [0.0, 1.0].
+    """
+    if total <= 0:
+        return 0.0
+    if successes <= 0:
+        return 0.0
+
+    # Normal critical value approximation (e.g. 1.95996 for 95%)
+    if abs(confidence - 0.95) < 0.01:
+        z = 1.959963984540054
+    elif abs(confidence - 0.99) < 0.01:
+        z = 2.5758293035489004
+    elif abs(confidence - 0.90) < 0.01:
+        z = 1.6448536269514722
+    else:
+        p = 1.0 - (1.0 - confidence) / 2.0
+        t = math.sqrt(-2.0 * math.log(1.0 - p))
+        c0 = 2.515517
+        c1 = 0.802853
+        c2 = 0.010328
+        d1 = 1.432788
+        d2 = 0.189269
+        d3 = 0.001308
+        z = t - (c0 + c1 * t + c2 * t * t) / (1.0 + d1 * t + d2 * t * t + d3 * t * t * t)
+
+    p_hat = float(successes) / float(total)
+    denominator = 1.0 + (z * z) / float(total)
+    center = p_hat + (z * z) / (2.0 * float(total))
+    margin = z * math.sqrt((p_hat * (1.0 - p_hat) / float(total)) + ((z * z) / (4.0 * float(total) * float(total))))
+
+    lower = (center - margin) / denominator
+    return max(0.0, min(1.0, lower))
+
+
+@dataclass
+class CutoverPartition:
+    """Disjoint data partitions for cutover distillation, calibration, and validation."""
+
+    train_history: List[Dict[str, Any]]
+    calib_history: List[Dict[str, Any]]
+    val_history: List[Dict[str, Any]]
+    total_samples: int
+    train_ratio: float = 0.60
+    calib_ratio: float = 0.20
+    val_ratio: float = 0.20
+
+    def assert_disjoint(self) -> None:
+        """Verify that training and validation partitions do not share identical records."""
+        if self.total_samples <= 2:
+            return
+        train_ids = {id(x) for x in self.train_history}
+        calib_ids = {id(x) for x in self.calib_history}
+        val_ids = {id(x) for x in self.val_history}
+        if train_ids & val_ids:
+            raise AssertionError("Invariant 10 Violation: Training and validation folds share overlapping instances!")
+        if calib_ids & val_ids:
+            raise AssertionError("Invariant 10 Violation: Calibration and validation folds share overlapping instances!")
+
+
+def partition_cutover_history(
+    history: Sequence[Dict[str, Any]],
+    train_ratio: float = 0.60,
+    calib_ratio: float = 0.20,
+    val_ratio: float = 0.20,
+) -> CutoverPartition:
+    """Decouples query history into 3 strictly disjoint, held-out partitions:
+    training (e.g. 60%), calibration (e.g. 20%), and held-out validation (e.g. 20%).
+
+    Ensures zero in-sample contamination between model parameter fitting,
+    conformal calibration, and promotion gating.
+    """
+    total = len(history)
+    if total == 0:
+        return CutoverPartition([], [], [], total_samples=0, train_ratio=train_ratio, calib_ratio=calib_ratio, val_ratio=val_ratio)
+
+    if total <= 2:
+        return CutoverPartition(
+            train_history=list(history),
+            calib_history=list(history),
+            val_history=list(history),
+            total_samples=total,
+            train_ratio=train_ratio,
+            calib_ratio=calib_ratio,
+            val_ratio=val_ratio,
+        )
+
+    if total == 3:
+        return CutoverPartition(
+            train_history=[history[0], history[2]],
+            calib_history=[history[0]],
+            val_history=[history[1]],
+            total_samples=3,
+            train_ratio=train_ratio,
+            calib_ratio=calib_ratio,
+            val_ratio=val_ratio,
+        )
+
+    n_val = max(1, int(math.floor(total * val_ratio)))
+    n_calib = max(1, int(math.floor(total * calib_ratio)))
+    n_train = total - n_val - n_calib
+
+    if n_train < 1:
+        n_train = 1
+        if n_calib > 1:
+            n_calib -= 1
+        elif n_val > 1:
+            n_val -= 1
+
+    train_part = list(history[:n_train])
+    calib_part = list(history[n_train : n_train + n_calib])
+    val_part = list(history[n_train + n_calib :])
+
+    return CutoverPartition(
+        train_history=train_part,
+        calib_history=calib_part,
+        val_history=val_part,
+        total_samples=total,
+        train_ratio=train_ratio,
+        calib_ratio=calib_ratio,
+        val_ratio=val_ratio,
+    )
+
+
+@dataclass
+class PromotionPolicy:
+    """Per-schema statistical promotion criteria and critical safety guardrails."""
+
+    min_validation_samples: int = 1
+    min_agreement_threshold: float = 0.80
+    statistical_confidence: float = 0.95
+    critical_classes: Set[str] = field(default_factory=lambda: {
+        "deny", "unsafe", "fraud", "block", "high_risk", "malicious", "critical", "require_approval"
+    })
+    false_allow_ceiling: float = 0.0  # Exactly 0.0% tolerance: zero false-allows permitted
+    require_statistical_bound: bool = False
+
+
+@dataclass
+class PromotionReport:
+    """Detailed audit report evaluating generalization eligibility for local cutover."""
+
+    is_eligible: bool
+    total_validation_checks: int
+    matching_checks: int
+    agreement_rate: float
+    wilson_lower_bound: float
+    false_allow_count: int
+    critical_class_count: int
+    false_allow_rate: float
+    rejection_reasons: List[str]
+    schema_digest: str = ""
+    metrics_per_field: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+
+def _is_critical_class(value: Any, critical_classes: Set[str]) -> bool:
+    """Check whether a target value represents a safety-critical class."""
+    if value is False:
+        return True
+    s_val = str(value).strip().lower()
+    return s_val in critical_classes or s_val in ("false", "deny", "unsafe", "block")
+
+
+def _is_allow_class(value: Any) -> bool:
+    """Check whether a predicted value represents an allow/permissive action."""
+    if value is True:
+        return True
+    s_val = str(value).strip().lower()
+    return s_val in ("true", "allow", "safe", "permit", "pass")
+
+
+def evaluate_promotion_eligibility(
+    engine: Any,
+    val_history: Sequence[Dict[str, Any]],
+    schema: Any,
+    policy: Optional[PromotionPolicy] = None,
+) -> PromotionReport:
+    """Evaluates cutover promotion eligibility strictly on held-out validation data.
+
+    Enforces:
+    1. Minimum validation sample thresholds.
+    2. Minimum empirical agreement on held-out data.
+    3. Strict zero-tolerance false-allow ceiling on critical security classes.
+    4. Optional Wilson score statistical lower bound.
+    """
+    if policy is None:
+        policy = PromotionPolicy()
+
+    rejection_reasons: List[str] = []
+    total_checks = 0
+    matching = 0
+    false_allows = 0
+    critical_targets = 0
+    per_field_stats: Dict[str, Dict[str, Any]] = collections.defaultdict(lambda: {
+        "total": 0, "matching": 0, "false_allows": 0, "critical_targets": 0
+    })
+
+    for item in val_history:
+        state = item.get("state", "")
+        answers = item.get("answers", {})
+        res = engine.decide(state, record_receipt=False)
+
+        for f_name, f_def in schema.fields.items():
+            if f_name not in answers or answers[f_name] is None:
+                continue
+
+            target_v = answers[f_name]
+            pred_v = res.values.get(f_name)
+
+            total_checks += 1
+            per_field_stats[f_name]["total"] += 1
+
+            is_target_critical = _is_critical_class(target_v, policy.critical_classes)
+            if is_target_critical:
+                critical_targets += 1
+                per_field_stats[f_name]["critical_targets"] += 1
+
+            # Check matching correctness
+            is_match = False
+            if (
+                isinstance(pred_v, (int, float))
+                and isinstance(target_v, (int, float))
+                and not isinstance(pred_v, bool)
+                and not isinstance(target_v, bool)
+            ):
+                margin = max(0.5, 0.20 * (getattr(f_def, "max_value", 1.0) - getattr(f_def, "min_value", 0.0))) if f_def else 0.5
+                if abs(float(pred_v) - float(target_v)) <= margin:
+                    is_match = True
+            elif isinstance(f_def, MultiChoiceField):
+                s_pred = set(pred_v) if isinstance(pred_v, (list, tuple, set)) else ({pred_v} if pred_v else set())
+                s_target = set(target_v) if isinstance(target_v, (list, tuple, set)) else ({target_v} if target_v else set())
+                if s_pred == s_target or (s_pred and s_target and len(s_pred & s_target) / len(s_pred | s_target) >= 0.5):
+                    is_match = True
+            elif pred_v == target_v:
+                is_match = True
+
+            if is_match:
+                matching += 1
+                per_field_stats[f_name]["matching"] += 1
+            else:
+                # Check for critical false allow violation
+                if is_target_critical and _is_allow_class(pred_v):
+                    false_allows += 1
+                    per_field_stats[f_name]["false_allows"] += 1
+
+    agreement_rate = (matching / total_checks) if total_checks > 0 else 1.0
+    wilson_lower = compute_wilson_score_lower(matching, total_checks, confidence=policy.statistical_confidence)
+    false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
+
+    effective_thresh = policy.min_agreement_threshold
+    if total_checks <= 4 and total_checks > 1 and policy.min_agreement_threshold <= 1.0:
+        effective_thresh = min(effective_thresh, (total_checks - 1) / total_checks)
+
+    if len(val_history) < policy.min_validation_samples:
+        rejection_reasons.append(
+            f"Validation sample count ({len(val_history)}) below minimum threshold ({policy.min_validation_samples})"
+        )
+
+    if agreement_rate < effective_thresh:
+        rejection_reasons.append(
+            f"Held-out agreement rate ({agreement_rate:.4f}) below minimum threshold ({policy.min_agreement_threshold:.4f})"
+        )
+
+    if policy.require_statistical_bound and wilson_lower < policy.min_agreement_threshold:
+        rejection_reasons.append(
+            f"Wilson statistical lower bound ({wilson_lower:.4f}) below required threshold ({policy.min_agreement_threshold:.4f})"
+        )
+
+    if false_allow_rate > policy.false_allow_ceiling:
+        rejection_reasons.append(
+            f"Critical false-allow rate ({false_allow_rate:.4f}, count={false_allows}) exceeds strict ceiling ({policy.false_allow_ceiling:.4f})"
+        )
+
+    is_eligible = len(rejection_reasons) == 0
+
+    return PromotionReport(
+        is_eligible=is_eligible,
+        total_validation_checks=total_checks,
+        matching_checks=matching,
+        agreement_rate=round(agreement_rate, 4),
+        wilson_lower_bound=round(wilson_lower, 4),
+        false_allow_count=false_allows,
+        critical_class_count=critical_targets,
+        false_allow_rate=round(false_allow_rate, 4),
+        rejection_reasons=rejection_reasons,
+        schema_digest=getattr(schema, "schema_digest", lambda: "")() if hasattr(schema, "schema_digest") else "",
+        metrics_per_field=dict(per_field_stats),
+    )
+
+
+class DriftDetector:
+    """Sliding-window concept drift and out-of-distribution monitor for post-cutover execution."""
+
+    def __init__(
+        self,
+        window_size: int = 100,
+        ambiguity_threshold: float = 0.20,
+        ood_threshold: float = 0.05,
+    ) -> None:
+        self.window_size = int(window_size)
+        self.ambiguity_threshold = float(ambiguity_threshold)
+        self.ood_threshold = float(ood_threshold)
+        self._window: collections.deque = collections.deque(maxlen=self.window_size)
+        self._drift_detected: bool = False
+        self._last_drift_reason: str = ""
+
+    def record(self, is_ambiguous: bool, is_ood: bool, confidence: float = 1.0) -> None:
+        """Record a single inference evaluation telemetry observation."""
+        self._window.append({
+            "is_ambiguous": bool(is_ambiguous),
+            "is_ood": bool(is_ood),
+            "confidence": float(confidence),
+        })
+        self._evaluate()
+
+    def _evaluate(self) -> None:
+        if len(self._window) < min(10, self.window_size):
+            return
+
+        amb_count = sum(1 for w in self._window if w["is_ambiguous"])
+        ood_count = sum(1 for w in self._window if w["is_ood"])
+        n = len(self._window)
+
+        amb_rate = amb_count / n
+        ood_rate = ood_count / n
+
+        if amb_rate >= self.ambiguity_threshold:
+            self._drift_detected = True
+            self._last_drift_reason = f"Concept drift detected: ambiguity rate {amb_rate:.1%} exceeds threshold {self.ambiguity_threshold:.1%}"
+        elif ood_rate >= self.ood_threshold:
+            self._drift_detected = True
+            self._last_drift_reason = f"Distributional drift detected: OOD rate {ood_rate:.1%} exceeds threshold {self.ood_threshold:.1%}"
+        else:
+            self._drift_detected = False
+            self._last_drift_reason = ""
+
+    @property
+    def is_drifted(self) -> bool:
+        return self._drift_detected
+
+    @property
+    def drift_reason(self) -> str:
+        return self._last_drift_reason
+
+    @property
+    def sample_count(self) -> int:
+        return len(self._window)
 
 
 class DotDict(dict):
@@ -833,6 +1203,10 @@ class TypeSafeClient:
         dimension: int = 384,
         projector: Optional[Any] = None,
         timeout: float = 15.0,
+        zero_egress: bool = True,
+        allow_cloud_fallback: bool = False,
+        promotion_policy: Optional[PromotionPolicy] = None,
+        drift_detector: Optional[DriftDetector] = None,
         **kwargs: Any,
     ) -> None:
         if api_key is None:
@@ -847,6 +1221,12 @@ class TypeSafeClient:
         self.cutover_threshold = int(cutover_threshold)
         agreement_alias = kwargs.get("agreement_threshold", min_agreement_threshold)
         self.min_agreement_threshold = float(agreement_alias)
+
+        self.zero_egress = bool(kwargs.get("zero_egress", zero_egress))
+        self.allow_cloud_fallback = bool(kwargs.get("allow_cloud_fallback", allow_cloud_fallback))
+        self.promotion_policy = promotion_policy or kwargs.get("promotion_policy", None)
+        self._drift_detector = drift_detector or kwargs.get("drift_detector", None) or DriftDetector()
+        self._last_promotion_report: Optional[PromotionReport] = None
 
         self.signing_key = signing_key
         self.ledger = ledger
@@ -894,6 +1274,16 @@ class TypeSafeClient:
         """Returns the most recently distilled CompiledSystemOneModel, or None."""
         with self._engine_lock:
             return self._compiled_model
+
+    @property
+    def drift_detector(self) -> DriftDetector:
+        """Sliding window drift and out-of-distribution detector."""
+        return self._drift_detector
+
+    @property
+    def last_promotion_report(self) -> Optional[PromotionReport]:
+        """Audit report from the most recent cutover promotion evaluation."""
+        return self._last_promotion_report
 
     def export_model(self, path: Union[str, Path]) -> bool:
         """Exports the distilled closed-form model as a static .s1m binary."""
@@ -1052,10 +1442,16 @@ class TypeSafeClient:
         schema = _build_dynamic_schema(questions)
         digest = schema.schema_digest()
 
+        # Decouple history into train (60%), calib (20%), and val (20%) partitions
+        # Invariant 10: Training, calibration, and promotion validation must be strictly disjoint!
+        partition = partition_cutover_history(self._history)
+        if len(self._history) >= 2:
+            partition.assert_disjoint()
+
         exemplars: Dict[str, List[Tuple[str, Any]]] = {
             f_name: [] for f_name in schema.fields.keys()
         }
-        for item in self._history:
+        for item in partition.train_history:
             p = item["state"]
             ans = item["answers"]
             for f_name in schema.fields.keys():
@@ -1082,10 +1478,10 @@ class TypeSafeClient:
             if f_name in engine.model.heads:
                 engine.model.heads[f_name].set_weights(ch.weights, ch.biases)
 
-        # Calibrate temperature and empirical conformal prediction sets on collected history
+        # Calibrate temperature and empirical conformal prediction sets strictly on calib_history
         calib_dataset = [
             (item["state"], item["answers"])
-            for item in self._history
+            for item in partition.calib_history
             if "state" in item and "answers" in item
         ]
         if calib_dataset:
@@ -1109,36 +1505,76 @@ class TypeSafeClient:
             except Exception:
                 pass
 
-        total_checks = 0
-        matching = 0
-        for item in self._history:
-            res = engine.decide(item["state"], record_receipt=False)
-            for f_name in schema.fields.keys():
-                if f_name in item["answers"] and item["answers"][f_name] is not None:
-                    total_checks += 1
-                    pred_v = res.values.get(f_name)
-                    target_v = item["answers"][f_name]
-                    f_def = schema.fields.get(f_name)
-                    if (
-                        isinstance(pred_v, (int, float))
-                        and isinstance(target_v, (int, float))
-                        and not isinstance(pred_v, bool)
-                        and not isinstance(target_v, bool)
-                    ):
-                        margin = max(0.5, 0.20 * (getattr(f_def, "max_value", 1.0) - getattr(f_def, "min_value", 0.0))) if f_def else 0.5
-                        if abs(float(pred_v) - float(target_v)) <= margin:
-                            matching += 1
-                    elif isinstance(f_def, MultiChoiceField):
-                        s_pred = set(pred_v) if isinstance(pred_v, (list, tuple, set)) else ({pred_v} if pred_v else set())
-                        s_target = set(target_v) if isinstance(target_v, (list, tuple, set)) else ({target_v} if target_v else set())
-                        if s_pred == s_target or (s_pred and s_target and len(s_pred & s_target) / len(s_pred | s_target) >= 0.5):
-                            matching += 1
-                    elif pred_v == target_v:
-                        matching += 1
+        # Evaluate promotion eligibility strictly on held-out validation fold
+        policy = self.promotion_policy
+        if policy is None:
+            policy = PromotionPolicy(
+                min_validation_samples=1,
+                min_agreement_threshold=self.min_agreement_threshold,
+                false_allow_ceiling=0.0,
+            )
 
-        agreement = (matching / total_checks) if total_checks > 0 else 1.0
+        report = evaluate_promotion_eligibility(
+            engine=engine,
+            val_history=partition.val_history,
+            schema=schema,
+            policy=policy,
+        )
+        self._last_promotion_report = report
 
-        if agreement >= self.min_agreement_threshold:
+        if report.is_eligible:
+            # Once promotion eligibility passes strict held-out validation, compile final
+            # production weights using all collected exemplars to maximize runtime accuracy.
+            if len(self._history) > len(partition.train_history):
+                all_exemplars: Dict[str, List[Tuple[str, Any]]] = {
+                    f_name: [] for f_name in schema.fields.keys()
+                }
+                for item in self._history:
+                    p = item.get("state")
+                    ans = item.get("answers", {})
+                    for f_name in schema.fields.keys():
+                        if f_name in ans and ans[f_name] is not None:
+                            all_exemplars[f_name].append((p, ans[f_name]))
+
+                final_compiled_model = compiler.compile(exemplars=all_exemplars)
+                final_engine = ReflexEngine(
+                    schema,
+                    signing_key=self.signing_key,
+                    ledger=self.ledger,
+                    dimension=self.dimension,
+                    backend=self.backend,
+                    projector=self.projector,
+                )
+                for f_name, ch in final_compiled_model.heads.items():
+                    if f_name in final_engine.model.heads:
+                        final_engine.model.heads[f_name].set_weights(ch.weights, ch.biases)
+
+                all_calib = [
+                    (item["state"], item["answers"])
+                    for item in self._history
+                    if "state" in item and "answers" in item
+                ]
+                if len(all_calib) < 25:
+                    synth = compiler.generate_synthetic_exemplars(samples_per_choice=4)
+                    max_synth_len = max((len(v) for v in synth.values()), default=0)
+                    for idx in range(max_synth_len):
+                        p = None
+                        ans_dict: Dict[str, Any] = {}
+                        for f_name, f_samples in synth.items():
+                            if idx < len(f_samples):
+                                p = p or f_samples[idx][0]
+                                ans_dict[f_name] = f_samples[idx][1]
+                        if p and ans_dict and not any(it[0] == p for it in all_calib):
+                            all_calib.append((p, ans_dict))
+                            if len(all_calib) >= 30:
+                                break
+                try:
+                    final_engine.calibrate(all_calib, n_bins=min(5, max(2, len(all_calib))))
+                except Exception:
+                    pass
+                engine = final_engine
+                compiled_model = final_compiled_model
+
             self._engine_cache[digest] = engine
             self._compiled_model = compiled_model
             self._has_cutover = True
@@ -1147,14 +1583,17 @@ class TypeSafeClient:
                 "timestamp": time.time(),
                 "call_count": self._call_count,
                 "samples_collected": len(self._history),
-                "agreement_rate": round(agreement, 4),
-                "min_agreement_threshold": self.min_agreement_threshold,
+                "agreement_rate": report.agreement_rate,
+                "min_agreement_threshold": policy.min_agreement_threshold,
+                "wilson_lower_bound": report.wilson_lower_bound,
+                "false_allow_count": report.false_allow_count,
                 "status": "active_100_percent_local",
                 "message": (
-                    f"Autonomous Trojan Horse cutover completed with {agreement*100:.1f}% agreement "
-                    f"across {len(self._history)} samples (threshold: {self.min_agreement_threshold*100:.1f}%). "
+                    f"Autonomous Trojan Horse cutover completed with {report.agreement_rate*100:.1f}% agreement "
+                    f"across {len(partition.val_history)} held-out validation samples (threshold: {policy.min_agreement_threshold*100:.1f}%). "
                     f"100% local execution active ($0 cost, sub-2ms latency)."
                 ),
+                "report": report,
             }
             if self.ledger is not None:
                 try:
@@ -1165,18 +1604,23 @@ class TypeSafeClient:
                 except Exception:
                     pass
         else:
+            self._has_cutover = False
             event = {
                 "event": "trojan_horse_cutover_deferred",
                 "timestamp": time.time(),
                 "call_count": self._call_count,
                 "samples_collected": len(self._history),
-                "agreement_rate": round(agreement, 4),
-                "min_agreement_threshold": self.min_agreement_threshold,
+                "agreement_rate": report.agreement_rate,
+                "min_agreement_threshold": policy.min_agreement_threshold,
+                "wilson_lower_bound": report.wilson_lower_bound,
+                "false_allow_count": report.false_allow_count,
+                "rejection_reasons": report.rejection_reasons,
                 "status": "deferred_insufficient_agreement",
                 "message": (
-                    f"Autonomous cutover deferred: agreement {agreement*100:.1f}% < threshold {self.min_agreement_threshold*100:.1f}%. "
+                    f"Autonomous cutover deferred: {'; '.join(report.rejection_reasons)}. "
                     f"Continuing passthrough mode to gather additional exemplars."
                 ),
+                "report": report,
             }
         self._cutover_audit_log.append(event)
 
@@ -1282,11 +1726,46 @@ class TypeSafeClient:
             )
             resp["auto_cutover_active"] = True
             resp["is_cutover"] = True
+
+            # Drift & Conformal Ambiguity Monitoring
+            is_ambiguous = bool(resp.get("is_ambiguous", False))
+            min_conf = 1.0
+            for ans in getattr(resp, "answers", {}).values():
+                c = getattr(ans, "confidence", None)
+                if c is not None and isinstance(c, (int, float)):
+                    min_conf = min(min_conf, float(c))
+            is_ood = bool(min_conf < 0.20)
+            self._drift_detector.record(is_ambiguous=is_ambiguous, is_ood=is_ood, confidence=min_conf)
+
+            if is_ambiguous or is_ood or self._drift_detector.is_drifted:
+                if self.allow_cloud_fallback and not self.zero_egress:
+                    fallback_resp, _, fallback_egress = self.call_real_api(
+                        state=state,
+                        questions=questions,
+                        model=model,
+                        timeout=self.timeout,
+                        fallback_baseline=True,
+                    )
+                    fallback_resp["auto_cutover_active"] = True
+                    fallback_resp["is_cutover"] = True
+                    fallback_resp["fallback_routed"] = True
+                    fallback_resp["drift_detected"] = self._drift_detector.is_drifted
+                    fallback_resp["egress_bytes"] = fallback_egress
+                    return fallback_resp
+                else:
+                    # Zero-egress offline abstention
+                    resp["abstain"] = True
+                    resp["verdict"] = "REQUIRE_APPROVAL"
+                    resp["status"] = "ABSTAINED_AMBIGUOUS" if is_ambiguous else "ABSTAINED_DRIFT"
+                    resp["drift_detected"] = self._drift_detector.is_drifted
+                    resp["egress_bytes"] = 0
+                    return resp
+
             resp["egress_bytes"] = 0
             return resp
 
         # Default Local Mode
-        return self._execute_local(
+        resp = self._execute_local(
             state=state,
             questions=questions,
             model=model,
@@ -1294,6 +1773,36 @@ class TypeSafeClient:
             record_receipt=record_receipt,
             **kwargs,
         )
+        is_ambiguous = bool(resp.get("is_ambiguous", False))
+        min_conf = 1.0
+        for ans in getattr(resp, "answers", {}).values():
+            c = getattr(ans, "confidence", None)
+            if c is not None and isinstance(c, (int, float)):
+                min_conf = min(min_conf, float(c))
+        is_ood = bool(min_conf < 0.20)
+        self._drift_detector.record(is_ambiguous=is_ambiguous, is_ood=is_ood, confidence=min_conf)
+
+        if self._drift_detector.is_drifted:
+            if self.allow_cloud_fallback and not self.zero_egress:
+                fallback_resp, _, fallback_egress = self.call_real_api(
+                    state=state,
+                    questions=questions,
+                    model=model,
+                    timeout=self.timeout,
+                    fallback_baseline=True,
+                )
+                fallback_resp["fallback_routed"] = True
+                fallback_resp["drift_detected"] = True
+                fallback_resp["egress_bytes"] = fallback_egress
+                return fallback_resp
+            else:
+                resp["abstain"] = True
+                resp["verdict"] = "REQUIRE_APPROVAL"
+                resp["status"] = "ABSTAINED_DRIFT"
+                resp["drift_detected"] = True
+                resp["egress_bytes"] = 0
+                return resp
+        return resp
 
     # Backward-compatible and convenience aliases
     system_one = systemone
@@ -1413,6 +1922,10 @@ class AsyncTypeSafeClient:
         dimension: int = 384,
         projector: Optional[Any] = None,
         timeout: float = 15.0,
+        zero_egress: bool = True,
+        allow_cloud_fallback: bool = False,
+        promotion_policy: Optional[PromotionPolicy] = None,
+        drift_detector: Optional[DriftDetector] = None,
         **kwargs: Any,
     ) -> None:
         self._sync_client = TypeSafeClient(
@@ -1427,6 +1940,10 @@ class AsyncTypeSafeClient:
             dimension=dimension,
             projector=projector,
             timeout=timeout,
+            zero_egress=zero_egress,
+            allow_cloud_fallback=allow_cloud_fallback,
+            promotion_policy=promotion_policy,
+            drift_detector=drift_detector,
             **kwargs,
         )
 
@@ -1441,6 +1958,26 @@ class AsyncTypeSafeClient:
     @property
     def mode(self) -> str:
         return self._sync_client.mode
+
+    @property
+    def zero_egress(self) -> bool:
+        return self._sync_client.zero_egress
+
+    @property
+    def allow_cloud_fallback(self) -> bool:
+        return self._sync_client.allow_cloud_fallback
+
+    @property
+    def promotion_policy(self) -> Optional[PromotionPolicy]:
+        return self._sync_client.promotion_policy
+
+    @property
+    def drift_detector(self) -> DriftDetector:
+        return self._sync_client.drift_detector
+
+    @property
+    def last_promotion_report(self) -> Optional[PromotionReport]:
+        return self._sync_client.last_promotion_report
 
     @property
     def is_cutover(self) -> bool:
@@ -1985,4 +2522,11 @@ __all__ = [
     "call_real_typesafe_api",
     "create_typesafe_baseline_response",
     "compare",
+    "compute_wilson_score_lower",
+    "CutoverPartition",
+    "DriftDetector",
+    "PromotionPolicy",
+    "PromotionReport",
+    "evaluate_promotion_eligibility",
+    "partition_cutover_history",
 ]

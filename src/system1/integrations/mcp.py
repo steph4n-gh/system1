@@ -6,6 +6,8 @@ conformal gating and Ed25519 digital witness receipts.
 
 from __future__ import annotations
 
+import hashlib
+import inspect
 import json
 from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 
@@ -89,17 +91,37 @@ class ReflexMCPProxy:
         context_prompt: Optional[str] = None,
     ) -> GuardInterceptionResult:
         """Evaluates an MCP tool call proposal against Reflex fail-closed gates."""
-        target = str(arguments.get("path") or arguments.get("target") or arguments.get("command") or tool_name)
-        purpose = str(arguments.get("purpose") or f"Execute tool {tool_name} on {target}")
+        if not isinstance(arguments, dict):
+            arguments_dict: Dict[str, Any] = {"input": str(arguments)} if arguments is not None else {}
+        else:
+            arguments_dict = dict(arguments)
+        target = str(
+            arguments_dict.get("path")
+            or arguments_dict.get("target")
+            or arguments_dict.get("command")
+            or arguments_dict.get("input")
+            or arguments_dict.get("query")
+            or arguments_dict.get("url")
+            or arguments_dict.get("file")
+            or tool_name
+        )
+        purpose = str(arguments_dict.get("purpose") or f"Execute tool {tool_name} on {target}")
+        canonical_target = (
+            f"sha256:{hashlib.sha256(target.encode('utf-8')).hexdigest()}"
+            if len(target) > 4096
+            else target
+        )
         proposal = ActionProposal.create(
             tenant_id=self.tenant_id,
             principal_id=client_session_id or self.principal_id,
             scope="mcp:tools:call",
             tool=tool_name,
-            arguments=dict(arguments),
+            arguments=arguments_dict,
+            canonical_target=canonical_target,
             purpose=purpose,
         )
-        context = context_prompt or f"{purpose}. Action: {tool_name} on {target}."
+        base_context = f"{purpose}. Action: {tool_name} on {target}. Arguments: {arguments_dict}"
+        context = context_prompt or base_context
         return self.guard.evaluate_proposal(proposal, context_prompt=context)
 
     def intercept_jsonrpc(
@@ -107,6 +129,7 @@ class ReflexMCPProxy:
         request: Union[Dict[str, Any], str, bytes],
         *,
         client_session_id: Optional[str] = None,
+        context_prompt: Optional[str] = None,
     ) -> Tuple[bool, Optional[Dict[str, Any]], Optional[GuardInterceptionResult]]:
         """Intercepts a raw MCP JSON-RPC 2.0 message.
         
@@ -126,6 +149,14 @@ class ReflexMCPProxy:
         else:
             data = request
 
+        if not isinstance(data, dict):
+            err_resp = {
+                "jsonrpc": "2.0",
+                "id": None,
+                "error": {"code": -32600, "message": "Invalid Request: payload must be a JSON object"},
+            }
+            return False, err_resp, None
+
         method = data.get("method")
         req_id = data.get("id")
 
@@ -133,14 +164,40 @@ class ReflexMCPProxy:
         if method != "tools/call":
             return True, None, None
 
-        params = data.get("params") or {}
+        params = data.get("params")
+        if not isinstance(params, dict):
+            err_resp = {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32602, "message": "Invalid params: params must be a JSON object"},
+            }
+            return False, err_resp, None
+
         tool_name = params.get("name", "")
-        arguments = params.get("arguments") or {}
+        arguments = params.get("arguments")
+        if arguments is None:
+            arguments = {}
+        elif not isinstance(arguments, dict):
+            err_resp = {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32602, "message": "Invalid params: arguments must be an object"},
+            }
+            return False, err_resp, None
+
+        if not tool_name:
+            err_resp = {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32602, "message": "Invalid params: missing tool name"},
+            }
+            return False, err_resp, None
 
         interception = self.evaluate_mcp_call(
             tool_name=tool_name,
             arguments=arguments,
             client_session_id=client_session_id,
+            context_prompt=context_prompt,
         )
 
         if interception.outcome == DecisionOutcome.ALLOW:
@@ -151,31 +208,112 @@ class ReflexMCPProxy:
 
     def handle_call(
         self,
-        request: Union[Dict[str, Any], str],
+        request: Union[Dict[str, Any], str, bytes],
         executor: Callable[[str, Dict[str, Any]], Any],
         *,
         client_session_id: Optional[str] = None,
+        context_prompt: Optional[str] = None,
     ) -> Dict[str, Any]:
         """High-level dispatcher that intercepts, executes if allowed, and injects witness receipts."""
         allowed, err_resp, interception = self.intercept_jsonrpc(
-            request, client_session_id=client_session_id
+            request,
+            client_session_id=client_session_id,
+            context_prompt=context_prompt,
         )
         if not allowed:
             return err_resp or {}
 
-        data = json.loads(request) if isinstance(request, str) else request
-        req_id = data.get("id")
-        params = data.get("params") or {}
-        tool_name = params.get("name", "")
-        arguments = params.get("arguments") or {}
-
         try:
-            exec_output = executor(tool_name, arguments)
-        except Exception as ex:
+            data = json.loads(request) if isinstance(request, (str, bytes)) else request
+        except Exception:
+            return err_resp or {}
+
+        req_id = data.get("id")
+        method = data.get("method")
+
+        # Invariant 1: Only dispatch to executor when method == "tools/call".
+        # For non-tool methods (e.g. ping, initialize), return standard protocol response with 0 executor calls.
+        if method != "tools/call":
+            if method == "ping":
+                result = {}
+            elif method == "initialize":
+                result = {
+                    "protocolVersion": "2024-11-05",
+                    "serverInfo": {"name": "reflex-mcp-guard", "version": "0.1.0"},
+                    "capabilities": {"tools": {}},
+                }
+            elif method == "tools/list":
+                result = {"tools": []}
+            else:
+                result = {}
             return {
                 "jsonrpc": "2.0",
                 "id": req_id,
-                "error": {"code": -32603, "message": f"Internal tool execution error: {ex}"},
+                "result": result,
+            }
+
+        params = data.get("params") or {}
+        tool_name = params.get("name", "")
+        arguments = params.get("arguments")
+        if arguments is None:
+            arguments = {}
+        elif not isinstance(arguments, dict):
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32602, "message": "Invalid params: arguments must be an object"},
+            }
+
+        # Two-phase execution outcome chaining
+        ledger = self.guard.ledger
+        action_id = (
+            interception.policy_decision.action_id
+            if (interception and interception.policy_decision)
+            else str(req_id or "")
+        )
+        receipt_digest = ""
+        if interception and interception.decision_result and interception.decision_result.receipt:
+            receipt_digest = interception.decision_result.receipt.compute_digest()
+
+        exec_output = None
+        exec_error = None
+        try:
+            exec_output = executor(tool_name, arguments)
+        except Exception as ex:
+            exec_error = ex
+
+        # Record outcome in ledger if active
+        if ledger is not None and receipt_digest:
+            outcome_status = "FAILED" if exec_error is not None else "SUCCEEDED"
+            try:
+                ledger.record_execution_outcome(
+                    action_id=action_id,
+                    receipt_digest=receipt_digest,
+                    status=outcome_status,
+                    result_payload={"result": str(exec_output)[:500]} if exec_output is not None else None,
+                    error_message=str(exec_error) if exec_error is not None else None,
+                    tenant_id=self.tenant_id,
+                    principal_id=client_session_id or self.principal_id,
+                    scope="mcp:tools:call:outcome",
+                )
+            except Exception as le:
+                # If execution succeeded but outcome recording failed in fail-closed mode:
+                if exec_error is None:
+                    return {
+                        "jsonrpc": "2.0",
+                        "id": req_id,
+                        "error": {
+                            "code": -32001,
+                            "message": f"Execution completed but outcome audit recording failed (status: INDETERMINATE): {le}",
+                            "data": {"status": "INDETERMINATE", "raw_result": exec_output},
+                        },
+                    }
+
+        if exec_error is not None:
+            return {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "error": {"code": -32603, "message": f"Internal tool execution error: {exec_error}"},
             }
 
         # Structure standard MCP tool call result
@@ -205,28 +343,48 @@ class ReflexMCPProxy:
 
 
 def wrap_mcp_tool(
-    func: Optional[Callable] = None,
+    func: Optional[Any] = None,
     *,
     guard: Optional[ReflexGuardHook] = None,
+    proxy: Optional[ReflexMCPProxy] = None,
     alpha: float = 0.20,
     min_confidence: float = 0.50,
     tool_name: Optional[str] = None,
 ) -> Callable:
     """Decorator to protect any Python function exposed as an MCP tool with Reflex fail-closed safety."""
-    proxy = ReflexMCPProxy(guard=guard, alpha=alpha, min_confidence=min_confidence)
+    if isinstance(func, ReflexMCPProxy):
+        proxy = func
+        func = None
+    resolved_proxy = proxy or ReflexMCPProxy(guard=guard, alpha=alpha, min_confidence=min_confidence)
 
     def decorator(fn: Callable) -> Callable:
-        resolved_name = tool_name or fn.__name__
+        resolved_name = tool_name or getattr(fn, "__name__", "tool")
+        try:
+            sig = inspect.signature(fn)
+        except Exception:
+            sig = None
 
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            # Map positional args and kwargs to argument dictionary
-            arguments = dict(kwargs)
-            if args:
-                arguments["_args"] = list(args)
+            # Use inspect.signature to bind default parameter values and map positional *args into named arguments
+            arguments: Dict[str, Any] = {}
+            if sig is not None:
+                try:
+                    bound = sig.bind(*args, **kwargs)
+                    bound.apply_defaults()
+                    arguments = dict(bound.arguments)
+                except Exception:
+                    arguments = dict(kwargs)
+                    if args:
+                        arguments["_args"] = list(args)
+            else:
+                arguments = dict(kwargs)
+                if args:
+                    arguments["_args"] = list(args)
+
             if "purpose" not in arguments and fn.__doc__:
                 arguments["purpose"] = fn.__doc__.strip()
 
-            interception = proxy.evaluate_mcp_call(
+            interception = resolved_proxy.evaluate_mcp_call(
                 tool_name=resolved_name,
                 arguments=arguments,
             )
@@ -236,9 +394,9 @@ def wrap_mcp_tool(
 
             return fn(*args, **kwargs)
 
-        wrapper.__name__ = fn.__name__
-        wrapper.__doc__ = fn.__doc__
-        wrapper.__reflex_proxy__ = proxy  # type: ignore[attr-defined]
+        wrapper.__name__ = getattr(fn, "__name__", "wrapper")
+        wrapper.__doc__ = getattr(fn, "__doc__", "")
+        wrapper.__reflex_proxy__ = resolved_proxy  # type: ignore[attr-defined]
         return wrapper
 
     if func is not None:

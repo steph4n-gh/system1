@@ -30,7 +30,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 
-from examples.pokemon_all_games_benchmark import (
+from examples.gaming.pokemon_all_games_benchmark import (
     ALL_POKEMON_GAMES,
     CartridgeMetadata,
     LatencyMetrics,
@@ -47,7 +47,7 @@ from examples.pokemon_all_games_benchmark import (
     run_multi_game_benchmark,
     run_single_game_benchmark,
 )
-from examples.pokemon_battle_reflex import (
+from examples.gaming.pokemon_battle_reflex import (
     BattleState,
     BattleType,
     Pokemon,
@@ -57,7 +57,7 @@ from examples.pokemon_battle_reflex import (
     create_wild_encounter,
     read_rom_header,
 )
-from examples.pokemon_gameboy_gui import GAME_ROM_MAP, fast_skip_intro, parse_gui_args
+from examples.gaming.pokemon_gameboy_gui import GAME_ROM_MAP, fast_skip_intro, parse_gui_args
 
 
 # ============================================================================

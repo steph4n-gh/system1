@@ -142,10 +142,10 @@ def test_conformal_predictor_uncalibrated_and_alpha_bounds():
     assert len(cset_mid.prediction_set) == 1
     assert cset_mid.prediction_set == ("alpha",)
 
-    # When alpha=0.99 (q_hat=0.01), min_top_prob = 1 - q_hat = 0.99 > top_prob (0.70), yielding empty set
+    # When alpha=0.99 (q_hat=0.01), top candidate (prob=0.70 >= 0.01) satisfies coverage
     cset_loose = cp.predict_set(probs, alpha=0.99)
-    assert cset_loose.is_empty is True
-    assert cset_loose.prediction_set == ()
+    assert cset_loose.is_empty is False
+    assert cset_loose.prediction_set == ("alpha",)
 
     # Invalid alpha values must raise ValueError
     with pytest.raises(ValueError, match="Significance level alpha must be in"):
@@ -171,7 +171,7 @@ def test_conformal_single_option_and_ood_empty_set():
     assert cset_single.margin == 1.0
     assert not cset_single.is_ambiguous
 
-    # Out-of-distribution (OOD) test: all probabilities tiny, top_prob < min_top_prob
+    # Out-of-distribution (OOD) test: all probabilities tiny, degenerate sum < 0.5
     cp_multi = ConformalPredictor("multi", ["A", "B", "C"])
     tiny_probs = np.array([1e-7, 1e-7, 1e-7], dtype=np.float64)
     cset_ood = cp_multi.predict_set(tiny_probs, alpha=0.05)
@@ -196,6 +196,13 @@ def test_regression_conformal_predictor_boundaries():
     interval_low = rcp.predict_interval(10.0, alpha=0.10)
     assert interval_low.lower_bound == 0.0  # Clamped to min_value
     assert interval_low.upper_bound == pytest.approx(55.0)
+
+    # Invariant 7: Order statistic exceeding sample count (k > n) returns conservative full feasible domain
+    rcp.calibrate([10.0, 20.0, 30.0, 40.0, 50.0], [11.0, 21.0, 29.0, 42.0, 48.0])
+    interval_k_gt_n = rcp.predict_interval(20.0, alpha=0.05)
+    assert interval_k_gt_n.lower_bound == 0.0
+    assert interval_k_gt_n.upper_bound == 100.0
+    assert interval_k_gt_n.margin == 100.0
 
     # Invalid alpha values
     with pytest.raises(ValueError):
@@ -595,4 +602,4 @@ def test_engine_benchmark_minimal_warmup_and_custom_prompts():
     )
     assert report.total_decisions == 5
     assert report.mean_latency_ms > 0.0
-    assert report.beats_jev is True
+    assert report.speedup_factor > 0.0

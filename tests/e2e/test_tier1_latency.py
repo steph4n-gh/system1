@@ -167,11 +167,10 @@ def test_sub_3ms_guard_proposal_evaluation():
     assert elapsed_ms < 10.0
 
 
-def test_benchmark_report_jev_speedup(compiled_latency_engine):
-    """Verify benchmark suite produces valid report showing speedup vs Jev."""
+def test_benchmark_report_speedup(compiled_latency_engine):
+    """Verify benchmark suite produces valid report showing speedup vs baseline."""
     engine = compiled_latency_engine
     report = engine.benchmark(iterations=25, warmup=5)
-    assert report.beats_jev is True
+    assert report.speedup_factor > 1.0
     assert report.p50_latency_ms < 10.0
-    assert report.speedup_factor_vs_jev_p50 > 1.0
     assert report.throughput_decisions_per_sec > 100.0

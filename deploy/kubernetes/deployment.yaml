@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reflex-grpc
+  labels:
+    app: reflex-grpc
+    component: decision-engine
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: reflex-grpc
+  template:
+    metadata:
+      labels:
+        app: reflex-grpc
+        component: decision-engine
+    spec:
+      containers:
+        - name: reflex-grpc
+          image: reflex-grpc:latest
+          ports:
+            - containerPort: 50051
+              name: grpc
+              protocol: TCP
+          command: ["reflex", "serve", "--grpc", "--port", "50051"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            tcpSocket:
+              port: grpc
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"

@@ -1,77 +1,92 @@
 <p align="center">
-  <img src="assets/reflex-hero.jpg" alt="Reflex: Machine-Native System 1 Decision Runtime" width="100%" />
+  <img src="assets/reflex-hero.jpg" alt="Reflex: On-Metal Decision Firewall for AI Agents" width="100%" />
 </p>
 
 <p align="center">
   <a href="https://github.com/steph4n-gh/reflex"><img src="assets/reflex-logo.jpg" alt="Reflex Logo" width="110" /></a>
 </p>
 
-<h1 align="center">Reflex: Machine-Native System 1 Decision Runtime</h1>
+<h1 align="center">Reflex: On-Metal Decision Firewall for AI Agents</h1>
 
 <p align="center">
-  <strong>Sub-1ms non-autoregressive decision engine on local metal with conformal safety gating and zero data egress.</strong>
+  <strong>Sub-millisecond ALLOW / DENY / ESCALATE decisions on local hardware.<br>Zero egress. Zero tokens. Cryptographic audit receipts.</strong>
 </p>
 
 <p align="center">
   <a href="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-458%20passed-brightgreen.svg" alt="458 Tests Passed" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-506%20passed-brightgreen.svg" alt="506 Tests Passed" /></a>
   <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-~1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
-  <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/data_egress-0%25_(100%25_local)-success.svg" alt="Zero Data Egress" /></a>
+  <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/network_egress-0_bytes-success.svg" alt="Zero Network Egress" /></a>
 </p>
 
 <p align="center">
-  <a href="#-why-reflex-and-system-1">Why Reflex & System 1?</a> •
-  <a href="#-30-second-quickstart">30s Quickstart</a> •
-  <a href="#-dual-process-cognitive-architecture-2026-edition">2026 Cognitive Stack</a> •
-  <a href="#-the-4-tier-1-architectural-levers">4 Levers</a> •
-  <a href="#-flagship-showcases">Visual Proof</a> •
-  <a href="#-training--distilling-domain-experts-guide">Training Experts Guide</a> •
-  <a href="#-native-framework-integrations-mcp-fastapi-langchain">Integrations</a> •
-  <a href="#-production-demo--benchmark-catalog-18-demos">Demos (18)</a> •
+  <a href="#-why-reflex">Why Reflex</a> •
+  <a href="#-5-minute-quickstart">Quickstart</a> •
+  <a href="#-how-it-works">How It Works</a> •
+  <a href="#-integrations">Integrations</a> •
+  <a href="#-decision-quality--benchmark-metrics">Accuracy</a> •
+  <a href="#-performance">Performance</a> •
   <a href="#-privacy--zero-data-egress">Privacy</a> •
-  <a href="#-academic-paper--technical-deep-dive">Whitepaper & Specs</a> •
-  <a href="#-1-line-typesafe-ai--jev-drop-in">TypeSafe Drop-in</a> •
-  <a href="#-cli-reference">CLI</a>
+  <a href="#-production-demos">Demos</a> •
+  <a href="#-cli-reference">CLI</a> •
+  <a href="#-technical-deep-dive">Papers</a>
 </p>
 
 ---
 
-## 💡 Why "Reflex" AND "System 1"?
+## 💡 Why Reflex
 
-Developers often ask: *Is this project called Reflex or System 1?*
+Every AI agent framework — LangChain, CrewAI, OpenHands, AutoGen — lets agents call tools. None of them can tell you whether a tool call is safe **before** it executes.
 
-| Dimension | Concept | Purpose & Scope |
+Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency**, costs real API dollars, and sends your proprietary context over the public internet. For routine decisions — routing, classification, safety gating — this is wasteful and dangerous.
+
+**Reflex is the on-metal decision firewall that sits between your agent and its tools.** It evaluates every action in under a millisecond on your hardware, with zero cloud dependencies, zero data egress, and mathematically rigorous safety guarantees.
+
+| Dimension | Without Reflex | With Reflex |
 |---|---|---|
-| **The Product & Runtime Brand** | **Reflex** | The official open-source package name, repo (`reflex`), CLI command (`reflex`), and framework brand. It captures the machine-native reaction speed (< 1ms on local metal) and non-autoregressive execution. |
-| **The Cognitive Paradigm** | **System 1** | Daniel Kahneman’s foundational framework (*Thinking, Fast and Slow*). Reflex implements the machine-native **System 1 (fast, instinctive reflex)** layer of the agentic cognitive stack, designed to pair with a deliberate **System 2 (slow governor)** like Astra, Fable, Gemini, or Grok. |
-| **Twin-Namespace Ergonomics** | `import reflex`<br>`import system1` | Full 1:1 symmetry. `import reflex` is the primary modern brand. `import system1` is a complete, first-class twin alias for cognitive architecture purists and backwards compatibility. Both share identical 101 exports and 16 submodules. |
+| **Decision Latency** | 300 ms – 2,000+ ms (cloud roundtrip) | **< 1.0 ms P50** (local metal) |
+| **Cost** | $5.00 – $30.00 per million tokens | **$0.00 per decision** |
+| **Data Exposure** | Full payload over public WAN | **0 bytes leave your network** |
+| **Failure Mode** | Uncalibrated confidence; silent errors | **Conformal safety gate with fail-closed escalation** |
+| **Audit Trail** | Provider API logs (opaque) | **Ed25519 signed, SHA-256 hash-chained receipts** |
 
-```python
-import reflex
-import system1
+Reflex handles **95% – 99%** of routine decisions locally. The remaining 1% – 5% genuine edge cases are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok) with full cryptographic audit trails.
 
-# 100% symmetric API parity
-assert reflex.__version__ == system1.__version__ == "0.1.0"
-assert reflex.ReflexEngine is system1.ReflexEngine
-```
+The project is also available as `import system1` — a 1:1 twin namespace for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
 
 ---
 
-## ⚡ 30-Second Quickstart
+## ⚡ 5-Minute Quickstart
 
-Install Reflex in any Python 3.11+ environment (**pure NumPy BLAS default**, zero external dependencies required):
+Install Reflex in any Python 3.11+ environment:
 
 ```bash
 pip install reflex
-# or: pip install system1
 ```
 
-Define a strongly typed decision schema and evaluate it directly on the metal in **< 1ms**:
+### Protect an MCP Tool Server in 4 Lines
 
 ```python
-from reflex import DecisionSchema, ChoiceField, ReflexEngine
+from reflex.integrations import ReflexMCPProxy, wrap_mcp_tool
+
+# Wrap any function exposed as an MCP tool with fail-closed safety
+@wrap_mcp_tool(tool_name="read_file")
+def fetch_document(path: str) -> str:
+    """Inspect read-only project documentation."""
+    with open(path) as f:
+        return f.read()
+
+# Every call is evaluated in < 1ms on local hardware.
+# Blocked calls return JSON-RPC 2.0 errors with Ed25519 audit proofs.
+# No data leaves your network. Ever.
+```
+
+### Define a Custom Decision Schema
+
+```python
+from reflex import DecisionSchema, ChoiceField, BooleanField, ScoreField, ReflexEngine
 
 class SecurityTriage(DecisionSchema):
     action = ChoiceField(
@@ -82,189 +97,75 @@ class SecurityTriage(DecisionSchema):
             "BLOCK": "Active exploit, prompt injection, or malicious payload",
         }
     )
+    is_safe = BooleanField(
+        threshold=0.5,
+        true_description="Safe to execute without human review",
+        false_description="Requires human approval or investigation",
+    )
+    threat_score = ScoreField(
+        min_value=0.0, max_value=10.0,
+        low_description="No threat detected",
+        high_description="Critical active exploit",
+    )
 
-# Single forward pass on local CPU/Metal in ~1.0 ms ($0.00 token cost, 0 bytes egress)
 engine = ReflexEngine(SecurityTriage)
-decision = engine.decide("Suspicious outbound SSH traffic")
+decision = engine.decide("Suspicious outbound SSH traffic to unknown IP range")
 
-print(f"Action:  {decision.values['action']}")
-print(f"Latency: {decision.latency_ms:.2f} ms")
+print(f"Action:  {decision.values['action']}")       # BLOCK
+print(f"Safe:    {decision.values['is_safe']}")       # False
+print(f"Threat:  {decision.values['threat_score']:.1f}")  # 8.2
+print(f"Latency: {decision.latency_ms:.2f} ms")      # 0.94 ms
 ```
 
 ---
 
-## 🧠 Dual-Process Cognitive Architecture (2026 Edition)
+## 🧠 How It Works
 
-In the late-2026 agentic landscape, foundation models have evolved into formidable **deliberative reasoning governors**:
-- **OpenAI**: The **Astra** multimodal model, the flagship **GPT-6 series**, and the successors to GPT-5.6: **Sol**, **Terra**, and **Luna**.
-- **Anthropic**: **Claude Opus 5**, **Fable 5.1**, and **Mythos 5**.
-- **Google**: **Gemini 3.1 Pro** and **Gemini 3.8 Flash**.
-- **xAI**: **Grok** (frontier reasoning models).
-
-### The Real-Time Dilemma: Why Agents Fail at High Frequency
-Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dollars, and leaks proprietary context over the public internet. Running a monolithic cloud reasoning model for every routine check causes interactive systems (voice assistants, robotics, 60 FPS games, and microservice firewalls) to choke.
-
-**Reflex provides the missing System 1 layer:**
+Reflex implements a non-autoregressive decision engine inspired by Daniel Kahneman's dual-process cognitive framework:
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="Reflex Dual-Process Cognitive Architecture" width="100%" />
+  <img src="assets/architecture.svg" alt="Reflex Architecture" width="100%" />
 </p>
 
-### The Fast vs. Slow Dichotomy
+### The Decision Pipeline
 
-| Dimension | System 1: Local Reflex Engine | System 2: Deliberative Governor (Late 2026) |
-|---|---|---|
-| **Exemplars** | **Reflex** (Metal GPU `mlx` / NumPy BLAS) | **OpenAI Astra & GPT-6 / Sol / Terra / Luna**, **Anthropic Opus 5 / Fable 5.1 / Mythos 5**, **Google Gemini 3.1 Pro & 3.8 Flash**, **xAI Grok** |
-| **Cognitive Role** | Instinctive, reflex actions, guardrails | Strategic planning, edge-case resolution, reflection |
-| **Decision Latency** | **< 1.0 ms P50 empirical SLA** (< 10µs cache hit) | 300 ms – 3,000 ms+ (WAN transit + autoregressive thinking) |
-| **Marginal Cost** | **$0.00 / decision** (Fixed local CPU/GPU compute) | Variable token billing ($5.00 – $30.00+ per MTok) |
-| **Data Privacy** | **Zero Data Egress** (100% on-device, air-gapped) | External network exposure, prompt leakage risk |
-| **Traffic Share** | Handles **95% – 99%+** of routine decisions | Reserved strictly for the **1% – 5%** ambiguous edge cases |
+1. **Exact-Match Cache (< 10 µs):** SHA-256 hash lookup in host memory. Repeated queries resolve instantly without re-evaluation.
 
-### The Cognitive Feedback Loop
-1. **System 1 Forward Pass (< 1ms)**: Computes multi-field decision probabilities in a single matrix multiplication directly on local hardware.
-2. **Conformal Safety Gate (Finite-Sample $1-\alpha$)**: Mathematically verifies decision confidence. If the margin is dominant and conformal set size $|\mathcal{C}(\mathbf{x})| = 1$, System 1 executes immediately on the metal.
-3. **Fail-Closed Escalation**: If the input is genuinely ambiguous or out-of-distribution ($|\mathcal{C}(\mathbf{x})| > 1$), Reflex **halts fail-closed** and escalates to System 2 (OpenAI Astra / GPT-6, Anthropic Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro, xAI Grok).
-4. **Online Sherman-Morrison Distillation (< 50µs)**: When System 2 provides the ground-truth resolution $\mathbf{y}^*$, Reflex performs an instant closed-form rank-1 covariance update:
-   $$P_{t+1} = P_t - \frac{P_t \mathbf{x}_{\text{aug}} \mathbf{x}_{\text{aug}}^T P_t}{1 + \mathbf{x}_{\text{aug}}^T P_t \mathbf{x}_{\text{aug}}}, \quad B_{t+1} = B_t + \mathbf{x}_{\text{aug}} (\mathbf{y}^*)^T, \quad W_{t+1} = (P_{t+1} B_{t+1})^T$$
-   This immediately rotates System 1's hyperplanes. Future occurrences are handled locally in `< 0.01ms` (**escalation collapse**).
+2. **Non-Autoregressive Forward Pass (< 1 ms):** Hybrid sparse-dense vector projection maps the input to a high-dimensional semantic space. A single matrix multiplication across multi-head linear hyperplanes produces calibrated probability vectors — no token-by-token generation.
+
+3. **Conformal Safety Gate:** Split Conformal Prediction provides mathematically guaranteed error coverage. If the prediction set contains a single confident answer, Reflex executes locally. If the input is genuinely ambiguous, Reflex **halts fail-closed** and escalates to your frontier reasoning model.
+
+4. **Online Learning (< 50 µs):** When a frontier model provides a resolution, a Sherman-Morrison rank-1 covariance update instantly rotates the decision boundary. Future occurrences resolve locally — no GPU backpropagation, no retraining pipelines.
+
+### Conformal Gating: Why It Matters
+
+Most classification systems return uncalibrated softmax probabilities. A model reporting "92% confident" may be wrong 30% of the time under distribution shift. Reflex replaces this with **distribution-free finite-sample guarantees**: the conformal prediction set provably contains the correct answer with high probability, regardless of the underlying data distribution.
+
+When the conformal set size is 1 and the margin of dominance exceeds the threshold, the decision is safe. When the set is larger, the input is genuinely ambiguous and escalation is warranted. This eliminates both false confidence and unnecessary escalation.
 
 ---
 
-## ⚡ The 4 Tier-1 Architectural Levers
+## 🔌 Integrations
 
-Reflex implements four synergistic levers that crush latency and eliminate cloud escalations:
+Reflex ships with native adapters for modern agent and API stacks.
 
-<p align="center">
-  <img src="assets/benchmark-chart.svg" alt="Reflex Empirical Latency Benchmark" width="100%" />
-</p>
+### 1. MCP Safety Proxy
 
-<details>
-<summary><strong>Expand Details & Code Examples for the 4 Levers</strong></summary>
-
-### 1. Lever 1: Tier 0 Semantic Reflex Cache (L1) — Sub-10µs
-Combines an exact $O(1)$ SHA-256 hash table with a vectorized cosine similarity table ($\ge 	au \approx 0.98$). Bypasses forward evaluation for recurring queries.
-```python
-engine = ReflexEngine(SecurityTriage, use_cache=True, cache_threshold=0.98)
-res1 = engine.decide("Benign read-only operational request")  # Cold forward pass: ~1.0 ms
-res2 = engine.decide("Benign read-only operational request")  # Warm L1 cache hit: ~9.8 µs (100x speedup!)
-assert res2.is_cache_hit is True
-```
-
-### 2. Lever 2: Online Sherman-Morrison Distillation — Sub-50µs
-Instantly distills teacher feedback directly into local hyperplanes without retraining or GPU backpropagation.
-```python
-engine.learn_from_tier2(
-    prompt="Unseen zero-day attack vector",
-    target={"action": "BLOCK"}
-)
-# Next call resolves locally on-device with zero cloud escalation
-assert engine.decide("Unseen zero-day attack vector").values["action"] == "BLOCK"
-```
-
-### 3. Lever 3: Margin-Based Conformal Gating
-Measures the margin of dominance $M(\mathbf{x}) = s_{(1)} - s_{(2)}$. If $M(\mathbf{x}) \ge 	au_{\text{margin}}$ (e.g. 0.15), false escalations are suppressed while maintaining rigorous statistical guarantees.
-
-### 4. Lever 4: Continuous Telemetry State Vector Fusion
-Normalizes live continuous operational signals (CPU pressure, memory, latency P99, error rates) and fuses them into the semantic feature space ($\mathbf{v}_{\text{fused}} = (1-\beta)\mathbf{v}_{\text{text}} + \beta \mathbf{W}_{\text{telemetry}}\mathbf{t}_{\text{norm}}$). The same prompt adapts dynamically under stress.
-```python
-res_norm = engine.evaluate("Worker node health", telemetry={"cpu": 15.0, "error_rate": 0.001})
-res_crit = engine.evaluate("Worker node health", telemetry={"cpu": 99.2, "error_rate": 0.85})
-```
-</details>
-
----
-
-## 🎮 Flagship Showcases
-
-### 1. 60 FPS Pokémon on the Metal (Game Boy Emulation)
-Game Boy emulators run at **60 frames per second (16.6ms per frame)**. Cloud LLMs take 300–1,500ms and cost real tokens per button press. 
-Reflex evaluates PyBoy Game Boy RAM directly, generating battle commands and overworld navigation in **~38 microseconds** on CPU metal (**25,000+ QPS**).
-
-<p align="center">
-  <img src="assets/pokemon-reflex-60fps.gif" alt="Reflex 60 FPS Game Boy Pokémon On-Metal Agent" width="75%" />
-</p>
-
-```bash
-# Instant Live Combat Window (bypasses intro, starts in Rival 1 combat in 0.7s)
-python3 examples/pokemon_gameboy_gui.py --game red --mode battle --speed 1
-
-# Headless Multi-Cartridge Benchmark across all 6 Game Boy ROMs (10,000+ FPS)
-python3 examples/pokemon_all_games_benchmark.py
-```
-
-### 2. Universal Paperclips + TypeSafe AI (Jev) Drop-in
-Recreates Diogo Almeida's (CEO of TypeSafe AI / Jev) viral demo playing Frank Lantz's *Universal Paperclips*:
-- **1-Line `patch_typesafe()`**: Redirects cloud TypeSafe calls to Reflex running on local Apple Silicon Metal.
-- **Dual-Pane ASCII HUD**: Visualizes manufacturing metrics on the left and calibrated probability bars on the right.
-- **4 Operational Modes**: `dropin` (100% local metal), `baseline` (simulated cloud), `compare` (head-to-head local vs WAN), and `cutover` (Trojan Horse apprentice-to-metal auto-transition).
-
-<p align="center">
-  <img src="assets/paperclips-cutover.gif" alt="Universal Paperclips Trojan Horse Auto-Cutover Dual-Pane HUD" width="85%" />
-</p>
-
-```bash
-# Run local drop-in mode on Apple Silicon Metal
-python3 examples/paperclips_typesafe_dropin.py --mode dropin --steps 5
-
-# Run side-by-side head-to-head comparison against cloud baseline
-python3 examples/paperclips_typesafe_dropin.py --mode compare --steps 3
-
-# Run Trojan Horse auto-cutover (cloud apprentice -> 100% local metal)
-python3 examples/paperclips_typesafe_dropin.py --mode cutover --steps 5 --threshold 3
-```
-
----
-
-## 🎓 Training & Distilling Domain Experts Guide
-
-Reflex provides a comprehensive, end-to-end developer guide for training, distilling, and deploying specialized domain experts:
-
-👉 **[Training, Distilling, and Deploying Reflex Domain Experts](docs/guides/training_experts.md)**
-
-### Key Topics Covered in the Guide:
-- **What a Reflex Expert Is:** A compiled, portable `<20KB` `.s1m` decision runtime with sub-millisecond execution on local silicon.
-- **The 4 Training Pathways:**
-  1. *Zero-Shot Seed Expert:* Instant deployment from schema definitions and contrastive option whitening without training data.
-  2. *Synthetic Teacher Distillation:* Closed-form Ridge Regression bootstrapping via frontier reasoning models (Astra, GPT-6, Claude Opus 5, Fable 5.1, Gemini 3.1, Grok).
-  3. *Supervised Dataset Compilation:* Direct closed-form compilation from historical JSON/CSV logs or benchmark splits.
-  4. *Live Autonomous Cutover (`mode="auto_cutover"`):* Zero-downtime Trojan horse migration from SaaS APIs to 100% on-metal execution.
-- **Continuous Online Adaptation:** Microsecond-grade Sherman-Morrison rank-1 updates with exponential forgetting ($\lambda_f = 0.995$) and regularized covariance bounding.
-- **2-Tier Mixture of Experts (MoE):** Composing a high-speed Router Expert dispatching to specialized Domain Experts (< 0.7ms end-to-end).
-- **Hyperparameter Tuning Guide:** Practical calibration tables for regularization $\lambda$, dimension $D$, forgetting factor $\lambda_f$, relative odds ratio $\gamma$, and confidence floors $\tau_0$.
-- **Runnable Reference Example:** Try [`examples/train_expert.py`](examples/train_expert.py) to run all 5 pathways on your machine in seconds:
-  ```bash
-  python3 examples/train_expert.py
-  ```
-
----
-
-## 🔌 Native Framework Integrations (MCP, FastAPI, LangChain)
-
-Reflex ships with native, zero-friction integration adapters for modern agent stacks:
-
-### 1. Model Context Protocol (MCP) Safety Proxy
-Intercept MCP tool execution JSON-RPC calls on local metal in **< 1ms** with fail-closed safety and cryptographic witness receipts:
+Intercept Model Context Protocol tool calls with fail-closed safety:
 
 ```python
-from reflex.integrations import ReflexMCPProxy, wrap_mcp_tool
+from reflex.integrations import ReflexMCPProxy
 
-# Decorator wraps any standard Python function exposed as an MCP tool
-@wrap_mcp_tool(tool_name="read_file")
-def fetch_document(path: str) -> str:
-    """Inspect read-only project documentation."""
-    with open(path) as f:
-        return f.read()
-
-# Raw JSON-RPC interceptor for MCP servers
 proxy = ReflexMCPProxy(tenant_id="prod_cluster")
 allowed, err_resp, result = proxy.intercept_jsonrpc(mcp_request_json)
+
 if not allowed:
-    return err_resp  # Returns standard JSON-RPC 2.0 error (-32000) with Ed25519 audit proof
+    return err_resp  # JSON-RPC 2.0 error with Ed25519 audit proof
 ```
 
 ### 2. FastAPI / Starlette Gateway Middleware
-Intercept incoming agent / chat requests, resolve confident classifications locally in **< 1ms** ($0 token cost, 0 bytes egress), and escalate genuine edge cases to deliberate frontier governors (Astra, Fable, Gemini, Grok):
+
+Route confident classifications locally and escalate edge cases to frontier models:
 
 ```python
 from fastapi import FastAPI
@@ -283,17 +184,16 @@ class IntentRouter(DecisionSchema):
         }
     )
 
-# 1-line gateway middleware
 add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
 ```
 
-### 3. LangChain & Autonomous Agent Guard
-Intercept agent tool calls before invocation, preventing destructive shell actions, credential theft, and prompt injection:
+### 3. LangChain Agent Guard
+
+Block destructive tool calls before invocation:
 
 ```python
 from reflex.integrations import ReflexGuardCallbackHandler, wrap_langchain_tool
 
-# Register callback handler with any LangChain AgentExecutor
 guard_handler = ReflexGuardCallbackHandler()
 agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
 
@@ -301,179 +201,240 @@ agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
 guarded_tool = wrap_langchain_tool(bash_tool, tool_name="system_terminal")
 ```
 
----
+### 4. Prometheus & OpenTelemetry Observability
 
-## 🚀 Production Demo & Benchmark Catalog (18 Demos)
+Monitor decision counts, latency histograms, escalation rates, and cache hit ratios:
 
-Reflex includes **18 production demonstrations and empirical benchmarks** organized across 4 domains:
+```python
+from reflex import ReflexEngine
+from reflex.integrations import ReflexMetricsExporter
 
-| # | Demo / Benchmark | Script | Primary Domain | Latency / Highlights |
-|:---:|---|---|---|---|
-| **1** | **Headless Multi-Cartridge Pokémon Benchmark** | `examples/pokemon_all_games_benchmark.py` | Real-Time Gaming | 10,000+ FPS, 38µs neural forward pass |
-| **2** | **60 FPS Autonomous Battle Reflex Agent** | `examples/pokemon_battle_reflex.py` | Real-Time Gaming | Sub-1ms battle decisions, PyBoy RAM extraction |
-| **3** | **10-Chapter Campaign Speedrun Engine** | `examples/pokemon_full_campaign_speedrun.py` | Long-Horizon Control | Pallet Town to Indigo Plateau, 8-badge trophy board |
-| **4** | **Live Game Boy Spectator GUI** | `examples/pokemon_gameboy_gui.py` | Interactive GUI | Live desktop window, 0.2s turbo intro skip |
-| **5** | **Autonomous Agent Security Firewall** | `examples/autonomous_agent_firewall_showcase.py` | Enterprise Security | 48 attack vectors, CVSS scoring, 1,000+ QPS stress |
-| **6** | **Enterprise Multi-Threaded Stress Runner** | `examples/enterprise_stress_showcase.py` | Concurrency & Ledger | Concurrent tool evaluation, SQLite WAL ActionLedger |
-| **7** | **Agent Tool Guard & ActionLedger** | `examples/agent_guard.py` | Audit & Verification | Fail-closed tool interception, SHA-256 hash chaining |
-| **8** | **"Trojan Horse" Autonomous Cutover** | `examples/auto_cutover_showcase.py` | Migration Engine | Shadow distillation from SaaS APIs to 100% local metal |
-| **9** | **Deep Moat Benchmark vs. TypeSafe AI** | `examples/deep_jev_benchmark.py` | Latency & Moat Audit | Apple Silicon Metal vs cloud API (150x+ speedup) |
-| **10** | **TypeSafe SDK Drop-in Validation** | `examples/typesafe_sdk_dropin_showcase.py` | API Compatibility | Zero-code-change drop-in validation for `typesafe` |
-| **11** | **4 Jev Enterprise Use-Case Comparison** | `examples/jev_comparison_demos.py` | Head-to-Head | Routing, triage, tool auth vs TypeSafe AI |
-| **12** | **5 Enterprise Killer Use Cases Live Test** | `examples/killer_use_cases_live_test.py` | Enterprise Evaluation | Financial, medical, and security multi-domain tests |
-| **13** | **Universal Paperclips + Jev Drop-in** | `examples/paperclips_typesafe_dropin.py` | Agent Simulation | 1-line patch, 4 modes, dual-pane ASCII HUD |
-| **14** | **4 Tier 1 Levers Empirical Benchmark** | `examples/four_levers_benchmark.py` | Cognitive Architecture | L1 cache (<10µs), Sherman-Morrison (<50µs) |
-| **15** | **Pure NumPy Standalone Evaluator** | `examples/core_standalone_evaluator.py` | Embedded / Zero-Dep | Pure NumPy `<0.5ms` forward pass, 0 crypto/SQLite deps |
-| **16** | **Front-Line AI Gateway Router** | `examples/model_routing.py` | AI Gateway Routing | Cache vs local vs frontier routing with conformal bounds |
-| **17** | **Customer Support Ticket Triage** | `examples/support_triage.py` | NLP Classification | Department routing, urgency, frustration index in ~1ms |
-| **18** | **Domain Expert Training & MoE Showcase** | `examples/train_expert.py` | Distillation & MoE | 5 training pathways, <20KB .s1m, sub-50µs adaptation |
+engine = ReflexEngine(SecurityTriage)
+metrics = ReflexMetricsExporter()
+metrics.instrument(engine)        # Automatically instruments decide()
+metrics.start_server(port=9090)   # Serves standard /metrics HTTP endpoint
+```
 
-<details>
-<summary><strong>Expand Execution Commands for All 18 Demos</strong></summary>
+*Pre-built Grafana dashboard available in [`docs/observability/grafana-dashboard.json`](docs/observability/grafana-dashboard.json).*
+
+### 5. Polyglot gRPC Sidecar & Kubernetes Deployment
+
+Deploy Reflex alongside agents written in Go, Rust, or TypeScript via standard protobuf contracts:
 
 ```bash
-# Gaming & Control
-python3 examples/pokemon_all_games_benchmark.py
-python3 examples/pokemon_battle_reflex.py
-python3 examples/pokemon_full_campaign_speedrun.py
-python3 examples/pokemon_gameboy_gui.py
+# Launch gRPC server on port 50051
+reflex serve --grpc --port 50051
 
-# Enterprise Security & Firewalls
-python3 examples/autonomous_agent_firewall_showcase.py
-python3 examples/enterprise_stress_showcase.py
-python3 examples/agent_guard.py
-
-# Migration Engine & TypeSafe Drop-in
-python3 examples/auto_cutover_showcase.py
-python3 examples/deep_jev_benchmark.py
-python3 examples/typesafe_sdk_dropin_showcase.py
-python3 examples/jev_comparison_demos.py
-python3 examples/killer_use_cases_live_test.py
-python3 examples/paperclips_typesafe_dropin.py --mode dropin
-
-# Architecture Levers & Core Evaluator
-python3 examples/four_levers_benchmark.py
-python3 examples/core_standalone_evaluator.py
-python3 examples/model_routing.py
-python3 examples/support_triage.py
-
-# Distillation, Domain Experts & Mixture of Experts (MoE)
-python3 examples/train_expert.py
+# Or deploy via Docker & Kubernetes sidecar
+docker run -p 50051:50051 reflex:latest
 ```
-</details>
+
+*Kubernetes deployment manifests available in [`deploy/kubernetes/`](deploy/kubernetes/).*
+
+---
+
+## 🎯 Decision Quality & Benchmark Metrics
+
+Latency without decision accuracy is meaningless. Reflex includes a standalone Quality Benchmark Suite evaluating decision correctness across high-stakes security, routing, and scoring tasks:
+
+<p align="center">
+  <img src="assets/quality-vs-latency.svg" alt="Reflex Decision Quality vs Latency Landscape" width="100%" />
+</p>
+
+```bash
+python3 benchmarks/quality/run_quality_benchmarks.py
+```
+
+| Benchmark Task | Primary Metric | Reflex Score | Latency (P50) | Latency (P99) | Description |
+|---|---|---|---|---|---|
+| **Security Triage** | Macro-F1 / Precision | **0.76 Block Precision** | **0.56 ms** | **1.25 ms** | 100 labeled agent tool actions (ALLOW / QUARANTINE / BLOCK) |
+| **Intent Routing** | Accuracy / Macro-F1 | **0.65 Billing F1** | **0.70 ms** | **1.77 ms** | 100 enterprise queries (Tech Support / Billing / Sales / Escalate) |
+| **Threat Scoring** | MAE / Pearson $r$ | **3.07 MAE** | **0.58 ms** | **1.30 ms** | 100 CVSS-style threat evaluations (0.0 – 10.0 scale) |
+
+*Full datasets and evaluation methodology documented in [`benchmarks/quality/README.md`](benchmarks/quality/README.md).*
+
+---
+
+## ⚡ Performance
+
+Benchmarked on Apple M3 Max (14-core CPU, 36 GB Unified Memory) across 10,000 independent trials:
+
+<p align="center">
+  <img src="assets/benchmark-chart.svg" alt="Reflex Latency Benchmark" width="100%" />
+</p>
+
+| Runtime | Hardware | Execution Model | P50 Latency | P99 Latency | Network Egress |
+|---|---|---|---|---|---|
+| **Reflex (L1 Cache Hit)** | Host Memory | In-Process Hash Lookup | **9.8 µs** | **14 µs** | **0 Bytes** |
+| **Reflex (Cold Forward Pass)** | Host Metal / BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **0 Bytes** |
+| Local 8B LLM (vLLM / Ollama) | Local GPU | Autoregressive (KV Cache) | 180 ms | 245 ms | 0 Bytes |
+| Cloud Fast API (Groq / Cerebras) | US-East WAN | Autoregressive Specialized ASIC | 220 ms | 410 ms | Full Payload |
+| Frontier Reasoning Model | Cloud WAN | Autoregressive Deliberation | 850 ms | 1,480 ms | Full Payload |
+| Multi-Turn Agent Loop | Cloud WAN | Multi-Call Tool Reasoning | 3,200 ms | 6,800 ms | Full Payload |
+
+### Throughput
+
+- **Concurrent workers:** Sustained over **2,200 QPS** across 8 threads with zero SQLite lock contention (WAL journal mode).
+- **Real-time control:** In a 60 FPS Game Boy emulator testbed, Reflex evaluated memory-mapped combat states in **38 µs** per frame — consuming 5.9% of the 16.6 ms frame budget.
 
 ---
 
 ## 🔒 Privacy & Zero Data Egress
 
-Reflex guarantees **Zero External Network Egress** and absolute local data isolation:
-
 <p align="center">
-  <img src="assets/privacy-zero-egress.svg" alt="Reflex Zero Data Egress & Air-Gapped Privacy Runtime" width="100%" />
+  <img src="assets/privacy-zero-egress.svg" alt="Reflex Zero Data Egress" width="100%" />
 </p>
 
-- **100% On-Device Execution**: All inference, calibration, and cryptographic receipt generation run in-process in host memory. Zero web sockets, zero telemetry pings, zero cloud dependencies.
-- **Enterprise Regulatory Compliance**:
-  - **HIPAA**: Protected Health Information (PHI) never crosses a network boundary.
-  - **GDPR**: PII evaluated on-premise without international data transfers.
-  - **SOC 2 Type II**: Tamper-evident `DecisionWitnessReceipt` signed by on-device Ed25519 keys with SHA-256 SQLite hash chaining.
+- **100% On-Device Execution:** All inference, calibration, and cryptographic receipt generation run in-process. Zero web sockets, zero telemetry pings, zero cloud dependencies.
+- **HIPAA:** Protected Health Information never crosses a network boundary.
+- **GDPR:** PII evaluated on-premise without international data transfers.
+- **SOC 2 Type II:** Tamper-evident `DecisionWitnessReceipt` signed in software by on-device Ed25519 keys (RFC 8032) with SHA-256 SQLite Merkle hash chaining.
+
+> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When Reflex escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic), those escalated queries traverse the network if fallback routing is enabled. In privacy-restricted zero-egress environments (`zero_egress=True`), Reflex executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
 
 ---
 
-## 🔄 1-Line TypeSafe AI / Jev Drop-in
+## 🚀 Production Demos
 
-Drop Reflex into any existing codebase that uses `typesafe` or `typesafe_sdk`:
+Reflex includes **18 runnable demonstrations** across enterprise security, migration, and real-time control:
+
+### Enterprise Security & Agent Safety
+
+| # | Demo | Script | Highlights |
+|:---:|---|---|---|
+| 1 | **Autonomous Agent Firewall** | `examples/autonomous_agent_firewall_showcase.py` | 48 attack vectors, CVSS scoring, 1,000+ QPS stress test |
+| 2 | **Agent Tool Guard & ActionLedger** | `examples/agent_guard.py` | Fail-closed tool interception, SHA-256 hash chaining |
+| 3 | **Enterprise Multi-Threaded Stress Runner** | `examples/enterprise_stress_showcase.py` | Concurrent tool evaluation, SQLite WAL ActionLedger |
+| 4 | **5 Enterprise Use Cases Live Test** | `examples/killer_use_cases_live_test.py` | Financial, medical, and security multi-domain tests |
+
+### Migration & Compatibility
+
+| # | Demo | Script | Highlights |
+|:---:|---|---|---|
+| 5 | **Autonomous Cutover Engine** | `examples/auto_cutover_showcase.py` | Shadow distillation from cloud APIs to 100% local metal |
+| 6 | **Cloud vs. Local Benchmark** | `examples/deep_jev_benchmark.py` | Apple Silicon Metal vs cloud API latency comparison |
+| 7 | **SDK Drop-in Validation** | `examples/typesafe_sdk_dropin_showcase.py` | Zero-code-change drop-in validation |
+| 8 | **4 Enterprise Use-Case Comparison** | `examples/jev_comparison_demos.py` | Routing, triage, tool auth head-to-head |
+| 9 | **Universal Paperclips + Drop-in** | `examples/paperclips_typesafe_dropin.py` | 1-line patch, 4 modes, dual-pane ASCII HUD |
+
+### Architecture & Core
+
+| # | Demo | Script | Highlights |
+|:---:|---|---|---|
+| 10 | **4-Component Empirical Benchmark** | `examples/four_levers_benchmark.py` | Cache (< 10µs), Online Learning (< 50µs) |
+| 11 | **Pure NumPy Standalone Evaluator** | `examples/core_standalone_evaluator.py` | Zero-dependency < 0.5ms forward pass |
+| 12 | **Front-Line AI Gateway Router** | `examples/model_routing.py` | Cache → local → frontier routing with conformal bounds |
+| 13 | **Customer Support Ticket Triage** | `examples/support_triage.py` | Department routing, urgency, frustration in ~1ms |
+| 14 | **Domain Expert Training & MoE** | `examples/train_expert.py` | 5 training pathways, < 20KB .s1m, sub-50µs adaptation |
+
+### Real-Time Control (Gaming)
+
+| # | Demo | Script | Highlights |
+|:---:|---|---|---|
+| 15 | **Multi-Cartridge Pokémon Benchmark** | `examples/gaming/pokemon_all_games_benchmark.py` | 10,000+ FPS, 38µs neural forward pass |
+| 16 | **60 FPS Battle Reflex Agent** | `examples/gaming/pokemon_battle_reflex.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
+| 17 | **10-Chapter Campaign Speedrun** | `examples/gaming/pokemon_full_campaign_speedrun.py` | Pallet Town to Indigo Plateau |
+| 18 | **Live Game Boy Spectator GUI** | `examples/gaming/pokemon_gameboy_gui.py` | Live desktop window, turbo intro skip |
+
+---
+
+## 🎓 Training & Distilling Domain Experts
+
+Reflex supports 4 training pathways to create compact, portable `.s1m` decision models (< 20 KB):
+
+1. **Zero-Shot Seed Expert:** Instant deployment from schema definitions without training data.
+2. **Synthetic Teacher Distillation:** Closed-form Ridge Regression via frontier reasoning models.
+3. **Supervised Dataset Compilation:** Direct compilation from historical JSON/CSV logs.
+4. **Live Autonomous Cutover:** Zero-downtime migration from cloud APIs to 100% on-metal execution.
+
+👉 **[Complete Training Guide](docs/guides/training_experts.md)**
+
+```bash
+python3 examples/train_expert.py
+```
+
+---
+
+## 🔄 Compatibility
+
+### TypeSafe AI / Jev SDK
+
+Reflex ships with a drop-in compatibility layer for TypeSafe AI's Jev SDK. Existing codebases using `typesafe` or `typesafe_sdk` can redirect to local on-metal execution:
 
 ```python
-# 1-Line Drop-in Replacement
 from reflex.compat.typesafe import patch_typesafe
 patch_typesafe()
 
-# Existing code now runs 100% on local metal at sub-2ms with $0 cost:
+# Existing TypeSafe code now runs locally in < 1ms with $0 cost
 import typesafe
 client = typesafe.Client()
 ```
 
-### Autonomous "Trojan Horse" Cutover
-Migrate transparently from cloud APIs with zero downtime:
+For gradual migration, the autonomous cutover mode transparently proxies initial calls to the cloud API, records exemplars, and cuts over to local execution once confidence is established:
 
 ```python
 from reflex.compat.typesafe import TypeSafeClient
 
-# Proxy first 50 calls to cloud API, record exemplars, then cut over to local metal:
 client = TypeSafeClient(
     mode="auto_cutover",
     cutover_threshold=50,
-    api_key="typesafe_live_key",
+    api_key="your_api_key",
 )
+```
+
+### Twin Namespace
+
+`import reflex` and `import system1` are fully symmetric — identical exports, identical behavior:
+
+```python
+import reflex
+import system1
+assert reflex.__version__ == system1.__version__
+assert reflex.ReflexEngine is system1.ReflexEngine
 ```
 
 ---
 
 ## 🛠️ CLI Reference
 
-Reflex provides a unified command-line tool accessible identically as either `reflex` or `system1`:
-
 ```bash
-# Run a structured decision
+# Evaluate a structured decision
 reflex decide "How do I reset my password?" --schema triage --json
 
-# Run benchmark against 20ms real-time frame ceiling
+# Run a latency benchmark
 reflex bench --schema triage --iterations 200 --target 20.0
 
 # Verify an Ed25519 decision witness receipt offline
 reflex verify-receipt path/to/receipt.json
-cat receipt.json | reflex verify-receipt
 
-# Calibrate temperature and conformal sets
+# Calibrate conformal prediction bounds
 reflex calibrate --dataset data.json --schema triage --bins 10
 
-# Compile schema into standalone portable <20KB binary model (.s1m)
+# Compile a portable < 20KB binary model
 reflex compile --schema triage --output triage.s1m --json
 ```
 
 ---
 
-## 🧪 Testing & Certification
+## 🧪 Testing
 
 ```bash
 python3 -m pytest tests/ -v
 ```
 
-- **Tests Passing**: **366 passed** (100% pass rate in ~24s)
-- **Failures / Errors**: **0**
-- **Warnings**: **0**
-- **CI Platforms**: Verified clean on macOS Apple Silicon and Linux runners (Python 3.11, 3.12, 3.13).
+- **506 tests passed** (100% pass rate across unit, e2e, observability, and gRPC suites)
+- **0 failures, 0 errors, 0 warnings**
+- Verified on macOS Apple Silicon and Linux (Python 3.11, 3.12, 3.13)
 
 ---
 
-## 🎨 Visual Assets & Media
+## 📚 Technical Deep Dive
 
-All diagrams, branding, and vector media are maintained in [`assets/`](https://github.com/steph4n-gh/reflex/blob/main/assets/):
-
-| Asset | Format | Resolution | Description |
-|---|---|---|---|
-| [`reflex-hero.jpg`](assets/reflex-hero.jpg) | JPEG | 1376 × 768 | Obsidian & electric-cyan reflex impulse hero banner |
-| [`reflex-logo.jpg`](assets/reflex-logo.jpg) | JPEG | 1024 × 1024 | Cybernetic square emblem & icon |
-| [`architecture.svg`](assets/architecture.svg) / [`.png`](assets/architecture.png) | SVG / PNG | 1260 × 680 | Cognitive flow diagram (System 1 Reflex vs System 2 Governor) |
-| [`benchmark-chart.svg`](assets/benchmark-chart.svg) / [`.png`](assets/benchmark-chart.png) | SVG / PNG | 1020 × 480 | Logarithmic empirical latency benchmark chart across architectures |
-| [`privacy-zero-egress.svg`](assets/privacy-zero-egress.svg) / [`.png`](assets/privacy-zero-egress.png) | SVG / PNG | 1160 × 640 | Zero data egress & air-gapped on-metal privacy infographic |
-| [`social-preview.png`](assets/social-preview.png) / [`.svg`](assets/social-preview.svg) | PNG / SVG | 1280 × 640 | OpenGraph 16:9 social card banner for GitHub preview |
-| [`pokemon-reflex-60fps.gif`](assets/pokemon-reflex-60fps.gif) | Animated GIF | 580 × 560 | 60 FPS Game Boy emulation with live Reflex on-metal telemetry HUD |
-| [`paperclips-cutover.gif`](assets/paperclips-cutover.gif) | Animated GIF | 640 × 440 | Universal Paperclips dual-pane cutover HUD (cloud to 100% local metal) |
-
----
-
-## 📚 Academic Paper & Technical Deep Dive
-
-For researchers, systems architects, and infrastructure security teams:
-
-* **Comprehensive Practitioner Guide**: [`docs/guides/training_experts.md`](docs/guides/training_experts.md)  
-  *Training, Distilling, and Deploying Reflex Domain Experts*. Complete practitioner and mathematical guide covering the 4 training pathways (Zero-Shot Seed, Synthetic Teacher Distillation, Supervised Compilation, Autonomous Cutover), continuous Sherman-Morrison rank-1 online adaptation ($\lambda_f = 0.995$), 2-tier Mixture of Experts (MoE) dispatching, and hyperparameter tuning.
-* **Academic Whitepaper**: [`docs/paper/reflex_whitepaper.md`](docs/paper/reflex_whitepaper.md)  
-  *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts* (steph4n, 2026). Contains formal mathematical proofs of finite-sample conformal coverage ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}(X)) \ge 1 - \alpha$), closed-form Ridge Regression distillation, sub-50µs Sherman-Morrison online rank-1 adaptation, contrastive whitening theorems, and real-world 60 FPS Game Boy emulation telemetry.
-* **Technical Architecture Specification**: [`docs/architecture/technical_specification.md`](docs/architecture/technical_specification.md)  
-  Exhaustive engineering specification covering the 4-tier memory hierarchy (L1 Cache $\to$ Metal BLAS $\to$ Conformal Gate $\to$ System 2 Governor), schema type system (`Choice`, `MultiChoice`, `Boolean`, `Score`), compiler binary container format (`.s1m`), SQLite WAL ActionLedger schema, Ed25519 signing envelope, and 1:1 twin-namespace parity.
+- **[Academic Paper: Conformal Ambiguity Gating](docs/paper/conformal_gating.md)** — Formal mathematical proof of Theorem 1 (Simplex Equiangular Separation & Welch optimality), finite-sample coverage guarantees, and Sherman-Morrison online rank-1 adaptation.
+- **[Technical Architecture & System Brief](docs/paper/reflex_technical_brief.md)** — Comprehensive architecture brief for CISOs, security engineers, and platform architects evaluating the on-metal decision firewall.
+- **[Training, Distilling, and Deploying Domain Experts](docs/guides/training_experts.md)** — Practitioner guide covering 4 training pathways, Sherman-Morrison online adaptation, and Mixture of Experts dispatching.
+- **[Foundational Whitepaper](docs/paper/reflex_whitepaper.md)** — Complete research monograph covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
+- **[Technical Architecture Specification](docs/architecture/technical_specification.md)** — Exhaustive engineering specification covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
 
 ---
 

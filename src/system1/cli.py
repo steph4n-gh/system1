@@ -257,11 +257,11 @@ def handle_bench_command(args: argparse.Namespace) -> int:
     print(f"  Mean Latency:       {report.mean_latency_ms:.3f} ms")
     print(f"  Throughput:         {report.throughput_decisions_per_sec:.1f} decisions/sec")
     print("-" * 70)
-    print("HEAD-TO-HEAD COMPARISON VS TYPESAFE AI (JEV):")
-    print(f"  Jev Baseline:       {report.jev_baseline_min_ms:.0f} - {report.jev_baseline_max_ms:.0f} ms (Cloud API Latency)")
+    print(f"HEAD-TO-HEAD COMPARISON VS {report.baseline_label.upper()}:")
+    print(f"  Baseline Latency:   {report.baseline_latency_ms:.1f} ms ({report.baseline_label})")
     print(f"  Reflex P50:         {report.p50_latency_ms:.3f} ms (Local Metal/CPU)")
-    print(f"  Speedup Factor:     {report.speedup_factor_vs_jev_p50:.1f}x FASTER than Jev (~150ms)")
-    print(f"  Target (<{target_ms:.0f}ms):    {'PASSED [BEATS JEV]' if report.p95_latency_ms <= target_ms else 'FAILED'}")
+    print(f"  Speedup Factor:     {report.speedup_factor:.1f}x FASTER than {report.baseline_label}")
+    print(f"  Target (<{target_ms:.0f}ms):    {'PASSED' if report.p95_latency_ms <= target_ms else 'FAILED'}")
     print(f"  Data Privacy:       ZERO DATA EGRESS (100% on-device local execution)")
     print(f"  Cryptographic Proof: Ed25519 RunWitnessEnvelope Receipts Included")
     print("=" * 70 + "\n")
@@ -483,6 +483,46 @@ def handle_compile_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_serve_command(args: argparse.Namespace) -> int:
+    """CLI handler for 'system1 serve' — starts the gRPC sidecar server."""
+    try:
+        from system1.grpc_server import serve as grpc_serve, grpc_available
+    except ImportError:
+        print(
+            "[REFLEX ERROR] grpcio is required for the serve command.  "
+            "Install with: pip install 'system1[grpc]'",
+            file=sys.stderr,
+        )
+        return 1
+
+    if not grpc_available():
+        print(
+            "[REFLEX ERROR] grpcio is not installed.  "
+            "Install with: pip install 'system1[grpc]'",
+            file=sys.stderr,
+        )
+        return 1
+
+    port = int(getattr(args, "port", 50051))
+    schema_args: List[str] = getattr(args, "schema", None) or []
+
+    # Build schemas dict from --schema flags.
+    # Formats: "guard", "triage", "name:path/to/file.s1m"
+    schemas: Dict[str, Any] = {}
+    for spec in schema_args:
+        if ":" in spec and not spec.startswith(":"):
+            name, path_str = spec.split(":", 1)
+            schema = _load_schema(path_str)
+            schemas[name] = schema
+        else:
+            schema = _load_schema(spec)
+            schemas[spec] = schema
+
+    print(f"[REFLEX] Starting gRPC server on port {port}...")
+    grpc_serve(port=port, schemas=schemas if schemas else None, block=True)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Constructs the unified CLI argument parser for system1."""
     parser = argparse.ArgumentParser(
@@ -540,6 +580,13 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON compilation summary")
     compile_parser.set_defaults(func=handle_compile_command)
 
+    # Command: serve
+    serve_parser = subparsers.add_parser("serve", help="Start the Reflex gRPC sidecar server")
+    serve_parser.add_argument("--grpc", action="store_true", default=True, help="Use gRPC transport (default)")
+    serve_parser.add_argument("--port", type=int, default=50051, help="Port to listen on (default: 50051)")
+    serve_parser.add_argument("--schema", action="append", help="Schema to load: 'guard', 'triage', or 'name:path/to/file.s1m'. Can be repeated.")
+    serve_parser.set_defaults(func=handle_serve_command)
+
     return parser
 
 
@@ -561,6 +608,7 @@ __all__ = [
     "handle_calibrate_command",
     "handle_verify_receipt_command",
     "handle_compile_command",
+    "handle_serve_command",
     "DefaultTriageSchema",
 ]
 

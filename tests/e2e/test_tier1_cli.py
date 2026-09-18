@@ -68,7 +68,7 @@ def test_cli_bench_execution(capsys):
     captured = capsys.readouterr()
     report = json.loads(captured.out)
     assert report["total_decisions"] == 15
-    assert report["beats_jev"] is True
+    assert report["speedup_factor"] > 5.0
     assert report["p50_latency_ms"] < 20.0
     assert report["throughput_decisions_per_sec"] > 50.0
 

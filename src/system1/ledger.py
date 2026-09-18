@@ -27,6 +27,11 @@ class LedgerError(RuntimeError):
     pass
 
 
+class LedgerWriteError(LedgerError):
+    """Raised when writing to the audit ledger fails in fail-closed mode."""
+    pass
+
+
 class IntegrityError(LedgerError):
     """Raised when cryptographic chain validation fails."""
     pass
@@ -39,9 +44,10 @@ class ActionLedger:
         self,
         path: str | Path = ":memory:",
         *,
+        db_path: Optional[str | Path] = None,
         read_only: bool = False,
     ) -> None:
-        self.path = str(path)
+        self.path = str(db_path if db_path is not None else path)
         self.read_only = bool(read_only)
         if self.read_only and self.path == ":memory:":
             raise ValueError("Read-only ledger requires an existing durable database file")
@@ -154,7 +160,7 @@ class ActionLedger:
         """Returns the current audit head hash string."""
         return self.audit_head()[1]
 
-    def record_decision_receipt(
+    def append(
         self,
         receipt: Mapping[str, Any] | Any,
         *,
@@ -212,6 +218,91 @@ class ActionLedger:
                     principal_id,
                     scope,
                     decision_id,
+                    event_type,
+                    canonical_json(entry_payload),
+                    previous_hash,
+                    entry_hash,
+                    created_at,
+                ),
+            )
+            sequence = int(cursor.lastrowid)
+            if sequence <= previous_sequence:
+                raise IntegrityError("Audit sequence did not advance")
+
+            connection.execute(
+                "UPDATE ledger_meta SET value=? WHERE key='audit_head_hash'", (entry_hash,)
+            )
+            connection.execute(
+                "UPDATE ledger_meta SET value=? WHERE key='audit_head_sequence'", (str(sequence),)
+            )
+            return entry_hash
+
+    def record_decision_receipt(
+        self,
+        receipt: Mapping[str, Any] | Any,
+        *,
+        tenant_id: str = "reflex",
+        principal_id: str = "engine",
+        scope: str = "decision",
+    ) -> str:
+        """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
+        return self.append(receipt, tenant_id=tenant_id, principal_id=principal_id, scope=scope)
+
+    def record_execution_outcome(
+        self,
+        *,
+        action_id: str,
+        receipt_digest: str,
+        status: str,
+        result_payload: Optional[Mapping[str, Any]] = None,
+        error_message: Optional[str] = None,
+        tenant_id: str = "reflex",
+        principal_id: str = "engine",
+        scope: str = "execution_outcome",
+    ) -> str:
+        """Records an execution outcome linked cryptographically to prior authorization receipt."""
+        with self._transaction() as connection:
+            meta = dict(connection.execute("SELECT key, value FROM ledger_meta").fetchall())
+            previous_hash = meta.get("audit_head_hash", _ZERO_HASH)
+            previous_sequence = int(meta.get("audit_head_sequence", "0"))
+            created_at = utc_now()
+            event_type = "execution_outcome"
+            event_id = f"audit_{fingerprint([previous_hash, event_type, created_at])[:32]}"
+
+            entry_payload = {
+                "action_id": action_id,
+                "prior_receipt_digest": receipt_digest,
+                "status": str(status),
+                "error_message": error_message,
+                "result_summary": dict(result_payload) if result_payload is not None else {},
+            }
+
+            body = {
+                "event_id": event_id,
+                "tenant_id": tenant_id,
+                "principal_id": principal_id,
+                "scope": scope,
+                "action_id": action_id,
+                "event_type": event_type,
+                "payload": entry_payload,
+                "previous_hash": previous_hash,
+                "created_at": created_at,
+            }
+            entry_hash = fingerprint(body)
+
+            cursor = connection.execute(
+                """
+                INSERT INTO audit_entries(
+                    event_id, tenant_id, principal_id, scope, action_id, event_type,
+                    payload_json, previous_hash, entry_hash, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    event_id,
+                    tenant_id,
+                    principal_id,
+                    scope,
+                    action_id,
                     event_type,
                     canonical_json(entry_payload),
                     previous_hash,
@@ -340,10 +431,31 @@ class ActionLedger:
 
             return True
 
+    def entries(self) -> List[Dict[str, Any]]:
+        """Returns all audit entries ordered by sequence."""
+        with self._lock:
+            rows = self._connection.execute(
+                "SELECT * FROM audit_entries ORDER BY sequence ASC"
+            ).fetchall()
+            results = []
+            for r in rows:
+                d = dict(r)
+                try:
+                    d["payload"] = json.loads(d.get("payload_json", "{}"))
+                except Exception:
+                    pass
+                results.append(d)
+            return results
+
+    def records(self) -> List[Dict[str, Any]]:
+        """Alias for entries()."""
+        return self.entries()
+
 
 __all__ = [
     "ActionLedger",
     "IntegrityError",
     "LedgerError",
+    "LedgerWriteError",
 ]
 

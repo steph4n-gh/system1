@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reflex-grpc
+  labels:
+    app: reflex-grpc
+    component: decision-engine
+spec:
+  type: ClusterIP
+  selector:
+    app: reflex-grpc
+  ports:
+    - name: grpc
+      port: 50051
+      targetPort: grpc
+      protocol: TCP

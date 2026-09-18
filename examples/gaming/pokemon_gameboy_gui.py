@@ -29,7 +29,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # Ensure src/ and repo root are on sys.path
 SCRIPT_DIR = Path(__file__).resolve().parent
-ROOT_DIR = SCRIPT_DIR.parent
+ROOT_DIR = SCRIPT_DIR.parent.parent
 SRC_DIR = ROOT_DIR / "src"
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -43,7 +43,7 @@ def ensure_venv_reexec() -> None:
         os.execv(str(venv_py), [str(venv_py)] + sys.argv)
 
 # Import Reflex battle mechanics and PyBoy bridges
-from examples.pokemon_battle_reflex import (
+from examples.gaming.pokemon_battle_reflex import (
     BattleState,
     BattleType,
     Pokemon,
@@ -61,7 +61,7 @@ from examples.pokemon_battle_reflex import (
     read_rom_header,
     render_gameboy_screen,
 )
-from examples.pokemon_full_campaign_speedrun import (
+from examples.gaming.pokemon_full_campaign_speedrun import (
     CampaignSpeedrunEngine,
     CampaignState,
     create_starter_pokemon,

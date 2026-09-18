@@ -35,7 +35,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 # Ensure repository root and src/ are on sys.path
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent
+REPO_ROOT = SCRIPT_DIR.parent.parent
 SRC_DIR = REPO_ROOT / "src"
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
@@ -48,7 +48,7 @@ def ensure_venv_reexec() -> None:
     if venv_py.is_file() and Path(sys.executable).resolve() != venv_py.resolve() and sys.version_info[:2] != (3, 13):
         os.execv(str(venv_py), [str(venv_py)] + sys.argv)
 
-from examples.pokemon_battle_reflex import (
+from examples.gaming.pokemon_battle_reflex import (
     BattleState,
     BattleType,
     Pokemon,

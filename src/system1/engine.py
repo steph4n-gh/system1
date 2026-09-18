@@ -7,6 +7,7 @@ and ActionLedger audit integration.
 
 from __future__ import annotations
 
+import copy
 import json
 import secrets
 import statistics
@@ -42,7 +43,7 @@ from system1.core import (
 from system1.core.model import _stable_sigmoid
 from system1.cache import SemanticReflexCache
 from system1.core.telemetry import TelemetryProjector
-from system1.ledger import ActionLedger
+from system1.ledger import ActionLedger, LedgerWriteError
 from system1.receipt import (
     DecisionWitnessReceipt,
     create_decision_receipt,
@@ -52,7 +53,7 @@ from system1.receipt import (
 
 @dataclass(frozen=True)
 class BenchmarkReport:
-    """Performance and latency benchmark report comparing Reflex vs TypeSafe AI (Jev)."""
+    """Performance and latency benchmark report."""
 
     schema_name: str
     total_decisions: int
@@ -64,11 +65,10 @@ class BenchmarkReport:
     min_latency_ms: float
     max_latency_ms: float
     throughput_decisions_per_sec: float
-    jev_baseline_min_ms: float = 70.0
-    jev_baseline_max_ms: float = 500.0
     target_latency_ms: float = 20.0
-    beats_jev: bool = True
-    speedup_factor_vs_jev_p50: float = 0.0
+    baseline_label: str = "Cloud SaaS API"
+    baseline_latency_ms: float = 0.0
+    speedup_factor: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
@@ -102,8 +102,11 @@ class DecisionResult:
     embedding: Optional[np.ndarray] = None
 
     def __getattr__(self, item: str) -> Any:
-        if item in self.values:
-            return self.values[item]
+        if item.startswith("__") and item.endswith("__"):
+            raise AttributeError(item)
+        values = self.__dict__.get("values")
+        if values is not None and item in values:
+            return values[item]
         raise AttributeError(f"'DecisionResult' object has no attribute {item!r}")
 
     def to_dict(self) -> Dict[str, Any]:
@@ -171,6 +174,9 @@ class ReflexEngine:
         relative_odds_ratio: Optional[float] = 1.5,
         confidence_floor_tau0: Optional[float] = 0.15,
         recency_weighted: bool = False,
+        fail_closed_ledger: bool = False,
+        strict_mode: bool = False,
+        policy_scope: str = "",
     ) -> None:
         if isinstance(schema, type) and issubclass(schema, DecisionSchema):
             self.schema: DecisionSchema = schema()
@@ -183,6 +189,7 @@ class ReflexEngine:
         self.backend = backend
         self.signing_key: Optional[Ed25519PrivateKey] = signing_key
         self.ledger: Optional[ActionLedger] = ledger
+        self.fail_closed_ledger = bool(fail_closed_ledger)
         self.projector = projector
         self.contrastive_whitening = contrastive_whitening
         self.use_cache = bool(use_cache)
@@ -200,6 +207,9 @@ class ReflexEngine:
             float(confidence_floor_tau0) if confidence_floor_tau0 is not None else None
         )
         self.recency_weighted = bool(recency_weighted)
+        self.strict_mode = bool(strict_mode)
+        self.policy_scope = str(policy_scope)
+        self.model_version: int = 1
 
         # Non-autoregressive decision model
         if model is not None:
@@ -262,6 +272,12 @@ class ReflexEngine:
                 if name in self.calibrators:
                     self.calibrators[name].temperature = getattr(ch, "temperature", 1.0)
                 if name in self.conformal_predictors:
+                    calib_scores = getattr(ch, "calibration_scores", ())
+                    if len(calib_scores) > 0:
+                        self.conformal_predictors[name].calibration_scores = np.sort(
+                            np.asarray(calib_scores, dtype=np.float64)
+                        )
+                        self.conformal_predictors[name].is_calibrated = True
                     q = getattr(ch, "conformal_quantile", 0.0)
                     if q > 0:
                         self.conformal_predictors[name].quantile = q
@@ -275,6 +291,13 @@ class ReflexEngine:
                     cft = getattr(ch, "confidence_floor_tau0", None)
                     if cft is not None and self.confidence_floor_tau0 is None:
                         self.conformal_predictors[name].confidence_floor_tau0 = float(cft)
+                if name in self.regression_conformal_predictors:
+                    calib_scores = getattr(ch, "calibration_scores", ())
+                    if len(calib_scores) > 0:
+                        self.regression_conformal_predictors[name].residuals = np.sort(
+                            np.asarray(calib_scores, dtype=np.float64)
+                        )
+                        self.regression_conformal_predictors[name].is_calibrated = True
 
     def encode(
         self,
@@ -436,12 +459,22 @@ class ReflexEngine:
         relative_odds_ratio: Optional[float] = None,
         confidence_floor_tau0: Optional[float] = None,
         recency_weighted: Optional[bool] = None,
+        fail_closed_ledger: Optional[bool] = None,
+        strict: Optional[bool] = None,
+        policy_scope: Optional[str] = None,
     ) -> DecisionResult:
         """Evaluates prompt against schema in a single non-autoregressive pass."""
         if not isinstance(prompt, str):
             raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
 
         t_start = time.perf_counter()
+
+        is_fail_closed = self.fail_closed_ledger if fail_closed_ledger is None else bool(fail_closed_ledger)
+        is_strict = self.strict_mode if strict is None else bool(strict)
+        eff_scope = self.policy_scope if policy_scope is None else str(policy_scope)
+        eff_m_thresh = margin_threshold if margin_threshold is not None else self.margin_threshold
+        eff_gamma = relative_odds_ratio if relative_odds_ratio is not None else self.relative_odds_ratio
+        eff_tau0 = confidence_floor_tau0 if confidence_floor_tau0 is not None else self.confidence_floor_tau0
 
         active_ledger = ledger or self.ledger
         truth_ledger_head = ""
@@ -450,17 +483,38 @@ class ReflexEngine:
         if active_ledger is not None:
             try:
                 truth_ledger_head = active_ledger.head_hash()
-            except Exception:
+            except Exception as ex:
+                if is_fail_closed:
+                    raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
                 truth_ledger_head = ""
 
         # 1. Tier 0 Semantic Reflex Cache fast-path (<0.05ms)
         query_emb: Optional[np.ndarray] = np.asarray(embedding, dtype=np.float32).flatten() if embedding is not None else None
         if self.use_cache:
-            cached = self.cache.get(prompt, telemetry=telemetry)
+            cached = self.cache.get(
+                prompt,
+                telemetry=telemetry,
+                schema_digest=self.schema.schema_digest(),
+                model_version=self.model_version,
+                policy_scope=eff_scope,
+                alpha=alpha,
+                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                strict=is_strict,
+            )
             if cached is None:
                 if query_emb is None:
                     query_emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
-                cached = self.cache.get(prompt, embedding=query_emb, telemetry=telemetry)
+                cached = self.cache.get(
+                    prompt,
+                    embedding=query_emb,
+                    telemetry=telemetry,
+                    schema_digest=self.schema.schema_digest(),
+                    model_version=self.model_version,
+                    policy_scope=eff_scope,
+                    alpha=alpha,
+                    margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                    strict=is_strict,
+                )
 
             if cached is not None:
                 entry, sim = cached
@@ -472,10 +526,10 @@ class ReflexEngine:
                             schema_name=self.schema.schema_name,
                             schema_digest=self.schema.schema_digest(),
                             prompt=prompt,
-                            values=entry.result.values,
-                            confidences=entry.result.confidences,
-                            conformal_sets=entry.result.conformal_sets,
-                            probabilities=entry.result.probabilities,
+                            values=copy.deepcopy(entry.result.values),
+                            confidences=copy.deepcopy(entry.result.confidences),
+                            conformal_sets=copy.deepcopy(entry.result.conformal_sets),
+                            probabilities=copy.deepcopy(entry.result.probabilities),
                             latency_ms=elapsed_ms,
                             is_ambiguous=False,
                             truth_ledger_head=truth_ledger_head,
@@ -502,30 +556,32 @@ class ReflexEngine:
                                 signer_public_key=hit_receipt.signer_public_key,
                                 envelope=hit_receipt.envelope,
                             )
-                        except Exception:
+                        except Exception as ex:
+                            if is_fail_closed:
+                                raise LedgerWriteError(f"Fail-closed ledger recording failed on cache hit: {ex}") from ex
                             pass
 
                     return DecisionResult(
                         schema_name=self.schema.schema_name,
                         schema_digest=self.schema.schema_digest(),
                         prompt=prompt,
-                        values=entry.result.values,
-                        confidences=entry.result.confidences,
-                        conformal_sets=entry.result.conformal_sets,
-                        probabilities=entry.result.probabilities,
+                        values=copy.deepcopy(entry.result.values),
+                        confidences=copy.deepcopy(entry.result.confidences),
+                        conformal_sets=copy.deepcopy(entry.result.conformal_sets),
+                        probabilities=copy.deepcopy(entry.result.probabilities),
                         is_ambiguous=False,  # Certified execution bypasses ambiguity halts!
                         latency_ms=elapsed_ms,
                         alpha=alpha,
                         receipt=hit_receipt,
-                        margins=entry.result.margins,
-                        margin_thresholds=entry.result.margin_thresholds,
-                        margin_gate_active=entry.result.margin_gate_active,
-                        odds_ratios=getattr(entry.result, "odds_ratios", {}),
-                        relative_odds_ratio_thresholds=getattr(entry.result, "relative_odds_ratio_thresholds", {}),
-                        confidence_floors=getattr(entry.result, "confidence_floors", {}),
-                        ambiguous_fields=getattr(entry.result, "ambiguous_fields", []),
+                        margins=copy.deepcopy(entry.result.margins),
+                        margin_thresholds=copy.deepcopy(entry.result.margin_thresholds),
+                        margin_gate_active=copy.deepcopy(entry.result.margin_gate_active),
+                        odds_ratios=copy.deepcopy(getattr(entry.result, "odds_ratios", {})),
+                        relative_odds_ratio_thresholds=copy.deepcopy(getattr(entry.result, "relative_odds_ratio_thresholds", {})),
+                        confidence_floors=copy.deepcopy(getattr(entry.result, "confidence_floors", {})),
+                        ambiguous_fields=copy.deepcopy(getattr(entry.result, "ambiguous_fields", [])),
                         escalated_fields=[],
-                        telemetry=telemetry,
+                        telemetry=copy.deepcopy(telemetry) if telemetry is not None else None,
                         is_cache_hit=True,
                         embedding=entry.embedding if entry.embedding is not None else query_emb,
                     )
@@ -558,10 +614,6 @@ class ReflexEngine:
         escalated_fields: List[str] = []
         is_ambiguous = False
 
-        eff_m_thresh = margin_threshold if margin_threshold is not None else self.margin_threshold
-        eff_gamma = relative_odds_ratio if relative_odds_ratio is not None else self.relative_odds_ratio
-        eff_tau0 = confidence_floor_tau0 if confidence_floor_tau0 is not None else self.confidence_floor_tau0
-
         for name, f_def in self.schema.fields.items():
             raw_eval = raw_result.fields[name]
             calibrator = self.calibrators[name]
@@ -583,9 +635,10 @@ class ReflexEngine:
                         cset = conformal.predict_set(
                             calibrated_p,
                             alpha=alpha,
-                            margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
-                            relative_odds_ratio=eff_gamma,
-                            confidence_floor_tau0=eff_tau0,
+                            margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
+                            relative_odds_ratio=eff_gamma if not is_strict else None,
+                            confidence_floor_tau0=eff_tau0 if not is_strict else None,
+                            strict=is_strict,
                         )
                     except TypeError:
                         cset = conformal.predict_set(calibrated_p, alpha=alpha)
@@ -596,7 +649,15 @@ class ReflexEngine:
                     odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
                     relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
                     confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
-                    if cset.is_ambiguous:
+
+                    is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
+                    cardinality = len(cset.prediction_set)
+                    if is_strict:
+                        field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                    else:
+                        field_ambiguous = is_empty_set or cset.is_ambiguous
+
+                    if field_ambiguous:
                         ambiguous_fields.append(name)
                         if getattr(f_def, "escalate_on_ambiguity", True):
                             is_ambiguous = True
@@ -621,9 +682,10 @@ class ReflexEngine:
                         cset = conformal.predict_set(
                             calibrated_p,
                             alpha=alpha,
-                            margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
-                            relative_odds_ratio=eff_gamma,
-                            confidence_floor_tau0=eff_tau0,
+                            margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
+                            relative_odds_ratio=eff_gamma if not is_strict else None,
+                            confidence_floor_tau0=eff_tau0 if not is_strict else None,
+                            strict=is_strict,
                         )
                     except TypeError:
                         cset = conformal.predict_set(calibrated_p, alpha=alpha)
@@ -634,7 +696,15 @@ class ReflexEngine:
                     odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
                     relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
                     confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
-                    if cset.is_ambiguous:
+
+                    is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
+                    cardinality = len(cset.prediction_set)
+                    if is_strict:
+                        field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                    else:
+                        field_ambiguous = is_empty_set or cset.is_ambiguous
+
+                    if field_ambiguous:
                         ambiguous_fields.append(name)
                         if getattr(f_def, "escalate_on_ambiguity", True):
                             is_ambiguous = True
@@ -678,6 +748,19 @@ class ReflexEngine:
         validated_values = self.schema.validate_decision(values)
         total_latency_ms = (time.perf_counter() - t_start) * 1000.0
 
+        safe_values = copy.deepcopy(validated_values)
+        safe_confidences = copy.deepcopy(confidences)
+        safe_conformal_sets = copy.deepcopy(conformal_sets)
+        safe_probabilities = copy.deepcopy(probabilities)
+        safe_margins = copy.deepcopy(margins)
+        safe_margin_thresholds = copy.deepcopy(margin_thresholds)
+        safe_margin_gate_active = copy.deepcopy(margin_gate_active)
+        safe_odds_ratios = copy.deepcopy(odds_ratios)
+        safe_relative_odds_ratio_thresholds = copy.deepcopy(relative_odds_ratio_thresholds)
+        safe_confidence_floors = copy.deepcopy(confidence_floors)
+        safe_ambiguous_fields = copy.deepcopy(ambiguous_fields)
+        safe_escalated_fields = copy.deepcopy(escalated_fields)
+
         # ActionLedger integration
         active_ledger = ledger or self.ledger
         truth_ledger_head = ""
@@ -686,7 +769,9 @@ class ReflexEngine:
         if active_ledger is not None:
             try:
                 truth_ledger_head = active_ledger.head_hash()
-            except Exception:
+            except Exception as ex:
+                if is_fail_closed:
+                    raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
                 truth_ledger_head = ""
 
         # Emit proof-carrying cryptographic receipt
@@ -694,10 +779,10 @@ class ReflexEngine:
             schema_name=self.schema.schema_name,
             schema_digest=self.schema.schema_digest(),
             prompt=prompt,
-            values=validated_values,
-            confidences=confidences,
-            conformal_sets=conformal_sets,
-            probabilities=probabilities,
+            values=safe_values,
+            confidences=safe_confidences,
+            conformal_sets=safe_conformal_sets,
+            probabilities=safe_probabilities,
             latency_ms=total_latency_ms,
             is_ambiguous=is_ambiguous,
             truth_ledger_head=truth_ledger_head,
@@ -727,29 +812,31 @@ class ReflexEngine:
                     signer_public_key=receipt.signer_public_key,
                     envelope=receipt.envelope,
                 )
-            except Exception:
+            except Exception as ex:
+                if is_fail_closed:
+                    raise LedgerWriteError(f"Fail-closed ledger recording failed: {ex}") from ex
                 pass
 
         result = DecisionResult(
             schema_name=self.schema.schema_name,
             schema_digest=self.schema.schema_digest(),
             prompt=prompt,
-            values=validated_values,
-            confidences=confidences,
-            conformal_sets=conformal_sets,
-            probabilities=probabilities,
+            values=safe_values,
+            confidences=safe_confidences,
+            conformal_sets=safe_conformal_sets,
+            probabilities=safe_probabilities,
             is_ambiguous=is_ambiguous,
             latency_ms=total_latency_ms,
             alpha=alpha,
             receipt=receipt,
-            margins=margins,
-            margin_thresholds=margin_thresholds,
-            margin_gate_active=margin_gate_active,
-            odds_ratios=odds_ratios,
-            relative_odds_ratio_thresholds=relative_odds_ratio_thresholds,
-            confidence_floors=confidence_floors,
-            ambiguous_fields=ambiguous_fields,
-            escalated_fields=escalated_fields,
+            margins=safe_margins,
+            margin_thresholds=safe_margin_thresholds,
+            margin_gate_active=safe_margin_gate_active,
+            odds_ratios=safe_odds_ratios,
+            relative_odds_ratio_thresholds=safe_relative_odds_ratio_thresholds,
+            confidence_floors=safe_confidence_floors,
+            ambiguous_fields=safe_ambiguous_fields,
+            escalated_fields=safe_escalated_fields,
             telemetry=telemetry,
             is_cache_hit=False,
             embedding=raw_result.embedding,
@@ -761,6 +848,12 @@ class ReflexEngine:
                 result,
                 embedding=raw_result.embedding,
                 telemetry=telemetry,
+                schema_digest=self.schema.schema_digest(),
+                model_version=self.model_version,
+                policy_scope=eff_scope,
+                alpha=alpha,
+                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                strict=is_strict,
                 source="evaluation",
             )
 
@@ -779,6 +872,8 @@ class ReflexEngine:
         relative_odds_ratio: Optional[float] = None,
         confidence_floor_tau0: Optional[float] = None,
         recency_weighted: Optional[bool] = None,
+        strict: Optional[bool] = None,
+        policy_scope: Optional[str] = None,
     ) -> DecisionResult:
         """Evaluates prompt against schema with optional continuous numeric telemetry vector and precomputed embedding."""
         return self.decide(
@@ -792,6 +887,8 @@ class ReflexEngine:
             relative_odds_ratio=relative_odds_ratio,
             confidence_floor_tau0=confidence_floor_tau0,
             recency_weighted=recency_weighted,
+            strict=strict,
+            policy_scope=policy_scope,
         )
 
     def learn_from_tier2(
@@ -810,6 +907,22 @@ class ReflexEngine:
         """
         eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
         t0 = time.perf_counter()
+
+        # Invariant 8: Bump model_version, evict prompt and invalidate prior versions before evaluation
+        self.model_version += 1
+        if hasattr(self.model, "model_version"):
+            self.model.model_version = self.model_version
+
+        if self.use_cache and self.cache is not None:
+            self.cache.evict_prompt(prompt)
+            self.cache.invalidate_prior_versions(self.model_version)
+
+        if hasattr(self.model, "cache") and self.model.cache is not None:
+            if hasattr(self.model.cache, "evict_prompt"):
+                self.model.cache.evict_prompt(prompt)
+            if hasattr(self.model.cache, "invalidate_prior_versions"):
+                self.model.cache.invalidate_prior_versions(self.model_version)
+
         if embedding is not None:
             emb = np.asarray(embedding, dtype=np.float32).flatten()
         else:
@@ -843,9 +956,24 @@ class ReflexEngine:
                 embedding=emb,
                 record_receipt=False,
                 recency_weighted=recency_weighted,
+                strict=self.strict_mode,
+                policy_scope=self.policy_scope,
             )
             if self.use_cache:
-                self.cache.put(prompt, res, embedding=emb, telemetry=telemetry, source="tier2")
+                eff_m_thresh = self.margin_threshold
+                self.cache.put(
+                    prompt,
+                    res,
+                    embedding=emb,
+                    telemetry=telemetry,
+                    schema_digest=self.schema.schema_digest(),
+                    model_version=self.model_version,
+                    policy_scope=self.policy_scope,
+                    alpha=0.05,
+                    margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                    strict=self.strict_mode,
+                    source="tier2",
+                )
             total_ms = (time.perf_counter() - t0) * 1000.0
             return {
                 "status": "updated",
@@ -886,9 +1014,24 @@ class ReflexEngine:
             embedding=emb,
             record_receipt=False,
             recency_weighted=recency_weighted,
+            strict=self.strict_mode,
+            policy_scope=self.policy_scope,
         )
         if self.use_cache:
-            self.cache.put(prompt, res, embedding=emb, telemetry=telemetry, source="tier2")
+            eff_m_thresh = self.margin_threshold
+            self.cache.put(
+                prompt,
+                res,
+                embedding=emb,
+                telemetry=telemetry,
+                schema_digest=self.schema.schema_digest(),
+                model_version=self.model_version,
+                policy_scope=self.policy_scope,
+                alpha=0.05,
+                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                strict=self.strict_mode,
+                source="tier2",
+            )
 
         return {
             "status": "updated",
@@ -912,6 +1055,8 @@ class ReflexEngine:
         relative_odds_ratio: Optional[float] = None,
         confidence_floor_tau0: Optional[float] = None,
         recency_weighted: Optional[bool] = None,
+        strict: Optional[bool] = None,
+        policy_scope: Optional[str] = None,
     ) -> List[DecisionResult]:
         """Processes multiple inputs in batch with optional continuous telemetry."""
         if telemetry is not None and len(telemetry) == len(prompts):
@@ -925,6 +1070,8 @@ class ReflexEngine:
                     relative_odds_ratio=relative_odds_ratio,
                     confidence_floor_tau0=confidence_floor_tau0,
                     recency_weighted=recency_weighted,
+                    strict=strict,
+                    policy_scope=policy_scope,
                 )
                 for i, p in enumerate(prompts)
             ]
@@ -937,6 +1084,8 @@ class ReflexEngine:
                 relative_odds_ratio=relative_odds_ratio,
                 confidence_floor_tau0=confidence_floor_tau0,
                 recency_weighted=recency_weighted,
+                strict=strict,
+                policy_scope=policy_scope,
             )
             for p in prompts
         ]
@@ -951,7 +1100,7 @@ class ReflexEngine:
         iterations: int = 100,
         warmup: int = 10,
     ) -> BenchmarkReport:
-        """Runs precision latency benchmark against sub-20ms target and Jev baseline."""
+        """Runs precision latency benchmark against sub-20ms target and cloud baseline."""
         if iterations < 1:
             raise ValueError(f"iterations must be a positive integer >= 1, got {iterations}")
         if warmup < 0:
@@ -992,9 +1141,9 @@ class ReflexEngine:
         p99 = float(percentiles[3])
         mean_lat = statistics.mean(latencies_sorted)
 
-        # Jev typical cloud latency is 70 - 500ms, midpoint ~ 150ms
-        jev_midpoint_ms = 150.0
-        speedup = jev_midpoint_ms / p50 if p50 > 0 else 0.0
+        # Baseline comparison against typical Cloud SaaS API latency (midpoint ~ 150ms)
+        baseline_ms = 150.0
+        speedup = baseline_ms / p50 if p50 > 0 else 0.0
         throughput = (1000.0 / mean_lat) if mean_lat > 0 else 0.0
 
         return BenchmarkReport(
@@ -1008,8 +1157,10 @@ class ReflexEngine:
             min_latency_ms=round(latencies_sorted[0], 3),
             max_latency_ms=round(latencies_sorted[-1], 3),
             throughput_decisions_per_sec=round(throughput, 1),
-            beats_jev=bool(p99 < 70.0),
-            speedup_factor_vs_jev_p50=round(speedup, 2),
+            target_latency_ms=20.0,
+            baseline_label="Cloud SaaS API",
+            baseline_latency_ms=baseline_ms,
+            speedup_factor=round(speedup, 2),
         )
 
 

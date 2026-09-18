@@ -124,8 +124,8 @@ def test_engine_benchmark_beats_jev():
     assert report.total_decisions == 30
     assert report.p50_latency_ms < 10.0
     assert report.p95_latency_ms < 20.0
-    assert report.beats_jev is True
-    assert report.speedup_factor_vs_jev_p50 > 5.0
+    assert report.baseline_label == "Cloud SaaS API"
+    assert report.speedup_factor > 5.0
     assert report.throughput_decisions_per_sec > 50.0
 
 

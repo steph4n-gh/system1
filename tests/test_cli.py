@@ -57,8 +57,8 @@ def test_cli_bench_command(capsys):
 
     assert report["total_decisions"] == 15
     assert report["p50_latency_ms"] < 15.0
-    assert report["beats_jev"] is True
-    assert report["speedup_factor_vs_jev_p50"] > 5.0
+    assert report["baseline_label"] == "Cloud SaaS API"
+    assert report["speedup_factor"] > 5.0
 
 
 def test_cli_calibrate_command(tmp_path, capsys):

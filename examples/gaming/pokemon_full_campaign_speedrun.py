@@ -49,14 +49,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
-# Ensure src/ and examples/ are on sys.path for direct execution and imports
-REPO_ROOT = Path(__file__).resolve().parent.parent
+# Ensure src/, examples/, and gaming/ are on sys.path for direct execution and imports
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SRC_DIR = REPO_ROOT / "src"
 EXAMPLES_DIR = REPO_ROOT / "examples"
+GAMING_DIR = EXAMPLES_DIR / "gaming"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 if str(EXAMPLES_DIR) not in sys.path:
     sys.path.insert(0, str(EXAMPLES_DIR))
+if str(GAMING_DIR) not in sys.path:
+    sys.path.insert(0, str(GAMING_DIR))
 
 def ensure_venv_reexec() -> None:
     """Transparently re-execs into project venv if running an incompatible Python version or pyboy is absent."""
@@ -2377,7 +2380,7 @@ def main() -> None:
         if not PyBoyAdapter.is_available():
             print("\n[Error] --gui was requested, but PyBoy is not installed in the current environment.")
             print("Please run using the project virtual environment:")
-            print(f"  {REPO_ROOT}/.venv/bin/python3 examples/pokemon_full_campaign_speedrun.py --gui ...\n")
+            print(f"  {REPO_ROOT}/.venv/bin/python3 examples/gaming/pokemon_full_campaign_speedrun.py --gui ...\n")
             sys.exit(1)
         if not rom_target or not rom_target.is_file():
             print("\n[Error] --gui was requested, but no Pokémon Game Boy ROM was found.")

@@ -78,6 +78,7 @@ class ConformalPredictionSet:
     odds_ratio: float = 1.0
     relative_odds_ratio_threshold: float = 0.0
     confidence_floor: float = 0.0
+    needs_escalation: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -93,6 +94,7 @@ class ConformalPredictionSet:
             "margin_threshold": self.margin_threshold,
             "margin_gate_active": self.margin_gate_active,
             "raw_is_ambiguous": self.raw_is_ambiguous,
+            "needs_escalation": self.needs_escalation,
             "odds_ratio": self.odds_ratio,
             "relative_odds_ratio_threshold": self.relative_odds_ratio_threshold,
             "confidence_floor": self.confidence_floor,
@@ -356,6 +358,7 @@ class ConformalPredictor:
         self.option_to_idx = {opt: idx for idx, opt in enumerate(self.options)}
         self.calibration_scores: np.ndarray = np.array([], dtype=np.float64)
         self.is_calibrated: bool = False
+        self.quantile: Optional[float] = None
         self.margin_threshold: Optional[float] = (
             float(margin_threshold) if margin_threshold is not None else None
         )
@@ -441,12 +444,13 @@ class ConformalPredictor:
         margin_threshold: Optional[float] = None,
         relative_odds_ratio: Optional[float] = None,
         confidence_floor_tau0: Optional[float] = None,
+        strict: bool = False,
     ) -> ConformalPredictionSet:
         """Constructs conformal prediction set C(x) satisfying P(Y in C(x)) >= 1 - alpha via APS.
 
         Applies Cardinality-Scaled Margin Gate & Relative Odds Ratio Dominance:
         When raw_is_ambiguous (set size > 1), false-positive ambiguity escalation is suppressed
-        ONLY IF:
+        ONLY IF strict=False AND:
           1. Absolute margin difference: margin >= eff_margin_thresh
           2. Absolute confidence floor scaled by cardinality: top_prob >= (1/K) + eff_tau0
           3. Relative odds ratio dominance: (top_prob / max(1e-6, runner_up_prob)) >= eff_gamma
@@ -479,9 +483,10 @@ class ConformalPredictor:
         top_prob = float(probs[sorted_indices[0]]) if len(sorted_indices) > 0 else 0.0
         runner_up_prob = float(probs[sorted_indices[1]]) if len(sorted_indices) > 1 else 0.0
         margin = float(top_prob - runner_up_prob) if len(sorted_indices) > 1 else 1.0
-        min_top_prob = max(1e-6, 1.0 - q_hat - 1e-7)
 
-        if top_prob >= min_top_prob:
+        total_mass = float(np.sum(probs))
+        # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
+        if total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
             for idx in sorted_indices:
                 opt = self.options[idx]
                 p = float(probs[idx])
@@ -533,15 +538,17 @@ class ConformalPredictor:
         # Relative odds ratio: p_(1) / max(1e-6, p_(2))
         odds_ratio = float(top_prob / max(1e-6, runner_up_prob))
 
-        # Margin-Based Conformal Dominance Gating
+        # Margin-Based Conformal Dominance Gating (suppressed in strict mode)
         margin_gate_active = bool(
-            raw_is_ambiguous
+            not strict
+            and raw_is_ambiguous
             and (eff_margin_thresh > 0.0)
             and (margin >= eff_margin_thresh)
             and (top_prob >= conf_floor)
             and (odds_ratio >= eff_gamma)
         )
         is_ambiguous = raw_is_ambiguous and not margin_gate_active
+        needs_escalation = is_empty or is_ambiguous
 
         return ConformalPredictionSet(
             field_name=self.field_name,
@@ -559,6 +566,7 @@ class ConformalPredictor:
             odds_ratio=odds_ratio,
             relative_odds_ratio_threshold=eff_gamma,
             confidence_floor=conf_floor,
+            needs_escalation=needs_escalation,
         )
 
 
@@ -612,15 +620,18 @@ class RegressionConformalPredictor:
 
         if not self.is_calibrated or n == 0:
             margin = val_range * ((1.0 - alpha) / 2.0)
+            low = max(self.min_value, y_hat - margin)
+            high = min(self.max_value, y_hat + margin)
         else:
             k = int(math.ceil((n + 1) * (1.0 - alpha)))
             if k > n:
-                margin = val_range / 2.0
+                margin = val_range
+                low = self.min_value
+                high = self.max_value
             else:
                 margin = float(self.residuals[k - 1])
-
-        low = max(self.min_value, y_hat - margin)
-        high = min(self.max_value, y_hat + margin)
+                low = max(self.min_value, y_hat - margin)
+                high = min(self.max_value, y_hat + margin)
         return RegressionConformalInterval(
             field_name=self.field_name,
             target_coverage=1.0 - alpha,

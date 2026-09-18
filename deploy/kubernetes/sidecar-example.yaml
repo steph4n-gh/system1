@@ -1,0 +1,56 @@
+# Example: Reflex gRPC as a sidecar container alongside an agent container.
+#
+# The agent communicates with the Reflex engine over localhost:50051 (gRPC).
+# Both containers share the same network namespace within the pod.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: agent-with-reflex-sidecar
+  labels:
+    app: agent
+    sidecar: reflex-grpc
+spec:
+  containers:
+    # ── Primary agent container ──────────────────────────────────────────
+    - name: agent
+      image: your-agent-image:latest
+      ports:
+        - containerPort: 8080
+          name: http
+      env:
+        # The agent connects to the Reflex sidecar on localhost.
+        - name: REFLEX_GRPC_ENDPOINT
+          value: "localhost:50051"
+      resources:
+        requests:
+          cpu: "250m"
+          memory: "256Mi"
+        limits:
+          cpu: "1"
+          memory: "1Gi"
+
+    # ── Reflex gRPC sidecar ──────────────────────────────────────────────
+    - name: reflex-sidecar
+      image: reflex-grpc:latest
+      command: ["reflex", "serve", "--grpc", "--port", "50051", "--schema", "guard"]
+      ports:
+        - containerPort: 50051
+          name: grpc
+          protocol: TCP
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "250m"
+          memory: "256Mi"
+      livenessProbe:
+        tcpSocket:
+          port: grpc
+        initialDelaySeconds: 10
+        periodSeconds: 30
+      readinessProbe:
+        tcpSocket:
+          port: grpc
+        initialDelaySeconds: 5
+        periodSeconds: 10

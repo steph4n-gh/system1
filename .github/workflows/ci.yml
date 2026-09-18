@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install .[dev]
+          pip install ".[dev,grpc,observability,otel]"
 
       - name: Run Test Suite
         run: |
-          pytest
+          pytest -v

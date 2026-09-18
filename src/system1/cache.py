@@ -11,6 +11,7 @@ In-memory, sub-millisecond L1 cache for ReflexEngine and CompiledSystemOneModel:
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import threading
@@ -36,6 +37,13 @@ class CacheEntry:
     hit_count: int = 0
     created_at: float = field(default_factory=time.time)
     last_accessed_at: float = field(default_factory=time.time)
+    schema_digest: str = ""
+    model_version: int = 0
+    policy_scope: str = ""
+    alpha: float = 0.05
+    margin_threshold: float = 0.0
+    strict: bool = False
+    context_digest: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes cache entry metadata (without raw numpy embedding)."""
@@ -51,6 +59,13 @@ class CacheEntry:
             "last_accessed_at": self.last_accessed_at,
             "telemetry_digest": self.telemetry_digest,
             "has_embedding": self.embedding is not None,
+            "schema_digest": self.schema_digest,
+            "model_version": self.model_version,
+            "policy_scope": self.policy_scope,
+            "alpha": self.alpha,
+            "margin_threshold": self.margin_threshold,
+            "strict": self.strict,
+            "context_digest": self.context_digest,
         }
 
 
@@ -73,12 +88,26 @@ def _digest_telemetry(telemetry: Optional[Any]) -> str:
     return hashlib.sha256(str(telemetry).encode("utf-8")).hexdigest()[:16]
 
 
-class SemanticReflexCache:
-    """High-performance L1 In-Memory Vector and Exact Match Cache for Tier 0 fast-path.
+def _format_context(
+    schema_digest: str = "",
+    model_version: int = 0,
+    policy_scope: str = "",
+    alpha: Optional[float] = 0.05,
+    margin_threshold: Optional[float] = 0.0,
+    strict: bool = False,
+) -> str:
+    """Formats execution context string for cache key isolation."""
+    a_val = float(alpha) if alpha is not None else 0.05
+    m_val = float(margin_threshold) if margin_threshold is not None else 0.0
+    return f"s:{schema_digest}|v:{model_version}|sc:{policy_scope}|a:{a_val:.6f}|m:{m_val:.6f}|st:{1 if strict else 0}"
 
-    Guarantees sub-0.05ms execution latency for repeated or near-duplicate queries
-    (cosine similarity >= similarity_threshold, default 0.98), bypassing forward pass
-    computation and suppressing unnecessary Tier 2 escalations.
+
+class SemanticReflexCache:
+    """Sub-0.05ms exact and semantic L1 cache for Reflex decision outputs.
+
+    Provides exact SHA-256 hash lookup (<0.005ms) with fallback to
+    cosine similarity search (<0.03ms) over dense semantic embeddings.
+    Thread-safe with RLock and LRU eviction.
     """
 
     def __init__(
@@ -112,16 +141,40 @@ class SemanticReflexCache:
         self._misses: int = 0
         self._evictions: int = 0
 
-    def _make_key(self, prompt: str, telemetry: Optional[Any] = None) -> str:
+    def _make_key(
+        self,
+        prompt: str,
+        telemetry: Optional[Any] = None,
+        schema_digest: str = "",
+        model_version: int = 0,
+        policy_scope: str = "",
+        alpha: Optional[float] = 0.05,
+        margin_threshold: Optional[float] = 0.0,
+        strict: bool = False,
+    ) -> str:
         p_dig = _digest_prompt(prompt)
         t_dig = _digest_telemetry(telemetry)
-        return f"{p_dig}::{t_dig}" if t_dig else p_dig
+        ctx = _format_context(
+            schema_digest=schema_digest,
+            model_version=model_version,
+            policy_scope=policy_scope,
+            alpha=alpha,
+            margin_threshold=margin_threshold,
+            strict=strict,
+        )
+        return f"{p_dig}::{t_dig}::{ctx}" if t_dig else f"{p_dig}::{ctx}"
 
     def get(
         self,
         prompt: str,
         embedding: Optional[np.ndarray] = None,
         telemetry: Optional[Any] = None,
+        schema_digest: str = "",
+        model_version: int = 0,
+        policy_scope: str = "",
+        alpha: Optional[float] = 0.05,
+        margin_threshold: Optional[float] = 0.0,
+        strict: bool = False,
     ) -> Optional[Tuple[CacheEntry, float]]:
         """Queries the cache with exact match first, then cosine similarity search.
 
@@ -134,7 +187,16 @@ class SemanticReflexCache:
 
         with self._lock:
             self._total_queries += 1
-            key = self._make_key(prompt, telemetry)
+            key = self._make_key(
+                prompt,
+                telemetry=telemetry,
+                schema_digest=schema_digest,
+                model_version=model_version,
+                policy_scope=policy_scope,
+                alpha=alpha,
+                margin_threshold=margin_threshold,
+                strict=strict,
+            )
 
             # 1. Exact Match Lookup (O(1), <0.005ms)
             if key in self._exact_index:
@@ -154,11 +216,19 @@ class SemanticReflexCache:
                     q_norm = q_emb / norm
                     sims = self._embeddings @ q_norm
 
-                    # Isolate telemetry presence: query with telemetry matches entries with telemetry,
-                    # and query without telemetry matches entries without telemetry.
+                    # Isolate telemetry presence and execution context
                     has_query_telem = (telemetry is not None)
+                    ctx = _format_context(
+                        schema_digest=schema_digest,
+                        model_version=model_version,
+                        policy_scope=policy_scope,
+                        alpha=alpha,
+                        margin_threshold=margin_threshold,
+                        strict=strict,
+                    )
                     mask = np.array([
-                        (e.telemetry is not None) == has_query_telem
+                        ((e.telemetry is not None) == has_query_telem)
+                        and (getattr(e, "context_digest", "") == ctx or not getattr(e, "context_digest", ""))
                         for e in self._embedding_entries
                     ], dtype=bool)
                     sims = np.where(mask, sims, -1.0)
@@ -170,7 +240,16 @@ class SemanticReflexCache:
                         entry = self._embedding_entries[best_idx]
                         entry.hit_count += 1
                         entry.last_accessed_at = time.time()
-                        entry_key = f"{entry.prompt_digest}::{entry.telemetry_digest}" if entry.telemetry_digest else entry.prompt_digest
+                        entry_key = self._make_key(
+                            entry.prompt,
+                            telemetry=entry.telemetry,
+                            schema_digest=entry.schema_digest,
+                            model_version=entry.model_version,
+                            policy_scope=entry.policy_scope,
+                            alpha=entry.alpha,
+                            margin_threshold=entry.margin_threshold,
+                            strict=entry.strict,
+                        )
                         if entry_key in self._exact_index:
                             self._exact_index.move_to_end(entry_key)
                         self._semantic_hits += 1
@@ -186,15 +265,42 @@ class SemanticReflexCache:
         embedding: Optional[np.ndarray] = None,
         telemetry: Optional[Any] = None,
         source: str = "evaluation",
+        schema_digest: str = "",
+        model_version: int = 0,
+        policy_scope: str = "",
+        alpha: Optional[float] = 0.05,
+        margin_threshold: Optional[float] = 0.0,
+        strict: bool = False,
     ) -> CacheEntry:
         """Stores or updates a result in the L1 cache."""
         if not isinstance(prompt, str):
             raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
 
         with self._lock:
-            key = self._make_key(prompt, telemetry)
+            key = self._make_key(
+                prompt,
+                telemetry=telemetry,
+                schema_digest=schema_digest,
+                model_version=model_version,
+                policy_scope=policy_scope,
+                alpha=alpha,
+                margin_threshold=margin_threshold,
+                strict=strict,
+            )
             p_dig = _digest_prompt(prompt)
             t_dig = _digest_telemetry(telemetry)
+            ctx = _format_context(
+                schema_digest=schema_digest,
+                model_version=model_version,
+                policy_scope=policy_scope,
+                alpha=alpha,
+                margin_threshold=margin_threshold,
+                strict=strict,
+            )
+            a_val = float(alpha) if alpha is not None else 0.05
+            m_val = float(margin_threshold) if margin_threshold is not None else 0.0
+
+            safe_result = copy.deepcopy(result)
 
             norm_emb: Optional[np.ndarray] = None
             if embedding is not None:
@@ -205,9 +311,16 @@ class SemanticReflexCache:
             # Update existing entry if present
             if key in self._exact_index:
                 entry = self._exact_index[key]
-                entry.result = result
+                entry.result = safe_result
                 entry.source = source
                 entry.last_accessed_at = time.time()
+                entry.schema_digest = schema_digest
+                entry.model_version = model_version
+                entry.policy_scope = policy_scope
+                entry.alpha = a_val
+                entry.margin_threshold = m_val
+                entry.strict = bool(strict)
+                entry.context_digest = ctx
                 if norm_emb is not None:
                     entry.embedding = norm_emb
                     if key in self._key_to_emb_idx and self._embeddings is not None:
@@ -231,14 +344,21 @@ class SemanticReflexCache:
             entry = CacheEntry(
                 prompt=prompt,
                 prompt_digest=p_dig,
-                result=result,
+                result=safe_result,
                 embedding=norm_emb,
-                telemetry=telemetry,
+                telemetry=copy.deepcopy(telemetry),
                 telemetry_digest=t_dig,
                 source=source,
                 hit_count=0,
                 created_at=time.time(),
                 last_accessed_at=time.time(),
+                schema_digest=schema_digest,
+                model_version=model_version,
+                policy_scope=policy_scope,
+                alpha=a_val,
+                margin_threshold=m_val,
+                strict=bool(strict),
+                context_digest=ctx,
             )
             self._exact_index[key] = entry
 
@@ -253,6 +373,69 @@ class SemanticReflexCache:
                 self._key_to_emb_idx[key] = new_idx
 
             return entry
+
+    def _remove_key(self, key: str) -> bool:
+        """Removes a key from exact and vector indices."""
+        if key not in self._exact_index:
+            return False
+        entry = self._exact_index.pop(key)
+        self._evictions += 1
+        if key in self._key_to_emb_idx:
+            idx = self._key_to_emb_idx.pop(key)
+            self._embedding_entries.pop(idx)
+            if self._embeddings is not None:
+                if len(self._embedding_entries) == 0:
+                    self._embeddings = None
+                else:
+                    self._embeddings = np.delete(self._embeddings, idx, axis=0)
+            self._key_to_emb_idx.clear()
+            for i, e in enumerate(self._embedding_entries):
+                k = self._make_key(
+                    e.prompt,
+                    telemetry=e.telemetry,
+                    schema_digest=e.schema_digest,
+                    model_version=e.model_version,
+                    policy_scope=e.policy_scope,
+                    alpha=e.alpha,
+                    margin_threshold=e.margin_threshold,
+                    strict=e.strict,
+                )
+                self._key_to_emb_idx[k] = i
+        return True
+
+    def evict_prompt(self, prompt: str) -> int:
+        """Evicts all cache entries matching prompt regardless of execution context."""
+        with self._lock:
+            p_dig = _digest_prompt(prompt)
+            keys_to_remove = [
+                k for k, entry in self._exact_index.items()
+                if entry.prompt_digest == p_dig or entry.prompt.strip() == prompt.strip()
+            ]
+            for k in keys_to_remove:
+                self._remove_key(k)
+            return len(keys_to_remove)
+
+    def invalidate_prior_versions(self, min_version: int) -> int:
+        """Invalidates all entries with model_version < min_version."""
+        with self._lock:
+            keys_to_remove = [
+                k for k, entry in self._exact_index.items()
+                if entry.model_version < min_version
+            ]
+            for k in keys_to_remove:
+                self._remove_key(k)
+            return len(keys_to_remove)
+
+    def invalidate_version(self, version: int) -> int:
+        """Invalidates all entries with model_version == version."""
+        with self._lock:
+            keys_to_remove = [
+                k for k, entry in self._exact_index.items()
+                if entry.model_version == version
+            ]
+            for k in keys_to_remove:
+                self._remove_key(k)
+            return len(keys_to_remove)
 
     def _evict_one(self) -> None:
         """Evicts the least recently used entry from exact and vector indices."""
@@ -272,7 +455,16 @@ class SemanticReflexCache:
             # Re-index remaining entries
             self._key_to_emb_idx.clear()
             for i, e in enumerate(self._embedding_entries):
-                k = f"{e.prompt_digest}::{e.telemetry_digest}" if e.telemetry_digest else e.prompt_digest
+                k = self._make_key(
+                    e.prompt,
+                    telemetry=e.telemetry,
+                    schema_digest=e.schema_digest,
+                    model_version=e.model_version,
+                    policy_scope=e.policy_scope,
+                    alpha=e.alpha,
+                    margin_threshold=e.margin_threshold,
+                    strict=e.strict,
+                )
                 self._key_to_emb_idx[k] = i
 
     def clear(self) -> None:
@@ -316,10 +508,29 @@ class SemanticReflexCache:
                 "similarity_threshold": self.similarity_threshold,
             }
 
-    def contains_exact(self, prompt: str, telemetry: Optional[Any] = None) -> bool:
+    def contains_exact(
+        self,
+        prompt: str,
+        telemetry: Optional[Any] = None,
+        schema_digest: str = "",
+        model_version: int = 0,
+        policy_scope: str = "",
+        alpha: Optional[float] = 0.05,
+        margin_threshold: Optional[float] = 0.0,
+        strict: bool = False,
+    ) -> bool:
         """Checks whether the exact query exists in the cache."""
         with self._lock:
-            key = self._make_key(prompt, telemetry)
+            key = self._make_key(
+                prompt,
+                telemetry=telemetry,
+                schema_digest=schema_digest,
+                model_version=model_version,
+                policy_scope=policy_scope,
+                alpha=alpha,
+                margin_threshold=margin_threshold,
+                strict=strict,
+            )
             return key in self._exact_index
 
 

@@ -16,8 +16,8 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 import pyboy
-from examples.pokemon_gameboy_gui import fast_forward_to_rival_battle
-from examples.pokemon_battle_reflex import PyBoyMemoryBridge, System1BattleAgent
+from examples.gaming.pokemon_gameboy_gui import fast_forward_to_rival_battle
+from examples.gaming.pokemon_battle_reflex import PyBoyMemoryBridge, System1BattleAgent
 
 
 def get_font(size: int = 14) -> ImageFont.ImageFont:

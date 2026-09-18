@@ -10,12 +10,13 @@ from __future__ import annotations
 import hashlib
 import os
 import re
+import sqlite3
 from dataclasses import dataclass
 from enum import IntEnum, StrEnum
-from typing import Any, Mapping, Optional, Sequence
+from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from system1.engine import DecisionResult, ReflexEngine, SystemOneEngine
-from system1.ledger import ActionLedger
+from system1.ledger import ActionLedger, LedgerError, LedgerWriteError
 from system1.receipt import fingerprint, freeze, thaw, utc_now
 from system1.core import (
     BooleanField,
@@ -186,11 +187,28 @@ class ActionProposal:
         arguments: Mapping[str, Any],
         purpose: str,
         evidence: tuple[EvidenceRef, ...] = (),
+        canonical_target: str | None = None,
         action_id: str | None = None,
         created_at: str | None = None,
     ) -> ActionProposal:
         """Create an unbound agent proposal."""
         obj = object.__new__(cls)
+        target = canonical_target
+        if target is None:
+            resolved_t = (
+                arguments.get("target")
+                or arguments.get("path")
+                or arguments.get("command")
+                or arguments.get("input")
+                or arguments.get("query")
+                or arguments.get("url")
+                or arguments.get("file")
+            )
+            if resolved_t is not None:
+                target = str(resolved_t)
+            else:
+                target = f"unresolved:{tool}"
+
         values = {
             "action_id": action_id or _new_id("act"),
             "tenant_id": tenant_id,
@@ -198,7 +216,7 @@ class ActionProposal:
             "scope": scope,
             "tool": tool,
             "adapter_contract_fingerprint": "0" * 64,
-            "canonical_target": f"unresolved:{tool}",
+            "canonical_target": target,
             "arguments": arguments,
             "evidence": evidence,
             "purpose": purpose,
@@ -336,14 +354,277 @@ class GuardInterceptionResult:
 
     outcome: DecisionOutcome
     reason: str
-    decision_result: DecisionResult
-    policy_decision: PolicyDecision
+    decision_result: Optional[DecisionResult] = None
+    policy_decision: Optional[PolicyDecision] = None
+    proposal: Optional[ActionProposal] = None
 
     @property
     def allowed(self) -> bool:
         """Return True iff the interception outcome is ALLOW."""
         return self.outcome == DecisionOutcome.ALLOW
 
+
+@dataclass(frozen=True)
+class PolicyRule:
+    """Deterministic policy rule specifying conditions and strict action outcome."""
+
+    rule_id: str
+    description: str = ""
+    outcome: DecisionOutcome = DecisionOutcome.DENY
+    effect: Optional[DecisionOutcome] = None
+    risk: RiskLevel = RiskLevel.IRREVERSIBLE
+    reason: Optional[str] = None
+    target_pattern: Optional[str] = None
+    tenant_pattern: Optional[str] = None
+    principal_pattern: Optional[str] = None
+    action_pattern: Optional[str] = None
+    # Match criteria (any violation triggers outcome with absolute veto)
+    principals: Optional[Sequence[str]] = None
+    denied_principals: Optional[Sequence[str]] = None
+    allowed_principals: Optional[Sequence[str]] = None
+    tenants: Optional[Sequence[str]] = None
+    denied_tenants: Optional[Sequence[str]] = None
+    allowed_tenants: Optional[Sequence[str]] = None
+    scopes: Optional[Sequence[str]] = None
+    denied_scopes: Optional[Sequence[str]] = None
+    allowed_scopes: Optional[Sequence[str]] = None
+    tools: Optional[Sequence[str]] = None
+    denied_tools: Optional[Sequence[str]] = None
+    allowed_tools: Optional[Sequence[str]] = None
+    denied_targets: Optional[Sequence[str]] = None
+    argument_limits: Optional[Mapping[str, Any]] = None
+    predicate: Optional[Callable[[ActionProposal], Optional[Tuple[DecisionOutcome, str]]]] = None
+
+    def evaluate(self, proposal: ActionProposal) -> Optional[Tuple[DecisionOutcome, RiskLevel, str, str]]:
+        """Evaluates proposal against this rule. Returns (outcome, risk, rule_id, reason) if triggered."""
+        effective_outcome = self.effect if self.effect is not None else self.outcome
+
+        # 0. Pattern checks (tenant, principal, action, target) - conjunctive matching
+        has_pattern = (
+            self.tenant_pattern is not None
+            or self.principal_pattern is not None
+            or self.action_pattern is not None
+            or self.target_pattern is not None
+        )
+        if has_pattern:
+            if self.tenant_pattern is not None and not re.search(self.tenant_pattern, proposal.tenant_id):
+                return None
+            if self.principal_pattern is not None and not re.search(self.principal_pattern, proposal.principal_id):
+                return None
+            if self.action_pattern is not None and not re.search(self.action_pattern, proposal.tool):
+                return None
+            if self.target_pattern is not None and not re.search(self.target_pattern, str(proposal.canonical_target)):
+                return None
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for rule {self.rule_id}",
+            )
+
+        # 1. Tenant checks
+        if self.allowed_tenants is not None and proposal.tenant_id not in self.allowed_tenants:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: tenant {proposal.tenant_id!r} not in allowed_tenants",
+            )
+        if self.denied_tenants is not None and proposal.tenant_id in self.denied_tenants:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: tenant {proposal.tenant_id!r} is explicitly denied",
+            )
+        if self.tenants is not None and proposal.tenant_id in self.tenants:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for tenant {proposal.tenant_id!r}",
+            )
+
+        # 2. Principal checks
+        if self.allowed_principals is not None and proposal.principal_id not in self.allowed_principals:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: principal {proposal.principal_id!r} not in allowed_principals",
+            )
+        if self.denied_principals is not None and proposal.principal_id in self.denied_principals:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: principal {proposal.principal_id!r} is explicitly denied",
+            )
+        if self.principals is not None and proposal.principal_id in self.principals:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for principal {proposal.principal_id!r}",
+            )
+
+        # 3. Scope checks
+        if self.allowed_scopes is not None and proposal.scope not in self.allowed_scopes:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: scope {proposal.scope!r} not in allowed_scopes",
+            )
+        if self.denied_scopes is not None and proposal.scope in self.denied_scopes:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: scope {proposal.scope!r} is explicitly denied",
+            )
+        if self.scopes is not None and proposal.scope in self.scopes:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for scope {proposal.scope!r}",
+            )
+
+        # 4. Tool / Action checks
+        if self.allowed_tools is not None and proposal.tool not in self.allowed_tools:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: tool {proposal.tool!r} not in allowed_tools",
+            )
+        if self.denied_tools is not None and proposal.tool in self.denied_tools:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy violation: tool {proposal.tool!r} is explicitly denied",
+            )
+        if self.tools is not None and proposal.tool in self.tools:
+            return (
+                effective_outcome,
+                self.risk,
+                self.rule_id,
+                self.reason or f"Deterministic policy match for tool {proposal.tool!r}",
+            )
+
+        # 5. Target checks
+        if self.denied_targets is not None:
+            target_str = str(proposal.canonical_target).lower()
+            for pattern in self.denied_targets:
+                if str(pattern).lower() in target_str:
+                    return (
+                        effective_outcome,
+                        self.risk,
+                        self.rule_id,
+                        self.reason or f"Deterministic policy violation: target {proposal.canonical_target!r} matches denied target pattern {pattern!r}",
+                    )
+
+        # 6. Argument limits & checks
+        if self.argument_limits is not None:
+            raw_args = dict(proposal.arguments)
+            for arg_key, limit_val in self.argument_limits.items():
+                if arg_key in raw_args:
+                    val = raw_args[arg_key]
+                    if isinstance(limit_val, (int, float)) and isinstance(val, (int, float)):
+                        if val > limit_val:
+                            return (
+                                effective_outcome,
+                                self.risk,
+                                self.rule_id,
+                                self.reason or f"Deterministic policy violation: argument {arg_key}={val} exceeds limit {limit_val}",
+                            )
+                    elif isinstance(limit_val, (list, tuple, set)):
+                        if val not in limit_val:
+                            return (
+                                effective_outcome,
+                                self.risk,
+                                self.rule_id,
+                                self.reason or f"Deterministic policy violation: argument {arg_key}={val!r} not in allowed values",
+                            )
+
+        # 7. Custom predicate
+        if self.predicate is not None:
+            pred_res = self.predicate(proposal)
+            if pred_res is not None:
+                p_outcome, p_reason = pred_res
+                return (p_outcome, self.risk, self.rule_id, p_reason)
+
+        return None
+
+
+class PolicyEngine:
+    """Deterministic reference monitor evaluating explicit security policies with absolute veto authority."""
+
+    def __init__(
+        self,
+        rules: Optional[Sequence[PolicyRule]] = None,
+        *,
+        allowed_principals: Optional[Sequence[str]] = None,
+        denied_principals: Optional[Sequence[str]] = None,
+        allowed_tenants: Optional[Sequence[str]] = None,
+        denied_tenants: Optional[Sequence[str]] = None,
+        allowed_scopes: Optional[Sequence[str]] = None,
+        denied_scopes: Optional[Sequence[str]] = None,
+        allowed_tools: Optional[Sequence[str]] = None,
+        denied_tools: Optional[Sequence[str]] = None,
+        denied_targets: Optional[Sequence[str]] = None,
+        argument_limits: Optional[Mapping[str, Any]] = None,
+    ) -> None:
+        self.rules: List[PolicyRule] = list(rules) if rules is not None else []
+        if any(
+            x is not None
+            for x in (
+                allowed_principals,
+                denied_principals,
+                allowed_tenants,
+                denied_tenants,
+                allowed_scopes,
+                denied_scopes,
+                allowed_tools,
+                denied_tools,
+                denied_targets,
+                argument_limits,
+            )
+        ):
+            self.rules.append(
+                PolicyRule(
+                    rule_id="engine_configured_rule",
+                    description="Configured engine-level deterministic policy constraints",
+                    outcome=DecisionOutcome.DENY,
+                    risk=RiskLevel.IRREVERSIBLE,
+                    allowed_principals=allowed_principals,
+                    denied_principals=denied_principals,
+                    allowed_tenants=allowed_tenants,
+                    denied_tenants=denied_tenants,
+                    allowed_scopes=allowed_scopes,
+                    denied_scopes=denied_scopes,
+                    allowed_tools=allowed_tools,
+                    denied_tools=denied_tools,
+                    denied_targets=denied_targets,
+                    argument_limits=argument_limits,
+                )
+            )
+
+    def add_rule(self, rule: PolicyRule) -> None:
+        self.rules.append(rule)
+
+    def evaluate(self, proposal: ActionProposal) -> Optional[Tuple[DecisionOutcome, RiskLevel, str, str]]:
+        """Evaluates all rules sequentially. First veto match returns immediately."""
+        for rule in self.rules:
+            res = rule.evaluate(proposal)
+            if res is not None:
+                return res
+        return None
+
+
+DeterministicPolicyEngine = PolicyEngine
 
 
 _DEFAULT_GUARD_CALIBRATION = [
@@ -379,9 +660,18 @@ class ReflexGuardHook:
         alpha: float = 0.05,
         ledger: Optional[ActionLedger] = None,
         auto_calibrate: bool = True,
+        policy: Optional[PolicyEngine] = None,
+        policy_engine: Optional[PolicyEngine] = None,
+        policy_rules: Optional[Sequence[PolicyRule]] = None,
+        fail_closed_ledger: bool = True,
     ) -> None:
+        self.fail_closed_ledger = bool(fail_closed_ledger)
         if engine is None:
-            self.engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=ledger)
+            self.engine = ReflexEngine(
+                DefaultGuardDecisionSchema,
+                ledger=ledger,
+                fail_closed_ledger=self.fail_closed_ledger,
+            )
             if auto_calibrate:
                 self.engine.calibrate(_DEFAULT_GUARD_CALIBRATION, n_bins=5)
         else:
@@ -389,6 +679,14 @@ class ReflexGuardHook:
         self.min_confidence = float(min_confidence)
         self.alpha = float(alpha)
         self.ledger = ledger or self.engine.ledger
+
+        resolved_policy = policy or policy_engine
+        if resolved_policy is not None:
+            self.policy: Optional[PolicyEngine] = resolved_policy
+        elif policy_rules is not None:
+            self.policy = PolicyEngine(rules=policy_rules)
+        else:
+            self.policy = None
 
     def _build_policy_decision(
         self,
@@ -416,6 +714,26 @@ class ReflexGuardHook:
             normalized_arguments=proposal.arguments,
         )
 
+    def evaluate_deterministic_policy(
+        self, proposal: ActionProposal
+    ) -> Optional[GuardInterceptionResult]:
+        """Evaluates deterministic policy rules before model inference and caching."""
+        if self.policy is not None:
+            pol_eval = self.policy.evaluate(proposal)
+            if pol_eval is not None:
+                p_outcome, p_risk, p_rule_id, p_reason = pol_eval
+                pol_dec = self._build_policy_decision(
+                    proposal, p_outcome, p_risk, p_rule_id, p_reason
+                )
+                return GuardInterceptionResult(
+                    outcome=p_outcome,
+                    reason=p_reason,
+                    decision_result=None,
+                    policy_decision=pol_dec,
+                    proposal=proposal,
+                )
+        return None
+
     def evaluate_proposal(
         self,
         proposal: ActionProposal,
@@ -423,17 +741,40 @@ class ReflexGuardHook:
         context_prompt: Optional[str] = None,
     ) -> GuardInterceptionResult:
         """Evaluates an ActionProposal through Reflex fail-closed gates."""
+        # 0. Deterministic policy evaluation BEFORE model inference and caching
+        det_result = self.evaluate_deterministic_policy(proposal)
+        if det_result is not None:
+            return det_result
+
         prompt = context_prompt or (
             f"Tool: {proposal.tool}. Target: {proposal.canonical_target}. "
             f"Args: {dict(proposal.arguments)}. Purpose: {proposal.purpose}"
         )
 
-        decision = self.engine.decide(
-            prompt,
-            alpha=self.alpha,
-            record_receipt=True,
-            ledger=self.ledger,
-        )
+        try:
+            decision = self.engine.decide(
+                prompt,
+                alpha=self.alpha,
+                record_receipt=True,
+                ledger=self.ledger,
+                fail_closed_ledger=self.fail_closed_ledger,
+            )
+        except (LedgerWriteError, LedgerError, sqlite3.Error) as ex:
+            outcome = DecisionOutcome.DENY
+            reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
+            pol_decision = self._build_policy_decision(
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", reason
+            )
+            return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
+
+        # Fail-closed ledger check: if ledger is configured, durable recording MUST have succeeded
+        if self.ledger is not None and (decision.receipt is None or not decision.receipt.ledger_record_id):
+            outcome = DecisionOutcome.DENY
+            reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
+            pol_decision = self._build_policy_decision(
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", reason
+            )
+            return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
         # 1. Check safety boolean if present
         if "is_safe" in decision.values and not decision.values["is_safe"]:
@@ -444,7 +785,7 @@ class ReflexGuardHook:
             pol_decision = self._build_policy_decision(
                 proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_safety_deny", reason
             )
-            return GuardInterceptionResult(outcome, reason, decision, pol_decision)
+            return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
         # 2. Check conformal ambiguity (|C(x)| > 1) or OOD (|C(x)| == 0)
         for field_name, cset in decision.conformal_sets.items():
@@ -457,7 +798,7 @@ class ReflexGuardHook:
                 pol_decision = self._build_policy_decision(
                     proposal, outcome, RiskLevel.EXTERNAL, "reflex_conformal_ood", reason
                 )
-                return GuardInterceptionResult(outcome, reason, decision, pol_decision)
+                return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
             # Categorical ambiguity (|C(x)| > 1) strictly applies to single-selection fields
             if isinstance(f_def, (ChoiceField, BooleanField)) and len(cset) > 1:
@@ -468,7 +809,7 @@ class ReflexGuardHook:
                 pol_decision = self._build_policy_decision(
                     proposal, outcome, RiskLevel.EXTERNAL, "reflex_conformal_ambiguity", reason
                 )
-                return GuardInterceptionResult(outcome, reason, decision, pol_decision)
+                return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
         # 3. Check minimum confidence threshold across all fields
         for field_name, conf in decision.confidences.items():
@@ -480,7 +821,7 @@ class ReflexGuardHook:
                 pol_decision = self._build_policy_decision(
                     proposal, outcome, RiskLevel.REVERSIBLE, "reflex_low_confidence", reason
                 )
-                return GuardInterceptionResult(outcome, reason, decision, pol_decision)
+                return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
         # 4. Safe and confident
         outcome = DecisionOutcome.ALLOW
@@ -488,7 +829,7 @@ class ReflexGuardHook:
         pol_decision = self._build_policy_decision(
             proposal, outcome, RiskLevel.READ_ONLY, "reflex_verified_allow", reason
         )
-        return GuardInterceptionResult(outcome, reason, decision, pol_decision)
+        return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
 
 # Compatibility alias
@@ -499,9 +840,12 @@ __all__ = [
     "ActionState",
     "DecisionOutcome",
     "DefaultGuardDecisionSchema",
+    "DeterministicPolicyEngine",
     "EvidenceRef",
     "GuardInterceptionResult",
     "PolicyDecision",
+    "PolicyEngine",
+    "PolicyRule",
     "ReflexGuardHook",
     "ResultStatus",
     "RiskLevel",
