@@ -128,6 +128,10 @@ def test_model_sub_20ms_latency_guarantee():
 
 
 def test_model_metal_mlx_execution():
+    from system1.model import HAS_MLX
+    if not HAS_MLX:
+        pytest.skip("MLX not installed on this system")
+
     schema = BenchmarkSchema()
     model_mlx = SystemOneModel(schema, backend="mlx")
     model_np = SystemOneModel(schema, backend="numpy")
@@ -151,6 +155,10 @@ def test_model_metal_mlx_execution():
 
 
 def test_model_mlx_batch_consistency():
+    from system1.model import HAS_MLX
+    if not HAS_MLX:
+        pytest.skip("MLX not installed on this system")
+
     schema = BenchmarkSchema()
     model_mlx = SystemOneModel(schema, backend="mlx")
 

@@ -43,6 +43,7 @@ gameboy = [
 ]
 dev = [
     "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
 ]
 
 [project.scripts]
@@ -57,3 +58,4 @@ include = ["reflex*", "system1*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+asyncio_mode = "auto"

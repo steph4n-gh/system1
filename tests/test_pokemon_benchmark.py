@@ -25,6 +25,7 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = REPO_ROOT / "examples"
 ROMS_DIR = REPO_ROOT / "roms"
+ROMS_PRESENT = (ROMS_DIR / "pokemon_red.gb").is_file()
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
@@ -65,6 +66,8 @@ from examples.pokemon_gameboy_gui import GAME_ROM_MAP, fast_skip_intro, parse_gu
 
 def test_all_six_roms_exist():
     """Verify all 6 Game Boy cartridges are present in the roms/ directory."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROMs not present in environment (ROM dumps are gitignored)")
     for key, filename in ALL_POKEMON_GAMES.items():
         rom_path = ROMS_DIR / filename
         assert rom_path.is_file(), f"Missing cartridge: {rom_path}"
@@ -73,6 +76,8 @@ def test_all_six_roms_exist():
 
 def test_parse_extended_rom_header():
     """Verify extended header parsing and 8-bit checksums across all 6 cartridges."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROMs not present in environment (ROM dumps are gitignored)")
     expected_meta = {
         "red": {"gen": "GEN1", "platform": "DMG/SGB", "rom_kb": 1024, "checksum": "0x20"},
         "blue": {"gen": "GEN1", "platform": "DMG/SGB", "rom_kb": 1024, "checksum": "0xD3"},
@@ -151,6 +156,8 @@ def test_compute_latency_stats_single():
 
 def test_memory_bridge_integrity_across_all_games():
     """Verify PyBoyMemoryBridge extraction produces 10/10 passed checks on all cartridges."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     for game_key, filename in ALL_POKEMON_GAMES.items():
         rom_path = ROMS_DIR / filename
         meta = read_rom_header(rom_path)
@@ -198,6 +205,8 @@ def test_system1_reflex_inference_performance():
 
 def test_run_single_game_benchmark():
     """Verify single game benchmark returns valid SingleGameBenchmarkResult."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     agent = System1BattleAgent()
     res = run_single_game_benchmark(
         game_key="red",
@@ -220,6 +229,8 @@ def test_run_single_game_benchmark():
 
 def test_run_multi_game_benchmark_subset():
     """Verify multi-game benchmark orchestrates a targeted subset of cartridges."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     results = run_multi_game_benchmark(
         games=["red", "gold"],
         rom_dir=ROMS_DIR,
@@ -246,6 +257,8 @@ def test_run_multi_game_benchmark_subset():
 
 def test_format_ansi_comparison_table():
     """Verify ANSI table renders cleanly with headers, rows, and summary statistics."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     results = run_multi_game_benchmark(
         games=["red", "crystal"],
         rom_dir=ROMS_DIR,
@@ -265,6 +278,8 @@ def test_format_ansi_comparison_table():
 
 def test_results_to_json_dict():
     """Verify JSON dictionary structure and serialization."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     results = run_multi_game_benchmark(
         games=["blue"],
         rom_dir=ROMS_DIR,
@@ -395,6 +410,8 @@ def test_format_ansi_dynamic_metrics():
 
 def test_gameboy_gui_game_rom_mapping():
     """Verify GAME_ROM_MAP maps all 6 game keys to valid files."""
+    if not ROMS_PRESENT:
+        pytest.skip("Game Boy ROM dumps are gitignored and not present in CI environment")
     for key, filename in GAME_ROM_MAP.items():
         rom_path = ROMS_DIR / filename
         assert rom_path.is_file(), f"File mapped to {key} does not exist: {rom_path}"

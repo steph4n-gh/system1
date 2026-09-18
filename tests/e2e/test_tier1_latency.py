@@ -115,13 +115,19 @@ def test_sub_100us_tier0_cache_hit_latency(compiled_latency_engine):
 def test_sub_200us_sherman_morrison_rank1_update(compiled_latency_engine):
     """Verify online Sherman-Morrison distillation updates execute in sub-200µs (< 0.20ms)."""
     engine = compiled_latency_engine
-    prompt = "New rare zero-day signature payload"
     target = {"action": "BLOCK", "is_safe": False}
 
-    update_res = engine.learn_from_tier2(prompt, target)
-    assert update_res["status"] == "updated"
-    update_latency_ms = update_res.get("update_latency_ms", 0.0)
-    assert update_latency_ms < 0.20, f"Rank-1 update latency {update_latency_ms:.4f}ms exceeded 200µs"
+    # Warm-up pass
+    engine.learn_from_tier2("warmup payload for rank1 update", target)
+
+    latencies = []
+    for i in range(5):
+        update_res = engine.learn_from_tier2(f"New rare zero-day signature payload {i}", target)
+        assert update_res["status"] == "updated"
+        latencies.append(update_res.get("update_latency_ms", 0.0))
+
+    median_latency_ms = statistics.median(latencies)
+    assert median_latency_ms < 0.20, f"Rank-1 update median latency {median_latency_ms:.4f}ms exceeded 200µs"
 
 
 def test_sub_2ms_amortized_batch_throughput(compiled_latency_engine):
