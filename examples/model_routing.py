@@ -52,9 +52,9 @@ class ModelRouterSchema(DecisionSchema):
     target_tier = ChoiceField(
         options=["local_small", "standard_chat", "frontier_reasoning"],
         descriptions={
-            "local_small": "Fast local on-device small model for simple transforms and formatting",
-            "standard_chat": "Standard cloud chat model for conversational queries and summaries",
-            "frontier_reasoning": "Frontier reasoning model for advanced math, logic, and architecture",
+            "local_small": "Fast local on-device small model / System 1 reflex for sub-millisecond transforms and formatting",
+            "standard_chat": "Standard cloud chat model for conversational queries and summaries (e.g. Gemini 3.8 Flash, GPT-5.6 Luna)",
+            "frontier_reasoning": "Frontier reasoning model for advanced math, logic, and architecture (e.g. OpenAI Astra, GPT-6, GPT-5.6 Sol/Terra, Anthropic Opus 5, Fable 5.1, Mythos 5, Gemini 3.1 Pro)",
         },
     )
     task_category = ChoiceField(

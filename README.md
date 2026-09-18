@@ -91,13 +91,13 @@ print(f"Latency: {decision.latency_ms:.2f} ms")
 
 ## 🧠 Dual-Process Cognitive Architecture (2026 Edition)
 
-In the late-2026 agentic landscape, foundation models have evolved into formidable **reasoning governors**:
-- **Google Project Astra & Gemini 2.5**: Continuous multimodal perception, audio/video streaming, and physical world grounding.
-- **OpenAI Fable / o3**: Deep test-time tree search, multi-turn tool interaction, and formal verification.
-- **Anthropic Claude 3.7 Sonnet / Claude 4**: Extended hybrid thinking and complex computer-use workflows.
+In the late-2026 agentic landscape, foundation models have evolved into formidable **deliberative reasoning governors**:
+- **OpenAI**: The **Astra** multimodal model, the flagship **GPT-6 series**, and the successors to GPT-5.6: **Sol**, **Terra**, and **Luna**.
+- **Anthropic**: **Claude Opus 5**, **Fable 5.1**, and **Mythos 5**.
+- **Google**: **Gemini 3.1 Pro** and **Gemini 3.8 Flash**.
 
 ### The Real-Time Dilemma: Why Agents Fail at High Frequency
-Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dollars, and leaks proprietary context over the public internet. Running a 70B+ cloud model for every routine check causes interactive systems (voice assistants, robotics, 60 FPS games, and microservice firewalls) to choke.
+Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dollars, and leaks proprietary context over the public internet. Running a monolithic cloud reasoning model for every routine check causes interactive systems (voice assistants, robotics, 60 FPS games, and microservice firewalls) to choke.
 
 **Reflex provides the missing System 1 layer:**
 
@@ -107,9 +107,9 @@ Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dol
 
 ### The Fast vs. Slow Dichotomy
 
-| Dimension | System 1: Local Reflex Engine | System 2: Deliberative Governor (2026) |
+| Dimension | System 1: Local Reflex Engine | System 2: Deliberative Governor (Late 2026) |
 |---|---|---|
-| **Exemplars** | **Reflex** (Metal GPU `mlx` / NumPy BLAS) | **Project Astra**, **Fable**, **Claude 3.7**, **Gemini 2.5** |
+| **Exemplars** | **Reflex** (Metal GPU `mlx` / NumPy BLAS) | **OpenAI Astra & GPT-6 / Sol / Terra / Luna**, **Anthropic Opus 5 / Fable 5.1 / Mythos 5**, **Google Gemini 3.1 Pro & 3.8 Flash** |
 | **Cognitive Role** | Instinctive, reflex actions, guardrails | Strategic planning, edge-case resolution, reflection |
 | **Decision Latency** | **< 1.0 ms P50 empirical SLA** (< 10µs cache hit) | 300 ms – 3,000 ms+ (WAN transit + autoregressive thinking) |
 | **Marginal Cost** | **$0.00 / decision** (Fixed local CPU/GPU compute) | Variable token billing ($5.00 – $30.00+ per MTok) |
@@ -118,8 +118,8 @@ Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dol
 
 ### The Cognitive Feedback Loop
 1. **System 1 Forward Pass (< 1ms)**: Computes multi-field decision probabilities in a single matrix multiplication directly on local hardware.
-2. **Conformal Safety Gate (Finite-Sample $1-lpha$)**: Mathematically verifies decision confidence. If the margin is dominant and conformal set size $|\mathcal{C}(\mathbf{x})| = 1$, System 1 executes immediately on the metal.
-3. **Fail-Closed Escalation**: If the input is genuinely ambiguous or out-of-distribution ($|\mathcal{C}(\mathbf{x})| > 1$), Reflex **halts fail-closed** and escalates to System 2 (Astra / Fable / Claude).
+2. **Conformal Safety Gate (Finite-Sample $1-\alpha$)**: Mathematically verifies decision confidence. If the margin is dominant and conformal set size $|\mathcal{C}(\mathbf{x})| = 1$, System 1 executes immediately on the metal.
+3. **Fail-Closed Escalation**: If the input is genuinely ambiguous or out-of-distribution ($|\mathcal{C}(\mathbf{x})| > 1$), Reflex **halts fail-closed** and escalates to System 2 (OpenAI Astra / GPT-6, Anthropic Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro).
 4. **Online Sherman-Morrison Distillation (< 50µs)**: When System 2 provides the ground-truth resolution $\mathbf{y}^*$, Reflex performs an instant closed-form rank-1 covariance update:
    $$P_{t+1} = P_t - \frac{P_t \mathbf{x} \mathbf{x}^T P_t}{1 + \mathbf{x}^T P_t \mathbf{x}}, \quad W_{t+1} = (P_{t+1} B_{t+1})^T$$
    This immediately rotates System 1's hyperplanes. Future occurrences are handled locally in `< 0.01ms` (**escalation collapse**).
