@@ -1,6 +1,8 @@
 """Reflex: Machine-Native System 1 Decision Runtime.
 
-Re-exports all public symbols and submodules from system1 for seamless drop-in compatibility.
+Reflex is the primary framework brand implementing Daniel Kahneman's System 1 (fast reflex)
+cognitive layer, designed to pair with deliberate System 2 governors (Project Astra, Fable, Claude).
+Symmetrically available as both `import reflex` and `import system1`.
 """
 
 from __future__ import annotations

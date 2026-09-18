@@ -1,8 +1,8 @@
-"""System 1: Machine-Native Decision Runtime.
+"""System 1: Machine-Native Decision Runtime (Reflex).
 
-High-performance, non-autoregressive decision engine with sub-2ms local execution,
-calibrated confidence scoring, split conformal prediction guarantees, and
-proof-carrying Ed25519 RunWitnessEnvelope decision receipts.
+High-performance, non-autoregressive decision engine implementing Daniel Kahneman's System 1
+fast cognitive layer with sub-1ms local execution, conformal safety gating, and Ed25519 receipts.
+Symmetrically available as both `import system1` and `import reflex`.
 """
 
 from __future__ import annotations
