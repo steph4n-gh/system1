@@ -114,7 +114,7 @@
   <!-- 5. System 2 Deliberate Governor (Right Bottom Card) -->
   <rect x="540" y="523" width="400" height="124" rx="10" fill="url(#card-amber)" stroke="#F59E0B" stroke-width="2" />
   <text x="560" y="550" class="node-title" fill="#FDE68A">SYSTEM 2: DELIBERATE GOVERNOR</text>
-  <text x="560" y="572" class="node-desc">• Cloud Frontier LLM (GPT-4 / Claude / Gemini)</text>
+  <text x="560" y="572" class="node-desc">• Frontier Model (Astra / Fable / Gemini / Grok)</text>
   <text x="560" y="591" class="node-desc">• Multi-turn strategic reasoning, human escalation</text>
   <text x="560" y="610" class="node-desc">• Invoked only on 1% - 5% edge cases &amp; safety anomalies</text>
   <text x="560" y="630" class="node-desc">• Resolves definitive target decision y*</text>

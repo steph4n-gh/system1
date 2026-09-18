@@ -1,7 +1,7 @@
 """Reflex: Machine-Native System 1 Decision Runtime.
 
 Reflex is the primary framework brand implementing Daniel Kahneman's System 1 (fast reflex)
-cognitive layer, designed to pair with deliberate System 2 governors (Project Astra, Fable, Claude).
+cognitive layer, designed to pair with deliberate System 2 governors (Astra, Fable, Gemini, or Grok).
 Symmetrically available as both `import reflex` and `import system1`.
 """
 

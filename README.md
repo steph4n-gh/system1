@@ -41,7 +41,7 @@ Developers often ask: *Is this project called Reflex or System 1?*
 | Dimension | Concept | Purpose & Scope |
 |---|---|---|
 | **The Product & Runtime Brand** | **Reflex** | The official open-source package name, repo (`reflex`), CLI command (`reflex`), and framework brand. It captures the machine-native reaction speed (< 1ms on local metal) and non-autoregressive execution. |
-| **The Cognitive Paradigm** | **System 1** | Daniel Kahneman’s foundational framework (*Thinking, Fast and Slow*). Reflex implements the machine-native **System 1 (fast, instinctive reflex)** layer of the agentic cognitive stack, designed to pair with a deliberate **System 2 (slow governor)** like Project Astra, Fable, or Claude. |
+| **The Cognitive Paradigm** | **System 1** | Daniel Kahneman’s foundational framework (*Thinking, Fast and Slow*). Reflex implements the machine-native **System 1 (fast, instinctive reflex)** layer of the agentic cognitive stack, designed to pair with a deliberate **System 2 (slow governor)** like Astra, Fable, Gemini, or Grok. |
 | **Twin-Namespace Ergonomics** | `import reflex`<br>`import system1` | Full 1:1 symmetry. `import reflex` is the primary modern brand. `import system1` is a complete, first-class twin alias for cognitive architecture purists and backwards compatibility. Both share identical 92 exports and 15 submodules. |
 
 ```python
@@ -95,6 +95,7 @@ In the late-2026 agentic landscape, foundation models have evolved into formidab
 - **OpenAI**: The **Astra** multimodal model, the flagship **GPT-6 series**, and the successors to GPT-5.6: **Sol**, **Terra**, and **Luna**.
 - **Anthropic**: **Claude Opus 5**, **Fable 5.1**, and **Mythos 5**.
 - **Google**: **Gemini 3.1 Pro** and **Gemini 3.8 Flash**.
+- **xAI**: **Grok** (frontier reasoning models).
 
 ### The Real-Time Dilemma: Why Agents Fail at High Frequency
 Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dollars, and leaks proprietary context over the public internet. Running a monolithic cloud reasoning model for every routine check causes interactive systems (voice assistants, robotics, 60 FPS games, and microservice firewalls) to choke.
@@ -109,7 +110,7 @@ Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dol
 
 | Dimension | System 1: Local Reflex Engine | System 2: Deliberative Governor (Late 2026) |
 |---|---|---|
-| **Exemplars** | **Reflex** (Metal GPU `mlx` / NumPy BLAS) | **OpenAI Astra & GPT-6 / Sol / Terra / Luna**, **Anthropic Opus 5 / Fable 5.1 / Mythos 5**, **Google Gemini 3.1 Pro & 3.8 Flash** |
+| **Exemplars** | **Reflex** (Metal GPU `mlx` / NumPy BLAS) | **OpenAI Astra & GPT-6 / Sol / Terra / Luna**, **Anthropic Opus 5 / Fable 5.1 / Mythos 5**, **Google Gemini 3.1 Pro & 3.8 Flash**, **xAI Grok** |
 | **Cognitive Role** | Instinctive, reflex actions, guardrails | Strategic planning, edge-case resolution, reflection |
 | **Decision Latency** | **< 1.0 ms P50 empirical SLA** (< 10µs cache hit) | 300 ms – 3,000 ms+ (WAN transit + autoregressive thinking) |
 | **Marginal Cost** | **$0.00 / decision** (Fixed local CPU/GPU compute) | Variable token billing ($5.00 – $30.00+ per MTok) |
@@ -119,9 +120,9 @@ Every frontier LLM call incurs **300ms to 2,000ms+ latency**, costs real API dol
 ### The Cognitive Feedback Loop
 1. **System 1 Forward Pass (< 1ms)**: Computes multi-field decision probabilities in a single matrix multiplication directly on local hardware.
 2. **Conformal Safety Gate (Finite-Sample $1-\alpha$)**: Mathematically verifies decision confidence. If the margin is dominant and conformal set size $|\mathcal{C}(\mathbf{x})| = 1$, System 1 executes immediately on the metal.
-3. **Fail-Closed Escalation**: If the input is genuinely ambiguous or out-of-distribution ($|\mathcal{C}(\mathbf{x})| > 1$), Reflex **halts fail-closed** and escalates to System 2 (OpenAI Astra / GPT-6, Anthropic Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro).
+3. **Fail-Closed Escalation**: If the input is genuinely ambiguous or out-of-distribution ($|\mathcal{C}(\mathbf{x})| > 1$), Reflex **halts fail-closed** and escalates to System 2 (OpenAI Astra / GPT-6, Anthropic Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro, xAI Grok).
 4. **Online Sherman-Morrison Distillation (< 50µs)**: When System 2 provides the ground-truth resolution $\mathbf{y}^*$, Reflex performs an instant closed-form rank-1 covariance update:
-   $$P_{t+1} = P_t - \frac{P_t \mathbf{x} \mathbf{x}^T P_t}{1 + \mathbf{x}^T P_t \mathbf{x}}, \quad W_{t+1} = (P_{t+1} B_{t+1})^T$$
+   $$P_{t+1} = P_t - \frac{P_t \mathbf{x}_{\text{aug}} \mathbf{x}_{\text{aug}}^T P_t}{1 + \mathbf{x}_{\text{aug}}^T P_t \mathbf{x}_{\text{aug}}}, \quad B_{t+1} = B_t + \mathbf{x}_{\text{aug}} (\mathbf{y}^*)^T, \quad W_{t+1} = (P_{t+1} B_{t+1})^T$$
    This immediately rotates System 1's hyperplanes. Future occurrences are handled locally in `< 0.01ms` (**escalation collapse**).
 
 ---
@@ -141,8 +142,8 @@ Reflex implements four synergistic levers that crush latency and eliminate cloud
 Combines an exact $O(1)$ SHA-256 hash table with a vectorized cosine similarity table ($\ge 	au \approx 0.98$). Bypasses forward evaluation for recurring queries.
 ```python
 engine = ReflexEngine(SecurityTriage, use_cache=True, cache_threshold=0.98)
-res1 = engine.decide("GET /health")  # Cold forward pass: ~1.0 ms
-res2 = engine.decide("GET /health")  # Warm L1 cache hit: ~9.8 µs (100x speedup!)
+res1 = engine.decide("Benign read-only operational request")  # Cold forward pass: ~1.0 ms
+res2 = engine.decide("Benign read-only operational request")  # Warm L1 cache hit: ~9.8 µs (100x speedup!)
 assert res2.is_cache_hit is True
 ```
 
