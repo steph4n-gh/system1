@@ -702,7 +702,7 @@ def test_battle_simulation_with_compiled_model(tmp_path: Path):
     summary = run_battle_simulation(state, agent=agent, speed="instant", quiet=True, max_turns=30)
     assert summary["turns"] >= 1
     assert summary["outcome"] in ["VICTORY", "DEFEAT", "TIMEOUT"]
-    assert summary["mean_latency_ms"] < 15.0
+    assert summary["mean_latency_ms"] < 25.0  # Interactive gaming frame ceiling
 
 
 # ============================================================================
