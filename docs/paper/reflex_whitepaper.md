@@ -415,9 +415,96 @@ This architectural invariant guarantees that **zero network packets are transmit
 
 ---
 
-## 6. Empirical Evaluation & Benchmarks
+## 6. Boundary Conditions, Cardinality Limits, and Operational Failure Modes
 
-### 6.1 Latency Comparison Across Architectures
+While Reflex demonstrates sub-millisecond execution and distribution-free coverage under nominal operational envelopes, machine-native System 1 runtimes are subject to fundamental mathematical and spectral boundary conditions. In this section, we formalize the operational failure modes identified during adversarial stress audits—including hash capacity limits, high-cardinality margin collapse, recursive covariance asphyxiation, and composite schema poisoning—and prove the correctness of the architectural upgrades introduced to resolve them.
+
+### 6.1 Zero-Shot Hash Projection Capacity & Dimensional Bounds
+Reflex projects unstructured input strings $s$ into a compact embedding space $\mathbb{R}^D$ ($D = 384$ default, $D = 4,160$ in hybrid configurations) via MurmurHash3 feature hashing and deterministic character n-gram projections.
+
+By the **Johnson-Lindenstrauss Lemma**, given $N$ discrete token representations and distortion tolerance $\epsilon \in (0, 1)$, pairwise Euclidean distances are preserved within $(1 \pm \epsilon)$ if the projection dimension satisfies:
+$$D \ge \frac{8 \ln N}{\epsilon^2}$$
+For $D = 384$ and $\epsilon = 0.25$, the theoretical capacity is bounded by $N \le \exp(384 \times 0.0625 / 8) = \exp(3.0) \approx 20$ mutually orthogonal dense clusters without distortion. When token dictionaries exceed this bound, pseudo-random feature collisions occur. Specifically, for $m$ distinct n-grams hashed into $B = 256$ buckets per subspace, the collision probability follows the classic birthday bound:
+$$P(\text{collision}) \approx 1 - \exp\left(-\frac{m(m-1)}{2B}\right)$$
+For $m \ge 20$ active n-grams, $P(\text{collision}) > 0.54$. Feature hashing mitigates collision-induced bias via Rademacher sign random variables $s(w) \in \{-1, +1\}$, yielding zero-mean expectation $\mathbb{E}[\mathbf{x}_i^T \mathbf{x}_j] = \mathbf{u}_i^T \mathbf{u}_j$ with variance:
+$$\operatorname{Var}(\mathbf{x}_i^T \mathbf{x}_j) \le \frac{2}{D}$$
+Consequently, zero-shot hash projection provides robust linear separability for low-to-medium cardinality tasks ($K \le 30$) but exhibits rising variance as cardinality $K$ or prompt length $L$ scales.
+
+### 6.2 High-Cardinality Margin Collapse Proof & Relative Odds Ratio Dominance
+In multi-class choice fields with $K$ candidate options, let the temperature-calibrated softmax probabilities be sorted in descending order:
+$$p_{(1)} \ge p_{(2)} \ge \dots \ge p_{(K)}, \quad \sum_{k=1}^K p_{(k)} = 1.0$$
+The uniform random baseline is $p_{\text{uniform}} = \frac{1}{K}$. In earlier runtime formulations, Lever 3 (Margin Gating) utilized a fixed absolute margin threshold $\tau_m$ (typically $\tau_m = 0.08$) to override conformal ambiguity:
+$$\Delta = p_{(1)} - p_{(2)} \ge \tau_m \implies \text{override ambiguity halt}$$
+
+**Theorem 2 (High-Cardinality Margin Collapse)**.  
+*For high-cardinality action schemas with $K \gg 1/\tau_m$ (e.g., $K = 77$, such as MTEB Banking77, where $p_{\text{uniform}} \approx 0.013$), a fixed margin threshold $\tau_m$ permits pseudo-random hash dispersion to create false dominant margins, causing catastrophic precision collapse.*
+
+*Proof*. Consider an adversarial or completely uninformative prompt where the true posterior distribution is approximately uniform across all $K$ options: $p_k \approx \frac{1}{K}$. Due to pseudo-random hash projections across $D = 384$, the pre-softmax logits $z_k \sim \mathcal{N}(0, \sigma^2)$ act as independent Gaussian random variables.  
+By extreme value theory for i.i.d. Gaussians, the expected difference between the first and second order statistics is non-zero: $\mathbb{E}[z_{(1)} - z_{(2)}] = \frac{\sigma \sqrt{2 \ln K}}{K}$. Under temperature scaling $T$, the resulting softmax probabilities exhibit positive dispersion:
+$$p_{(1)} \approx \frac{e^{z_{(1)}/T}}{\sum_k e^{z_k/T}} \approx 0.12, \quad p_{(2)} \approx 0.03 \implies \Delta = p_{(1)} - p_{(2)} = 0.09$$
+Under a fixed threshold $\tau_m = 0.08$, the condition $\Delta = 0.09 \ge 0.08$ is satisfied, triggering the margin gate override. The engine accepts $p_{(1)} = 0.12$ as a decisive prediction, despite the fact that $1 - p_{(1)} = 0.88$ (88% of total probability mass) is uncommitted entropy. The conformal ambiguity halt is falsely bypassed, yielding silent misclassification. $\blacksquare$
+
+**Architectural Solution (Dual Cardinality-Scaled Dominance Gate)**:  
+To eliminate high-cardinality margin collapse, Reflex upgrades Lever 3 by establishing two mandatory invariant bounds that must hold simultaneously:
+1. **Cardinality-Scaled Confidence Floor**: The winning probability must exceed the uniform baseline by an absolute offset $\tau_0$:
+   $$p_{(1)} \ge \frac{1}{K} + \tau_0, \quad \text{with } \tau_0 = 0.15$$
+   For $K = 77$, the required floor is $p_{(1)} \ge \frac{1}{77} + 0.15 \approx 0.163$. The dispersed pseudo-margin with $p_{(1)} = 0.12 < 0.163$ is rejected, preserving the conformal ambiguity halt.
+2. **Relative Odds Ratio Dominance**: The ratio of the top choice to the runner-up must satisfy a multiplicative likelihood dominance bound:
+   $$\mathcal{R} = \frac{p_{(1)}}{\max(10^{-6}, p_{(2)})} \ge \gamma, \quad \text{with } \gamma \ge 1.5$$
+   This guarantees that even if $p_{(1)}$ is elevated, it cannot override ambiguity if the runner-up is nearly tied ($p_{(1)} \approx p_{(2)}$).
+
+### 6.3 Covariance Asphyxiation in Online Sherman-Morrison Updates
+Under Lever 2, Reflex performs recursive least-squares (RLS) online adaptation via the Sherman-Morrison rank-1 formula:
+$$\mathbf{P}_{t+1} = \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{1 + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}}$$
+where $\mathbf{P}_t = \mathbf{A}_t^{-1} \in \mathbb{R}^{(D+1) \times (D+1)}$.
+
+**Theorem 3 (Covariance Asphyxiation Bound)**.  
+*In unweighted recursive least squares ($\lambda_f = 1.0$), the spectral norm of the inverse covariance matrix decays as $\mathcal{O}(1/t)$. For $t > 500$ streaming updates under persistent excitation, the matrix update gain vanishes, rendering the model permanently non-adaptive.*
+
+*Proof*. By definition, $\mathbf{A}_t = \lambda \mathbf{I} + \sum_{i=1}^t \mathbf{x}_i \mathbf{x}_i^T$. Assume persistent excitation such that the sample covariance satisfies $\mathbb{E}[\mathbf{x} \mathbf{x}^T] \succeq \sigma_{\min}^2 \mathbf{I}$ with $\sigma_{\min}^2 > 0$. By the strong law of large numbers:
+$$\lim_{t \to \infty} \frac{1}{t} \mathbf{A}_t = \boldsymbol{\Sigma}_{\mathbf{x}} \succ \mathbf{0} \implies \lambda_{\min}(\mathbf{A}_t) \ge t \sigma_{\min}^2 + \lambda$$
+Inverting $\mathbf{A}_t$ to obtain $\mathbf{P}_t = \mathbf{A}_t^{-1}$, the maximum eigenvalue satisfies:
+$$\lambda_{\max}(\mathbf{P}_t) = \frac{1}{\lambda_{\min}(\mathbf{A}_t)} \le \frac{1}{t \sigma_{\min}^2 + \lambda} = \mathcal{O}\left(\frac{1}{t}\right)$$
+The weight parameter update vector is $\Delta \mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{x}_{t+1}) (\mathbf{y}_{t+1}^T - \mathbf{x}_{t+1}^T \mathbf{W}_t)$. Its Frobenius norm is bounded by:
+$$\|\Delta \mathbf{W}_{t+1}\|_F \le \|\mathbf{P}_{t+1}\|_2 \|\mathbf{x}_{t+1}\|_2 \|\mathbf{e}_{t+1}\|_2 \le \frac{\|\mathbf{x}_{t+1}\|_2 \|\mathbf{e}_{t+1}\|_2}{t \sigma_{\min}^2 + \lambda} \xrightarrow{t \to \infty} 0$$
+For $t = 500$ and $\|\mathbf{x}\|_2 \approx 1$, $\|\mathbf{P}_t\|_2 < 2 \times 10^{-3}$. When the environment experiences non-stationary distribution shift or new System 2 exemplar corrections arrive, the parameter update step size is suffocated by $\mathbf{P}_t \to \mathbf{0}$. $\blacksquare$
+
+**Architectural Solution (Exponential Forgetting Factor RLS)**:  
+Reflex introduces a calibrated forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
+$$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left[ \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}} \right], \quad \mathbf{B}_{t+1} = \lambda_f \mathbf{B}_t + \mathbf{x}_{t+1} \mathbf{y}_{t+1}^T$$
+Under $\lambda_f = 0.995$, the effective observation horizon is geometrically bounded by:
+$$N_{\text{eff}} = \sum_{k=0}^\infty \lambda_f^k = \frac{1}{1 - \lambda_f} = \frac{1}{1 - 0.995} = 200 \text{ steps}$$
+As $t \to \infty$, the inverse covariance converges to a non-zero steady-state limit:
+$$\mathbf{P}_\infty = (1 - \lambda_f) \boldsymbol{\Sigma}_{\mathbf{x}}^{-1} \succ \mathbf{0}$$
+The condition number $\kappa(\mathbf{P})$ remains strictly bounded under persistent excitation, preserving active learning sensitivity across millions of online decisions. To prevent asymmetric floating-point rounding divergence and eliminate covariance windup along unexcited subspace dimensions ($\lambda_{\max}(\mathbf{P}) \to \infty$), Reflex explicitly enforces three invariant safeguards:
+1. **Hermitian Symmetrization**: $\mathbf{P}_{t+1} \leftarrow \frac{1}{2}\left(\mathbf{P}_{t+1} + \mathbf{P}_{t+1}^T\right)$.
+2. **Regularized Covariance Bounding**: If $\max_i P_{ii} > \frac{50.0}{\lambda_{\text{reg}}}$, the runtime rescales $\mathbf{P}_{t+1} \leftarrow s \mathbf{P}_{t+1}$ and $\mathbf{B}_{t+1} \leftarrow s^{-1} \mathbf{B}_{t+1}$ where $s = \frac{50.0 / \lambda_{\text{reg}}}{\max_i P_{ii}}$, exactly preserving weight invariance $\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$ while bounding spectral condition $\kappa(\mathbf{P}) < 10^5$.
+3. **Strict Positive-Definiteness**: $P_{ii} \leftarrow \max(P_{ii}, 10^{-6})$ preventing indefinite floating-point cancellation.
+
+### 6.4 Recency Decay Inversion for Multi-Turn Agent Traces
+Autonomous agent interaction logs consist of ordered token sequences $S = (w_0, w_1, \dots, w_{N-1})$. In standard bag-of-words or uniform token projection, all tokens contribute equally to the document vector $\mathbf{x} = \frac{1}{N} \sum_i \mathbf{v}(w_i)$.  
+In multi-turn execution traces, earlier turns (system preamble, historical tool outputs) dominate the token count, diluting the directive in the latest user or tool message $w_{N-1}$.  
+Reflex introduces **Recency-Aware Context Weighting**:
+$$\text{weight}(i) = \frac{\log(1 + \text{len}(w_i))}{\sqrt{1.0 + 0.05 \cdot (N - 1 - i)}}$$
+where $N - 1 - i$ is the backward distance from the trailing token.  
+- For the final token ($i = N - 1$), the decay denominator is $\sqrt{1.0 + 0} = 1.0$ (full weight).
+- For historical tokens $k$ steps prior, weight decays sub-linearly as $\mathcal{O}(1/\sqrt{k})$, preventing prefix dominance while preserving semantic anchoring.
+
+### 6.5 Field-Level Escalation Granularity
+In enterprise schemas comprising $M$ simultaneous output fields (e.g. `ActionRoute`, `ApprovalTier`, `SentimentAudit`), standard conformal gating evaluates each field independently:
+$$|\mathcal{C}_{1-\alpha}^{(m)}| > 1 \implies \text{field } m \text{ is ambiguous}$$
+In earlier implementations, any single ambiguous field triggered a global decision halt ($I_{\text{ambiguous}} = \bigvee_{m=1}^M I_{\text{ambiguous}}^{(m)}$).  
+However, advisory or non-critical fields (such as auxiliary sentiment tags or optional reason codes) frequently experience natural semantic fuzziness without impacting the determinism of the primary control action (e.g., `ActionRoute = "TRANSFER"`). Forcing a full System 2 frontier escalation for an ambiguous advisory field introduces unnecessary latency and token expense—a failure mode termed **Advisory Field Poisoning**.
+
+Reflex resolves this via field-level escalation granularity (`escalate_on_ambiguity: bool = True`):
+$$I_{\text{ambiguous}}^{\text{global}} = \bigvee_{m=1}^M \left( I_{\text{ambiguous}}^{(m)} \land \text{field}_m.\texttt{escalate\_on\_ambiguity} \right)$$
+Fields configured with `escalate_on_ambiguity=False` continue to emit calibrated prediction sets $\mathcal{C}_{1-\alpha}$ and log uncertainty into `DecisionResult.ambiguous_fields`, but do not trip $I_{\text{ambiguous}}^{\text{global}}$, isolating high-frequency control pathways from non-critical ambiguity.
+
+---
+
+## 7. Empirical Evaluation & Benchmarks
+
+### 7.1 Latency Comparison Across Architectures
 We benchmarked Reflex on an Apple M3 Max (14-core CPU, 36 GB Unified Memory) running macOS 15 and Linux Ubuntu 24.04 LTS against leading alternative decision paradigms across 10,000 independent trials.
 
 | Runtime Architecture | Hardware Location | Execution Paradigm | P50 Latency | P99 Latency | Relative Speedup | WAN Egress |
@@ -433,7 +520,7 @@ Reflex delivers an **867× latency improvement** over single-call frontier cloud
 
 ---
 
-### 6.2 60 FPS Real-Time Game Boy Control (Pokémon Red/Blue)
+### 7.2 60 FPS Real-Time Game Boy Control (Pokémon Red/Blue)
 To test Reflex under unforgiving real-time constraints, we interfaced the runtime directly with the `PyBoy` Game Boy hardware emulator running *Pokémon Red*. Game Boy hardware ticks at exactly 60.0 Hz (16.6 ms per frame).
 
 ```
@@ -448,7 +535,7 @@ Reflex System 1 Pass:   |=| (0.98 ms -> consumes 5.9% of budget; up to 16 evalua
 
 ---
 
-### 6.3 Autonomous Apprentice-to-Metal Cutover Engine
+### 7.3 Autonomous Apprentice-to-Metal Cutover Engine
 We evaluated `TypeSafeClient(mode="auto_cutover")` within an autonomous agent tool pipeline processing live streaming requests:
 * **Phase 1: Shadow Apprentice (Queries 1–50)**: Transparently proxied requests to the cloud SaaS API baseline (mean latency: 220 ms) while asynchronously recording prompt-action pairs to `ActionLedger`.
 * **Phase 2: Closed-Form Cutover (Query 51)**: `ReflexCompiler` solved closed-form Ridge Regression in 14.2 ms, calibrated conformal prediction bounds at $\alpha = 0.05$, verified 100% agreement on validation exemplars, and executed an atomic pointer swap to 100% local metal execution.
@@ -456,7 +543,7 @@ We evaluated `TypeSafeClient(mode="auto_cutover")` within an autonomous agent to
 
 ---
 
-### 6.4 Concurrency & Ledger Integrity
+### 7.4 Concurrency & Ledger Integrity
 Under a multi-threaded stress test simulating 8 concurrent worker threads executing an enterprise security firewall schema (48 attack vectors including prompt injection, data exfiltration, and unauthorized shell execution):
 * Sustained throughput exceeded **1,240 QPS** (reaching 2,281 QPS on in-line tool gating).
 * Zero SQLite lock contention occurred under WAL journal mode.
@@ -464,7 +551,7 @@ Under a multi-threaded stress test simulating 8 concurrent worker threads execut
 
 ---
 
-## 7. Related Work
+## 8. Related Work
 
 1. **Speculative Decoding & Draft Models**: Leviathan et al. (2023) introduced speculative decoding using small autoregressive draft models to propose token sequences verified in parallel by larger models. While effective for prose generation, speculative decoding remains fundamentally autoregressive and cannot achieve the sub-millisecond execution envelope required for real-time discrete state decisions.
 2. **Dual-Process Cognitive AI**: Booch et al. (2021) and Bengio (2017) formalized the conceptual integration of fast intuitive heuristics (System 1) with deliberate symbolic or neural reasoning (System 2). In late-2026 architectures, frontier models (OpenAI Astra & GPT-6 series, Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, and xAI Grok) represent powerful System 2 governors; Reflex provides the first machine-native, non-autoregressive System 1 runtime engineered to interface directly with these governors.
@@ -473,7 +560,7 @@ Under a multi-threaded stress test simulating 8 concurrent worker threads execut
 
 ---
 
-## 8. Conclusion
+## 9. Conclusion
 
 Reflex addresses the acute latency, economic, and data privacy bottlenecks of contemporary agentic AI. By decoupling high-frequency System 1 reflex actions from deliberate System 2 reasoning, Reflex enables autonomous agents to operate at machine-native speeds (0.98 ms P50 latency, 60 FPS hardware budgets) while enforcing rigorous mathematical safety guarantees through Split Conformal Prediction and Ed25519 cryptographic audit receipts. Reflex is fully open source under the Apache 2.0 license at `https://github.com/steph4n-gh/reflex`.
 

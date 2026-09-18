@@ -116,12 +116,16 @@ When an agent requests an action via `engine.evaluate(schema_instance, prompt)` 
   4. **Rank-Uniform Proof:**  
      *Proof*. Let $S_i = s(\mathbf{x}_i, y_i)$ for $i \in \{1, \dots, n\}$ and $S_{n+1} = s(\mathbf{x}_{n+1}, Y_{n+1})$. Because $\hat{P}$ is fitted independently of $\mathcal{D}_{\text{cal}} \cup \{(\mathbf{x}_{n+1}, Y_{n+1})\}$, exchangeability of data points implies exchangeability of the real random variables $\{S_1, \dots, S_n, S_{n+1}\}$. Under permutation symmetry (breaking ties uniformly at random if atomic), the rank $R_{n+1} = \sum_{i=1}^{n+1} \mathbf{1}_{\{S_i \le S_{n+1}\}}$ is discrete uniform on $\{1, 2, \dots, n+1\}$:
      $$\mathbb{P}(R_{n+1} = r) = \frac{1}{n+1} \quad \forall r \in \{1, \dots, n+1\}$$
-     The test label is covered if and only if $S_{n+1} \le \hat{q}_{1-\alpha} = S_{(k^*)}$, which occurs if and only if $R_{n+1} \le k^* = \lceil (n+1)(1-\alpha) \rceil$. Therefore:
+     The test label is covered if and only if $S_{n+1} \le \hat{q}_{1-\alpha} = S_{(k*)}$, which occurs if and only if $R_{n+1} \le k^* = \lceil (n+1)(1-\alpha) \rceil$. Therefore:
      $$\mathbb{P}\left( Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1}) \right) = \mathbb{P}(R_{n+1} \le k^*) = \sum_{r=1}^{k^*} \frac{1}{n+1} = \frac{\lceil (n+1)(1-\alpha) \rceil}{n+1} \ge \frac{(n+1)(1-\alpha)}{n+1} = 1 - \alpha$$
      By the ceiling property $\lceil x \rceil < x + 1$, the upper bound $\frac{(n+1)(1-\alpha)+1}{n+1} = 1 - \alpha + \frac{1}{n+1}$ holds for continuous distributions. When discrete ties occur, counting ties in the rank conservatively only increases the coverage probability: $\mathbb{P} \ge 1 - \alpha$ holds unconditionally. $\blacksquare$
-  5. **Operational Gating Rule:**
-     - **Pass (Fast-Path on Local Metal):** $|\mathcal{C}_{1-\alpha}(\mathbf{x})| = 1$ and top-2 margin $M(\mathbf{x}) = \hat{p}_{(1)} - \hat{p}_{(2)} \ge \tau$ (default $\tau = 0.15$). The decision is unambiguous and executes in $<1.0$ ms.
-     - **Halt (Escalate to Tier 3 System 2):** $|\mathcal{C}_{1-\alpha}(\mathbf{x})| \ge 2$ (statistical ambiguity), $|\mathcal{C}_{1-\alpha}(\mathbf{x})| = 0$ (out-of-distribution OOD), or $M(\mathbf{x}) < \tau$.
+  5. **Operational Gating Rule (Dual Cardinality-Scaled Dominance Gate):**
+      - **Pass (Fast-Path on Local Metal):** $|\mathcal{C}_{1-\alpha}(\mathbf{x})| = 1$ and margin dominance gate is satisfied:
+        - **Absolute Margin Threshold:** $M(\mathbf{x}) = \hat{p}_{(1)} - \hat{p}_{(2)} \ge \tau$ (default $\tau = 0.08$).
+        - **Cardinality-Scaled Confidence Floor:** $\hat{p}_{(1)} \ge \frac{1}{K} + \tau_0$ (default $\tau_0 = 0.15$), preventing pseudo-random hash dispersion from overriding ambiguity in high-cardinality action spaces (e.g. $K = 77$).
+        - **Relative Odds Ratio Dominance:** $\mathcal{R} = \frac{\hat{p}_{(1)}}{\max(10^{-6}, \hat{p}_{(2)})} \ge \gamma$ (default $\gamma = 1.5$), enforcing strict multiplicative likelihood superiority over runner-up candidates.
+        The decision is certified unambiguous and executes locally in $<1.0$ ms.
+      - **Halt (Escalate to Tier 3 System 2):** $|\mathcal{C}_{1-\alpha}(\mathbf{x})| \ge 2$ (statistical ambiguity), $|\mathcal{C}_{1-\alpha}(\mathbf{x})| = 0$ (out-of-distribution OOD), or margin dominance failure on any field with `escalate_on_ambiguity=True`.
 
 ### Tier 3: Deliberate Governor Escalation (System 2)
 * **Latency:** $300\,\text{ms} - 1,500\,\text{ms}$.
@@ -184,6 +188,12 @@ class AgentSecurityFirewall(DecisionSchema):
 * **`MultiChoiceField`**: Vectorized element-wise sigmoid $\hat{p}_k = \frac{1}{1 + \exp(-z_k)}$ with independent thresholding per option.
 * **`BooleanField`**: Binary sigmoid $\hat{p} = \frac{1}{1 + \exp(-z)}$ mapped to `{True, False}` via threshold $\tau_{\text{bool}}$ (default $0.5$).
 * **`ScoreField`**: Linear continuous projection with clamping: $\hat{s} = \min(\max(\mathbf{x}^T \mathbf{w} + b, s_{\min}), s_{\max})$.
+
+### 3.2 Field-Level Escalation Granularity (`escalate_on_ambiguity`)
+Every `DecisionField` definition accepts an explicit configuration flag `escalate_on_ambiguity: bool = True` (persisted in JSON schema metadata and binary `.s1m` artifacts):
+* **Operational Control Fields (`escalate_on_ambiguity=True`, default):** Any conformal ambiguity ($|\mathcal{C}_{1-\alpha}| > 1$) or margin deficiency trips the runtime's global fail-closed halt (`is_ambiguous = True`), forcing escalation to Tier 3 System 2.
+* **Advisory & Auxiliary Fields (`escalate_on_ambiguity=False`):** For non-critical telemetry, descriptive sentiment classifications, or advisory triage fields, conformal prediction sets and ambiguity statuses are calculated and logged into `DecisionResult.ambiguous_fields`, but **do not trip global execution halts**. This decouples core control pathways from auxiliary ambiguity and prevents **Advisory Field Poisoning**.
+* **Audit Transparency:** `DecisionResult` exposes both `ambiguous_fields: List[str]` (all fields with $|\mathcal{C}| > 1$) and `escalated_fields: List[str]` (subset that caused System 2 escalation).
 
 ---
 
@@ -281,6 +291,16 @@ Prior to centering, when background intensity dominates ($\|\mathbf{b}\|_2 = B \
 $$\frac{\gamma_{\text{centered}}}{\gamma_{\text{uncentered}}} \approx \frac{B}{c} \sqrt{\frac{K}{K-1}} \gg 1$$
 Because $B/c \approx 10$ to $50$ in natural language representations, contrastive centering widens linear decision margins by **one to two orders of magnitude**, rendering classification robust against token noise.
 
+### 4.5 Recency-Aware Context Weighting for Multi-Turn Agent Traces
+In conversational agent loops and tool execution traces, historical tokens (system prompt, prior tool outputs) easily outnumber recent instructions, diluting critical trailing context under standard uniform token averaging.
+
+Reflex implements **Recency-Aware Context Weighting** in `DeterministicSemanticProjector`:
+$$\text{weight}(i) = \frac{\log(1 + \text{len}(w_i))}{\sqrt{1.0 + 0.05 \cdot (N - 1 - i)}}$$
+where $N$ is the total token count and $i \in \{0, \dots, N-1\}$ indexes tokens from head to tail.
+* **Trailing Token Priority:** For the most recent token ($i = N - 1$), the denominator is $\sqrt{1.0 + 0} = 1.0$, receiving full unattenuated weight.
+* **Bounded Sub-linear Attenuation:** Historical tokens decay sub-linearly as $\mathcal{O}(1/\sqrt{k})$ where $k = N - 1 - i$, ensuring that past context provides background semantics without washing out prompt-tail directives.
+* **Configurable Activation:** Enabled via `recency_weighted: bool = True` in runtime calls (`engine.decide(prompt, recency_weighted=True)` or model configuration).
+
 ---
 
 ## 5. The Reflex Compiler (`reflex.compiler`)
@@ -370,6 +390,21 @@ Substituting into $\mathbf{W}_{t+1}^* = \mathbf{M}_{t+1}\mathbf{B}_{t+1} = \math
 $$\mathbf{W}_{t+1}^* = \mathbf{W}_t + \mathbf{M}_{t+1}\mathbf{x}_{t+1}(\mathbf{y}_{t+1}^T - \mathbf{x}_{t+1}^T\mathbf{W}_t) \equiv \mathbf{W}_{t+1} \quad \blacksquare$$
 
 This guarantees zero approximation drift between online streaming adaptation and full batch retraining.
+
+### 5.5 Exponential Forgetting Factor & Numerical Stabilization
+Over extended production lifecycles ($t > 500$ streaming updates), standard recursive least squares ($\lambda_f = 1.0$) accumulates eigenvalues in $\mathbf{A}_t$, causing $\mathbf{P}_t = \mathbf{A}_t^{-1} \to \mathbf{0}$ and freezing model adaptation (**Covariance Asphyxiation**).
+
+Reflex incorporates an exponential forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
+$$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left[ \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}} \right]$$
+$$\mathbf{B}_{t+1} = \lambda_f \mathbf{B}_t + \mathbf{x}_{t+1} \mathbf{y}_{t+1}^T$$
+$$\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$$
+
+* **Bounded Memory Horizon:** The effective sample horizon is bounded by $N_{\text{eff}} = \frac{1}{1 - \lambda_f} = 200$, preventing eigenvalue asphyxiation while maintaining long-term stability.
+* **Hermitian Symmetrization:** Floating-point rounding on physical metal can introduce minor non-symmetric skew ($\mathbf{P} \ne \mathbf{P}^T$). Reflex explicitly enforces symmetry after every online rank-1 update:
+  $$\mathbf{P} \leftarrow \frac{1}{2}(\mathbf{P} + \mathbf{P}^T)$$
+* **Regularized Covariance Bounding:** To prevent covariance windup along unexcited subspace dimensions ($\lambda_{\max}(\mathbf{P}) \to \infty$), if $\max_i P_{ii} > \frac{50.0}{\lambda_{\text{reg}}}$, the runtime rescales $\mathbf{P} \leftarrow s \mathbf{P}$ and $\mathbf{B} \leftarrow s^{-1} \mathbf{B}$ where $s = \frac{50.0 / \lambda_{\text{reg}}}{\max_i P_{ii}}$, exactly preserving weight invariance $\mathbf{W} = (\mathbf{P} \mathbf{B})^T$ while bounding spectral condition $\kappa(\mathbf{P}) < 10^5$.
+* **Strict Positive-Definiteness:** $P_{ii} \leftarrow \max(P_{ii}, 10^{-6})$, eliminating indefinite floating-point cancellation across unexcited coordinates.
+* **Throughput & Speed:** Preserves the measured $38.4\,\mu\text{s}$ update latency on host silicon.
 
 ---
 

@@ -43,11 +43,13 @@ class DecisionField(ABC):
         *,
         description: str = "",
         required: bool = True,
+        escalate_on_ambiguity: bool = True,
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
         self.name: str = ""
         self.description: str = str(description).strip()
         self.required: bool = bool(required)
+        self.escalate_on_ambiguity: bool = bool(escalate_on_ambiguity)
         self.metadata: Dict[str, Any] = dict(metadata or {})
 
     def bind_name(self, name: str) -> None:
@@ -83,9 +85,15 @@ class ChoiceField(DecisionField):
         default: Optional[str] = None,
         description: str = "",
         required: bool = True,
+        escalate_on_ambiguity: bool = True,
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        super().__init__(description=description, required=required, metadata=metadata)
+        super().__init__(
+            description=description,
+            required=required,
+            escalate_on_ambiguity=escalate_on_ambiguity,
+            metadata=metadata,
+        )
         if not options:
             raise ValueError("ChoiceField requires at least one option")
         cleaned_options = []
@@ -137,6 +145,7 @@ class ChoiceField(DecisionField):
             "name": self.name,
             "description": self.description,
             "required": self.required,
+            "escalate_on_ambiguity": self.escalate_on_ambiguity,
             "options": list(self.options),
             "descriptions": serializable_desc,
             "default": self.default,
@@ -158,9 +167,15 @@ class BooleanField(DecisionField):
         default: Optional[bool] = None,
         description: str = "",
         required: bool = True,
+        escalate_on_ambiguity: bool = True,
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        super().__init__(description=description, required=required, metadata=metadata)
+        super().__init__(
+            description=description,
+            required=required,
+            escalate_on_ambiguity=escalate_on_ambiguity,
+            metadata=metadata,
+        )
         if not (0.0 <= threshold <= 1.0):
             raise ValueError(f"BooleanField threshold must be in [0.0, 1.0], got {threshold}")
         self.threshold: float = float(threshold)
@@ -189,6 +204,7 @@ class BooleanField(DecisionField):
             "name": self.name,
             "description": self.description,
             "required": self.required,
+            "escalate_on_ambiguity": self.escalate_on_ambiguity,
             "threshold": self.threshold,
             "true_description": self.true_description,
             "false_description": self.false_description,
@@ -211,9 +227,15 @@ class MultiChoiceField(DecisionField):
         default: Optional[Sequence[str]] = None,
         description: str = "",
         required: bool = False,
+        escalate_on_ambiguity: bool = True,
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        super().__init__(description=description, required=required, metadata=metadata)
+        super().__init__(
+            description=description,
+            required=required,
+            escalate_on_ambiguity=escalate_on_ambiguity,
+            metadata=metadata,
+        )
         if not options:
             raise ValueError("MultiChoiceField requires at least one option")
         cleaned_options = []
@@ -274,6 +296,7 @@ class MultiChoiceField(DecisionField):
             "name": self.name,
             "description": self.description,
             "required": self.required,
+            "escalate_on_ambiguity": self.escalate_on_ambiguity,
             "options": list(self.options),
             "threshold": self.threshold,
             "descriptions": serializable_desc,
@@ -297,9 +320,15 @@ class ScoreField(DecisionField):
         default: Optional[float] = None,
         description: str = "",
         required: bool = True,
+        escalate_on_ambiguity: bool = True,
         metadata: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        super().__init__(description=description, required=required, metadata=metadata)
+        super().__init__(
+            description=description,
+            required=required,
+            escalate_on_ambiguity=escalate_on_ambiguity,
+            metadata=metadata,
+        )
         if min_value >= max_value:
             raise ValueError(
                 f"ScoreField min_value ({min_value}) must be strictly less than max_value ({max_value})"
@@ -335,6 +364,7 @@ class ScoreField(DecisionField):
             "name": self.name,
             "description": self.description,
             "required": self.required,
+            "escalate_on_ambiguity": self.escalate_on_ambiguity,
             "min_value": self.min_value,
             "max_value": self.max_value,
             "low_description": self.low_description,
@@ -443,6 +473,7 @@ class DecisionSchema(metaclass=SchemaMeta):
         for name, field_info in fields_data.items():
             ftype = field_info.get("type")
             req = field_info.get("required", True)
+            esc = field_info.get("escalate_on_ambiguity", True)
             desc = field_info.get("description", "")
             meta = field_info.get("metadata", {})
 
@@ -453,6 +484,7 @@ class DecisionSchema(metaclass=SchemaMeta):
                     default=field_info.get("default"),
                     description=desc,
                     required=req,
+                    escalate_on_ambiguity=esc,
                     metadata=meta,
                 )
             elif ftype == "boolean":
@@ -463,6 +495,7 @@ class DecisionSchema(metaclass=SchemaMeta):
                     default=field_info.get("default"),
                     description=desc,
                     required=req,
+                    escalate_on_ambiguity=esc,
                     metadata=meta,
                 )
             elif ftype == "multi_choice":
@@ -473,6 +506,7 @@ class DecisionSchema(metaclass=SchemaMeta):
                     default=field_info.get("default"),
                     description=desc,
                     required=req,
+                    escalate_on_ambiguity=esc,
                     metadata=meta,
                 )
             elif ftype == "score":
@@ -484,6 +518,7 @@ class DecisionSchema(metaclass=SchemaMeta):
                     default=field_info.get("default"),
                     description=desc,
                     required=req,
+                    escalate_on_ambiguity=esc,
                     metadata=meta,
                 )
             else:
@@ -536,8 +571,12 @@ class DecisionSchema(metaclass=SchemaMeta):
         }
 
 
+# FieldDefinition alias for canonical DecisionField
+FieldDefinition = DecisionField
+
 __all__ = [
     "DecisionField",
+    "FieldDefinition",
     "ChoiceField",
     "BooleanField",
     "MultiChoiceField",

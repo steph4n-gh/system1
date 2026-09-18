@@ -20,6 +20,7 @@ from system1 import (
     decide,
     DecisionSchema,
     DecisionField,
+    FieldDefinition,
     ChoiceField,
     BooleanField,
     MultiChoiceField,

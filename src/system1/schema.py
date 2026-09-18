@@ -10,6 +10,7 @@ from system1.core.schema import (
     ChoiceField,
     DecisionField,
     DecisionSchema,
+    FieldDefinition,
     MultiChoiceField,
     ScoreField,
     SchemaMeta,

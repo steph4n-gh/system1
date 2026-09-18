@@ -18,6 +18,7 @@ from system1.core.schema import (
     ChoiceField,
     DecisionField,
     DecisionSchema,
+    FieldDefinition,
     MultiChoiceField,
     ScoreField,
     SchemaMeta,
@@ -62,6 +63,7 @@ __all__ = [
     # Schema primitives
     "DecisionSchema",
     "DecisionField",
+    "FieldDefinition",
     "ChoiceField",
     "BooleanField",
     "MultiChoiceField",

@@ -17,6 +17,7 @@ from system1.core import (
     DecisionField,
     DecisionFieldHead,
     DecisionSchema,
+    FieldDefinition,
     DeterministicSemanticProjector,
     HybridProjector,
     HybridSemanticProjector,
@@ -258,6 +259,7 @@ __all__ = [
     # Schemas & Fields
     "DecisionSchema",
     "DecisionField",
+    "FieldDefinition",
     "ChoiceField",
     "BooleanField",
     "MultiChoiceField",

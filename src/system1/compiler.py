@@ -65,6 +65,10 @@ class CompiledHeadWeights:
     P: Optional[np.ndarray] = None  # Inverted regularized covariance matrix (D+1, D+1)
     B: Optional[np.ndarray] = None  # Cross-covariance matrix (D+1, K)
     margin_threshold: float = 0.20
+    forgetting_factor: float = 0.995
+    relative_odds_ratio: float = 1.5
+    confidence_floor_tau0: float = 0.15
+    escalate_on_ambiguity: bool = True
 
 
 class CompiledSystemOneModel:
@@ -86,16 +90,23 @@ class CompiledSystemOneModel:
         use_cache: bool = True,
         cache_threshold: float = 0.98,
         cache_capacity: int = 2048,
+        forgetting_factor: float = 0.995,
+        recency_weighted: bool = False,
     ) -> None:
         self.schema = schema
         self.heads = heads
         self.dimension = dimension
         self.backend = backend
         self.metadata = metadata or {}
+        self.forgetting_factor = float(forgetting_factor)
+        self.recency_weighted = bool(recency_weighted)
         self.projector = (
             projector
             if projector is not None
-            else DeterministicSemanticProjector(dimension=self.dimension)
+            else DeterministicSemanticProjector(
+                dimension=self.dimension,
+                recency_weighted=self.recency_weighted,
+            )
         )
         self.use_cache = bool(use_cache)
         self.cache = SemanticReflexCache(
@@ -113,6 +124,7 @@ class CompiledSystemOneModel:
                 dimension=self.dimension,
                 backend=self.backend,
                 projector=self.projector,
+                forgetting_factor=self.forgetting_factor,
             )
             if name in self.heads:
                 ch = self.heads[name]
@@ -122,11 +134,23 @@ class CompiledSystemOneModel:
                 head.init_covariance()
             self._field_heads[name] = head
 
-    def encode(self, prompt: str, telemetry: Optional[Any] = None) -> np.ndarray:
+    def encode(
+        self,
+        prompt: str,
+        telemetry: Optional[Any] = None,
+        recency_weighted: Optional[bool] = None,
+    ) -> np.ndarray:
         """Projects input prompt into normalized dense vector, fusing continuous telemetry if present."""
         if not isinstance(prompt, str):
             raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
-        emb = self.projector.project(prompt)
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
+        if hasattr(self.projector, "project"):
+            try:
+                emb = self.projector.project(prompt, recency_weighted=use_recency)
+            except TypeError:
+                emb = self.projector.project(prompt)
+        else:
+            emb = self.projector(prompt)
         norm = float(np.linalg.norm(emb))
         if norm > 1e-12:
             emb = emb / norm
@@ -142,13 +166,15 @@ class CompiledSystemOneModel:
         prompt: str,
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> ModelInferenceResult:
         """Executes a forward evaluation over the schema."""
         t0 = time.perf_counter()
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
         if embedding is not None:
             emb = np.asarray(embedding, dtype=np.float32).flatten()
         else:
-            emb = self.encode(prompt, telemetry=telemetry)
+            emb = self.encode(prompt, telemetry=telemetry, recency_weighted=use_recency)
 
         # Check Tier 0 Semantic Reflex Cache
         if self.use_cache:
@@ -184,20 +210,28 @@ class CompiledSystemOneModel:
         self,
         prompts: Sequence[str],
         telemetry: Optional[Sequence[Any]] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> List[ModelInferenceResult]:
         """Batched forward evaluation over multiple inputs."""
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
         if telemetry is not None and len(telemetry) == len(prompts):
-            return [self.forward_single(p, telemetry[i]) for i, p in enumerate(prompts)]
-        return [self.forward_single(p) for p in prompts]
+            return [self.forward_single(p, telemetry[i], recency_weighted=use_recency) for i, p in enumerate(prompts)]
+        return [self.forward_single(p, recency_weighted=use_recency) for p in prompts]
 
     def evaluate(
         self,
         prompt: str,
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> ModelInferenceResult:
         """Alias for forward_single with optional continuous telemetry vector and precomputed embedding."""
-        return self.forward_single(prompt, telemetry=telemetry, embedding=embedding)
+        return self.forward_single(
+            prompt,
+            telemetry=telemetry,
+            embedding=embedding,
+            recency_weighted=recency_weighted,
+        )
 
     def learn_from_tier2(
         self,
@@ -205,6 +239,8 @@ class CompiledSystemOneModel:
         target: Union[Mapping[str, Any], Any],
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        forgetting_factor: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
 
@@ -216,7 +252,7 @@ class CompiledSystemOneModel:
             if embedding is not None:
                 emb = np.asarray(embedding, dtype=np.float32).flatten()
             else:
-                emb = self.encode(prompt, telemetry=telemetry)
+                emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
             x_aug = np.append(emb, 1.0).astype(np.float32)
 
             target_dict: Dict[str, Any]
@@ -233,7 +269,7 @@ class CompiledSystemOneModel:
                 if f_name in self._field_heads:
                     head = self._field_heads[f_name]
                     y_target = head.format_target_vector(target_val)
-                    dt = head.online_update(x_aug, y_target)
+                    dt = head.online_update(x_aug, y_target, forgetting_factor=forgetting_factor)
                     update_durations_ms.append(dt)
 
                     # Sync back to compiled head weights
@@ -284,13 +320,21 @@ class CompiledSystemOneModel:
             "schema_digest": self.schema.schema_digest(),
             "dimension": self.dimension,
             "created_at": time.time(),
-            "metadata": self.metadata,
+            "metadata": {
+                **self.metadata,
+                "forgetting_factor": self.forgetting_factor,
+                "recency_weighted": self.recency_weighted,
+            },
             "heads": {
                 name: {
                     "field_type": ch.field_type,
                     "temperature": float(ch.temperature),
                     "conformal_quantile": float(ch.conformal_quantile),
                     "margin_threshold": float(getattr(ch, "margin_threshold", 0.20)),
+                    "forgetting_factor": float(getattr(ch, "forgetting_factor", 0.995)),
+                    "relative_odds_ratio": float(getattr(ch, "relative_odds_ratio", 1.5)),
+                    "confidence_floor_tau0": float(getattr(ch, "confidence_floor_tau0", 0.15)),
+                    "escalate_on_ambiguity": bool(getattr(ch, "escalate_on_ambiguity", True)),
                     "options": list(ch.options),
                     "weights_shape": list(ch.weights.shape),
                     "biases_shape": list(ch.biases.shape),
@@ -374,15 +418,22 @@ class CompiledSystemOneModel:
                 P=p_mat,
                 B=b_mat,
                 margin_threshold=float(h_info.get("margin_threshold", 0.20)),
+                forgetting_factor=float(h_info.get("forgetting_factor", 0.995)),
+                relative_odds_ratio=float(h_info.get("relative_odds_ratio", 1.5)),
+                confidence_floor_tau0=float(h_info.get("confidence_floor_tau0", 0.15)),
+                escalate_on_ambiguity=bool(h_info.get("escalate_on_ambiguity", True)),
             )
 
+        saved_meta = meta.get("metadata", {})
         return cls(
             schema=schema,
             heads=heads,
             dimension=dimension,
             projector=projector,
             backend=backend,
-            metadata=meta.get("metadata", {}),
+            metadata=saved_meta,
+            forgetting_factor=float(saved_meta.get("forgetting_factor", 0.995)),
+            recency_weighted=bool(saved_meta.get("recency_weighted", False)),
         )
 
     @classmethod
@@ -418,6 +469,10 @@ class ReflexCompiler:
         dimension: int = 384,
         regularization: float = 1.0,
         backend: str = "numpy",
+        forgetting_factor: float = 0.995,
+        relative_odds_ratio: float = 1.5,
+        confidence_floor_tau0: float = 0.15,
+        recency_weighted: bool = False,
     ) -> None:
         if isinstance(schema, type) and issubclass(schema, DecisionSchema):
             self.schema = schema()
@@ -432,12 +487,19 @@ class ReflexCompiler:
         self.dimension = dimension
         self.regularization = float(regularization)
         self.backend = backend
+        self.forgetting_factor = float(forgetting_factor)
+        self.relative_odds_ratio = float(relative_odds_ratio)
+        self.confidence_floor_tau0 = float(confidence_floor_tau0)
+        self.recency_weighted = bool(recency_weighted)
         if projector is not None:
             self.projector = projector
             if hasattr(projector, "dimension"):
                 self.dimension = projector.dimension
         else:
-            self.projector = DeterministicSemanticProjector(dimension=self.dimension)
+            self.projector = DeterministicSemanticProjector(
+                dimension=self.dimension,
+                recency_weighted=self.recency_weighted,
+            )
         self.telemetry_projector = TelemetryProjector(embedding_dim=self.dimension)
 
     def generate_synthetic_exemplars(
@@ -710,6 +772,10 @@ class ReflexCompiler:
                     temperature=1.0,
                     conformal_quantile=0.0,
                     options=getattr(f_def, "options", ()),
+                    forgetting_factor=self.forgetting_factor,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
                 )
                 continue
 
@@ -862,6 +928,10 @@ class ReflexCompiler:
                     P=P_mat,
                     B=B_mat,
                     margin_threshold=m_thresh,
+                    forgetting_factor=self.forgetting_factor,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
                 )
 
             elif isinstance(f_def, BooleanField):
@@ -914,6 +984,10 @@ class ReflexCompiler:
                     P=P_mat,
                     B=B_mat,
                     margin_threshold=m_thresh_bool,
+                    forgetting_factor=self.forgetting_factor,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
                 )
 
             elif isinstance(f_def, MultiChoiceField):
@@ -972,6 +1046,10 @@ class ReflexCompiler:
                     options=f_def.options,
                     P=P_mat,
                     B=B_mat,
+                    forgetting_factor=self.forgetting_factor,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
                 )
 
             elif isinstance(f_def, ScoreField):
@@ -1008,6 +1086,10 @@ class ReflexCompiler:
                     options=(),
                     P=P_mat,
                     B=B_mat,
+                    forgetting_factor=self.forgetting_factor,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
+                    escalate_on_ambiguity=getattr(f_def, "escalate_on_ambiguity", True),
                 )
 
         return CompiledSystemOneModel(
@@ -1016,6 +1098,8 @@ class ReflexCompiler:
             dimension=self.dimension,
             projector=self.projector,
             backend=self.backend,
+            forgetting_factor=self.forgetting_factor,
+            recency_weighted=self.recency_weighted,
             metadata={
                 "regularization": self.regularization,
                 "teacher": teacher,

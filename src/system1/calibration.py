@@ -75,6 +75,9 @@ class ConformalPredictionSet:
     margin_threshold: float = 0.0
     margin_gate_active: bool = False
     raw_is_ambiguous: bool = False
+    odds_ratio: float = 1.0
+    relative_odds_ratio_threshold: float = 0.0
+    confidence_floor: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -90,6 +93,9 @@ class ConformalPredictionSet:
             "margin_threshold": self.margin_threshold,
             "margin_gate_active": self.margin_gate_active,
             "raw_is_ambiguous": self.raw_is_ambiguous,
+            "odds_ratio": self.odds_ratio,
+            "relative_odds_ratio_threshold": self.relative_odds_ratio_threshold,
+            "confidence_floor": self.confidence_floor,
         }
 
 
@@ -341,6 +347,9 @@ class ConformalPredictor:
         field_name: str,
         options: Sequence[str],
         margin_threshold: Optional[float] = None,
+        *,
+        relative_odds_ratio: Optional[float] = 1.5,
+        confidence_floor_tau0: Optional[float] = 0.15,
     ) -> None:
         self.field_name = field_name
         self.options = tuple(options)
@@ -351,12 +360,21 @@ class ConformalPredictor:
             float(margin_threshold) if margin_threshold is not None else None
         )
         self.calibrated_margin_threshold: float = 0.0
+        self.relative_odds_ratio: float = (
+            float(relative_odds_ratio) if relative_odds_ratio is not None else 1.5
+        )
+        self.confidence_floor_tau0: float = (
+            float(confidence_floor_tau0) if confidence_floor_tau0 is not None else 0.15
+        )
 
     def calibrate(
         self,
         calibrated_probs: np.ndarray,
         ground_truth_labels: Sequence[str],
         margin_threshold: Optional[float] = None,
+        *,
+        relative_odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
     ) -> None:
         """Fits Adaptive Prediction Set (APS) non-conformity scores and margin threshold on calibration samples."""
         probs = np.asarray(calibrated_probs, dtype=np.float64)
@@ -364,6 +382,11 @@ class ConformalPredictor:
             raise ValueError("Mismatched probabilities and labels length")
         if len(probs) == 0:
             raise ValueError("Cannot calibrate conformal predictor with 0 samples")
+
+        if relative_odds_ratio is not None:
+            self.relative_odds_ratio = float(relative_odds_ratio)
+        if confidence_floor_tau0 is not None:
+            self.confidence_floor_tau0 = float(confidence_floor_tau0)
 
         scores: List[float] = []
         error_margins: List[float] = []
@@ -416,11 +439,19 @@ class ConformalPredictor:
         *,
         alpha: float = 0.05,
         margin_threshold: Optional[float] = None,
+        relative_odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
     ) -> ConformalPredictionSet:
         """Constructs conformal prediction set C(x) satisfying P(Y in C(x)) >= 1 - alpha via APS.
 
-        Applies Margin-Based Conformal Gating: if the top prediction dominates the runner-up
-        by >= margin_threshold, false-positive ambiguity escalations are suppressed.
+        Applies Cardinality-Scaled Margin Gate & Relative Odds Ratio Dominance:
+        When raw_is_ambiguous (set size > 1), false-positive ambiguity escalation is suppressed
+        ONLY IF:
+          1. Absolute margin difference: margin >= eff_margin_thresh
+          2. Absolute confidence floor scaled by cardinality: top_prob >= (1/K) + eff_tau0
+          3. Relative odds ratio dominance: (top_prob / max(1e-6, runner_up_prob)) >= eff_gamma
+        This prevents pseudo-random hash dispersion at high cardinality (e.g. K=77) from
+        falsely suppressing conformal ambiguity escalation while maintaining precision.
         """
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"Significance level alpha must be in (0, 1), got {alpha}")
@@ -475,19 +506,40 @@ class ConformalPredictor:
                 p_val = float(probs[idx])
             p_values[opt] = p_val
 
-        # Margin-Based Conformal Gating
+        # Cardinality-Scaled Margin Gate & Relative Odds Ratio
         eff_margin_thresh = (
             float(margin_threshold)
             if margin_threshold is not None
             else (self.margin_threshold if self.margin_threshold is not None else self.calibrated_margin_threshold)
         )
+        eff_gamma = (
+            float(relative_odds_ratio)
+            if relative_odds_ratio is not None
+            else self.relative_odds_ratio
+        )
+        eff_tau0 = (
+            float(confidence_floor_tau0)
+            if confidence_floor_tau0 is not None
+            else self.confidence_floor_tau0
+        )
 
         raw_is_ambiguous = len(prediction_set) > 1
         is_empty = len(prediction_set) == 0
 
-        # When the top candidate dominates the runner-up by >= threshold, suppress ambiguity escalation
+        # Cardinality-scaled confidence floor: p_(1) >= 1/K + tau_0
+        k_card = max(1, len(self.options))
+        conf_floor = float((1.0 / float(k_card)) + eff_tau0)
+
+        # Relative odds ratio: p_(1) / max(1e-6, p_(2))
+        odds_ratio = float(top_prob / max(1e-6, runner_up_prob))
+
+        # Margin-Based Conformal Dominance Gating
         margin_gate_active = bool(
-            raw_is_ambiguous and (eff_margin_thresh > 0.0) and (margin >= eff_margin_thresh)
+            raw_is_ambiguous
+            and (eff_margin_thresh > 0.0)
+            and (margin >= eff_margin_thresh)
+            and (top_prob >= conf_floor)
+            and (odds_ratio >= eff_gamma)
         )
         is_ambiguous = raw_is_ambiguous and not margin_gate_active
 
@@ -504,6 +556,9 @@ class ConformalPredictor:
             margin_threshold=eff_margin_thresh,
             margin_gate_active=margin_gate_active,
             raw_is_ambiguous=raw_is_ambiguous,
+            odds_ratio=odds_ratio,
+            relative_odds_ratio_threshold=eff_gamma,
+            confidence_floor=conf_floor,
         )
 
 

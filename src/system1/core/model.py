@@ -46,10 +46,11 @@ class DeterministicSemanticProjector:
     cosine similarity, and orthogonal concepts yield near-zero similarity.
     """
 
-    def __init__(self, dimension: int = 384):
+    def __init__(self, dimension: int = 384, recency_weighted: bool = False):
         if dimension <= 0:
             raise ValueError(f"dimension must be positive, got {dimension}")
         self.dimension = dimension
+        self.recency_weighted = bool(recency_weighted)
 
     def _hash_to_sparse_vec(self, token: str, weight: float = 1.0) -> np.ndarray:
         """Map a token or n-gram deterministically to a sparse pseudo-random vector."""
@@ -63,8 +64,16 @@ class DeterministicSemanticProjector:
             vec[idx] += sign * weight
         return vec
 
-    def project(self, text: str) -> np.ndarray:
-        """Project input text into a deterministic dense vector."""
+    def project(self, text: str, recency_weighted: Optional[bool] = None) -> np.ndarray:
+        """Project input text into a deterministic dense vector.
+
+        Supports recency weighting for multi-turn agent traces / command histories.
+        When recency_weighted=True, trailing tokens receive full weight 1.0 and historical
+        context decays backwards from the end:
+            weight(i) = log(1 + len(w_i)) / sqrt(1.0 + 0.05 * (N - 1 - i))
+        When recency_weighted=False (default), standard forward position decay applies:
+            weight(i) = log(1 + len(w_i)) / sqrt(1.0 + 0.05 * i)
+        """
         if not isinstance(text, str):
             raise TypeError(f"Expected text to be a string, got {type(text).__name__}")
         if not text or not text.strip():
@@ -72,16 +81,20 @@ class DeterministicSemanticProjector:
             v[0] = 1.0
             return v
 
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
+
         clean_text = text.lower().strip()
         if len(clean_text) > 8192:
             clean_text = clean_text[:4096] + " " + clean_text[-4096:]
         words = re.findall(r"\b\w+\b", clean_text)
+        n_words = len(words)
 
         vec = np.zeros(self.dimension, dtype=np.float32)
 
         # 1. Whole word tokens with position decay and length weighting
         for pos, word in enumerate(words):
-            word_weight = math.log1p(len(word)) / math.sqrt(1.0 + pos * 0.05)
+            dist = (n_words - 1 - pos) if use_recency else pos
+            word_weight = math.log1p(len(word)) / math.sqrt(1.0 + dist * 0.05)
             vec += self._hash_to_sparse_vec(f"word:{word}", weight=word_weight * 2.0)
 
             # Subword 3-grams and 4-grams for morphological/synonym tolerance
@@ -118,7 +131,7 @@ class DeterministicSemanticProjector:
 
     encode = project
 
-    def project_batch(self, texts: Sequence[str]) -> np.ndarray:
+    def project_batch(self, texts: Sequence[str], recency_weighted: Optional[bool] = None) -> np.ndarray:
         """Batched projection of multiple text inputs."""
         if texts is None:
             raise TypeError("texts must be a sequence of strings, got None")
@@ -129,12 +142,12 @@ class DeterministicSemanticProjector:
         for idx, t in enumerate(texts):
             if not isinstance(t, str):
                 raise TypeError(f"All elements in texts must be strings, got {type(t).__name__} at index {idx}")
-        return np.stack([self.project(t) for t in texts], axis=0).astype(np.float32)
+        return np.stack([self.project(t, recency_weighted=recency_weighted) for t in texts], axis=0).astype(np.float32)
 
-    def similarity(self, text_a: str, text_b: str) -> float:
+    def similarity(self, text_a: str, text_b: str, recency_weighted: Optional[bool] = None) -> float:
         """Computes cosine similarity between two text strings."""
-        v_a = self.project(text_a)
-        v_b = self.project(text_b)
+        v_a = self.project(text_a, recency_weighted=recency_weighted)
+        v_b = self.project(text_b, recency_weighted=recency_weighted)
         return float(np.dot(v_a, v_b))
 
 
@@ -197,12 +210,14 @@ class DecisionFieldHead:
         backend: str = "numpy",
         projector: Optional[Any] = None,
         contrastive_whitening: bool = True,
+        forgetting_factor: float = 0.995,
     ) -> None:
         self.field_def = field_def
         self.dimension = dimension
         self.backend = backend
         self.projector = projector
         self.contrastive_whitening = contrastive_whitening
+        self.forgetting_factor = float(forgetting_factor)
         self.weights: np.ndarray
         self.biases: np.ndarray
         self.mx_weights: Any = None
@@ -407,16 +422,23 @@ class DecisionFieldHead:
         self,
         x_aug: np.ndarray,
         y_target: np.ndarray,
+        forgetting_factor: Optional[float] = None,
     ) -> float:
-        """Closed-form rank-1 Sherman-Morrison update for online distillation in ~50 microseconds.
+        r"""Closed-form rank-1 Sherman-Morrison update with exponential forgetting factor.
 
-        P_{t+1} = P_t - (P_t x_aug x_aug^T P_t) / (1 + x_aug^T P_t x_aug)
-        B_{t+1} = B_t + x_aug (y^*)^T
+        P_{t+1} = (1 / \lambda_f) [ P_t - (P_t x x^T P_t) / (\lambda_f + x^T P_t x) ]
+        B_{t+1} = \lambda_f B_t + x y^T
         W_{t+1} = (P_{t+1} B_{t+1})^T
         """
         t0 = time.perf_counter()
         if self.covariance_inv is None or self.cross_covariance is None:
             self.init_covariance(regularization=self.regularization)
+
+        lam_f = float(
+            forgetting_factor if forgetting_factor is not None else self.forgetting_factor
+        )
+        if not (0.0 < lam_f <= 1.0):
+            raise ValueError(f"Forgetting factor lambda_f must be in (0, 1.0], got {lam_f}")
 
         P = self.covariance_inv
         B = self.cross_covariance
@@ -441,17 +463,29 @@ class DecisionFieldHead:
 
         # v = P @ x_aug (shape: D+1,)
         v = P @ x
-        denom = float(1.0 + x @ v)
+        denom = float(lam_f + x @ v)
         if denom <= 1e-12 or not math.isfinite(denom):
             # Degenerate input or numerical singularity: preserve internal state
             return (time.perf_counter() - t0) * 1000.0
 
-        # Rank-1 update: P_{t+1} = P_t - (v v^T) / denom
-        P_next = P - (np.outer(v, v) / denom)
+        # Rank-1 update with exponential forgetting factor:
+        # P_{t+1} = (1 / lam_f) * [ P_t - (v v^T) / denom ]
+        P_next = (1.0 / lam_f) * (P - (np.outer(v, v) / denom))
         P_next = 0.5 * (P_next + P_next.T)
 
-        # Cross-covariance update: B_{t+1} = B_t + x y^T
-        B_next = B + np.outer(x, y)
+        # Cross-covariance update: B_{t+1} = lam_f * B_t + x y^T
+        B_next = (lam_f * B) + np.outer(x, y)
+
+        # Covariance bounding: prevent covariance windup along unexcited subspace directions
+        p_max = float(50.0 / max(1e-4, self.regularization))
+        max_d = float(np.max(np.diag(P_next)))
+        if max_d > p_max and max_d > 0:
+            scale = p_max / max_d
+            P_next *= scale
+            B_next *= (1.0 / scale)
+
+        # Enforce strict positive-definiteness on diagonal against floating-point drift
+        np.fill_diagonal(P_next, np.maximum(np.diag(P_next), 1e-6))
 
         # Weight update: W_aug = (P_{t+1} @ B_{t+1})^T
         W_aug = (P_next @ B_next).T
@@ -567,6 +601,8 @@ class SystemOneModel:
         backend: str = "auto",
         projector: Optional[Any] = None,
         contrastive_whitening: bool = True,
+        forgetting_factor: float = 0.995,
+        recency_weighted: bool = False,
     ) -> None:
         if isinstance(schema, type) and issubclass(schema, DecisionSchema):
             self.schema: DecisionSchema = schema()
@@ -578,12 +614,17 @@ class SystemOneModel:
         self.dimension = dimension
         self.backend = self._resolve_backend(backend)
         self.contrastive_whitening = contrastive_whitening
+        self.forgetting_factor = float(forgetting_factor)
+        self.recency_weighted = bool(recency_weighted)
         if projector is not None:
             self.projector = projector
             if hasattr(projector, "dimension"):
                 self.dimension = projector.dimension
         else:
-            self.projector = DeterministicSemanticProjector(dimension=self.dimension)
+            self.projector = DeterministicSemanticProjector(
+                dimension=self.dimension,
+                recency_weighted=self.recency_weighted,
+            )
 
         self.telemetry_projector = TelemetryProjector(embedding_dim=self.dimension)
 
@@ -594,6 +635,7 @@ class SystemOneModel:
                 backend=self.backend,
                 projector=self.projector,
                 contrastive_whitening=self.contrastive_whitening,
+                forgetting_factor=self.forgetting_factor,
             )
             for name, f in self.schema.fields.items()
         }
@@ -615,11 +657,23 @@ class SystemOneModel:
             return "mlx"
         return "numpy"
 
-    def encode(self, prompt: str, telemetry: Optional[Any] = None) -> np.ndarray:
+    def encode(
+        self,
+        prompt: str,
+        telemetry: Optional[Any] = None,
+        recency_weighted: Optional[bool] = None,
+    ) -> np.ndarray:
         """Encodes prompt into a normalized dense embedding vector, fusing continuous telemetry if present."""
         if not isinstance(prompt, str):
             raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
-        emb = self.projector.project(prompt)
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
+        if hasattr(self.projector, "project"):
+            try:
+                emb = self.projector.project(prompt, recency_weighted=use_recency)
+            except TypeError:
+                emb = self.projector.project(prompt)
+        else:
+            emb = self.projector(prompt)
         norm = np.linalg.norm(emb)
         if norm > 0:
             emb = emb / norm
@@ -627,7 +681,12 @@ class SystemOneModel:
             emb = self.telemetry_projector.fuse(emb, telemetry)
         return emb
 
-    def encode_batch(self, prompts: Sequence[str], telemetry: Optional[Sequence[Any]] = None) -> np.ndarray:
+    def encode_batch(
+        self,
+        prompts: Sequence[str],
+        telemetry: Optional[Sequence[Any]] = None,
+        recency_weighted: Optional[bool] = None,
+    ) -> np.ndarray:
         """Encodes a sequence of prompts (and optional telemetry) into normalized dense embedding vectors."""
         if prompts is None:
             raise TypeError("prompts must be a sequence of strings, got None")
@@ -638,12 +697,16 @@ class SystemOneModel:
         for idx, p in enumerate(prompts):
             if not isinstance(p, str):
                 raise TypeError(f"All elements in prompts must be strings, got {type(p).__name__} at index {idx}")
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
         if telemetry is not None and len(telemetry) == len(prompts):
-            return np.stack([self.encode(p, telemetry[i]) for i, p in enumerate(prompts)], axis=0).astype(np.float32)
+            return np.stack([self.encode(p, telemetry[i], recency_weighted=use_recency) for i, p in enumerate(prompts)], axis=0).astype(np.float32)
         if hasattr(self.projector, "project_batch"):
-            embs = self.projector.project_batch(prompts)
+            try:
+                embs = self.projector.project_batch(prompts, recency_weighted=use_recency)
+            except TypeError:
+                embs = self.projector.project_batch(prompts)
         else:
-            embs = np.stack([self.encode(p) for p in prompts], axis=0).astype(np.float32)
+            embs = np.stack([self.encode(p, recency_weighted=use_recency) for p in prompts], axis=0).astype(np.float32)
         norms = np.linalg.norm(embs, axis=1, keepdims=True)
         norms = np.where(norms < 1e-12, 1.0, norms)
         return (embs / norms).astype(np.float32)
@@ -653,13 +716,15 @@ class SystemOneModel:
         prompt: str,
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> ModelInferenceResult:
         """Executes a single non-autoregressive forward pass over the schema."""
         start_t = time.perf_counter()
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
         if embedding is not None:
             emb = np.asarray(embedding, dtype=np.float32).flatten()
         else:
-            emb = self.encode(prompt, telemetry=telemetry)
+            emb = self.encode(prompt, telemetry=telemetry, recency_weighted=use_recency)
 
         field_results: Dict[str, RawFieldEvaluation] = {}
         for name, head in self.heads.items():
@@ -678,9 +743,15 @@ class SystemOneModel:
         prompt: str,
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> ModelInferenceResult:
         """Alias for forward_single with optional continuous telemetry vector and precomputed embedding."""
-        return self.forward_single(prompt, telemetry=telemetry, embedding=embedding)
+        return self.forward_single(
+            prompt,
+            telemetry=telemetry,
+            embedding=embedding,
+            recency_weighted=recency_weighted,
+        )
 
     def learn_from_tier2(
         self,
@@ -688,6 +759,8 @@ class SystemOneModel:
         target: Union[Mapping[str, Any], Any],
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        forgetting_factor: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms)."""
         with self._lock:
@@ -695,7 +768,7 @@ class SystemOneModel:
             if embedding is not None:
                 emb = np.asarray(embedding, dtype=np.float32).flatten()
             else:
-                emb = self.encode(prompt, telemetry=telemetry)
+                emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
             x_aug = np.append(emb, 1.0).astype(np.float32)
 
             target_dict: Dict[str, Any]
@@ -712,7 +785,7 @@ class SystemOneModel:
                 if f_name in self.heads:
                     head = self.heads[f_name]
                     y_target = head.format_target_vector(target_val)
-                    dt = head.online_update(x_aug, y_target)
+                    dt = head.online_update(x_aug, y_target, forgetting_factor=forgetting_factor)
                     update_durations_ms.append(dt)
                     updated_fields.append(f_name)
 
@@ -734,6 +807,7 @@ class SystemOneModel:
         self,
         prompts: Sequence[str],
         telemetry: Optional[Sequence[Any]] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> List[ModelInferenceResult]:
         """Batched forward pass over multiple inputs with Metal GPU and NumPy BLAS optimization."""
         if prompts is None:
@@ -744,7 +818,8 @@ class SystemOneModel:
             return []
 
         start_t = time.perf_counter()
-        embs = self.encode_batch(prompts, telemetry=telemetry)
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
+        embs = self.encode_batch(prompts, telemetry=telemetry, recency_weighted=use_recency)
 
         head_logits: Dict[str, np.ndarray] = {}
         if self.backend == "mlx" and HAS_MLX and mx is not None:

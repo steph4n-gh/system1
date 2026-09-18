@@ -92,6 +92,11 @@ class DecisionResult:
     margins: Dict[str, float] = field(default_factory=dict)
     margin_thresholds: Dict[str, float] = field(default_factory=dict)
     margin_gate_active: Dict[str, bool] = field(default_factory=dict)
+    odds_ratios: Dict[str, float] = field(default_factory=dict)
+    relative_odds_ratio_thresholds: Dict[str, float] = field(default_factory=dict)
+    confidence_floors: Dict[str, float] = field(default_factory=dict)
+    ambiguous_fields: List[str] = field(default_factory=list)
+    escalated_fields: List[str] = field(default_factory=list)
     telemetry: Optional[Any] = None
     is_cache_hit: bool = False
     embedding: Optional[np.ndarray] = None
@@ -117,6 +122,11 @@ class DecisionResult:
             "margins": self.margins,
             "margin_thresholds": self.margin_thresholds,
             "margin_gate_active": self.margin_gate_active,
+            "odds_ratios": self.odds_ratios,
+            "relative_odds_ratio_thresholds": self.relative_odds_ratio_thresholds,
+            "confidence_floors": self.confidence_floors,
+            "ambiguous_fields": self.ambiguous_fields,
+            "escalated_fields": self.escalated_fields,
             "telemetry": self.telemetry,
             "is_cache_hit": self.is_cache_hit,
         }
@@ -157,6 +167,10 @@ class ReflexEngine:
         cache_capacity: int = 2048,
         enable_margin_gating: bool = True,
         margin_threshold: Optional[float] = None,
+        forgetting_factor: float = 0.995,
+        relative_odds_ratio: Optional[float] = 1.5,
+        confidence_floor_tau0: Optional[float] = 0.15,
+        recency_weighted: bool = False,
     ) -> None:
         if isinstance(schema, type) and issubclass(schema, DecisionSchema):
             self.schema: DecisionSchema = schema()
@@ -178,6 +192,14 @@ class ReflexEngine:
         )
         self.enable_margin_gating = bool(enable_margin_gating)
         self.margin_threshold = margin_threshold
+        self.forgetting_factor = float(forgetting_factor)
+        self.relative_odds_ratio = (
+            float(relative_odds_ratio) if relative_odds_ratio is not None else None
+        )
+        self.confidence_floor_tau0 = (
+            float(confidence_floor_tau0) if confidence_floor_tau0 is not None else None
+        )
+        self.recency_weighted = bool(recency_weighted)
 
         # Non-autoregressive decision model
         if model is not None:
@@ -191,6 +213,8 @@ class ReflexEngine:
                 backend=self.backend,
                 projector=self.projector,
                 contrastive_whitening=self.contrastive_whitening,
+                forgetting_factor=self.forgetting_factor,
+                recency_weighted=self.recency_weighted,
             )
             self.dimension = self.model.dimension
             self.backend = self.model.backend
@@ -205,15 +229,27 @@ class ReflexEngine:
         for name, f in self.schema.fields.items():
             if isinstance(f, ChoiceField):
                 self.conformal_predictors[name] = ConformalPredictor(
-                    name, f.options, margin_threshold=self.margin_threshold
+                    name,
+                    f.options,
+                    margin_threshold=self.margin_threshold,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
                 )
             elif isinstance(f, BooleanField):
                 self.conformal_predictors[name] = ConformalPredictor(
-                    name, ("False", "True"), margin_threshold=self.margin_threshold
+                    name,
+                    ("False", "True"),
+                    margin_threshold=self.margin_threshold,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
                 )
             elif isinstance(f, MultiChoiceField):
                 self.conformal_predictors[name] = ConformalPredictor(
-                    name, f.options, margin_threshold=self.margin_threshold
+                    name,
+                    f.options,
+                    margin_threshold=self.margin_threshold,
+                    relative_odds_ratio=self.relative_odds_ratio,
+                    confidence_floor_tau0=self.confidence_floor_tau0,
                 )
             elif isinstance(f, ScoreField):
                 self.regression_conformal_predictors[name] = RegressionConformalPredictor(
@@ -233,6 +269,36 @@ class ReflexEngine:
                     m = getattr(ch, "margin_threshold", None)
                     if m is not None and self.margin_threshold is None:
                         self.conformal_predictors[name].calibrated_margin_threshold = float(m)
+                    ror = getattr(ch, "relative_odds_ratio", None)
+                    if ror is not None and self.relative_odds_ratio is None:
+                        self.conformal_predictors[name].relative_odds_ratio = float(ror)
+                    cft = getattr(ch, "confidence_floor_tau0", None)
+                    if cft is not None and self.confidence_floor_tau0 is None:
+                        self.conformal_predictors[name].confidence_floor_tau0 = float(cft)
+
+    def encode(
+        self,
+        prompt: str,
+        telemetry: Optional[Any] = None,
+        recency_weighted: Optional[bool] = None,
+    ) -> np.ndarray:
+        """Encodes prompt into semantic embedding vector."""
+        use_recency = self.recency_weighted if recency_weighted is None else bool(recency_weighted)
+        if hasattr(self.model, "encode"):
+            try:
+                return self.model.encode(prompt, telemetry=telemetry, recency_weighted=use_recency)
+            except TypeError:
+                return self.model.encode(prompt, telemetry=telemetry)
+        if self.projector is not None:
+            try:
+                emb = self.projector.project(prompt, recency_weighted=use_recency)
+            except TypeError:
+                emb = self.projector.project(prompt)
+            norm = float(np.linalg.norm(emb))
+            return (emb / norm).astype(np.float32) if norm > 1e-12 else emb
+        v = np.zeros(self.dimension, dtype=np.float32)
+        v[0] = 1.0
+        return v
 
     def calibrate(
         self,
@@ -367,6 +433,9 @@ class ReflexEngine:
         record_receipt: bool = True,
         ledger: Optional[ActionLedger] = None,
         margin_threshold: Optional[float] = None,
+        relative_odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> DecisionResult:
         """Evaluates prompt against schema in a single non-autoregressive pass."""
         if not isinstance(prompt, str):
@@ -374,7 +443,6 @@ class ReflexEngine:
 
         t_start = time.perf_counter()
 
-        # ActionLedger integration
         active_ledger = ledger or self.ledger
         truth_ledger_head = ""
         ledger_record_id: Optional[str] = None
@@ -391,7 +459,7 @@ class ReflexEngine:
             cached = self.cache.get(prompt, telemetry=telemetry)
             if cached is None:
                 if query_emb is None:
-                    query_emb = self.model.encode(prompt, telemetry=telemetry)
+                    query_emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
                 cached = self.cache.get(prompt, embedding=query_emb, telemetry=telemetry)
 
             if cached is not None:
@@ -452,12 +520,29 @@ class ReflexEngine:
                         margins=entry.result.margins,
                         margin_thresholds=entry.result.margin_thresholds,
                         margin_gate_active=entry.result.margin_gate_active,
+                        odds_ratios=getattr(entry.result, "odds_ratios", {}),
+                        relative_odds_ratio_thresholds=getattr(entry.result, "relative_odds_ratio_thresholds", {}),
+                        confidence_floors=getattr(entry.result, "confidence_floors", {}),
+                        ambiguous_fields=getattr(entry.result, "ambiguous_fields", []),
+                        escalated_fields=[],
                         telemetry=telemetry,
                         is_cache_hit=True,
                         embedding=entry.embedding if entry.embedding is not None else query_emb,
                     )
 
-        raw_result = self.model.forward_single(prompt, telemetry=telemetry, embedding=query_emb)
+        try:
+            raw_result = self.model.forward_single(
+                prompt,
+                telemetry=telemetry,
+                embedding=query_emb,
+                recency_weighted=recency_weighted,
+            )
+        except TypeError:
+            raw_result = self.model.forward_single(
+                prompt,
+                telemetry=telemetry,
+                embedding=query_emb,
+            )
 
         values: Dict[str, Any] = {}
         confidences: Dict[str, float] = {}
@@ -466,9 +551,16 @@ class ReflexEngine:
         margins: Dict[str, float] = {}
         margin_thresholds: Dict[str, float] = {}
         margin_gate_active: Dict[str, bool] = {}
+        odds_ratios: Dict[str, float] = {}
+        relative_odds_ratio_thresholds: Dict[str, float] = {}
+        confidence_floors: Dict[str, float] = {}
+        ambiguous_fields: List[str] = []
+        escalated_fields: List[str] = []
         is_ambiguous = False
 
         eff_m_thresh = margin_threshold if margin_threshold is not None else self.margin_threshold
+        eff_gamma = relative_odds_ratio if relative_odds_ratio is not None else self.relative_odds_ratio
+        eff_tau0 = confidence_floor_tau0 if confidence_floor_tau0 is not None else self.confidence_floor_tau0
 
         for name, f_def in self.schema.fields.items():
             raw_eval = raw_result.fields[name]
@@ -492,6 +584,8 @@ class ReflexEngine:
                             calibrated_p,
                             alpha=alpha,
                             margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                            relative_odds_ratio=eff_gamma,
+                            confidence_floor_tau0=eff_tau0,
                         )
                     except TypeError:
                         cset = conformal.predict_set(calibrated_p, alpha=alpha)
@@ -499,8 +593,14 @@ class ReflexEngine:
                     margins[name] = getattr(cset, "margin", 1.0)
                     margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
                     margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
+                    odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
+                    relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
+                    confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
                     if cset.is_ambiguous:
-                        is_ambiguous = True
+                        ambiguous_fields.append(name)
+                        if getattr(f_def, "escalate_on_ambiguity", True):
+                            is_ambiguous = True
+                            escalated_fields.append(name)
                 else:
                     conformal_sets[name] = [selected_choice]
                     margins[name] = 1.0
@@ -522,6 +622,8 @@ class ReflexEngine:
                             calibrated_p,
                             alpha=alpha,
                             margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                            relative_odds_ratio=eff_gamma,
+                            confidence_floor_tau0=eff_tau0,
                         )
                     except TypeError:
                         cset = conformal.predict_set(calibrated_p, alpha=alpha)
@@ -529,8 +631,14 @@ class ReflexEngine:
                     margins[name] = getattr(cset, "margin", 1.0)
                     margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
                     margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
+                    odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
+                    relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
+                    confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
                     if cset.is_ambiguous:
-                        is_ambiguous = True
+                        ambiguous_fields.append(name)
+                        if getattr(f_def, "escalate_on_ambiguity", True):
+                            is_ambiguous = True
+                            escalated_fields.append(name)
                 else:
                     conformal_sets[name] = ["True" if val else "False"]
                     margins[name] = 1.0
@@ -637,6 +745,11 @@ class ReflexEngine:
             margins=margins,
             margin_thresholds=margin_thresholds,
             margin_gate_active=margin_gate_active,
+            odds_ratios=odds_ratios,
+            relative_odds_ratio_thresholds=relative_odds_ratio_thresholds,
+            confidence_floors=confidence_floors,
+            ambiguous_fields=ambiguous_fields,
+            escalated_fields=escalated_fields,
             telemetry=telemetry,
             is_cache_hit=False,
             embedding=raw_result.embedding,
@@ -663,6 +776,9 @@ class ReflexEngine:
         record_receipt: bool = True,
         ledger: Optional[ActionLedger] = None,
         margin_threshold: Optional[float] = None,
+        relative_odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> DecisionResult:
         """Evaluates prompt against schema with optional continuous numeric telemetry vector and precomputed embedding."""
         return self.decide(
@@ -673,6 +789,9 @@ class ReflexEngine:
             record_receipt=record_receipt,
             ledger=ledger,
             margin_threshold=margin_threshold,
+            relative_odds_ratio=relative_odds_ratio,
+            confidence_floor_tau0=confidence_floor_tau0,
+            recency_weighted=recency_weighted,
         )
 
     def learn_from_tier2(
@@ -681,26 +800,50 @@ class ReflexEngine:
         target: Union[Mapping[str, Any], Any],
         telemetry: Optional[Any] = None,
         embedding: Optional[np.ndarray] = None,
+        forgetting_factor: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> Dict[str, Any]:
         """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
 
         Adapts the decision hyperplanes of ReflexEngine for resolved Tier 2 edge cases,
         and certifies the resolution in the Tier 0 Semantic Reflex Cache.
         """
+        eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
         t0 = time.perf_counter()
         if embedding is not None:
             emb = np.asarray(embedding, dtype=np.float32).flatten()
         else:
-            emb = self.model.encode(prompt, telemetry=telemetry)
+            emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
         x_aug = np.append(emb, 1.0).astype(np.float32)
 
         if hasattr(self.model, "learn_from_tier2"):
-            res_dict = self.model.learn_from_tier2(
-                prompt, target, telemetry=telemetry, embedding=emb
-            )
+            try:
+                res_dict = self.model.learn_from_tier2(
+                    prompt,
+                    target,
+                    telemetry=telemetry,
+                    embedding=emb,
+                    forgetting_factor=eff_forgetting,
+                    recency_weighted=recency_weighted,
+                )
+            except TypeError:
+                try:
+                    res_dict = self.model.learn_from_tier2(
+                        prompt, target, telemetry=telemetry, embedding=emb, forgetting_factor=eff_forgetting
+                    )
+                except TypeError:
+                    res_dict = self.model.learn_from_tier2(
+                        prompt, target, telemetry=telemetry, embedding=emb
+                    )
             updated_fields = res_dict.get("updated_fields", [])
             rank1_ms = res_dict.get("update_latency_ms", 0.0)
-            res = self.decide(prompt, telemetry=telemetry, embedding=emb, record_receipt=False)
+            res = self.decide(
+                prompt,
+                telemetry=telemetry,
+                embedding=emb,
+                record_receipt=False,
+                recency_weighted=recency_weighted,
+            )
             if self.use_cache:
                 self.cache.put(prompt, res, embedding=emb, telemetry=telemetry, source="tier2")
             total_ms = (time.perf_counter() - t0) * 1000.0
@@ -726,7 +869,10 @@ class ReflexEngine:
                 head = heads_dict[f_name]
                 if hasattr(head, "format_target_vector") and hasattr(head, "online_update"):
                     y_target = head.format_target_vector(target_val)
-                    dt = head.online_update(x_aug, y_target)
+                    try:
+                        dt = head.online_update(x_aug, y_target, forgetting_factor=eff_forgetting)
+                    except TypeError:
+                        dt = head.online_update(x_aug, y_target)
                     update_durations_ms.append(dt)
                     updated_fields.append(f_name)
 
@@ -734,7 +880,13 @@ class ReflexEngine:
         total_ms = (time.perf_counter() - t0) * 1000.0
 
         # Execute decision pass to generate certified result and populate Tier 0 Cache
-        res = self.decide(prompt, telemetry=telemetry, embedding=emb, record_receipt=False)
+        res = self.decide(
+            prompt,
+            telemetry=telemetry,
+            embedding=emb,
+            record_receipt=False,
+            recency_weighted=recency_weighted,
+        )
         if self.use_cache:
             self.cache.put(prompt, res, embedding=emb, telemetry=telemetry, source="tier2")
 
@@ -756,15 +908,36 @@ class ReflexEngine:
         telemetry: Optional[Sequence[Any]] = None,
         alpha: float = 0.05,
         record_receipt: bool = False,
+        margin_threshold: Optional[float] = None,
+        relative_odds_ratio: Optional[float] = None,
+        confidence_floor_tau0: Optional[float] = None,
+        recency_weighted: Optional[bool] = None,
     ) -> List[DecisionResult]:
         """Processes multiple inputs in batch with optional continuous telemetry."""
         if telemetry is not None and len(telemetry) == len(prompts):
             return [
-                self.decide(p, telemetry=telemetry[i], alpha=alpha, record_receipt=record_receipt)
+                self.decide(
+                    p,
+                    telemetry=telemetry[i],
+                    alpha=alpha,
+                    record_receipt=record_receipt,
+                    margin_threshold=margin_threshold,
+                    relative_odds_ratio=relative_odds_ratio,
+                    confidence_floor_tau0=confidence_floor_tau0,
+                    recency_weighted=recency_weighted,
+                )
                 for i, p in enumerate(prompts)
             ]
         return [
-            self.decide(p, alpha=alpha, record_receipt=record_receipt)
+            self.decide(
+                p,
+                alpha=alpha,
+                record_receipt=record_receipt,
+                margin_threshold=margin_threshold,
+                relative_odds_ratio=relative_odds_ratio,
+                confidence_floor_tau0=confidence_floor_tau0,
+                recency_weighted=recency_weighted,
+            )
             for p in prompts
         ]
 
