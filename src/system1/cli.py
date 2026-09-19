@@ -242,7 +242,7 @@ def handle_bench_command(args: argparse.Namespace) -> int:
         return 0
 
     print("\n" + "=" * 70)
-    print("  REFLEX DECISION ENGINE — LATENCY BENCHMARK REPORT")
+    print("  SYSTEM1 DECISION ENGINE — LATENCY BENCHMARK REPORT")
     print("=" * 70)
     print(f"Evaluated Decisions:  {report.total_decisions} iterations")
     print(f"Schema:               {schema.schema_name}")
