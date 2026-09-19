@@ -148,7 +148,7 @@ def test_grpc_health_check_wire_call(live_grpc_server):
     assert isinstance(resp, system1_pb2.HealthCheckResponse)
     assert resp.status == system1_pb2.HealthCheckResponse.SERVING
     assert "auth_policy" in resp.loaded_schemas
-    assert resp.version in ("0.1.0", "0.1.2", "0.2.1", "1.0.0")
+    assert resp.version == "0.2.1"
 
 
 def test_protobuf_binary_serialization_round_trip():
@@ -281,7 +281,7 @@ def test_twin_namespace_observability_mirrors():
 def test_twin_namespace_proto_assets():
     """Verify that .proto files exist in both namespaces and are identical."""
     s1_path = Path(s1_proto_path())
-    r_path = Path(system1_proto_path())
+    r_path = Path(s1_path.parent.parent.parent / "reflex" / "proto" / "system1.proto")
 
     assert s1_path.is_file(), f"Proto file missing at {s1_path}"
     assert r_path.is_file(), f"Proto file missing at {r_path}"

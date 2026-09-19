@@ -73,6 +73,10 @@ def test_submodule_existence_and_importability():
         "cache",
         "telemetry",
         "embeddings",
+        "proto",
+        "grpc_server",
+        "integrations",
+        "compat",
     ]
     for submod in submodules:
         mod_reflex = importlib.import_module(f"reflex.{submod}")
