@@ -1,4 +1,4 @@
-# Teach the three primary skills
+# Teach a bounded skill
 
 Each example teaches one decision, saves a `.s1m` skill, reloads it, and checks
 new inputs. Everything runs locally using the existing NumPy compiler. There
@@ -10,6 +10,7 @@ From the repository root, with System 1 installed:
 python examples/support_triage.py
 python examples/model_routing.py
 python examples/agent_guard.py
+python examples/banking_support.py
 ```
 
 Each command prints every evaluation decision and writes its skill and full
@@ -27,15 +28,22 @@ system1 decide "Inspect the local source files" --model .system1/examples/agent_
 | Example | Decision | Teaching cases | Calibration cases | Evaluation cases |
 |---|---|---:|---:|---:|
 | [Support triage](../support_triage.py) | Billing, product support, account security, or sales | 192 | 112 | 104 |
-| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 156 | 96 | 96 |
+| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 156 | 156 | 96 |
 | [Agent guard](../agent_guard.py) | Inspect, change, or restricted operation | 334 | 125 | 132 |
+| [Banking support](../banking_support.py) | Card arrival, lost/stolen card, or withdrawal fees | 287 | 125 | 120 |
 
 The current files include six additional routing lessons and 28 operation lessons
 for close distinctions. They are marked `quality_round` and are locally authored.
 The [contrast comparison](../../benchmarks/quality/contrast_round.md) keeps their
 fresh evaluation separate from teaching and records the remaining errors. Support
-teaching and all three calibration sets are unchanged. No new APIs or settings are
-needed to use these lessons.
+teaching is unchanged. The later confidence round adds 60 routing calibration
+cases marked `2026-09-confidence`; the historical contrast comparison excludes
+those rows to preserve its original results. No new APIs or settings are needed.
+
+The banking example uses externally labeled public queries, with all selected
+official test rows kept separate. See its [source and license](BANKING77.md).
+The [1.0.1 evidence](../../docs/releases/1.0.1.md) reports current calibration and
+banking results, including the harder routing cohort that misses the 95% target.
 
 The agent example additionally demonstrates an explicit permission rule: a local
 configuration lookup is allowed, a private-key lookup is denied, and the signed
@@ -47,7 +55,7 @@ specific language models' capabilities or call any of those models.
 
 ## The teaching step
 
-All three use the same existing API:
+All four use the same existing API:
 
 ```python
 skill = SystemOneCompiler(Schema, dimension=2048, regularization=0.1).compile(
@@ -126,12 +134,13 @@ calls. See the [release evidence](../../docs/releases/1.0.md) for methods and li
 
 ## Data separation and development history
 
-These are explicit AI-authored demonstration cases, not customer traffic or an
-independent benchmark. Each file states its label policy and contains:
+The three original skills use explicit AI-authored demonstration cases, not customer
+traffic or an independent benchmark. Banking uses public queries with original
+intent annotations. Each file states its label policy and contains:
 
 - `teach`: examples used to fit the decision head.
 - `calibration`: separate examples, divided between temperature fitting and
-  conformal calibration (56/56 support, 48/48 routing, 63/62 operations).
+  conformal calibration (56/56 support, 78/78 routing, 63/62 operations and banking).
 - `evaluate`: examples used after saving and reloading, never fitted or calibrated.
 
 The loader rejects repeated normalized prompts and groups crossing these splits.
@@ -139,7 +148,7 @@ These checks catch accidental reuse; they do not prove semantic independence.
 Authored read/edit contrast pairs in the operation teaching data share object
 families, with family groups kept together. No examples are generated at runtime.
 
-Each evaluation retains the original 24 cases as `0.2.2 reference`. Before
+Each of the three original evaluations retains 24 cases as `0.2.2 reference`. Before
 expanding teaching, we froze 80 new support cases, 72 routing cases, and 72
 operation cases as `stable held-out`. Support and routing met the targets on the
 first evaluation. Operation acceptance informed further teaching improvements,

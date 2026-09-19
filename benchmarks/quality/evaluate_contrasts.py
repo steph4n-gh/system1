@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare 1.0 teaching with the small contrast-lesson additions, entirely offline."""
+"""Reproduce the frozen contrast round, before the later confidence-calibration round."""
 from __future__ import annotations
 
 import argparse
@@ -48,6 +48,12 @@ def evaluate(output_dir):
             current = load_cases(path)
             baseline = load_cases(path, include_quality_round=False)
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            if any(r.get('quality_round') == '2026-09-confidence' for r in current['calibration']):
+                # Reconstruct the published contrast snapshot; its recorded hashes
+                # and confirmation results must not change as newer lessons evolve.
+                current['calibration'] = [r for r in current['calibration']
+                                          if r.get('quality_round') != '2026-09-confidence']
+                digest = hashlib.sha256((json.dumps(current, indent=2, ensure_ascii=False) + '\n').encode()).hexdigest()
             # These lessons were selected before the confirmation cohort was tested.
             assert digest == cases['teaching_sha256'][name], 'Teaching changed after confirmation was frozen'
             field = next(iter(schema().fields))

@@ -1,4 +1,4 @@
-"""Shared measurement code for the three single-skill examples, not a runtime API."""
+"""Shared measurement code for the single-skill examples, not a runtime API."""
 
 import argparse
 import hashlib
@@ -150,5 +150,6 @@ def run_example(schema, name, argv=None):
         match = "correct" if row["prediction"] == row["label"] else f"expected {row['label']}"
         print(f"  {status:6} {row['prediction']:20} ({match}) {row['prompt']}")
     print(f"Skill: {path}\nFull report: {output / 'report.json'}")
-    print("Authored demonstration cases; accuracy and timings are not production guarantees.")
+    print(f"Data: {data['provenance']}")
+    print("Measured accuracy and timings are not production guarantees.")
     return report

@@ -27,8 +27,10 @@ none of the described operations, and a label grants no permission.
 python benchmarks/quality/evaluate_contrasts.py
 ```
 
-The runner reads the same JSON teaching files twice: once with all current
-lessons, and once excluding rows marked `quality_round` to reproduce 1.0 teaching.
+The runner reconstructs the frozen contrast snapshot from the JSON teaching files,
+excluding later `2026-09-confidence` calibration rows, and compares it with the
+original 1.0 data excluding all `quality_round` rows. The report's `current` variant
+means the contrast snapshot, before the later 1.0.1 confidence round.
 It uses 2048 features, regularization 0.1, no augmentation, unchanged calibration,
 alpha 0.05, strict mode, NumPy, and no decision cache. Both variants are saved and
 reloaded; answers, probabilities, uncertainty sets, and review flags must agree

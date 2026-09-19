@@ -1275,6 +1275,366 @@
       "group": "stable-c1a32c53c74d27d8",
       "prompt": "Prove that the supplied scheduler cannot starve a runnable task.",
       "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-calibration-00",
+      "prompt": "Extract the section numbers from the supplied correctness proof.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-01",
+      "prompt": "Reformat this supplied JSON example as TOML with the same keys and values.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-02",
+      "prompt": "Convert the provided TOML settings into a YAML mapping without altering values.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-03",
+      "prompt": "Alphabetize the theorem names in the attached index.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-04",
+      "prompt": "Count the occurrences of each identifier in this supplied source listing.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-05",
+      "prompt": "Replace tabs with four spaces in the supplied program text.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-06",
+      "prompt": "Turn the supplied XML elements into a JSON object using the stated one-to-one mapping.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-07",
+      "prompt": "Remove duplicate rows from this supplied inference timing table.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-08",
+      "prompt": "Copy the hexadecimal addresses out of these provided diagnostic messages.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-09",
+      "prompt": "Sort this attached resilience checklist by its existing priority number.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-10",
+      "prompt": "Extract the named assumptions from the provided argument using the marked headings.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-11",
+      "prompt": "Convert the supplied Markdown table into equivalent comma-separated rows.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-12",
+      "prompt": "Explain the conclusion of this supplied induction argument in everyday language.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-13",
+      "prompt": "Summarize the given lemma without verifying its validity.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-14",
+      "prompt": "Translate the provided correctness analysis into French while preserving its claims.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-15",
+      "prompt": "Describe what the attached formal derivation says for a nontechnical reader.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-16",
+      "prompt": "Rewrite the supplied proof introduction in a more conversational tone.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-17",
+      "prompt": "Produce a brief digest of this existing fault-tolerance report.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-18",
+      "prompt": "Draft a polite reply acknowledging receipt of the supplied mathematical analysis.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-19",
+      "prompt": "Explain the meaning of the compiler error quoted below to a novice programmer.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-20",
+      "prompt": "Summarize the reasoning already written in this research abstract.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-21",
+      "prompt": "Rephrase this supplied theorem statement without attempting a proof.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-22",
+      "prompt": "Write a short release announcement from these supplied optimization notes.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-23",
+      "prompt": "Translate this provided discussion of deadlocks into clear Spanish.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-24",
+      "prompt": "Independently check the supplied derivation and find any unsupported inference.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-25",
+      "prompt": "Verify whether the provided correctness proof covers every legal execution.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-26",
+      "prompt": "Determine whether the supplied argument actually establishes the theorem.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-27",
+      "prompt": "Construct a counterexample to the claim made in this algorithm analysis.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-28",
+      "prompt": "Prove that the scheduler cannot starve a runnable worker under these assumptions.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-29",
+      "prompt": "Derive the maximum memory bound for this recursive procedure.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-30",
+      "prompt": "Investigate why these concurrent writes violate the stated consistency rule.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-31",
+      "prompt": "Find the hidden assumption that makes this supposedly valid proof fail.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-32",
+      "prompt": "Establish whether the invariant is preserved across every state transition.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-33",
+      "prompt": "Design a recovery protocol under the conflicting latency and durability constraints.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-34",
+      "prompt": "Determine the root cause of this intermittent corruption using the supplied conflicting traces.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-35",
+      "prompt": "Assess whether this reasoning is logically sound and repair its missing steps.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-36",
+      "prompt": "Transcribe the given result table as JSON.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-37",
+      "prompt": "Extract all words in uppercase from the supplied derivation.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-38",
+      "prompt": "Indent the attached TOML sample consistently.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-39",
+      "prompt": "Convert this provided JSON array into a TOML array.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-40",
+      "prompt": "List the bullet headings from the quoted proof.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-41",
+      "prompt": "Copy each lemma identifier into a numbered list.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-42",
+      "prompt": "Change this supplied configuration from YAML syntax into TOML syntax.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-43",
+      "prompt": "Count the characters in the given theorem statement.",
+      "label": "local_small",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-44",
+      "prompt": "Describe this lemma briefly for a reader unfamiliar with it.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-45",
+      "prompt": "Condense the attached proposition into one plain sentence.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-46",
+      "prompt": "Tell me in simple terms what the provided demonstration claims.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-47",
+      "prompt": "Give a readable recap of this supplied mathematical result.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-48",
+      "prompt": "Outline the already-written argument without auditing it.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-49",
+      "prompt": "Restate this corollary for a general audience.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-50",
+      "prompt": "Put the supplied deduction into everyday words.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-51",
+      "prompt": "Give a concise overview of the reasoning in this excerpt.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-52",
+      "prompt": "Check this proof for omitted logical steps.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-53",
+      "prompt": "Validate the proposition by deriving it from its premises.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-54",
+      "prompt": "Audit the logical validity of the attached proof.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-55",
+      "prompt": "Verify this theorem by finding a complete deduction.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-56",
+      "prompt": "Show whether the stated corollary follows from these assumptions.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-57",
+      "prompt": "Establish the soundness of the given argument.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-58",
+      "prompt": "Decide whether this formal demonstration contains a logical error.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
+    },
+    {
+      "group": "confidence-calibration-59",
+      "prompt": "Test the mathematical claim by constructing a counterexample.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-confidence"
     }
   ],
   "evaluate": [

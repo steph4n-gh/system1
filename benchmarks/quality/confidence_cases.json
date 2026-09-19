@@ -1,0 +1,248 @@
+{
+  "provenance": "AI-authored routing confirmation cases written after selecting the 60 calibration additions and before evaluating this cohort. Distinct prompts and object groups, but shared authorship and policy vocabulary. These cases never enter teaching or calibration.",
+  "baseline_commit": "e3d682129aa30ff85c923fcd8c0c82628e037c3d",
+  "teaching_sha256": "1eed9f3f51ef07cb848a24ef6102f25987a82033aa198a15055053a14cbb39ca",
+  "banking_sha256": "d1bc96779a6ff92ad1bc21cad725b0f1b8bc08db81ee6d129485490165f4d06a",
+  "evaluate": [
+    {
+      "group": "confidence-confirmation-convergence-notes",
+      "prompt": "Extract the numbered equation references from the attached convergence notes.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-convergence-notes",
+      "prompt": "Summarize the conclusions already stated in these convergence notes for a beginner.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-convergence-notes",
+      "prompt": "Verify whether the convergence argument remains valid without the boundedness assumption.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-consistency-analysis",
+      "prompt": "Copy the table column names from this supplied consistency analysis.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-consistency-analysis",
+      "prompt": "Give a plain-language overview of the supplied consistency analysis without checking it.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-consistency-analysis",
+      "prompt": "Check whether the supplied consistency analysis misses any legal message ordering.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-service-settings",
+      "prompt": "Convert the provided service settings from JSON syntax to equivalent INI entries using this exact key mapping.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-service-settings",
+      "prompt": "Explain the supplied service settings to a new administrator in ordinary language.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-service-settings",
+      "prompt": "Determine which combination of these settings can cause a deadlock and justify the failure sequence.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-latency-study",
+      "prompt": "Sort the existing measurements in this latency study by their numeric duration.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-latency-study",
+      "prompt": "Rewrite the findings already recorded in this latency study as a short announcement.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-latency-study",
+      "prompt": "Derive a scheduling change that meets both tail-latency and fairness requirements.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-formal-certificate",
+      "prompt": "Count the occurrences of each supplied identifier in the formal certificate text.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-formal-certificate",
+      "prompt": "Restate the claim in this supplied formal certificate for a general audience.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-formal-certificate",
+      "prompt": "Independently establish whether every inference in the supplied formal certificate is valid.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-handover-report",
+      "prompt": "Extract the dates already written in this handover report.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-handover-report",
+      "prompt": "Draft a friendly handover email from the facts in the attached report.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-handover-report",
+      "prompt": "Design a failover handover that preserves acknowledged writes despite concurrent coordinator failures.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-mathematical-outline",
+      "prompt": "Copy the bullet labels from this supplied mathematical outline into a list.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-mathematical-outline",
+      "prompt": "Describe the point of the provided mathematical outline without extending the argument.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-mathematical-outline",
+      "prompt": "Supply the missing deduction that would make the mathematical outline a complete proof.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-serialization-sample",
+      "prompt": "Render this supplied TOML sample as an equivalent JSON object with unchanged values.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-serialization-sample",
+      "prompt": "Explain what the supplied serialization example represents in a short paragraph.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-serialization-sample",
+      "prompt": "Determine whether this serializer preserves object identity across cyclic graphs and prove the result.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-research-handout",
+      "prompt": "Remove duplicate reference identifiers from the supplied research handout.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-research-handout",
+      "prompt": "Translate this supplied research handout into Dutch without assessing its argument.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-research-handout",
+      "prompt": "Find a counterexample to the central assumption in this research handout.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-replica-log",
+      "prompt": "Extract the transaction IDs from the replica log supplied below.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-replica-log",
+      "prompt": "Summarize the event sequence already described in this replica log.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-replica-log",
+      "prompt": "Infer why the replicas diverged despite these apparently successful acknowledgements.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-theorem-commentary",
+      "prompt": "Put the supplied theorem commentary into a JSON string by escaping its quotation marks.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-theorem-commentary",
+      "prompt": "Give an accessible account of the theorem commentary that is already provided.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-theorem-commentary",
+      "prompt": "Assess the logical validity of the theorem and establish whether its conclusion follows.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-cost-table",
+      "prompt": "Convert the provided cost table from comma-separated to tab-separated values.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-cost-table",
+      "prompt": "Write a concise explanation of the supplied cost table for a customer.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-cost-table",
+      "prompt": "Find an allocation satisfying the coupled cost, redundancy, and processing-time constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-migration-record",
+      "prompt": "List the filenames explicitly named in this migration record.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-migration-record",
+      "prompt": "Prepare a short status update using the completed steps in this migration record.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-migration-record",
+      "prompt": "Design an online migration that preserves consistency while old and new writers operate together.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-induction-proof",
+      "prompt": "Number the paragraphs of the supplied induction proof without changing their words.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-induction-proof",
+      "prompt": "Provide a short digest of this induction proof, accepting the argument as supplied.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-induction-proof",
+      "prompt": "Check the induction proof for an invalid base case or an unsupported inductive step.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-meeting-transcript",
+      "prompt": "Extract the email addresses literally present in this supplied meeting transcript.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-meeting-transcript",
+      "prompt": "Summarize this meeting transcript into a brief note for attendees.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-meeting-transcript",
+      "prompt": "Resolve the competing design constraints in the transcript and justify a feasible architecture.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "confidence-confirmation-experiment-summary",
+      "prompt": "Sort the experiment names in the supplied summary alphabetically.",
+      "label": "local_small"
+    },
+    {
+      "group": "confidence-confirmation-experiment-summary",
+      "prompt": "Turn the supplied experiment summary into a readable paragraph for non-specialists.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "confidence-confirmation-experiment-summary",
+      "prompt": "Determine which of the competing causal explanations is consistent with all experimental observations.",
+      "label": "frontier_reasoning"
+    }
+  ]
+}

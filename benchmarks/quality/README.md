@@ -1,5 +1,23 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## Confidence and external banking data
+
+```bash
+python benchmarks/quality/evaluate_confidence.py
+```
+
+Checks calibration changes with unchanged routing weights, keeps prior development
+and fresh confirmation cohorts separate, and evaluates a fixed three-intent slice
+of BANKING77's official test split. Network calls are blocked and saved/reloaded
+behavior must match. See [1.0.1 methods, results, and limits](../../docs/releases/1.0.1.md)
+and the [complete report](results/confidence_round.json).
+
+The fresh routing cohort misses the 95% accepted-correctness target, explicitly
+recorded as `all_cohorts_meet_targets: false`. The command's regression checks
+allow that disclosed miss while requiring useful acceptance, no increase in
+accepted routing errors per cohort, and target attainment on original routing
+and banking. Exit success does not mean every cohort meets the quality target.
+
 ## Stable release evaluation
 
 ```bash
@@ -24,9 +42,9 @@ five-fold results below are retained as historical 0.2.2 comparisons.
 python benchmarks/quality/evaluate_contrasts.py
 ```
 
-Compares the original teaching with 34 additional lessons, checks saved/reloaded
+Reproduces the frozen comparison of original teaching with 34 additional lessons, checks saved/reloaded
 behavior offline, and reports diagnostic and fresh confirmation cases separately.
-See the [results and remaining errors](contrast_round.md).
+Later confidence-calibration additions are excluded. See the [results and remaining errors](contrast_round.md).
 
 ## First-use game decisions
 

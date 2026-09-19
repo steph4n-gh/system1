@@ -14,7 +14,7 @@ from system1.compiler import CompiledSystemOneModel
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.mark.parametrize("name", ["support_triage", "model_routing", "agent_guard"])
+@pytest.mark.parametrize("name", ["support_triage", "model_routing", "agent_guard", "banking_support"])
 def test_primary_teaching_demo_runs_offline_and_saves_its_evidence(tmp_path, monkeypatch, capsys, name):
     monkeypatch.syspath_prepend(str(ROOT / "examples"))
 
@@ -80,4 +80,17 @@ def test_contrast_lessons_improve_without_reusing_evaluation_or_contacting_a_tea
         assert workload["calibration_unchanged"]
         for variant in workload["variants"].values():
             assert variant["reload_identical"]
+    capsys.readouterr()
+
+
+def test_confidence_round_preserves_answers_and_reports_the_fresh_target_miss(tmp_path, capsys):
+    runner = runpy.run_path(str(ROOT / "benchmarks/quality/evaluate_confidence.py"))
+    report = runner["evaluate"](tmp_path)
+    assert report["regression_checks_passed"]
+    assert not report["all_cohorts_meet_targets"]
+    assert not report["routing"]["after"]["cohorts"]["fresh_confirmation"]["quality"]["meets_routing_targets"]
+    assert report["routing"]["weights_unchanged"]
+    assert report["routing"]["raw_predictions_unchanged"]
+    assert report["banking"]["reload_identical"]
+    assert report["network_calls"] == report["teacher_calls"] == 0
     capsys.readouterr()

@@ -1,0 +1,3873 @@
+{
+  "name": "banking_support",
+  "provenance": "Public BANKING77 online banking queries and original intent annotations from PolyAI. A fixed three-intent support-routing task selected before evaluation; not all 77 intents, and not live customer traffic collected by this project.",
+  "source": {
+    "repository": "https://github.com/PolyAI-LDN/task-specific-datasets",
+    "revision": "57ec275d8078af65b7731c2a98be812d844a6d6b",
+    "license": "CC-BY-4.0",
+    "authors": "Iñigo Casanueva, Tadas Temcinas, Daniela Gerz, Matthew Henderson, Ivan Vulić (2020)",
+    "paper": "https://arxiv.org/abs/2003.04807",
+    "sha256": {
+      "train.csv": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+      "test.csv": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d"
+    },
+    "overlapping_train_rows_removed": 0
+  },
+  "policy": {
+    "card_arrival": "Delivery and arrival of a bank card already ordered.",
+    "lost_or_stolen_card": "A missing, lost, or stolen card.",
+    "cash_withdrawal_charge": "Fees charged for withdrawing cash.",
+    "scope": "Only these three original BANKING77 intents. Other requests are outside this measured task."
+  },
+  "protocol": "All official test rows for the three preselected intents are evaluation only. Within official train, normalized word-token duplicates stay together; SHA-256 of the normalized prompt orders groups within each intent, and the first 30% of groups form calibration. No model or parameter selection uses official test outcomes.",
+  "teach": [
+    {
+      "group": "banking-5236e15dddb30cf6526b",
+      "prompt": "Can I track my card while it is in the process of delivery?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 3
+    },
+    {
+      "group": "banking-53283fabf618fa6a6bac",
+      "prompt": "If I ordered my new card last week, how much longer should I wait to receive it?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 84
+    },
+    {
+      "group": "banking-532b2b928cfce9e53488",
+      "prompt": "I haven't gotten my credit card in the mail.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 148
+    },
+    {
+      "group": "banking-552052245b8db911ab12",
+      "prompt": "I haven't gotten my new card.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 64
+    },
+    {
+      "group": "banking-5706c419c4e434c9e9ce",
+      "prompt": "What's the expected wait time to recieve my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 71
+    },
+    {
+      "group": "banking-58bc097ff6510e3c851c",
+      "prompt": "What's the card you sent me's tracking number?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 121
+    },
+    {
+      "group": "banking-5a17ec77f46fbaa91bb5",
+      "prompt": "Is there a way to track the delivery of my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 13
+    },
+    {
+      "group": "banking-5d587abee800cd398ea8",
+      "prompt": "Am I able to track a card that has already been sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 127
+    },
+    {
+      "group": "banking-5ff57c58a04ba0d888c6",
+      "prompt": "What's the tracking on the card you sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 37
+    },
+    {
+      "group": "banking-6229b0c183964470f0c9",
+      "prompt": "I am still waiting on my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 0
+    },
+    {
+      "group": "banking-62e8a226bcfa0aa06574",
+      "prompt": "My new card hasn't came in.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 33
+    },
+    {
+      "group": "banking-63ba8d2d8bae3296e8f1",
+      "prompt": "When will I get my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 28
+    },
+    {
+      "group": "banking-6669e9618a54089599fe",
+      "prompt": "My card still hasn't been delivered",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 39
+    },
+    {
+      "group": "banking-6693a49aa666aa454046",
+      "prompt": "Can I track the card that was just sent to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 83
+    },
+    {
+      "group": "banking-6705379c6a34e20c0645",
+      "prompt": "How long until my new card gets here?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 125
+    },
+    {
+      "group": "banking-6b5987fb476c8a479879",
+      "prompt": "How can I track my card's delivery?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 82
+    },
+    {
+      "group": "banking-6c47dba578394fa2bf7a",
+      "prompt": "maximum how many days get the courier?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 79
+    },
+    {
+      "group": "banking-6e029702d830e6eaaf8c",
+      "prompt": "Is there a way I can get my card expedited?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 51
+    },
+    {
+      "group": "banking-6e67d889a40596a35563",
+      "prompt": "What's go on, where is my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 85
+    },
+    {
+      "group": "banking-7281c198ad320e32b025",
+      "prompt": "Why hasn't my card arrived yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 123
+    },
+    {
+      "group": "banking-7286302771ff9421a3c9",
+      "prompt": "Why haven't I received my new card yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 104
+    },
+    {
+      "group": "banking-74ce123f4465e74c11f4",
+      "prompt": "Can I get an update on my replacement card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 35
+    },
+    {
+      "group": "banking-79d736e55cb16b659837",
+      "prompt": "How long should it take for my new card to arrive in them mail? What should I do if I never receive it?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 65
+    },
+    {
+      "group": "banking-7ae0c8cd799971966929",
+      "prompt": "I still haven't received my card after two weeks, is it lost?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 11
+    },
+    {
+      "group": "banking-7cd8ae29a80d9c07298e",
+      "prompt": "Was there a number to track that I could get?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 146
+    },
+    {
+      "group": "banking-7d49cba70d37ad6784ce",
+      "prompt": "Can you please tell me where my card is? I ordered it 2 weeks ago!",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 111
+    },
+    {
+      "group": "banking-7f8aec51df1c7a887cfa",
+      "prompt": "I ordered my card but it hasn't been delivered yet",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 42
+    },
+    {
+      "group": "banking-8176979cefa20e1c0d1d",
+      "prompt": "How can I check on the delivery status of my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 69
+    },
+    {
+      "group": "banking-834721ffde3603d4297e",
+      "prompt": "WHAT IS THE SOLUTION OF THIS PROBLEM",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 93
+    },
+    {
+      "group": "banking-88ecf6aac1742efb6439",
+      "prompt": "Is it possible to track the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 128
+    },
+    {
+      "group": "banking-8b94bc6dba8a83b4041c",
+      "prompt": "Why has my new card still not come?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 10
+    },
+    {
+      "group": "banking-8dabd34190442f8ff773",
+      "prompt": "How long will it take for me to get my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 75
+    },
+    {
+      "group": "banking-8e503557576647a780ac",
+      "prompt": "I have been waiting over a week. Is the card still coming?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 2
+    },
+    {
+      "group": "banking-907b70288ddf29edc34e",
+      "prompt": "My card isn't here yet.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 23
+    },
+    {
+      "group": "banking-962e08a46f0ef7501b61",
+      "prompt": "How do I know when my new card is going to arrive?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 17
+    },
+    {
+      "group": "banking-98e560071733bfc4ece1",
+      "prompt": "My card hasn't arrived.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 62
+    },
+    {
+      "group": "banking-996f1be63f8f658786af",
+      "prompt": "I was supposed to receive my new card by now, but it hasn't came in.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 143
+    },
+    {
+      "group": "banking-99ebc546ff5ed34d4908",
+      "prompt": "Is there a way I can check on the card on route to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 102
+    },
+    {
+      "group": "banking-9a437be4182247eede0a",
+      "prompt": "My card was supposed to arrive, but hasn't?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 73
+    },
+    {
+      "group": "banking-9c076e2164f94939f0f7",
+      "prompt": "Can you tell me if I can track the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 139
+    },
+    {
+      "group": "banking-9d140058700ae3ed1e80",
+      "prompt": "It's been a week since I ordered my card and it's not here. Please help?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 14
+    },
+    {
+      "group": "banking-9d43187c2578431bc289",
+      "prompt": "Do you have a tracking number for the card I was sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 115
+    },
+    {
+      "group": "banking-9e2087ea0f533d0b804e",
+      "prompt": "I ordered a card and would like to know how to track the delivery progress of it.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 74
+    },
+    {
+      "group": "banking-9f101d4703c58a5eba2c",
+      "prompt": "My card never arrived.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 152
+    },
+    {
+      "group": "banking-9fcda3b8a2403067682a",
+      "prompt": "When will my new card arrive?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 103
+    },
+    {
+      "group": "banking-a1c4aeb4f8b6a240594b",
+      "prompt": "Can I track when my card will be delivered?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 48
+    },
+    {
+      "group": "banking-a1cb24b62b70727fac74",
+      "prompt": "I have not received my card and it's been a week, what do I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 101
+    },
+    {
+      "group": "banking-a2715dc87bed35f8cc10",
+      "prompt": "Can you tell me why I haven't received my new card yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 88
+    },
+    {
+      "group": "banking-a33b2d6bd2e66829c24d",
+      "prompt": "I need to find out where the card is that I ordered.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 40
+    },
+    {
+      "group": "banking-a5d713453b5582d5b91c",
+      "prompt": "I was expecting my new card by now.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 135
+    },
+    {
+      "group": "banking-a6c002550fa06a0bc592",
+      "prompt": "When will I recieve my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 27
+    },
+    {
+      "group": "banking-aabef741b432714b9d51",
+      "prompt": "How do I track the card you sent to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 116
+    },
+    {
+      "group": "banking-ab98c910ce6126063317",
+      "prompt": "I ordered my card but it still isn't here",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 9
+    },
+    {
+      "group": "banking-ac4bd4503604e5f0f969",
+      "prompt": "how can i track card you sent",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 130
+    },
+    {
+      "group": "banking-ad8d24884ed10af5fb0b",
+      "prompt": "What can I do to track the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 52
+    },
+    {
+      "group": "banking-ae723d57f24bb7f3c0f8",
+      "prompt": "I'm still waiting for my new card.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 45
+    },
+    {
+      "group": "banking-ae89e8391aa3a01c39cb",
+      "prompt": "Is my new bank card on the way and is there a way to track it?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 117
+    },
+    {
+      "group": "banking-b16f469e2f5f31b3f8b3",
+      "prompt": "It's been two weeks and I haven't gotten my card, what do I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 134
+    },
+    {
+      "group": "banking-b556ca89759cc33110a8",
+      "prompt": "How can I periodically check the delivery of the card you sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 54
+    },
+    {
+      "group": "banking-b65ee571bd5c0f6067a8",
+      "prompt": "Can I track the card you sent to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 63
+    },
+    {
+      "group": "banking-b72bd7592c34f609a41d",
+      "prompt": "How long does it take for me to get my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 56
+    },
+    {
+      "group": "banking-b8ab3f614ef0d7e21be9",
+      "prompt": "I was issued a card about a week ago. why hasn't it come in yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 110
+    },
+    {
+      "group": "banking-baa6b23db4b5676ab217",
+      "prompt": "How long does it take for a new card to ship?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 36
+    },
+    {
+      "group": "banking-bbe0d872bc8bf8bfd9d5",
+      "prompt": "Is my card lost? I am still waiting for it to be delivered.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 46
+    },
+    {
+      "group": "banking-befacdb30e4f08248272",
+      "prompt": "What is the status of my card's delivery?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 21
+    },
+    {
+      "group": "banking-bf27c24a07c6102b62ef",
+      "prompt": "Is there a tracking number for the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 30
+    },
+    {
+      "group": "banking-c5c872cf6fbb4625641c",
+      "prompt": "Is there a reason my new card hasn't arrived yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 80
+    },
+    {
+      "group": "banking-c6d051b8c8ee023d9ec7",
+      "prompt": "I still haven't received my card in the mail",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 112
+    },
+    {
+      "group": "banking-c763ded2ecf4952051d1",
+      "prompt": "Can you tell me why I haven't received my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 44
+    },
+    {
+      "group": "banking-c7f6fcb1863b49817adb",
+      "prompt": "I was issued a new card a week ago but still haven't received it. How long will it be until I receive it?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 137
+    },
+    {
+      "group": "banking-c9423d7a74e9acf69845",
+      "prompt": "Does the package with my card have tracking?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 8
+    },
+    {
+      "group": "banking-cabfa6e983446fbf2275",
+      "prompt": "Is there a way to track the new card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 90
+    },
+    {
+      "group": "banking-cb1d0bd8c12a589333b5",
+      "prompt": "I haven't received my card and am worried it is lost.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 38
+    },
+    {
+      "group": "banking-cfd9a74ff5dabeb6abb2",
+      "prompt": "It's been a week since you sent my card and I still don't have it.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 25
+    },
+    {
+      "group": "banking-d0b7f70039565672d839",
+      "prompt": "My card hasn't shown up yet.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 76
+    },
+    {
+      "group": "banking-d1a489d09ea619555420",
+      "prompt": "How long will it be to get this new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 129
+    },
+    {
+      "group": "banking-d1fc7760c232c9b7688e",
+      "prompt": "I still haven't gotten my new card.  When will it get here?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 114
+    },
+    {
+      "group": "banking-d20b2f6b5f9b5d2206b3",
+      "prompt": "What do I need to do to get my new card which I have requested 2 weeks ago?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 92
+    },
+    {
+      "group": "banking-d3ece9887cec6f33dfe6",
+      "prompt": "i havent got my card",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 122
+    },
+    {
+      "group": "banking-d671aaaee87a9b18974c",
+      "prompt": "How can I see the progress of delivery of the card that was sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 72
+    },
+    {
+      "group": "banking-d6ef35f21f620b8b0ce4",
+      "prompt": "How can I check on the status of my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 49
+    },
+    {
+      "group": "banking-d760c20aebfabea67968",
+      "prompt": "I know I'm getting a new card but would like know when I can expect to receive it.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 58
+    },
+    {
+      "group": "banking-dc50d49dd452a26c3c51",
+      "prompt": "Am I able to track the card that was just sent to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 43
+    },
+    {
+      "group": "banking-dc8355f86bc513900ba6",
+      "prompt": "My card still hasn't arrived after two weeks, now what?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 150
+    },
+    {
+      "group": "banking-df9724d5912c26a955d5",
+      "prompt": "Shouldn't my new card be here by now?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 96
+    },
+    {
+      "group": "banking-dfe1433fd8278530a57a",
+      "prompt": "Should I keep waiting for my card to be delivered?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 47
+    },
+    {
+      "group": "banking-e32773647208bac1bbfb",
+      "prompt": "Is there a reason my new card hasn't arrived?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 97
+    },
+    {
+      "group": "banking-e346e03e7ca4e553cee8",
+      "prompt": "My new card isn't here and it was issued a week ago.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 142
+    },
+    {
+      "group": "banking-e652cbc4a0fde13673f7",
+      "prompt": "I don't have my card after 1 week. What are my next steps?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 57
+    },
+    {
+      "group": "banking-e772c1fad5b6d30f8d2c",
+      "prompt": "I don't have my card in 1 week.  Should I be worried?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 16
+    },
+    {
+      "group": "banking-e8464902f9ae345c37e5",
+      "prompt": "Does the card you sent have a tracking number?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 77
+    },
+    {
+      "group": "banking-e9f1b77a4860d5789698",
+      "prompt": "My card appears to have never arrived?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 151
+    },
+    {
+      "group": "banking-ef613dca748fc5dcd27e",
+      "prompt": "What do I do if I still have not received my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 7
+    },
+    {
+      "group": "banking-f1157226d73cb82f4b5f",
+      "prompt": "How do I know if I will get my card, or if it is lost?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 4
+    },
+    {
+      "group": "banking-f1c5793984b4c49acba8",
+      "prompt": "When will my new card be delivered?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 109
+    },
+    {
+      "group": "banking-f2067a8872c42061eb00",
+      "prompt": "Where is my new card if I haven't received it yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 86
+    },
+    {
+      "group": "banking-f2ca49c6e2f6d9106fae",
+      "prompt": "I am still waiting for my card.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 61
+    },
+    {
+      "group": "banking-f36723a2123f14407190",
+      "prompt": "My new card has not been delivered to my home yet. What is going on?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 18
+    },
+    {
+      "group": "banking-f575de761a85e6ad15d8",
+      "prompt": "Why haven't I gotten my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 145
+    },
+    {
+      "group": "banking-f58e82914ccf46cd93ea",
+      "prompt": "Will I have to wait much longer for my new card to arrive?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 66
+    },
+    {
+      "group": "banking-f5db5032304777af291a",
+      "prompt": "Can you track my card for me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 12
+    },
+    {
+      "group": "banking-f5f4f6a3e844fbab706b",
+      "prompt": "What's the reason my new card hasn't come?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 55
+    },
+    {
+      "group": "banking-f791053c8df14891d8ae",
+      "prompt": "where is my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 24
+    },
+    {
+      "group": "banking-f86225267ff8d63cb78d",
+      "prompt": "How much longer is it going to take to get my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 147
+    },
+    {
+      "group": "banking-fd2318cfbac2c3b90be8",
+      "prompt": "Could you send me and up date on the arrival of my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 118
+    },
+    {
+      "group": "banking-feb4c2ad5ef729cc5d69",
+      "prompt": "Have you sent out my card yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 22
+    },
+    {
+      "group": "banking-ffff4cd5e4ebf69766b4",
+      "prompt": "On the card that is coming, what's the tracking info?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 20
+    },
+    {
+      "group": "banking-628026fc62086a589a4f",
+      "prompt": "How do I deactivate a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1540
+    },
+    {
+      "group": "banking-63e536b0806080211ba4",
+      "prompt": "I think my card is stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1499
+    },
+    {
+      "group": "banking-640b893f2937445cb0d1",
+      "prompt": "Please help me.  My card is missing.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1532
+    },
+    {
+      "group": "banking-67b5cf1f5cb80de255b9",
+      "prompt": "Can you send me a new card and block my current one. I'm in Spain and my wallet was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1496
+    },
+    {
+      "group": "banking-69fafa525bd89feeb81d",
+      "prompt": "My card was stolen last night.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1555
+    },
+    {
+      "group": "banking-6b334f4a57011337ce3a",
+      "prompt": "I lost my card, what do I do now?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1533
+    },
+    {
+      "group": "banking-6e563c381828d0b03a33",
+      "prompt": "I think my card is lost.  What do I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1538
+    },
+    {
+      "group": "banking-70bad3f34804c5e4fe60",
+      "prompt": "Someone stole my wallet with my card in it while vacationing in Spain. I really need my card blocked and a new one ordered.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1520
+    },
+    {
+      "group": "banking-7246210b78cb95f10cb4",
+      "prompt": "I lost my card n need a new one.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1529
+    },
+    {
+      "group": "banking-73146d72cf6e9a49bf9e",
+      "prompt": "What are the steps I need to do if I have a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1536
+    },
+    {
+      "group": "banking-76252bbbccd5b7bc9cbd",
+      "prompt": "I lost my wallet and all my cards were in it.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1476
+    },
+    {
+      "group": "banking-77964348bcd0f19151bb",
+      "prompt": "help, lost my card",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1544
+    },
+    {
+      "group": "banking-7a73069807a72e112c59",
+      "prompt": "What do I do if my card was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1545
+    },
+    {
+      "group": "banking-7c3aa5b422b6b55491b5",
+      "prompt": "What's the phone number to freeze a card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1481
+    },
+    {
+      "group": "banking-80c30066f72e42a0e497",
+      "prompt": "Has there been any activity on my card today?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1475
+    },
+    {
+      "group": "banking-88a85eeb5b2370ede63f",
+      "prompt": "I lost my card. Can you help me?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1553
+    },
+    {
+      "group": "banking-8db71eee862ce62da558",
+      "prompt": "I can't find my card, it is lost.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1492
+    },
+    {
+      "group": "banking-8df75f31882d51871088",
+      "prompt": "I believe that my card has been stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1494
+    },
+    {
+      "group": "banking-90429c0939e572dd53ec",
+      "prompt": "Someone took my card without my permission.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1542
+    },
+    {
+      "group": "banking-91a2af1b04429b74b547",
+      "prompt": "I misplaced my card and I dont know where the last place is where I used the card last. Can you look at my account and tell me the last place I used the card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1531
+    },
+    {
+      "group": "banking-92f4eec3638b2d323e91",
+      "prompt": "What do I do if my card has been lost or stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1518
+    },
+    {
+      "group": "banking-9657857a696090aa180a",
+      "prompt": "My card has been lost! help!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1517
+    },
+    {
+      "group": "banking-986b068c8370e8d0b28a",
+      "prompt": "Help!  I fear that my card was stolen,",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1500
+    },
+    {
+      "group": "banking-987a55e29f051fb13100",
+      "prompt": "My bag got stolen with all my cards. Can you please cancel my card and send a new one?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1498
+    },
+    {
+      "group": "banking-9c6856188ddf05cfb66b",
+      "prompt": "I cant find my card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1537
+    },
+    {
+      "group": "banking-a4cdca56e0cebd396151",
+      "prompt": "I think that the card is stolen.  What are my next steps?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1509
+    },
+    {
+      "group": "banking-a88ce806af6269fac355",
+      "prompt": "I think someone stole my card because I can't find it.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1535
+    },
+    {
+      "group": "banking-a999af843ff55fa7f2ed",
+      "prompt": "I can't find my card! Can you help?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1482
+    },
+    {
+      "group": "banking-afe2f56254e9494a7fa3",
+      "prompt": "I thought I left my card at a restaurant, but they claim not to have it and now I don't have any idea where it is. I'm so worried that someone might be using it fraudulently. Is there any way to look into this?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1497
+    },
+    {
+      "group": "banking-b4ab1118fc66341c6eb7",
+      "prompt": "My card is lost!  Please help me!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1493
+    },
+    {
+      "group": "banking-b6d2b8c2d95fcd3999f6",
+      "prompt": "My card was stolen",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1487
+    },
+    {
+      "group": "banking-b7591ff453075d5e65d1",
+      "prompt": "I want to block my card or deactivate it or something, it's been stolen and I don't want it misused. I want this handled right away.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1541
+    },
+    {
+      "group": "banking-b7bf836a70b20aa3b53a",
+      "prompt": "What should I do if my card is stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1539
+    },
+    {
+      "group": "banking-b8f28aad968bce328949",
+      "prompt": "My card has been stolen. I reported it with the police, but I need to report it with you as well.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1489
+    },
+    {
+      "group": "banking-b9e3a3c66c3e8471dcda",
+      "prompt": "What can I do if I lost my card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1508
+    },
+    {
+      "group": "banking-c036f44bd0ed04557b0d",
+      "prompt": "I left my card at a restaurant and now its missing.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1551
+    },
+    {
+      "group": "banking-c0f42622484e5480e00e",
+      "prompt": "Could you please freeze my card immediately?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1506
+    },
+    {
+      "group": "banking-c144db74d54ef84b80cc",
+      "prompt": "My wallet was stolen, along with my cards. How do I put a freeze on my cards and order a new one?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1505
+    },
+    {
+      "group": "banking-c1bcc03dbee0c4e69b97",
+      "prompt": "Help! I lost my card!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1484
+    },
+    {
+      "group": "banking-c7ba6797c26cf6d6ebb7",
+      "prompt": "Report stolen card",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1513
+    },
+    {
+      "group": "banking-cba9ad32851a7c4e0fb1",
+      "prompt": "Help Me!  I lost my card.  What should I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1519
+    },
+    {
+      "group": "banking-cd5bbffcf63e9ee376fb",
+      "prompt": "I've lost my card. What can I do about that?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1550
+    },
+    {
+      "group": "banking-d24c92068db5bd919ca9",
+      "prompt": "I think my wallet fell out on the Tube today! I realized as soon as I got to my desk. How do I cut off the card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1546
+    },
+    {
+      "group": "banking-d25ad11aad2586e64dcb",
+      "prompt": "What do I do if my card is stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1510
+    },
+    {
+      "group": "banking-d3bcba344dbda25e0e03",
+      "prompt": "Help!  My card is stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1514
+    },
+    {
+      "group": "banking-da51b53386bd38409c0a",
+      "prompt": "Someone took my card without permission",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1528
+    },
+    {
+      "group": "banking-da7ade7403a6b3cfe616",
+      "prompt": "I can't find my card!  What should I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1524
+    },
+    {
+      "group": "banking-e25a290d5870bc9b9b43",
+      "prompt": "What is the first step that I should take after my card has been stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1525
+    },
+    {
+      "group": "banking-e4a96c7f14f7d214696a",
+      "prompt": "Someone stole my card!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1501
+    },
+    {
+      "group": "banking-eb91ea313f3485002851",
+      "prompt": "How do I replace a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1479
+    },
+    {
+      "group": "banking-f20f90806593c0af3fc7",
+      "prompt": "A fee shouldn't apply to me if my card was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1488
+    },
+    {
+      "group": "banking-f3e289e3aef74e45bcd9",
+      "prompt": "Can you help me retrieve my card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1552
+    },
+    {
+      "group": "banking-f51f352dbb7f338eb518",
+      "prompt": "Could you assist me in finding my lost card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1556
+    },
+    {
+      "group": "banking-f82ed7444ffbc761cd50",
+      "prompt": "What should I do?  My card has been stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1554
+    },
+    {
+      "group": "banking-fb59972f82c6a6e17e58",
+      "prompt": "My card has been lost / stolen",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1530
+    },
+    {
+      "group": "banking-fbbfafa78122f41cb13b",
+      "prompt": "Is there any way for you to find my card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1549
+    },
+    {
+      "group": "banking-fca3b8b8474b31f1183a",
+      "prompt": "Can you provide information for freezing my card immediately?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1480
+    },
+    {
+      "group": "banking-537855f662e8f02d9208",
+      "prompt": "Tell me why there is a charge on my cash withdrawl.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9401
+    },
+    {
+      "group": "banking-53abdff9a26261cab4df",
+      "prompt": "What's up with the extra fee I got?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9400
+    },
+    {
+      "group": "banking-53c7e1029dfa175443bb",
+      "prompt": "What was the extra charge for withdrawing money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9473
+    },
+    {
+      "group": "banking-54933698cd01651fe9f3",
+      "prompt": "I was recently charged for withdrawing money from my bank ATM. How can that be possible when I haven't been charged for using it before?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9470
+    },
+    {
+      "group": "banking-594f90f737846e5fb6d6",
+      "prompt": "I used an ATM and wanted to know why I was charged an extra fee.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9422
+    },
+    {
+      "group": "banking-5964f180321919f33205",
+      "prompt": "that fee should not be there, you charged my cash for an unnecessary thing.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9500
+    },
+    {
+      "group": "banking-5968ca9e12fc37a24ea7",
+      "prompt": "The past few times I've been to the ATM, I was charged a withdrawal fee. Have your policies changed regarding fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9493
+    },
+    {
+      "group": "banking-5ac8311098868ea5beb5",
+      "prompt": "Why did I get charged a fee, I thought it was free?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9481
+    },
+    {
+      "group": "banking-5cac53f4e5ebea15042f",
+      "prompt": "I received a fee for obtaining cash, is this correct?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9425
+    },
+    {
+      "group": "banking-5d6ad6aefcc37aba2163",
+      "prompt": "Why was i charged for making a withdrawal? After i went grocery shopping i withdrew some money from my account and now there is another charge.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9367
+    },
+    {
+      "group": "banking-5f2f0dff0abcd24f5d5a",
+      "prompt": "Why was there an extra charge with the withdrawal of my money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9501
+    },
+    {
+      "group": "banking-5fae3059c4b31d192395",
+      "prompt": "Do you charge for making a withdrawal? I took some money out of my account earlier and I was charged for this.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9368
+    },
+    {
+      "group": "banking-619237c5cfcbb735c0a7",
+      "prompt": "Anytime I've made an ATM withdrawal before it has always been free. I now say that I have been charged for my most recent ATM withdrawal. What's going on here?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9456
+    },
+    {
+      "group": "banking-61a4ebb8a60721bf2c64",
+      "prompt": "I used my card to get cash then I was charged a fee that I shouldn't have been charged.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9510
+    },
+    {
+      "group": "banking-63ebf3d270d3dc0b73b6",
+      "prompt": "Please help!  There was an extra fee when I got cash.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9411
+    },
+    {
+      "group": "banking-6c3b93c94f7469ecb8e6",
+      "prompt": "There was an extra fee when I was at the ATM.  Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9397
+    },
+    {
+      "group": "banking-7054dce8ebce4f187dc3",
+      "prompt": "Why do I see extra charges for withdrawing my money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9455
+    },
+    {
+      "group": "banking-73fd308f8bcac6e7dc90",
+      "prompt": "Why was there a fee on my cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9357
+    },
+    {
+      "group": "banking-7584dbeaa8367dd86815",
+      "prompt": "I got charged a fee that shouldn't be there from my cash",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9405
+    },
+    {
+      "group": "banking-7600a1d4acb09bfcc1f4",
+      "prompt": "Why are you charging me for ATM withdrawal? It has always been free before.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9395
+    },
+    {
+      "group": "banking-7727896dfd568264d775",
+      "prompt": "I don't understand why I was charged extra for withdrawing money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9353
+    },
+    {
+      "group": "banking-7790239fa09eda84d191",
+      "prompt": "Why was I charged a fee for withdrawing money off my card?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9507
+    },
+    {
+      "group": "banking-77f26dcd7ab9f4ca2b4f",
+      "prompt": "Is there always a charge when withdrawing money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9431
+    },
+    {
+      "group": "banking-79ac3835ca337ccd0166",
+      "prompt": "Why did you charge a fee when I withdrew from an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9502
+    },
+    {
+      "group": "banking-7b6cc70015ad010ed8af",
+      "prompt": "What's up with the fee for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9389
+    },
+    {
+      "group": "banking-7c14115e272adc0a080a",
+      "prompt": "I noticed a different charge while I was taking my money out.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9511
+    },
+    {
+      "group": "banking-7ca3be65e50f5ee28955",
+      "prompt": "Why have I been charged for pulling cash out of my own account?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9366
+    },
+    {
+      "group": "banking-7de8ce80b9072d7b9c25",
+      "prompt": "is there a charge on withdrawals?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9467
+    },
+    {
+      "group": "banking-7e97e68ac783f073e3b5",
+      "prompt": "Why is there a fee for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9514
+    },
+    {
+      "group": "banking-7f1884bc397b10a22efd",
+      "prompt": "extra fees on a cash withdrawal, not cool.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9460
+    },
+    {
+      "group": "banking-81b9ff1c42e0983d08ea",
+      "prompt": "Why did you charge me extra for withdrawing money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9430
+    },
+    {
+      "group": "banking-8308e01313e9af585292",
+      "prompt": "Make me understand why I am charged an extra fee when I use the ATM.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9433
+    },
+    {
+      "group": "banking-888646382fe7bc14927f",
+      "prompt": "When I withdrew my money, why was there an extra charge?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9380
+    },
+    {
+      "group": "banking-8b4530ddf8699dd0ec5e",
+      "prompt": "Why was I charged an extra fee when using an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9370
+    },
+    {
+      "group": "banking-8cc6c0133e3e230f63ef",
+      "prompt": "I have been charged a fee for getting cash",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9444
+    },
+    {
+      "group": "banking-8d9da3a67808f72136e4",
+      "prompt": "Why is it I am charged an extra fee when I use the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9399
+    },
+    {
+      "group": "banking-8dd296b5fdfcb6149c70",
+      "prompt": "Do you charge for cash withdrawals?  I want to get my hands on my own money and you appear to be charging me for the pleasure! Why is this, you'd never get this with my high street bank!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9438
+    },
+    {
+      "group": "banking-8ec370a6357dfd0d20af",
+      "prompt": "How come I got charged extra for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9453
+    },
+    {
+      "group": "banking-8fd40b78927b351b7fbb",
+      "prompt": "Can you tell me why I was charged to withdraw cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9413
+    },
+    {
+      "group": "banking-9140701aaeb124036470",
+      "prompt": "How much money can I withdraw before fees? I noticed a fee on my card but I didn't think I had hit the limit of how much I could withdraw in a month.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9384
+    },
+    {
+      "group": "banking-91e6ada2c932435e32e8",
+      "prompt": "Why was my account assessed a fee for an ATM transaction?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9364
+    },
+    {
+      "group": "banking-925baa302c66f14d1308",
+      "prompt": "Why are you charging for cash withdrawals? I went to withdraw some money earlier today after getting my groceries, and it appears there is a fee that wasn't there before",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9388
+    },
+    {
+      "group": "banking-92db654c064722cc78a1",
+      "prompt": "It seems I've suddenly been charged for my recent ATM cash withdrawal. What's up with that? I though withdrawals are free, you never charged me so far!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9464
+    },
+    {
+      "group": "banking-940db5cceffd1eab5c60",
+      "prompt": "I didn't realize that there were any fees for withdrawing money from my account--this has never happened to me before.  What exactly are the fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9436
+    },
+    {
+      "group": "banking-956f0e009ee71fdc0991",
+      "prompt": "I was charged for getting cash.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9349
+    },
+    {
+      "group": "banking-96005068a9d970efc178",
+      "prompt": "I thought it was free to make a withdrawal. So how much does it cost now?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9393
+    },
+    {
+      "group": "banking-97084dab512a913169d3",
+      "prompt": "Hello, I have a question concerning an unfamiliar fee that I notice on my account. I see that you guys charge for ATM withdrawal. Never notice this fee until now. Can you please explain?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9350
+    },
+    {
+      "group": "banking-9723d64d1c9f6b7693c7",
+      "prompt": "Today I noticed a charge for an ATM withdrawal on my account. Can you please fix this? It's supposed to be no charge.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9426
+    },
+    {
+      "group": "banking-976a2e28d0b573409e49",
+      "prompt": "I have a strange transaction on my account which appears to pertain to a cash withdrawal I made outside Nandos in Leeds.  What is that for?  Is it fraud?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9491
+    },
+    {
+      "group": "banking-9a944c386d4597f9b7a7",
+      "prompt": "I made a cash withdrawal and was charged a fee incorrectly can you help with this?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9446
+    },
+    {
+      "group": "banking-9b3d791e7dc8edf9753f",
+      "prompt": "i withdraw cash from the ATM and was charged a fee",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9480
+    },
+    {
+      "group": "banking-9bfbf06bbb2d686a1592",
+      "prompt": "Why did I get a fee for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9443
+    },
+    {
+      "group": "banking-9c72087d7ca474042881",
+      "prompt": "Why did using an ATM cause me to have an extra fee charged?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9362
+    },
+    {
+      "group": "banking-9ecedc87b903eb817533",
+      "prompt": "I was under the impression ATM cash withdrawals were free. Why was I suddenly charged for my most recent ATM transaction?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9435
+    },
+    {
+      "group": "banking-9ffed9791244f72d1d5a",
+      "prompt": "How come my cash withdrawal came with an unnecessary fee?!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9415
+    },
+    {
+      "group": "banking-a14faab6b8320bdcda16",
+      "prompt": "When I withdrew money from my account the other day, I noticed that there was a fee.  I didn't think that there were any fees for withdrawals...?  How much will I be charged?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9392
+    },
+    {
+      "group": "banking-a15f0c820655560a467b",
+      "prompt": "Is there a charge for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9489
+    },
+    {
+      "group": "banking-a2701ecbeae87d6cf166",
+      "prompt": "Why did they take more money out then I withdrawed?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9346
+    },
+    {
+      "group": "banking-a35e98aa405b7dee6c42",
+      "prompt": "what is this extra charge for a withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9488
+    },
+    {
+      "group": "banking-a512e3134b6d378a0f15",
+      "prompt": "Why am I being charged for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9454
+    },
+    {
+      "group": "banking-a8a05276b329892a98a8",
+      "prompt": "Will I be charged for a cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9417
+    },
+    {
+      "group": "banking-a8a462dec51ec408dcdd",
+      "prompt": "Why was I charged when taking out money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9466
+    },
+    {
+      "group": "banking-a90989a1723c6f1ba410",
+      "prompt": "Why am I being charged for withdrawing cash but haven't in the past?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9442
+    },
+    {
+      "group": "banking-a9d82535502cc12f15fe",
+      "prompt": "I should not have been charged a fee for cash withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9404
+    },
+    {
+      "group": "banking-ab515d8245e20803e1c6",
+      "prompt": "WHY IS THERE AN EXTRA FEE FOR USING THE ATM??!!!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9360
+    },
+    {
+      "group": "banking-ac52a10e0c4b28704e37",
+      "prompt": "I got this stupid fee after taking cash out, why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9408
+    },
+    {
+      "group": "banking-af3ac37b6aa53caac8b0",
+      "prompt": "Hello, I have noticed a problem on my recent withdrawal at the banks atm machine.  I made a transaction and upon receiving my funds from the machine, a fee was assessed to my withdrawal.  Are these types of transactions free of charge?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9490
+    },
+    {
+      "group": "banking-b063c05044743167f1e8",
+      "prompt": "Is there a charge for cash withdrawals? I always thought it was free.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9428
+    },
+    {
+      "group": "banking-b0c3bc4e2ba58d592820",
+      "prompt": "Why is there a fee for cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9475
+    },
+    {
+      "group": "banking-b10d975592327311120a",
+      "prompt": "I just took some cash out of a cash machine in Heathrow airport because I wanted to buy some new sunglasses for my holiday but you've added a fee to the withdrawal, what is this?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9419
+    },
+    {
+      "group": "banking-b14e96f16b6ac0e5b0e0",
+      "prompt": "I made a cash withdrawl and there is a charge.  What is this?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9340
+    },
+    {
+      "group": "banking-b195a1eeebb1c115de84",
+      "prompt": "Explain the extra ATM fees.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9418
+    },
+    {
+      "group": "banking-b574caa92007d8864163",
+      "prompt": "Why was I charged a fee for my withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9505
+    },
+    {
+      "group": "banking-b57ad90232768c244cb5",
+      "prompt": "Why was I charged for a cash withdrawal at the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9358
+    },
+    {
+      "group": "banking-b6dae576a64abdae81d7",
+      "prompt": "I just had a look at my statement. Why have I been changed for using the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9394
+    },
+    {
+      "group": "banking-b7480a20f36b69531f49",
+      "prompt": "Why am I charged a fee for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9351
+    },
+    {
+      "group": "banking-b80bc7d0ccb07ef76227",
+      "prompt": "I withdrew cash and was charged. Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9483
+    },
+    {
+      "group": "banking-b8d82505c88c0d07077a",
+      "prompt": "I am not supposed to be charged a cash withdrawal fee, but I was.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9372
+    },
+    {
+      "group": "banking-bb473c17fbe74c71af9a",
+      "prompt": "Why am I charged whenever I withdraw cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9497
+    },
+    {
+      "group": "banking-bc513ea86613e5bd2fc9",
+      "prompt": "A percentage fee was charged to my withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9416
+    },
+    {
+      "group": "banking-c3416b6ff5d447e74a70",
+      "prompt": "Why have I been charged a fee for cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9339
+    },
+    {
+      "group": "banking-c35829501259679c5aae",
+      "prompt": "Why am I charged a fee for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9421
+    },
+    {
+      "group": "banking-c43b04062f7b4e6e7397",
+      "prompt": "Is the fee with my cash withdrawal a mistake?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9361
+    },
+    {
+      "group": "banking-c6684ce0b345f23489db",
+      "prompt": "I got cash and was charged a fee that shouldn't be there!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9410
+    },
+    {
+      "group": "banking-c66f67842111d6984f1d",
+      "prompt": "I am inquiring about why there was an extra fee charged when I used an ATM.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9341
+    },
+    {
+      "group": "banking-c9920591812566ccedd6",
+      "prompt": "How come I got to pay to get my money from the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9386
+    },
+    {
+      "group": "banking-cd3e93c3052056b1a8fb",
+      "prompt": "Why did using an ATM cause me to be charged an additional fee?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9476
+    },
+    {
+      "group": "banking-d064aaab8bbbe26bebb5",
+      "prompt": "There was an extra fee on my account when I got cash.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9450
+    },
+    {
+      "group": "banking-d2af6a3139e27283233e",
+      "prompt": "There was an unexpected fee for my cash withdrawal!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9449
+    },
+    {
+      "group": "banking-d552f8231edb3f590b75",
+      "prompt": "I saw I was charged extra for money I withdrew?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9344
+    },
+    {
+      "group": "banking-d584d4628c5dbbb8c4bd",
+      "prompt": "When I got cash I was charged an extra fee!  Explain!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9371
+    },
+    {
+      "group": "banking-d60e2c87a6e06a824faa",
+      "prompt": "I used my card the other day to get cash from an ATM and was charged an extra fee. I don't understand why I am being charged a fee all of a sudden. I thought it was free to withdraw from an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9486
+    },
+    {
+      "group": "banking-d6655f967f38d6681cb1",
+      "prompt": "While getting cash, I was charged a fee.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9451
+    },
+    {
+      "group": "banking-d6b05a398cf92b80cde6",
+      "prompt": "to cash withdrawals charge me?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9478
+    },
+    {
+      "group": "banking-d9e54bdf4d1d0d1cfdca",
+      "prompt": "So, I was just charged for my recent ATM withdrawal and any withdrawal prior to this has been free. What is the issue here?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9369
+    },
+    {
+      "group": "banking-de6c2552ca030a4b1219",
+      "prompt": "I just saw a charge for a cash withdrawal that I made! ATM withdrawals have always been free in the past, so why is there suddenly a charge? What is it going to cost me now?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9387
+    },
+    {
+      "group": "banking-defd90d65f3e377d3481",
+      "prompt": "I have never been charged for making an ATM cash withdrawal before, but I am now being charged a fee to withdraw cash. What happened?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9482
+    },
+    {
+      "group": "banking-e23e3ae4a790ab920027",
+      "prompt": "Tell me why there is an extra charge when I used an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9429
+    },
+    {
+      "group": "banking-e47a1bed7ef6f2c68d5d",
+      "prompt": "Since when do you charge to make a withdrawal? I've always done it for free. So how much is it now?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9359
+    },
+    {
+      "group": "banking-e52b92e42094a5e9e2b3",
+      "prompt": "why has a cash withdrawal charged me?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9348
+    },
+    {
+      "group": "banking-e58df7ad256b94f67dfa",
+      "prompt": "Are there charges for cash withdrawals?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9468
+    },
+    {
+      "group": "banking-e73d12da77dc8a3ffb2e",
+      "prompt": "Is there a fee for a cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9423
+    },
+    {
+      "group": "banking-e847323ae28698632dcb",
+      "prompt": "I want to get some cash from the ATM using my card but I dont want to be charged any fees. Ive taken some money out before with no fees, but recently Ive been getting charged. Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9407
+    },
+    {
+      "group": "banking-eb37acbe2a6b9351f327",
+      "prompt": "Why did you charge me extra when I withdrew cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9498
+    },
+    {
+      "group": "banking-ec57c000473405456d0c",
+      "prompt": "I got a strange fee when I used the ATM.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9485
+    },
+    {
+      "group": "banking-ec5d430418a777a6f7a1",
+      "prompt": "Am I charged more for using the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9377
+    },
+    {
+      "group": "banking-ef27e0f869a3814501df",
+      "prompt": "When did you start charging to make a withdrawal? How much is it now? I always thought it was free.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9472
+    },
+    {
+      "group": "banking-f15a30c14559e67a191d",
+      "prompt": "Why was I charged an extra fee from the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9459
+    },
+    {
+      "group": "banking-f1687fbd6a470d9d4438",
+      "prompt": "Is there a cash withdrawal fee? Because I just got charged?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9382
+    },
+    {
+      "group": "banking-f174e168dfdca472dee5",
+      "prompt": "Since when were there charges for taking out cash from my account? It's always been free for me to do this before.  How much are the charges going to be?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9448
+    },
+    {
+      "group": "banking-f194e16ae576982ecda7",
+      "prompt": "I withdrew cash and was charged",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9347
+    },
+    {
+      "group": "banking-f4c1ca51693ee67d9ff4",
+      "prompt": "Why am I being charged to withdrawal money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9504
+    },
+    {
+      "group": "banking-f5e59108bd1134350c62",
+      "prompt": "How do I avoid a fee to use an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9375
+    },
+    {
+      "group": "banking-f65f6d6279c7cde663af",
+      "prompt": "Why am I being charged extra when I withdrew money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9342
+    },
+    {
+      "group": "banking-f68eac4eb82b821cf927",
+      "prompt": "Why did you charge me for taking out cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9492
+    },
+    {
+      "group": "banking-f6d7a600abb3df9d774c",
+      "prompt": "Why did I get charged for a withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9452
+    },
+    {
+      "group": "banking-f714d29240b23943ab5e",
+      "prompt": "I hate this ATM, it charged me an extra fee, Why did it charge?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9398
+    },
+    {
+      "group": "banking-f7271ffb17f23e174464",
+      "prompt": "I believe i was charged for making a withdrawal after i went grocery shopping. Are you guys charging for this now?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9465
+    },
+    {
+      "group": "banking-f7a95dc1d76dcfcd16fd",
+      "prompt": "Do I get charged for withdrawals?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9469
+    },
+    {
+      "group": "banking-f97d241ebb27c583ac05",
+      "prompt": "Why are you charging fees on cash withdrawals? I went to withdraw some money earlier today after buying groceries. There's a fee that wasn't there before.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9427
+    },
+    {
+      "group": "banking-f9d55c823ffa735b25cc",
+      "prompt": "Why is there now a charge for making cash withdrawals? I wanted some cash after I went to the grocery store, and there's a new fee!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9503
+    },
+    {
+      "group": "banking-fbbc8356cb1a13fe8e86",
+      "prompt": "What is your policy on withdrawing cash from an ATM? There is a fee on my account that wasn't there before I paid for my groceries.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9495
+    },
+    {
+      "group": "banking-fc7a35afb894ecbc6af2",
+      "prompt": "Hello, I wanted to get some more information about ATM Withdraw Fee. I have been withdrawing money for years and notice this charge on my account. I always thought it was no fee since its you guys ATM company that I am withdrawing. Can you please explain?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9383
+    }
+  ],
+  "calibration": [
+    {
+      "group": "banking-0129fcd35c103900a18e",
+      "prompt": "why have i not got my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 132
+    },
+    {
+      "group": "banking-07c40426c608d80dd755",
+      "prompt": "Is there a tracking number for the card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 99
+    },
+    {
+      "group": "banking-07cd0e569d8f81bb2e9a",
+      "prompt": "I'm still waiting for my card that was issued a week ago. What should I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 113
+    },
+    {
+      "group": "banking-084c04572ece9c2fa939",
+      "prompt": "What is the expected delivery date of my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 105
+    },
+    {
+      "group": "banking-098e381f5263215ec90c",
+      "prompt": "I would like to track a card sent to me, how do I do that?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 98
+    },
+    {
+      "group": "banking-0a01770b229394b1eaff",
+      "prompt": "I need to track the card sent to me.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 133
+    },
+    {
+      "group": "banking-0a1d4ef3c9aed42c3839",
+      "prompt": "Was there a way for me to get tracking for that?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 60
+    },
+    {
+      "group": "banking-0a3340864102a729274f",
+      "prompt": "how to track the card you sent",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 67
+    },
+    {
+      "group": "banking-0ae5f0d9bfa96c9f3dbd",
+      "prompt": "can you share card tracking number?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 100
+    },
+    {
+      "group": "banking-0ce90e224bf60eda65b9",
+      "prompt": "My card has not come in the mail yet.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 120
+    },
+    {
+      "group": "banking-0d773ccd8743adf0a04a",
+      "prompt": "What is the expected delivery date for my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 29
+    },
+    {
+      "group": "banking-12cd64943e6fdd534f5d",
+      "prompt": "Can I track the card that you sent me in the mail?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 138
+    },
+    {
+      "group": "banking-13930f1d1098d5297445",
+      "prompt": "I've been waiting a while for my card, is there a way to know when it will arrive?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 81
+    },
+    {
+      "group": "banking-13c4fe62103aeb815796",
+      "prompt": "I would like to track the card you sent to me.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 31
+    },
+    {
+      "group": "banking-14946763281ba98cf6da",
+      "prompt": "My card hasn't arrived in the mail yet. I ordered it two weeks ago. What can I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 78
+    },
+    {
+      "group": "banking-160159d966289ea2783e",
+      "prompt": "A card has been sent to me, how do I track it?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 50
+    },
+    {
+      "group": "banking-17c56d765f810a3be1ae",
+      "prompt": "My card hasn't arrived yet. What do I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 149
+    },
+    {
+      "group": "banking-21350ada7c51c38aef4d",
+      "prompt": "Can the card was sen to me be tracked?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 131
+    },
+    {
+      "group": "banking-23812cdb9c89f8de5bff",
+      "prompt": "What can I do if my card still hasn't arrived after 2 weeks?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 1
+    },
+    {
+      "group": "banking-24fc51ad6c79e2ff939d",
+      "prompt": "My card hasn't came in the mail yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 106
+    },
+    {
+      "group": "banking-2ba783c21c08c1d087ce",
+      "prompt": "When did you send me my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 5
+    },
+    {
+      "group": "banking-2ef0e0a5e2b4aaada105",
+      "prompt": "Is it possible for me to track the card is was mailed to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 108
+    },
+    {
+      "group": "banking-2f9796302f8abe7bce74",
+      "prompt": "How much longer until I get my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 126
+    },
+    {
+      "group": "banking-32a9ac6d9e945a2b1543",
+      "prompt": "Where is my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 87
+    },
+    {
+      "group": "banking-336c519a68cd5f846b13",
+      "prompt": "Where is the card I ordered 2 weeks ago?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 34
+    },
+    {
+      "group": "banking-348932cc563340b5c298",
+      "prompt": "why hasnt my card come in yet?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 53
+    },
+    {
+      "group": "banking-35ea1dcaf860766afe40",
+      "prompt": "Can you help me track my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 95
+    },
+    {
+      "group": "banking-360badc62369be62d92b",
+      "prompt": "My card has not been delivered yet and its been a week since I ordered it, please help",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 70
+    },
+    {
+      "group": "banking-375626a0a745e3f394dd",
+      "prompt": "2 weeks ago I ordered my new card.  It isn't here.  What should I do?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 68
+    },
+    {
+      "group": "banking-38fa2fb2465b1e8df888",
+      "prompt": "How long does it take to recieve my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 119
+    },
+    {
+      "group": "banking-39051983e2ad4c86157e",
+      "prompt": "Has my card been lost in delivery?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 32
+    },
+    {
+      "group": "banking-3acf5f4115dbf87a07ef",
+      "prompt": "Why have I not gotten my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 140
+    },
+    {
+      "group": "banking-3d34119e46097a8df158",
+      "prompt": "Will I be able to track the card that was sent to me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 15
+    },
+    {
+      "group": "banking-3e90b257e74bbb1e9ef2",
+      "prompt": "I want to find out what happened to my new card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 59
+    },
+    {
+      "group": "banking-3f2eddb4ad06bfe1d759",
+      "prompt": "I thought I would have received my new card at this point.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 124
+    },
+    {
+      "group": "banking-4296a2a162ec90ef2002",
+      "prompt": "Could I get tracking on the card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 94
+    },
+    {
+      "group": "banking-454c0df1ec24cf110222",
+      "prompt": "Where is the tracking number for the card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 136
+    },
+    {
+      "group": "banking-4562e4a2102581fee03a",
+      "prompt": "I'm still waiting on my new card to be delivered!",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 141
+    },
+    {
+      "group": "banking-45b961b52101933e5b4f",
+      "prompt": "Where is my credit card that was to be mailed?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 41
+    },
+    {
+      "group": "banking-4bc5b038351a847ffde5",
+      "prompt": "Do you have info about the card on delivery?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 6
+    },
+    {
+      "group": "banking-4c8239234d4ef4cc8517",
+      "prompt": "Is a tracking number available for the card that was just sent?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 144
+    },
+    {
+      "group": "banking-4d0b6a0c2e6648d2bd41",
+      "prompt": "It's been a week since you issued me a card and I still didn't get it. Should I keep waiting?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 19
+    },
+    {
+      "group": "banking-4e6e0b2604537b893bfc",
+      "prompt": "I haven't received my card.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 107
+    },
+    {
+      "group": "banking-4ee95684fde00575415f",
+      "prompt": "Is there a way to track my card?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 89
+    },
+    {
+      "group": "banking-50ba34148cea2c032b86",
+      "prompt": "How do I track the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 26
+    },
+    {
+      "group": "banking-50c6dcda3837ef1eecab",
+      "prompt": "I'm still waiting for my card.",
+      "label": "card_arrival",
+      "source_split": "train",
+      "source_row": 91
+    },
+    {
+      "group": "banking-0b07e0d38b5ef9ed5769",
+      "prompt": "How can I report that my card was stolen? I made a police report first.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1503
+    },
+    {
+      "group": "banking-0ebf480b0d40be391918",
+      "prompt": "Are you able to guide me to my card's location?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1502
+    },
+    {
+      "group": "banking-10931b7ae401d9a54d71",
+      "prompt": "My card has been stolen what do I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1491
+    },
+    {
+      "group": "banking-1d04fcece438ce1519f7",
+      "prompt": "I seem to have lost my card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1526
+    },
+    {
+      "group": "banking-1e16320985a5be4cc4a7",
+      "prompt": "I need to order a new card as my other one was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1534
+    },
+    {
+      "group": "banking-207d4c9c257fb5c77d24",
+      "prompt": "My card is missing!  Help!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1504
+    },
+    {
+      "group": "banking-20dbe72787c52d91a6a6",
+      "prompt": "Hi, I am on vacation in Spain and someone stole my bag with my phone and wallet with cards and everything. Can you block it ASAP and then I want to order a new one also ASAP.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1483
+    },
+    {
+      "group": "banking-25c7141169d06b03f202",
+      "prompt": "I'm panicking!  I lost my card!  Help!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1477
+    },
+    {
+      "group": "banking-28ac6eae0fc48b9f9d68",
+      "prompt": "Need help with a stolen card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1543
+    },
+    {
+      "group": "banking-2bf5c4633df4b7126d87",
+      "prompt": "My card was lost on vacation, I don't know where it is. Can you help me take care of this immediately?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1515
+    },
+    {
+      "group": "banking-2c172646bf3b7c86bf1a",
+      "prompt": "I have lost my card! What is my next step?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1516
+    },
+    {
+      "group": "banking-2de0fb1ce7f3b5597407",
+      "prompt": "My card is missing.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1547
+    },
+    {
+      "group": "banking-2f3436a0bb0eee598cf2",
+      "prompt": "i need help, i lost my card",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1507
+    },
+    {
+      "group": "banking-314d697090d6214d8fd5",
+      "prompt": "My card has gone missing.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1522
+    },
+    {
+      "group": "banking-36d052e8d7f706440f9b",
+      "prompt": "I need to report a stolen card",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1478
+    },
+    {
+      "group": "banking-3a2da82e1233feb02f99",
+      "prompt": "My card was stolen. What do I need to do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1527
+    },
+    {
+      "group": "banking-4364400afdecf8240a57",
+      "prompt": "How do I report my card as lost or stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1548
+    },
+    {
+      "group": "banking-4baf02f4c17fbdd04988",
+      "prompt": "I lost track of my card",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1512
+    },
+    {
+      "group": "banking-4ed9a74e3526751adb79",
+      "prompt": "My card is stolen.  Help!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1511
+    },
+    {
+      "group": "banking-50af12f96a4ac170972d",
+      "prompt": "Can you tell me the status of my new card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1490
+    },
+    {
+      "group": "banking-548ca75a179a9cd78b63",
+      "prompt": "What should I do if I think my card was stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1495
+    },
+    {
+      "group": "banking-5b919f43ee2c74538296",
+      "prompt": "Who can I speak with regarding a lost card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1521
+    },
+    {
+      "group": "banking-5c5aeb4e3a7612ef505a",
+      "prompt": "I think that my card has been stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1486
+    },
+    {
+      "group": "banking-6051e032011a8eb19c87",
+      "prompt": "My card is missing.  Please help.",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1485
+    },
+    {
+      "group": "banking-61f9ecb9d1721cab73a2",
+      "prompt": "oh my god I lost my card! what should I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "train",
+      "source_row": 1523
+    },
+    {
+      "group": "banking-001b4f1f2327ef7b5032",
+      "prompt": "I made a transaction at an atm and was charged extra for it.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9354
+    },
+    {
+      "group": "banking-058eace4fd2a0b1d6590",
+      "prompt": "I was charged a fee with my cash withdrawal that I shouldn't have been charged.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9474
+    },
+    {
+      "group": "banking-06530b42812198f5e6c9",
+      "prompt": "Why did I get charged for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9471
+    },
+    {
+      "group": "banking-06b334078ca2ff02ea4b",
+      "prompt": "Why am I being charged for ATM fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9365
+    },
+    {
+      "group": "banking-06f5af4e5e09a4f1d2e2",
+      "prompt": "Can you tell me why I was charged extra when I withdrew money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9463
+    },
+    {
+      "group": "banking-08ad014664feb2042ee0",
+      "prompt": "Why am I being charged to make cash withdrawals? I thought they were supposed to be free!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9403
+    },
+    {
+      "group": "banking-08adc27226a04adc7595",
+      "prompt": "Why is there a charge when I took out money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9338
+    },
+    {
+      "group": "banking-08c154583d644bc2a5a9",
+      "prompt": "This is not right, I was told I could take out cash at the ATM for free?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9385
+    },
+    {
+      "group": "banking-095c19110816d1906f0b",
+      "prompt": "Why was I charged a fee for withdrawing money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9512
+    },
+    {
+      "group": "banking-0a2d7119ff76a01f3807",
+      "prompt": "Why did I get a fee from the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9477
+    },
+    {
+      "group": "banking-0ab12edbd90041fbcc2f",
+      "prompt": "Why did I get charged when getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9445
+    },
+    {
+      "group": "banking-0b13177be15893285bae",
+      "prompt": "I withdrew money and got a fee, please explain",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9509
+    },
+    {
+      "group": "banking-0ca4ef49f5059a84180b",
+      "prompt": "I took out money and there is a fee.  Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9381
+    },
+    {
+      "group": "banking-0dd33462ca631bb5e466",
+      "prompt": "Why am I being charged for ATM cash withdrawals? The only reason I use it is because it's been free! Now you expect me to pay for them, and how much is that going to cost me?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9363
+    },
+    {
+      "group": "banking-0ff675cc3fb030d5ff7a",
+      "prompt": "Are there ATM fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9437
+    },
+    {
+      "group": "banking-111ab59f852bbec2d2cf",
+      "prompt": "Why was I charged for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9379
+    },
+    {
+      "group": "banking-122edd616e0d4ecb5f18",
+      "prompt": "Why was there a fee for my cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9352
+    },
+    {
+      "group": "banking-12ae703e41782b025b8b",
+      "prompt": "I was charged a fee when withdrawing cash, can you explain why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9424
+    },
+    {
+      "group": "banking-157c7771333f85232515",
+      "prompt": "Why was I charged a fee when I withdrew money?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9414
+    },
+    {
+      "group": "banking-162c28e5c9a6d2c6cc6a",
+      "prompt": "Is there a fee when I get cash from an ATM? Is there a limit I can take out? If there is a fee, what is it?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9439
+    },
+    {
+      "group": "banking-186a7dfa9add5bcbf74c",
+      "prompt": "I was charged extra when I made a cash withdraw, why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9355
+    },
+    {
+      "group": "banking-1984df5e5ad668289600",
+      "prompt": "I was told that withdrawing cash from the ATM is free, but I'm charged a fee. Why is this?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9390
+    },
+    {
+      "group": "banking-1f06b5c4430ff64a0837",
+      "prompt": "I got charged fees for withdrawing cash!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9447
+    },
+    {
+      "group": "banking-1f3c2b108c6bfda2ef93",
+      "prompt": "I was charged a fee for withdrawing cash.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9406
+    },
+    {
+      "group": "banking-201d79336bf5bb3d1eb3",
+      "prompt": "Why was I charged a fee on a cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9479
+    },
+    {
+      "group": "banking-2079e6dd86cc9931fa79",
+      "prompt": "Why have I all of a sudden been charged for my ATM withdrawal? I thought the withdrawals were free because this is the first time I've ever had this problem.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9412
+    },
+    {
+      "group": "banking-24f32d8f234a2771e29d",
+      "prompt": "I have a question about fee for cash withdraw.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9373
+    },
+    {
+      "group": "banking-26701b1de7977cabe89b",
+      "prompt": "Why are fees charged for cash withdrawals? I went to withdraw some money earlier today after shopping. There's a new fee that there.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9391
+    },
+    {
+      "group": "banking-273f3ff6dc649f74e8dd",
+      "prompt": "Is there an extra fee for using an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9345
+    },
+    {
+      "group": "banking-27d42ca9b22d94d6abc1",
+      "prompt": "What is the fee for a cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9508
+    },
+    {
+      "group": "banking-2c4df6aedc22fed60d56",
+      "prompt": "Could you explain your rules for ATM fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9374
+    },
+    {
+      "group": "banking-2cd9c47393222b2e740c",
+      "prompt": "Why was there a fee with my cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9487
+    },
+    {
+      "group": "banking-2ddd2ab1ef4a9f7bef7d",
+      "prompt": "What is the extra fee I was charged when using an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9496
+    },
+    {
+      "group": "banking-2ee8479bb20f761cba86",
+      "prompt": "I used an ATM and there was an extra charge.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9499
+    },
+    {
+      "group": "banking-2f594e4003ef2108bd37",
+      "prompt": "Why was I charged for cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9356
+    },
+    {
+      "group": "banking-30955c82d8ed226a09ee",
+      "prompt": "Why am I being charged certain fees? I noticed a fee after I withdrew some money for groceries earlier today.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9461
+    },
+    {
+      "group": "banking-326d9deed04293f5450c",
+      "prompt": "Why was there a fee when I pulled cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9440
+    },
+    {
+      "group": "banking-333ddfa0659437da2619",
+      "prompt": "I saw a fee on my receipt from withdrawing money while shopping earlier.  Is there supposed to be a fee for this type of transaction?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9458
+    },
+    {
+      "group": "banking-3414734fe0f80fe21c6b",
+      "prompt": "The bank charged me fees for withdrawing cash!",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9420
+    },
+    {
+      "group": "banking-368f27478469d7694b48",
+      "prompt": "Why am I charged to get money from the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9343
+    },
+    {
+      "group": "banking-3b4ed798872edc174a16",
+      "prompt": "I was charged for a cash withdrawal, why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9409
+    },
+    {
+      "group": "banking-3b8920df2264bd0bb63f",
+      "prompt": "Why was I charged for getting cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9402
+    },
+    {
+      "group": "banking-3ddb2d3540a6bc08ea42",
+      "prompt": "Why do I have a charge for an ATM withdrawal? I thought these were free?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9484
+    },
+    {
+      "group": "banking-40a17ed08550fcb4b4b7",
+      "prompt": "Do cash withdrawals cost anything?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9513
+    },
+    {
+      "group": "banking-411215aca4da406bdfb3",
+      "prompt": "I have a fee for cash withdrawal",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9432
+    },
+    {
+      "group": "banking-4192f2a576cb0c4eab1b",
+      "prompt": "How much can I withdrawal in one month without incurring fees?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9376
+    },
+    {
+      "group": "banking-4482d55466e52ba96108",
+      "prompt": "Is there a reason I was charged an extra fee for using the ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9396
+    },
+    {
+      "group": "banking-46d3f947a46b085bf629",
+      "prompt": "Have you started charging for cash withdrawals? I always thought it was free until I noticed this fee. How much is the fee?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9462
+    },
+    {
+      "group": "banking-4ecce0a79ece49e7c40b",
+      "prompt": "Why am i being charged for withdrawing cash funds?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9494
+    },
+    {
+      "group": "banking-4f5c7d8f26a5e0e8c8fd",
+      "prompt": "Why am I being charge a fee when using an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9434
+    },
+    {
+      "group": "banking-50dca1d8dd4f5afb3901",
+      "prompt": "What's going on? I was just recently charged for an ATM withdrawal. I've never seen this charge before and before it's always been free.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9457
+    },
+    {
+      "group": "banking-5116876055b203b38c57",
+      "prompt": "The ATM charged me an extra fee, Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9441
+    },
+    {
+      "group": "banking-5170aa9c76c1b10fd4b2",
+      "prompt": "Why did withdrawing money cost me extra?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9506
+    },
+    {
+      "group": "banking-51d7a003544a7a4a0511",
+      "prompt": "I just pulled money out of the ATM and was charged a fee, WHy?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "train",
+      "source_row": 9378
+    }
+  ],
+  "evaluate": [
+    {
+      "group": "banking-89000fd16dbb30e00f27",
+      "prompt": "How do I locate my card?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 0,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-9cae6f142e0b2fc7a163",
+      "prompt": "I still have not received my new card, I ordered over a week ago.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 1,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f930ff33d73cb6577351",
+      "prompt": "I ordered a card but it has not arrived. Help please!",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 2,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-dda71f44fb5f3d275db5",
+      "prompt": "Is there a way to know when my card will arrive?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 3,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a5ed030587286e13e225",
+      "prompt": "My card has not arrived yet.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 4,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ad2d19788d7d3abc6af1",
+      "prompt": "When will I get my card?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 5,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c5cecc3f86b0fd0d863c",
+      "prompt": "Do you know if there is a tracking number for the new card you sent me?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 6,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-42571d78b7078520b38c",
+      "prompt": "i have not received my card",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 7,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d865b4fddda8867c7378",
+      "prompt": "still waiting on that card",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 8,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-97090c7676c34a994af5",
+      "prompt": "Is it normal to have to wait over a week for my new card?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 9,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-187359c988115f73dae9",
+      "prompt": "How do I track my card?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 10,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-65abce4fe4f938757519",
+      "prompt": "How long does a card delivery take?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 11,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-46583724086617cab7bf",
+      "prompt": "I still don't have my card after 2 weeks.  What should I do?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 12,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c3be7814d5be60227017",
+      "prompt": "still waiting on my new card",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 13,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ad1f3c2c2127a1c4d47d",
+      "prompt": "I am still waiting for my card after 1 week.  Is this ok?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 14,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d98d56d25483cd536f74",
+      "prompt": "I have been waiting longer than expected for my bank card, could you provide information on when it will arrive?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 15,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6e407f31f49e7d7e94c4",
+      "prompt": "I've been waiting longer than expected for my card.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 16,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c07ae12f9dd266e34630",
+      "prompt": "Why hasn't my card been delivered?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 17,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-3e222e5e4bdc52cf2d6e",
+      "prompt": "Where is my new card? I have been waiting a week!",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 18,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ab10dbd75b8fd00d8896",
+      "prompt": "My card still hasn't arrived after 2 weeks. Is it lost?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 19,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-39ca3619547be3b44543",
+      "prompt": "I did not get my card yet, is it lost?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 20,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f91428f584cfcde7b7f3",
+      "prompt": "Status of the card I ordered.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 21,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-04d8eeca6690b0e19070",
+      "prompt": "How long should my new card take to arrive?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 22,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a03bc944143228b60b2f",
+      "prompt": "I ordered my card 2 weeks ago and it still isn't here? What do I do?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 23,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-3f7a7b388e80effca4fa",
+      "prompt": "My card has not arrived yet, where is it?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 24,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-bb78a097195a3f557472",
+      "prompt": "What is the tracking number for my card that was mailed?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 25,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-77e7802eeeee0a1e0270",
+      "prompt": "I think something went wrong with my card delivery as I haven't received it yet.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 26,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a57fed3822709f1c542c",
+      "prompt": "I'm still waiting for delivery of my new card, why is it taking so long?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 27,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-075df393ece1740eab88",
+      "prompt": "I ordered a card a week ago, and it's still not here. What do I do?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 28,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d1161f7f5909fbb80f2f",
+      "prompt": "i want to track the card you sent",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 29,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-bd722993d5af9c717048",
+      "prompt": "My card hasn't arrived yet.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 30,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-0820d81d68a037dd169f",
+      "prompt": "I was expecting my new card and am wondering why I haven't received it yet?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 31,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-43746aecbf753830e640",
+      "prompt": "How do I know when my card will arrive?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 32,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-2f12c3d425664504ff36",
+      "prompt": "I'm still waiting on my card to be delivered.",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 33,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-9213ce497918c9c65bd0",
+      "prompt": "Does the card you sent have a way to track to it?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 34,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-cf354e0d8b7a9cb8d84a",
+      "prompt": "I ordered a card and I still haven't received it. It's been two weeks. What can I do?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 35,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-71a09ce64bf82933d895",
+      "prompt": "I'm starting to think my card is lost because it still hasn't arrived, can you help?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 36,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-7398a0718fb3b7d4b9f1",
+      "prompt": "Is there tracking info available?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 37,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c68e4662356d61c71292",
+      "prompt": "What is the tracking number for the card you sent?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 38,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6bb91be489ad43a04db5",
+      "prompt": "Where is the tracking number for the card you sent me?",
+      "label": "card_arrival",
+      "source_split": "test",
+      "source_row": 39,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-e5448b026a18144c9085",
+      "prompt": "My entire gym bag, including my wallet, was stolen out of my locker today. Everything in my wallet is gone - how do I block the card to make it can't be used?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 440,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-091936888445e7647ddf",
+      "prompt": "I can't find my card and think it may have been stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 441,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-2b31254868fa469049f1",
+      "prompt": "Someone stole my card. I need to report it stolen. I made a police report already, but how do I report it with you?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 442,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f78bbca2b642e5dbe0f4",
+      "prompt": "I cant find my card, it's gone.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 443,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-68297e4e217bac08ca92",
+      "prompt": "My card is lost! What can I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 444,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-3974feaea2557a54d572",
+      "prompt": "I lost my card",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 445,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ae1f91b1afee1a1d577c",
+      "prompt": "Oh no!  I lost my card!  Help!",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 446,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d1cea3985e3a6ac55b4f",
+      "prompt": "I believe my card has been stolen, what can I do about this situation? It's urgent.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 447,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f93bd889b9ad5feb0302",
+      "prompt": "Help! Someone stole my card!",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 448,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-35401305ac943240791c",
+      "prompt": "Help.  I have a stolen card!",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 449,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-7978e389a17a40367d95",
+      "prompt": "card is lost, please help",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 450,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-0bdc5fd39ff5fba40866",
+      "prompt": "How do I report my card stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 451,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d6a497db8c6be5abaffb",
+      "prompt": "My card is gone I think it was stolen",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 452,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-7fe715b3d80e342fb1cb",
+      "prompt": "Is a copy of the police report necessary for completing the report process?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 453,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d2d3b03f341229fb24ca",
+      "prompt": "I lost my wallet today with all my credit cards. Will you please block the card and send a replacement?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 454,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-50b77aac62366956e02d",
+      "prompt": "How do I deal with a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 455,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-abdf7dd9315d019f1061",
+      "prompt": "Can you freeze my card it was stolen",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 456,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-94ac648ac4f8e827212e",
+      "prompt": "Help!  I can't find my card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 457,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ab0d9a00cc70a3d7e30d",
+      "prompt": "What should I do if I lost my card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 458,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-56c755ccce85110be1ef",
+      "prompt": "I need help with a lost card",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 459,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f1ae8a8829a7e30b600b",
+      "prompt": "I think my card was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 460,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-b6fe11e054e8008590c9",
+      "prompt": "Someone stole my wallet earlier today, not sure exactly when, probably on Piccadilly circus. Can you check if there were any attempts to use the card and obviously block it?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 461,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-eaa2601aa3a19e02f582",
+      "prompt": "I think I lost my card . I dont know how long it has been missing. Can you see if maybe someone else has been using it?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 462,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-72ba1c7db2a40669d37e",
+      "prompt": "How can I freeze a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 463,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-5af0940c76239ab486cc",
+      "prompt": "What should I do if my card is missing?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 464,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-940493f0656a80f76fa3",
+      "prompt": "My bags were stolen. I need a new card but need to cancel the stolen one.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 465,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d1398d74caa2140e0a19",
+      "prompt": "Somehow I am missing my card.  What should I do?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 466,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-67b44bd8f82682d65361",
+      "prompt": "My card was taken from me",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 467,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-876eaaeb849397cf00b7",
+      "prompt": "My card got lost.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 468,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-89244232dc64158c72db",
+      "prompt": "Some idiot stole my card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 469,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6b732852bc3a609514c1",
+      "prompt": "How do I report my card lost or stolen?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 470,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c5e6b84f3ecff42c55b0",
+      "prompt": "My card is lost! What do I do now?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 471,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-add27fd1690319443ac7",
+      "prompt": "I'm in Spain and my stuff has been stolen. My card was with it and I need a new one shipped and the old one frozen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 472,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-62859d12f7f5029cec10",
+      "prompt": "I believe my credit card was stolen.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 473,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-9d3cb0f2e6a9d8270a37",
+      "prompt": "How do I report a stolen card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 474,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-76f38756ee4caf41965e",
+      "prompt": "Somebody has stolen my card, I need help please.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 475,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-362317c14d0bf156e220",
+      "prompt": "I cannot find my credit card.",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 476,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a9736935ef979b3316e7",
+      "prompt": "Are you able to locate my card?",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 477,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-35424154048cd2b2be96",
+      "prompt": "My card got stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 478,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-046156e9b2357066cb99",
+      "prompt": "Help me please!  My card was stolen!",
+      "label": "lost_or_stolen_card",
+      "source_split": "test",
+      "source_row": 479,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6f89e9e157ac4fbe2e29",
+      "prompt": "I see some fees for cash withdraw.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2880,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-5d9d329117d086b3a4a5",
+      "prompt": "How come I was charged extra when I withdrew cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2881,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-36a3a3a1f83340c52fd1",
+      "prompt": "Why am I being charged when I withdraw cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2882,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-03eb2338fd09c67a9b46",
+      "prompt": "What is this charge on my account for a cash withdrawl?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2883,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-df7a7a91335a8131b8cd",
+      "prompt": "Why are fees charged on cash withdrawals? I went to withdraw some money earlier today after shopping. There's a fee that wasn't there before.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2884,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-caf6b8e79e54d67847fb",
+      "prompt": "How come you charge for cash withdrawals? I withdrew cash after buying groceries today, and there seems to be a new fee",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2885,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-fc9b0073d740ac7ee316",
+      "prompt": "It looks like I was charged a withdrawal fee for going to my ATM. Why is that because I haven't been charged previously for doing so?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2886,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-b2d2e881652a5d9f681b",
+      "prompt": "Do ATM cash withdrawals carry a charge now? They've been free in the past, but all of a sudden I have to pay to make ATM withdrawals?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2887,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d8aa68b1ae03819643c9",
+      "prompt": "Why is there an extra charge for money that was withdrawn?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2888,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a3e8a017000146d30f6d",
+      "prompt": "Why was I charged a fee for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2889,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-5c917726d25f5cd5c923",
+      "prompt": "Why did I get a fee?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2890,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-5d3651f12e700fb79fa5",
+      "prompt": "Why did my cash get charged a fee that should not be there.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2891,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-92f8b47c0b8b1d51dff4",
+      "prompt": "Why did I have to pay a fee when I got cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2892,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-f3a7fe7ef7aab27c6f72",
+      "prompt": "Hi, I am calling about a recent transaction that has happened on my account.  I recently went to the ATM, and tried to make a withdrawal on my account.  I just happened to check my transaction slip and noticed a fee for my withdrawal.  How can I resolve this, I didn't know fees were charged for this type of action.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2893,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-2fa0df192cb068962015",
+      "prompt": "A fee was charged for my recent withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2894,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-b7a33529672ce43109c5",
+      "prompt": "I got a fee for an ATM withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2895,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-0ec31a454dba047b5340",
+      "prompt": "What is the reason for this fee I got after a simple cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2896,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d3dba78e3bb9589b5c72",
+      "prompt": "Did you start charging for cash withdrawals? I thought it was free so far but noticed suddendly there is a fee. How much do I need to pay?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2897,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-94f7f499bc74fd857fc7",
+      "prompt": "Is there a fee for withdrawing cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2898,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c54159e6dcb0122b490c",
+      "prompt": "I've notice I was charged for withdrawing cash, can you explain why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2899,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-954c8d24c68914a846ba",
+      "prompt": "Why was my account charged for using an ATM?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2900,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-cea96cb4d34f03406b19",
+      "prompt": "Why is there a charge on my account for taking out cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2901,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-98466a2416ed54731954",
+      "prompt": "An ATM fee was attached to my recent withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2902,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-9b6fb43c9772898866c8",
+      "prompt": "I thought cash withdrawals didn't have a fee",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2903,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-cb1f869cb1e5362bd20f",
+      "prompt": "Why did I get charged a fee when I tried to obtain cash?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2904,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-d0c2fc19acd1754c74dd",
+      "prompt": "While I was checking out in the grocery store, I realized I needed cash so I requested some.  However, I noticed there was a fee for this transaction.  Why did I get charged a fee?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2905,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-b2f30957aefbfb72ab1e",
+      "prompt": "Using an ATM caused me to incur an additional fee. Why?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2906,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ee2235c2f72ec1235007",
+      "prompt": "I was charged extra for a withdrawal",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2907,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6345be4eb74a1428c32f",
+      "prompt": "Is there a limit on how much I can withdraw from my account without being charged?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2908,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-89dc86dbd7780dabbf33",
+      "prompt": "I thought cash withdrawals were free? Why have I been charged a fee? Also, how much is this fee?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2909,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-c26329dcb5004ff6e3d4",
+      "prompt": "More fees, this time for withdrawing my own cash. Why are you robbing me?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2910,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-e07c6896901fb8481844",
+      "prompt": "I have never been charged a fee for cash withdrawal before. When did that change?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2911,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-6d31824dfc3bc071748c",
+      "prompt": "I was charged for a cash withdrawal.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2912,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-87b7bcb98b3c2d13ceb7",
+      "prompt": "Why did you charge me for a cash withdrawal?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2913,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-66a5f70f227a822ab30e",
+      "prompt": "I took cash and got charged a fee",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2914,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-ed680ea7080df183436e",
+      "prompt": "Was charged an ATM fee despite it being a small withdrawal on the 1st day of the month. I thought I was allowed 200 per month?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2915,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-140303cbc5668fa1ad7d",
+      "prompt": "I had a wrong fee charged at this ATM.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2916,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-fa46462a4d274003971f",
+      "prompt": "When I got cash, I'm pretty sure there was a glitch that overcharged me.",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2917,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-54c5e48b6486f85125dd",
+      "prompt": "My account got charged for taking out cash, why did this happen?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2918,
+      "evaluation_cohort": "official BANKING77 test"
+    },
+    {
+      "group": "banking-a09a9ad3b95b85452f1d",
+      "prompt": "Why is there a fee for withdrawing?",
+      "label": "cash_withdrawal_charge",
+      "source_split": "test",
+      "source_row": 2919,
+      "evaluation_cohort": "official BANKING77 test"
+    }
+  ]
+}

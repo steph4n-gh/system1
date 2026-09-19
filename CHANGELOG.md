@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.1 — 2026-09-19
+
+- Add 60 routing calibration cases that move two of three previously accepted mistakes to review, preserving fitted weights and raw predictions. Retain the fresh 48-case result that still misses the 95% accepted-correctness target.
+- Add a JSON teach/save/local-reuse banking-support demo using original BANKING77 labels and a fixed three-intent official test slice: 118/120 accepted, 115/118 correct. Include source provenance, the CC BY 4.0 data license, and reproducible split verification.
+- Add six routing and 28 operation teaching lessons for close distinctions. Preserve the original Jev observations and historical comparisons separately from new local teaching.
+- Improve Pokémon's legal move selection and immediate damage/healing rules, and Paperclips' wire-unit pricing, purchase affordability, and handling of failed observations. Report game-rule gains separately from raw classifier results.
+- Verify calibration results, untouched banking evaluation, and exact saved/reloaded behavior offline in the existing test suite. No new runtime dependencies or public API changes.
+
+See [release evidence and remaining limitations](docs/releases/1.0.1.md).
+
 ## 1.0.0 — 2026-09-19
 
 - Stabilize the bounded-skill lifecycle: teach or observe, validate, run locally, save, reload, and correct with fresh calibration. No new runtime dependencies.

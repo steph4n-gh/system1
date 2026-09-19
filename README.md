@@ -11,7 +11,7 @@ Teach a repeatable decision skill from examples or by observing a teacher such a
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 
-**Version 1.0:** a stable core for teaching bounded decisions, validated local takeover, portable skills, and explicit tool policies. Evaluate each skill on your workload; the included seed models are starting points. See the [release evidence and migration guide](docs/releases/1.0.md).
+**Version 1.0.1:** improved teaching examples, routing calibration, and game policies, plus a public banking-support dataset demo. The core remains teaching bounded decisions, validated local takeover, portable skills, and explicit tool policies. See the [results and remaining limits](docs/releases/1.0.1.md) and [1.0 migration guide](docs/releases/1.0.md).
 
 [Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [Limits and deployment](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
@@ -83,9 +83,18 @@ Each command teaches from explicit examples, uses separate calibration cases, th
 |---|---:|---:|
 | Support triage | 92/104 (88.5%) | 91/92 (98.9%) |
 | Model routing | 94/96 (97.9%) | 94/94 (100%) |
-| Operation triage | 125/132 (94.7%) | 125/125 (100%) |
+| Operation triage | 126/132 (95.5%) | 126/126 (100%) |
 
-Teaching from recorded **actual Jev answers** achieved the same counts. These are authored demonstrations; operation triage includes development cases and a separate fresh confirmation set. The support result contains one accepted error. See [data, confidence intervals, and limitations](examples/teaching/README.md). They do not establish general Jev parity or security detection capability.
+These are current results on the primary authored demonstration cohorts; the support result contains one accepted error. A harder fresh routing cohort reaches only 41/44 correct among accepted answers (93.2%). The recorded **actual Jev** comparison reproduces the original 1.0 lessons separately. See [data and confidence intervals](examples/teaching/README.md) and [1.0.1 results and remaining errors](docs/releases/1.0.1.md). These results do not establish general Jev parity or security detection capability.
+
+For an externally labeled example, teach three banking-support intents from the bundled BANKING77 data:
+
+```bash
+python examples/banking_support.py
+system1 decide "My card was stolen" --model .system1/examples/banking_support/skill.s1m --json
+```
+
+On the complete official test slice for those three intents, the saved skill accepts 118/120 queries, with 115/118 correct (97.5%). Teaching and calibration take about 0.2 seconds locally. This measures three intents, not the full 77-intent benchmark. See [source, license, and split details](examples/teaching/BANKING77.md).
 
 For the smallest API example, see [teach one skill](examples/teach_skill.py). The [teaching guide](docs/guides/training_experts.md) covers your own data and evaluation. In Python, use `compile(examples, augment=False)` and `System1Engine(..., strict_mode=True)` for this workflow.
 
