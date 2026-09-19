@@ -545,6 +545,14 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
             )
         except TypeError:
             client = typesafe.Client(api_key=api_key or "")
+    elif mode == "compare":
+        client = typesafe.Client(
+            api_key=api_key or "",
+            mode="local",
+            signing_key=signing_key,
+            ledger=ledger,
+            zero_egress=False,
+        )
     else:
         client = typesafe.Client(
             api_key=api_key or "",

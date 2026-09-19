@@ -32,7 +32,7 @@ spec:
     # ── System 1 gRPC sidecar ──────────────────────────────────────────────
     - name: reflex-sidecar
       image: reflex-grpc:latest
-      command: ["reflex", "serve", "--grpc", "--port", "50051", "--schema", "guard"]
+      command: ["system1", "serve", "--grpc", "--port", "50051", "--schema", "guard"]
       ports:
         - containerPort: 50051
           name: grpc

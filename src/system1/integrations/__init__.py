@@ -26,10 +26,14 @@ from system1.integrations.langchain import (
     wrap_langchain_tool,
 )
 
+# Compatibility alias
+System1MCPProxy = SystemOneMCPProxy
+
 __all__ = [
     # MCP
     "SystemOneMCPBlockedError",
     "SystemOneMCPProxy",
+    "System1MCPProxy",
     "wrap_mcp_tool",
     # FastAPI / ASGI
     "SystemOneGatewayMiddleware",
@@ -45,7 +49,8 @@ __all__ = [
 try:
     from system1.integrations.observability import SystemOneMetricsExporter
 
-    __all__.append("SystemOneMetricsExporter")
+    System1MetricsExporter = SystemOneMetricsExporter
+    __all__.extend(["SystemOneMetricsExporter", "System1MetricsExporter"])
 except ImportError:
     pass
 

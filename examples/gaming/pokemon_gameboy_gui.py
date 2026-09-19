@@ -526,7 +526,7 @@ def run_pyboy_live_game(
     except ImportError:
         print("\n[Error] PyBoy is required to display the actual graphical Game Boy game.")
         print("Please run using the project virtual environment:")
-        print("  /Volumes/Storage/reflex/.venv/bin/python3 examples/pokemon_gameboy_gui.py")
+        print("  python3 examples/gaming/pokemon_gameboy_gui.py")
         return
 
     # Parse ROM header

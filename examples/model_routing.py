@@ -217,7 +217,7 @@ def run_side_by_side_comparison(test_queries: list[str]):
     else:
         print("No TYPESAFE_API_KEY found. Measuring WAN socket RTT and realistic baseline profile.")
 
-    client = TypeSafeClient(api_key=api_key)
+    client = TypeSafeClient(api_key=api_key, zero_egress=False)
 
     questions = {
         "target_tier": Choice("Model tier", criteria=["local_small", "standard_chat", "frontier_reasoning"]),

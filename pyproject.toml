@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "system1"
 version = "0.2.1"
-description = "System 1: Machine-Native System 1 Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
+description = "Machine-Native System 1 Decision Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
 license = "Apache-2.0"
-authors = [{name = "System 1 / System 1 Authors"}]
+authors = [{name = "System 1 Authors"}]
 requires-python = ">=3.11"
 keywords = [
     "reflex",
@@ -67,7 +67,7 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "grpcio>=1.80.0",
     "grpcio-tools>=1.80.0",
-    "protobuf>=6.31.1",
+    "protobuf>=7.35.1",
     "prometheus_client>=0.17.0",
     "opentelemetry-api>=1.20.0",
     "opentelemetry-sdk>=1.20.0",
@@ -75,7 +75,7 @@ dev = [
 grpc = [
     "grpcio>=1.80.0",
     "grpcio-tools>=1.80.0",
-    "protobuf>=6.31.1",
+    "protobuf>=7.35.1",
 ]
 
 [project.scripts]

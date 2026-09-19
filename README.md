@@ -438,11 +438,12 @@ client = TypeSafeClient(
 
 ### Twin Namespace
 
-`import system1` and `import system1` are fully symmetric — identical exports, identical behavior:
+`import reflex` and `import system1` are fully symmetric — identical exports, identical behavior:
 
 ```python
+import reflex
 import system1
-import system1
+
 assert reflex.__version__ == system1.__version__
 assert reflex.System1Engine is system1.System1Engine
 ```
@@ -476,7 +477,7 @@ system1 compile --schema triage --output triage.s1m --json
 python3 -m pytest tests/ -v
 ```
 
-- **506 tests passed** (100% pass rate across unit, e2e, observability, and gRPC suites)
+- **982 tests passed** (100% pass rate across unit, e2e, observability, and gRPC suites)
 - **0 failures, 0 errors, 0 warnings**
 - Verified on macOS Apple Silicon and Linux (Python 3.11, 3.12, 3.13)
 
@@ -485,7 +486,7 @@ python3 -m pytest tests/ -v
 ## 📚 Technical Deep Dive
 
 - **[Academic Paper: Conformal Ambiguity Gating](docs/paper/conformal_gating.md)** — Formal mathematical proof of Theorem 1 (Simplex Equiangular Separation & Welch optimality), finite-sample coverage guarantees, and Sherman-Morrison online rank-1 adaptation.
-- **[Technical Architecture & System Brief](docs/paper/reflex_technical_brief.md)** — Comprehensive architecture brief for CISOs, security engineers, and platform architects evaluating the on-metal decision firewall.
+- **[Technical Architecture & System Brief](docs/paper/system1_technical_brief.md)** — Comprehensive architecture brief for CISOs, security engineers, and platform architects evaluating the on-metal decision firewall.
 - **[Training, Distilling, and Deploying Domain Experts](docs/guides/training_experts.md)** — Practitioner guide covering 4 training pathways, Sherman-Morrison online adaptation, and Mixture of Experts dispatching.
 - **[Foundational Whitepaper](docs/paper/system1_whitepaper.md)** — Complete research monograph covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
 - **[Technical Architecture Specification](docs/architecture/technical_specification.md)** — Exhaustive engineering specification covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.

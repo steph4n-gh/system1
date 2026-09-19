@@ -11,5 +11,5 @@ from system1.core import (
 )
 from system1.core import __all__ as _all
 
-__version__ = "0.1.1"
+__version__ = "0.2.1"
 __all__ = list(_all)

@@ -197,7 +197,7 @@ def run_side_by_side_comparison(incoming_tickets: list[str]):
     else:
         print("No TYPESAFE_API_KEY found. Measuring WAN socket RTT and realistic baseline profile.")
 
-    client = TypeSafeClient(api_key=api_key)
+    client = TypeSafeClient(api_key=api_key, zero_egress=False)
 
     questions = {
         "department": Choice("Department", criteria=["billing", "technical_support", "account_security", "sales"]),

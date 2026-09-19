@@ -56,6 +56,7 @@ venv.bak/
 
 # SQLite databases
 *.sqlite
+*.sqlite3
 *.db
 
 # macOS
@@ -86,9 +87,13 @@ roms/
 # Temporary scratch directories
 scratch/
 
-# Audit bundle
+# Audit bundle and memos
 REFLEX_AUDIT_CODEBASE.txt
+audit/
 
-
-# Agent run logs
+# Agent run logs and data
 runs/
+*.jsonl
+
+# Quality benchmark results
+benchmarks/quality/results/quality_results_*.json

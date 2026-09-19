@@ -1350,15 +1350,14 @@ class SystemOneEngine:
         )
 
 
-# Compatibility alias
-SystemOneEngine = SystemOneEngine
-
+# Compatibility aliases
+ReflexEngine = SystemOneEngine
 System1Engine = SystemOneEngine
 
 __all__ = [
     "SystemOneEngine",
-    "SystemOneEngine",
     "System1Engine",
+    "ReflexEngine",
     "DecisionResult",
     "BenchmarkReport",
 ]

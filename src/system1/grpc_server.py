@@ -556,7 +556,7 @@ def _build_health_response(schemas: List[str], as_protobuf: bool = False):
     try:
         from system1 import __version__ as _ver
     except ImportError:
-        _ver = "0.1.1"
+        _ver = "0.2.1"
     if as_protobuf and _STUBS_AVAILABLE:
         return system1_pb2.HealthCheckResponse(
             status=system1_pb2.HealthCheckResponse.SERVING,

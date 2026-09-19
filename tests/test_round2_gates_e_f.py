@@ -182,7 +182,7 @@ class TestPackagingAndProtobufAlignment:
         assert pyproject_path.exists()
         content = pyproject_path.read_text()
 
-        assert "protobuf>=6.31.1" in content
+        assert "protobuf>=7.35.1" in content
         assert "grpcio>=1.80.0" in content
         assert "grpcio-tools>=1.80.0" in content
 

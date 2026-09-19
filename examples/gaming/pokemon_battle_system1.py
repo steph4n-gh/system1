@@ -2053,10 +2053,6 @@ def find_default_pokemon_rom() -> Optional[Path]:
         Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_red.gb",
         Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_blue.gb",
         Path(__file__).resolve().parent.parent.parent / "roms" / "pokemon_yellow.gb",
-        Path("/Volumes/Storage/reflex/roms/pokemon_red.gb"),
-        Path("/Users/sarrington/Downloads/game-boy-and-game-boy-color-complete-collection/game-boy-and-game-boy-color-complete-collection/Pokemon Red Version (USA) (SGB Enhanced).gb"),
-        Path("/Users/sarrington/Downloads/game-boy-and-game-boy-color-complete-collection/game-boy-and-game-boy-color-complete-collection/Pokemon Blue Version (USA) (SGB Enhanced).gb"),
-        Path("/Users/sarrington/Downloads/game-boy-and-game-boy-color-complete-collection/game-boy-and-game-boy-color-complete-collection/Pokemon Yellow Version - Special Pikachu Edition (USA) (SGB Enhanced).gb"),
     ]
     for c in candidates:
         try:

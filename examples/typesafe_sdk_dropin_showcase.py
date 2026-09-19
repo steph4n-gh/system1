@@ -218,7 +218,7 @@ def showcase_part_5_side_by_side_comparison(api_key: str):
         print("No TYPESAFE_API_KEY set: Using measured WAN socket RTT and realistic baseline profile")
         print("Set TYPESAFE_API_KEY environment variable to test against live TypeSafe SaaS cloud endpoint.")
 
-    client = TypeSafeClient(api_key=api_key)
+    client = TypeSafeClient(api_key=api_key, zero_egress=False)
 
     benchmark_cases = [
         (

@@ -52,7 +52,7 @@ from system1 import (
     schema,
 )
 
-__version__ = "0.1.2"
+__version__ = "0.2.1"
 
 
 def decide(
@@ -152,8 +152,8 @@ _MODULE_MAP = {
     "TelemetryProjector": "system1.telemetry",
     # engine
     "SystemOneEngine": "system1.engine",
-    "SystemOneEngine": "system1.engine",
     "System1Engine": "system1.engine",
+    "ReflexEngine": "system1.engine",
     "DecisionResult": "system1.engine",
     "BenchmarkReport": "system1.engine",
     # receipt
@@ -186,8 +186,8 @@ _MODULE_MAP = {
     # guard
     "SystemOneGuard": "system1.guard",
     "SystemOneGuardHook": "system1.guard",
-    "SystemOneGuard": "system1.guard",
-    "SystemOneGuardHook": "system1.guard",
+    "System1Guard": "system1.guard",
+    "ReflexGuard": "system1.guard",
     "PolicyRule": "system1.guard",
     "PolicyEngine": "system1.guard",
     "DeterministicPolicyEngine": "system1.guard",
@@ -262,8 +262,8 @@ __all__ = [
     "__version__",
     # Engine & Core Results
     "SystemOneEngine",
-    "SystemOneEngine",
     "System1Engine",
+    "ReflexEngine",
     "DecisionResult",
     "BenchmarkReport",
     "decide",
@@ -314,8 +314,8 @@ __all__ = [
     # Reference Monitor & Guard
     "SystemOneGuard",
     "SystemOneGuardHook",
-    "SystemOneGuard",
-    "SystemOneGuardHook",
+    "System1Guard",
+    "ReflexGuard",
     "PolicyRule",
     "PolicyEngine",
     "DeterministicPolicyEngine",

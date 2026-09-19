@@ -504,7 +504,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
                 assert h_resp.status == adv_pb2.HealthCheckResponse.SERVING
-                assert h_resp.version == "0.1.2"
+                assert h_resp.version == "0.2.1"
 
                 # 2. Decide with numeric telemetry features
                 d_req = adv_pb2.DecideRequest(
@@ -649,7 +649,7 @@ class TestAttack4DocumentationRigorAndPackagingParity:
         content = pyproject_path.read_text()
 
         # Dependencies
-        assert "protobuf>=6.31.1" in content, "pyproject.toml must enforce protobuf>=6.31.1"
+        assert "protobuf>=7.35.1" in content, "pyproject.toml must enforce protobuf>=7.35.1"
         assert "grpcio>=1.80.0" in content, "pyproject.toml must enforce grpcio>=1.80.0"
         assert "grpcio-tools>=1.80.0" in content, "pyproject.toml must enforce grpcio-tools>=1.80.0"
 

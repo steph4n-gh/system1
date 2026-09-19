@@ -23,7 +23,7 @@ spec:
             - containerPort: 50051
               name: grpc
               protocol: TCP
-          command: ["reflex", "serve", "--grpc", "--port", "50051"]
+          command: ["system1", "serve", "--grpc", "--port", "50051"]
           resources:
             requests:
               cpu: "100m"

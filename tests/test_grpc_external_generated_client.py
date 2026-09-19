@@ -104,7 +104,7 @@ def test_grpc_external_generated_client_roundtrip():
                     health_req = ext_system1_pb2.HealthCheckRequest()
                     health_resp = stub.HealthCheck(health_req)
                     assert health_resp.status == ext_system1_pb2.HealthCheckResponse.SERVING
-                    assert health_resp.version == "0.1.2"
+                    assert health_resp.version == "0.2.1"
 
                     # RPC 2: Decide
                     decide_req = ext_system1_pb2.DecideRequest(

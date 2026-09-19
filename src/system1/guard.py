@@ -1101,8 +1101,8 @@ class SystemOneGuardHook:
 
 # Compatibility aliases
 SystemOneGuard = SystemOneGuardHook
-SystemOneGuard = SystemOneGuardHook
-SystemOneGuardHook = SystemOneGuardHook
+System1Guard = SystemOneGuardHook
+ReflexGuard = SystemOneGuardHook
 
 __all__ = [
     "ActionProposal",
@@ -1119,10 +1119,10 @@ __all__ = [
     "PolicyRule",
     "SystemOneGuard",
     "SystemOneGuardHook",
+    "System1Guard",
+    "ReflexGuard",
     "ResultStatus",
     "RiskLevel",
-    "SystemOneGuard",
-    "SystemOneGuardHook",
 ]
 
 

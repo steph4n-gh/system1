@@ -13,8 +13,8 @@ import system1
 from system1 import *
 from system1 import (
     SystemOneEngine,
-    SystemOneEngine,
     System1Engine,
+    ReflexEngine,
     DecisionResult,
     BenchmarkReport,
     decide,
@@ -60,8 +60,8 @@ from system1 import (
     IntegrityError,
     SystemOneGuard,
     SystemOneGuardHook,
-    SystemOneGuard,
-    SystemOneGuardHook,
+    System1Guard,
+    ReflexGuard,
     PolicyRule,
     PolicyEngine,
     DeterministicPolicyEngine,
@@ -175,8 +175,8 @@ _MODULE_MAP = {
     "TelemetryProjector": "reflex.telemetry",
     # engine
     "SystemOneEngine": "reflex.engine",
-    "SystemOneEngine": "reflex.engine",
     "System1Engine": "reflex.engine",
+    "ReflexEngine": "reflex.engine",
     "DecisionResult": "reflex.engine",
     "BenchmarkReport": "reflex.engine",
     # receipt
@@ -209,8 +209,8 @@ _MODULE_MAP = {
     # guard
     "SystemOneGuard": "reflex.guard",
     "SystemOneGuardHook": "reflex.guard",
-    "SystemOneGuard": "reflex.guard",
-    "SystemOneGuardHook": "reflex.guard",
+    "System1Guard": "reflex.guard",
+    "ReflexGuard": "reflex.guard",
     "PolicyRule": "reflex.guard",
     "PolicyEngine": "reflex.guard",
     "DeterministicPolicyEngine": "reflex.guard",

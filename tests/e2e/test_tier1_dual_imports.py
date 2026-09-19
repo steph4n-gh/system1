@@ -2,7 +2,7 @@
 
 Authoritative Invariants:
 1. Complete namespace symmetry: import reflex and import system1 export identical public interfaces.
-2. Version alignment: reflex.__version__ == system1.__version__ == '0.1.2'.
+2. Version alignment: reflex.__version__ == system1.__version__ == '0.2.1'.
 3. Object identity: exported classes, functions, and schemas are identical objects in memory.
 4. Drop-in interoperability: decision engines, guard hooks, ledgers, and SDK clients operate interchangeably.
 """
@@ -19,16 +19,15 @@ import system1
 
 def test_top_level_package_exports_parity():
     """Verify top-level symbols, __all__, and __version__ are completely symmetric."""
-    assert reflex.__version__ == system1.__version__ == "0.1.2"
+    assert reflex.__version__ == system1.__version__ == "0.2.1"
     
     # Both packages should export the exact same set of public symbols
-    system1_all = set(reflex.__all__)
+    reflex_all = set(reflex.__all__)
     system1_all = set(system1.__all__)
-    assert system1_all == system1_all, f"Export mismatch: diff={system1_all ^ system1_all}"
+    assert reflex_all == system1_all, f"Export mismatch: diff={reflex_all ^ system1_all}"
 
     # Verify identity for core exports
     core_symbols = [
-        "SystemOneEngine",
         "SystemOneEngine",
         "System1Engine",
         "DecisionResult",
@@ -46,7 +45,6 @@ def test_top_level_package_exports_parity():
         "create_decision_receipt",
         "verify_decision_witness_receipt",
         "ActionLedger",
-        "SystemOneGuardHook",
         "SystemOneGuardHook",
         "DefaultGuardDecisionSchema",
         "GuardInterceptionResult",
@@ -77,34 +75,34 @@ def test_submodule_existence_and_importability():
         "embeddings",
     ]
     for submod in submodules:
-        mod_system1 = importlib.import_module(f"reflex.{submod}")
+        mod_reflex = importlib.import_module(f"reflex.{submod}")
         mod_system1 = importlib.import_module(f"system1.{submod}")
-        assert mod_system1 is not None
+        assert mod_reflex is not None
         assert mod_system1 is not None
 
         # Check key functions/classes in each submodule
-        if hasattr(mod_system1, "__all__"):
-            assert set(mod_system1.__all__) == set(mod_system1.__all__)
+        if hasattr(mod_reflex, "__all__") and hasattr(mod_system1, "__all__"):
+            assert set(mod_reflex.__all__) == set(mod_system1.__all__)
 
 
 def test_functional_runtime_decision_parity(triage_schema):
     """Verify executing decisions via reflex.SystemOneEngine and system1.System1Engine produces identical results."""
-    engine_system1 = reflex.SystemOneEngine(triage_schema)
+    engine_reflex = reflex.SystemOneEngine(triage_schema)
     engine_system1 = system1.System1Engine(triage_schema)
 
     test_prompt = "Perform read-only query on customer SQLite database"
-    res_system1 = engine_system1.decide(test_prompt)
+    res_reflex = engine_reflex.decide(test_prompt)
     res_system1 = engine_system1.decide(test_prompt)
 
-    assert res_system1.values == res_system1.values
-    assert res_system1.schema_name == res_system1.schema_name
-    assert set(res_system1.conformal_sets.keys()) == set(res_system1.conformal_sets.keys())
-    assert set(res_system1.confidences.keys()) == set(res_system1.confidences.keys())
+    assert res_reflex.values == res_system1.values
+    assert res_reflex.schema_name == res_system1.schema_name
+    assert set(res_reflex.conformal_sets.keys()) == set(res_system1.conformal_sets.keys())
+    assert set(res_reflex.confidences.keys()) == set(res_system1.confidences.keys())
 
     # Convenient decide() helper function parity
-    res_helper_system1 = reflex.decide(test_prompt, schema=triage_schema)
+    res_helper_reflex = reflex.decide(test_prompt, schema=triage_schema)
     res_helper_system1 = system1.decide(test_prompt, schema=triage_schema)
-    assert res_helper_system1.values == res_helper_system1.values
+    assert res_helper_reflex.values == res_helper_system1.values
 
 
 def test_typesafe_sdk_twin_parity():
@@ -122,7 +120,7 @@ def test_typesafe_sdk_twin_parity():
 
 def test_guard_hook_and_ledger_twin_parity(tmp_path: Path):
     """Verify ActionLedger and SystemOneGuardHook operate seamlessly across imports."""
-    db_r = tmp_path / "ledger_system1.db"
+    db_r = tmp_path / "ledger_reflex.db"
     db_s = tmp_path / "ledger_system1.db"
 
     ledger_r = reflex.ActionLedger(db_r)
