@@ -89,3 +89,6 @@ scratch/
 # Audit bundle
 REFLEX_AUDIT_CODEBASE.txt
 
+
+# Agent run logs
+runs/

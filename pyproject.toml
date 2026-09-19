@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "system1"
-version = "0.1.2"
+version = "0.2.0"
 description = "System 1: Machine-Native System 1 Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
 license = "Apache-2.0"
