@@ -251,15 +251,23 @@ class ActionLedger:
         scope: str = "decision",
         trusted_public_key: Optional[Any] = None,
     ) -> str:
-        """Appends a Reflex decision receipt to the tamper-evident audit ledger.
-        
-        Performs full historical chain validation under a coherent transaction snapshot.
-        """
+        """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
         with self._transaction() as connection:
+            payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt)
+            
+            # Derive authorization subject/scope from the signed record (receipt)
+            tenant_id = payload.get("tenant_id") or tenant_id
+            principal_id = payload.get("principal_id") or principal_id
+            scope = payload.get("scope") or scope
+            
+            if trusted_public_key is not None:
+                from system1.receipt import verify_decision_witness_receipt
+                if not verify_decision_witness_receipt(payload, public_key=trusted_public_key):
+                    raise IntegrityError("Incoming receipt failed signature verification against trust anchor.")
+                    
             if not self._verify_integrity_locked(connection, trusted_public_key):
                 raise IntegrityError("Ledger cryptographic integrity validation failed during append.")
 
-            payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt)
             decision_id = payload.get("decision_id")
             receipt_digest = payload.get("receipt_digest") or (
                 receipt.compute_digest() if hasattr(receipt, "compute_digest") else None
@@ -366,8 +374,8 @@ class ActionLedger:
                 raise LedgerWriteError(f"Invalid execution outcome status: {status}")
 
             prior = connection.execute(
-                "SELECT * FROM audit_entries WHERE action_id = ? AND event_type IN ('reflex_decision', 'decision_receipt', 'action') ORDER BY sequence DESC LIMIT 1",
-                (action_id,)
+                "SELECT * FROM audit_entries WHERE (action_id = ? OR json_extract(payload_json, '$.decision_id') = ?) AND event_type IN ('reflex_decision', 'decision_receipt', 'action') ORDER BY sequence DESC LIMIT 1",
+                (action_id, action_id)
             ).fetchone()
 
             if not prior:
@@ -381,6 +389,12 @@ class ActionLedger:
 
             if found_digest and found_digest != receipt_digest:
                 raise LedgerWriteError(f"Wrong action association: outcome receipt_digest {receipt_digest} does not match prior {found_digest}")
+
+            if prior["tenant_id"] != tenant_id or prior["principal_id"] != principal_id:
+                raise LedgerWriteError(f"Authorization mismatch: outcome context ({tenant_id}/{principal_id}) does not match prior ({prior['tenant_id']}/{prior['principal_id']})")
+
+            if scope != "execution_outcome" and prior["scope"] != scope:
+                raise LedgerWriteError(f"Authorization mismatch: outcome scope ({scope}) does not match prior ({prior['scope']})")
 
             meta = dict(connection.execute("SELECT key, value FROM ledger_meta").fetchall())
             previous_hash = meta.get("audit_head_hash", _ZERO_HASH)

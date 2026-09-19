@@ -350,53 +350,70 @@ def evaluate_promotion_eligibility(
         "total": 0, "matching": 0, "false_allows": 0, "critical_targets": 0
     })
 
+    groups = collections.defaultdict(list)
     for item in val_history:
-        state = item.get("state", "")
-        answers = item.get("answers", {})
-        res = engine.decide(state, record_receipt=False)
+        g_key = item.get("group_id") or item.get("lineage_id") or item.get("request_id") or item.get("id") or item.get("nonce") or hash(item.get("state", ""))
+        groups[str(g_key)].append(item)
 
-        for f_name, f_def in schema.fields.items():
-            if f_name not in answers or answers[f_name] is None:
+    scored_units = 0
+    unit_matches = 0
+
+    for g_key, g_items in groups.items():
+        unit_has_scored_evidence = False
+
+        for item in g_items:
+            state = item.get("state", "")
+            answers = item.get("answers", {})
+            if not answers:
                 continue
 
-            target_v = answers[f_name]
-            pred_v = res.values.get(f_name)
+            res = engine.decide(state, record_receipt=False)
 
-            total_checks += 1
-            per_field_stats[f_name]["total"] += 1
+            for f_name, f_def in schema.fields.items():
+                if f_name not in answers or answers[f_name] is None:
+                    continue
 
-            is_target_critical = _is_critical_class(target_v, policy.critical_classes)
-            if is_target_critical:
-                critical_targets += 1
-                per_field_stats[f_name]["critical_targets"] += 1
+                target_v = answers[f_name]
+                pred_v = res.values.get(f_name)
 
-            # Check matching correctness
-            is_match = False
-            if (
-                isinstance(pred_v, (int, float))
-                and isinstance(target_v, (int, float))
-                and not isinstance(pred_v, bool)
-                and not isinstance(target_v, bool)
-            ):
-                margin = max(0.5, 0.20 * (getattr(f_def, "max_value", 1.0) - getattr(f_def, "min_value", 0.0))) if f_def else 0.5
-                if abs(float(pred_v) - float(target_v)) <= margin:
+                total_checks += 1
+                per_field_stats[f_name]["total"] += 1
+                unit_has_scored_evidence = True
+
+                is_target_critical = _is_critical_class(target_v, policy.critical_classes)
+                if is_target_critical:
+                    critical_targets += 1
+                    per_field_stats[f_name]["critical_targets"] += 1
+
+                # Check matching correctness
+                is_match = False
+                if (
+                    isinstance(pred_v, (int, float))
+                    and isinstance(target_v, (int, float))
+                    and not isinstance(pred_v, bool)
+                    and not isinstance(target_v, bool)
+                ):
+                    margin = max(0.5, 0.20 * (getattr(f_def, "max_value", 1.0) - getattr(f_def, "min_value", 0.0))) if f_def else 0.5
+                    if abs(float(pred_v) - float(target_v)) <= margin:
+                        is_match = True
+                elif isinstance(f_def, MultiChoiceField):
+                    s_pred = set(pred_v) if isinstance(pred_v, (list, tuple, set)) else ({pred_v} if pred_v else set())
+                    s_target = set(target_v) if isinstance(target_v, (list, tuple, set)) else ({target_v} if target_v else set())
+                    if s_pred == s_target or (s_pred and s_target and len(s_pred & s_target) / len(s_pred | s_target) >= 0.5):
+                        is_match = True
+                elif pred_v == target_v:
                     is_match = True
-            elif isinstance(f_def, MultiChoiceField):
-                s_pred = set(pred_v) if isinstance(pred_v, (list, tuple, set)) else ({pred_v} if pred_v else set())
-                s_target = set(target_v) if isinstance(target_v, (list, tuple, set)) else ({target_v} if target_v else set())
-                if s_pred == s_target or (s_pred and s_target and len(s_pred & s_target) / len(s_pred | s_target) >= 0.5):
-                    is_match = True
-            elif pred_v == target_v:
-                is_match = True
 
-            if is_match:
-                matching += 1
-                per_field_stats[f_name]["matching"] += 1
-            else:
-                # Check for critical false allow violation
-                if is_target_critical and _is_allow_class(pred_v):
-                    false_allows += 1
-                    per_field_stats[f_name]["false_allows"] += 1
+                if is_match:
+                    matching += 1
+                    per_field_stats[f_name]["matching"] += 1
+                else:
+                    if is_target_critical and _is_allow_class(pred_v):
+                        false_allows += 1
+                        per_field_stats[f_name]["false_allows"] += 1
+
+        if unit_has_scored_evidence:
+            scored_units += 1
 
     if total_checks == 0:
         agreement_rate = 0.0
@@ -404,7 +421,7 @@ def evaluate_promotion_eligibility(
     else:
         agreement_rate = matching / total_checks
         
-    effective_n = len(val_history)
+    effective_n = scored_units
     effective_matching = agreement_rate * effective_n
     wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
@@ -1354,6 +1371,7 @@ class TypeSafeClient:
         self._engine_cache: Dict[str, ReflexEngine] = {}
         self._engine_lock = threading.Lock()
         self._call_count: Dict[str, int] = collections.defaultdict(int)
+        self._teacher_sample_count: Dict[str, int] = collections.defaultdict(int)
         self._history: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
         self._has_cutover: bool = False
         self._has_cutover_schemas: Set[str] = set()
@@ -1396,6 +1414,16 @@ class TypeSafeClient:
         return sum(self._call_count.values())
 
     @property
+    def total_requests(self) -> int:
+        """Total number of queries evaluated by this client."""
+        return sum(self._call_count.values())
+
+    @property
+    def teacher_sample_count(self) -> int:
+        """Total number of teacher exemplar samples collected."""
+        return sum(self._teacher_sample_count.values())
+
+    @property
     def cutover_audit_log(self) -> List[Dict[str, Any]]:
         """Log of cutover audit events."""
         return list(self._cutover_audit_log)
@@ -1419,10 +1447,25 @@ class TypeSafeClient:
         return self._last_promotion_report
 
     def export_model(self, path: Union[str, Path]) -> bool:
-        """Exports the distilled closed-form model as a static .s1m binary."""
+        """Compiles and exports the validated System 1 model to disk."""
         cm = self.compiled_model
         if cm is None:
             return False
+            
+        digest = cm.schema.schema_digest()
+        with self._engine_lock:
+            engine = self._engine_cache.get(digest)
+            if engine is not None:
+                for f_name, ch in cm.heads.items():
+                    if f_name in engine.calibrators:
+                        ch.temperature = engine.calibrators[f_name].temperature
+                    if f_name in engine.conformal_predictors:
+                        cp = engine.conformal_predictors[f_name]
+                        ch.calibration_scores = tuple(cp.calibration_scores) if getattr(cp, "calibration_scores", None) is not None else ()
+                    elif f_name in engine.regression_conformal_predictors:
+                        rcp = engine.regression_conformal_predictors[f_name]
+                        ch.calibration_scores = tuple(rcp.residuals) if getattr(rcp, "residuals", None) is not None else ()
+                        
         cm.save(path)
         return True
 
@@ -1826,6 +1869,7 @@ class TypeSafeClient:
 
                 with self._engine_lock:
                     self._call_count[digest] += 1
+                    self._teacher_sample_count[digest] += 1
                     current_count = self._call_count[digest]
                     sample_record = {
                         "state": state,
@@ -1871,6 +1915,8 @@ class TypeSafeClient:
                 record_receipt=record_receipt,
                 **kwargs,
             )
+            with self._engine_lock:
+                self._call_count[digest] += 1
             resp["auto_cutover_active"] = True
             resp["is_cutover"] = True
 
@@ -1920,6 +1966,10 @@ class TypeSafeClient:
             record_receipt=record_receipt,
             **kwargs,
         )
+        schema = _build_dynamic_schema(questions)
+        digest = schema.schema_digest()
+        with self._engine_lock:
+            self._call_count[digest] += 1
         is_ambiguous = bool(resp.get("is_ambiguous", False))
         min_conf = 1.0
         for ans in getattr(resp, "answers", {}).values():
@@ -2155,6 +2205,14 @@ class AsyncTypeSafeClient:
     @property
     def call_count(self) -> int:
         return self._sync_client.call_count
+
+    @property
+    def total_requests(self) -> int:
+        return self._sync_client.total_requests
+
+    @property
+    def teacher_sample_count(self) -> int:
+        return self._sync_client.teacher_sample_count
 
     @property
     def cutover_audit_log(self) -> List[Dict[str, Any]]:

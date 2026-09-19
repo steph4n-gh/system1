@@ -68,24 +68,73 @@ pip install system1
 pip install -e .
 ```
 
-### Protect an MCP Tool Server in 4 Lines
+### Enforcing Policy Guard Quickstart (Durable Ledger + Ed25519 Signing)
+
+Configure a deterministic permission policy, Ed25519 signer, and persistent SQLite WAL audit ledger:
 
 ```python
-from reflex.integrations import ReflexMCPProxy, wrap_mcp_tool
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from reflex import ActionLedger, PolicyEngine, PolicyRule, ReflexGuard, ActionProposal
+from reflex.guard import DecisionOutcome
 
-# Wrap any function exposed as an MCP tool with fail-closed safety
-@wrap_mcp_tool(tool_name="read_file")
-def fetch_document(path: str) -> str:
-    """Inspect read-only project documentation."""
-    with open(path) as f:
-        return f.read()
+# 1. Establish persistent tamper-evident audit storage and trust anchor
+ledger = ActionLedger("audit_ledger.sqlite", require_durable=True)
+signing_key = Ed25519PrivateKey.generate()
 
-# Every call is evaluated in < 1ms on local hardware.
-# Blocked calls return JSON-RPC 2.0 errors with Ed25519 audit proofs.
-# No data leaves your network. Ever.
+# 2. Define deterministic permission policy
+policy = PolicyEngine(
+    rules=[
+        PolicyRule(rule_id="read_rule", tools=["read_file"], outcome=DecisionOutcome.ALLOW, allowed_principals=["agent-worker"]),
+        PolicyRule(rule_id="bash_rule", tools=["execute_bash"], outcome=DecisionOutcome.REQUIRE_APPROVAL),
+        PolicyRule(rule_id="db_rule", tools=["delete_database"], outcome=DecisionOutcome.DENY),
+    ],
+    denied_tools=["delete_database"],
+)
+
+# 3. Instantiate fail-closed Guard reference monitor
+guard = ReflexGuard(
+    policy=policy,
+    ledger=ledger,
+    signing_key=signing_key,
+    enforcement_profile=True,
+)
+
+# 4. Evaluate proposal under strict authenticated enforcement
+proposal = ActionProposal.create(
+    tenant_id="prod-us-east",
+    principal_id="agent-worker",
+    scope="tool_execution",
+    tool="read_file",
+    arguments={"path": "reports/q3_summary.pdf"},
+    purpose="Inspect quarterly compliance report",
+)
+
+auth = guard.evaluate_proposal(proposal)
+
+if auth.outcome == DecisionOutcome.ALLOW:
+    # Action authorized; receipt is cryptographically signed and durable in the ledger
+    print(f"Authorized! Receipt Digest: {auth.receipt.compute_digest()[:16]}...")
+    # Execute tool, then cryptographically bind outcome to the authorization
+    ledger.record_execution_outcome(
+        action_id=auth.receipt.decision_id,
+        receipt_digest=auth.receipt.compute_digest(),
+        status="SUCCEEDED",
+        tenant_id="prod-us-east",
+        principal_id="agent-worker",
+        scope="tool_execution",
+        result_payload={"bytes_read": 1024},
+    )
+elif auth.outcome == DecisionOutcome.REQUIRE_APPROVAL:
+    print(f"Action escalated to human reviewer: {auth.reason}")
+else:
+    print(f"Action DENIED: {auth.reason}")
 ```
 
-### Define a Custom Decision Schema
+> **Architecture Separation**:
+> - **Deterministic Policy Enforcement (`ReflexGuard` / `PolicyEngine`)**: Fail-closed rule evaluation, principal/argument constraints, Ed25519 signed receipts, and durable hash-chained outcome recording.
+> - **Statistical Decision Classification (`ReflexEngine` / `DecisionSchema`)**: Non-autoregressive linear projection, split-conformal uncertainty prediction, and online covariance updates. Current strict permission grants follow the deterministic rule path to guarantee zero false allows.
+
+### Define a Custom Decision Schema (Statistical Classification)
 
 ```python
 from reflex import DecisionSchema, ChoiceField, BooleanField, ScoreField, ReflexEngine

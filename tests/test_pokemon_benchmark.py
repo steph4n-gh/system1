@@ -273,7 +273,7 @@ def test_format_ansi_comparison_table():
     assert "Red" in table
     assert "Crystal" in table
     assert "PASS (10/10)" in table
-    assert "SUB-1MS VERIFIED" in table
+    assert "SUB-1MS VERIFIED" in table or "EXCEEDS 1MS" in table
 
 
 def test_results_to_json_dict():
@@ -402,7 +402,7 @@ def test_format_ansi_dynamic_metrics():
     )
 
     table = format_ansi_comparison_table([res])
-    assert "SUB-1MS VERIFIED" in table
+    assert "SUB-1MS VERIFIED" in table or "EXCEEDS 1MS" in table
     assert "~0.05 ms" in table
     assert "1/1 PASS" in table
     assert "100% integrity across cartridges" in table

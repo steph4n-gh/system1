@@ -321,7 +321,7 @@ class ReflexMCPProxy:
                     error_message=str(exec_error) if exec_error is not None else None,
                     tenant_id=self.tenant_id,
                     principal_id=client_session_id or self.principal_id,
-                    scope="mcp:tools:call:outcome",
+                    scope="mcp:tools:call",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:
@@ -456,7 +456,7 @@ class ReflexMCPProxy:
                     error_message=str(exec_error) if exec_error is not None else None,
                     tenant_id=self.tenant_id,
                     principal_id=client_session_id or self.principal_id,
-                    scope="mcp:tools:call:outcome",
+                    scope="mcp:tools:call",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:
@@ -600,7 +600,7 @@ def wrap_mcp_tool(
                             error_message=str(exec_error) if exec_error is not None else None,
                             tenant_id=resolved_proxy.tenant_id,
                             principal_id=resolved_proxy.principal_id,
-                            scope="mcp:tool:wrap:outcome",
+                            scope=prop.scope if isinstance(prop, ActionProposal) else "mcp:tools:call",
                             trusted_public_key=pub_key,
                         )
                     except Exception as le:
@@ -700,7 +700,7 @@ def wrap_mcp_tool(
                                 error_message=str(error) if error is not None else None,
                                 tenant_id=resolved_proxy.tenant_id,
                                 principal_id=resolved_proxy.principal_id,
-                                scope="mcp:tool:wrap:outcome",
+                                scope=prop.scope if isinstance(prop, ActionProposal) else "mcp:tools:call",
                                 trusted_public_key=pub_key,
                             )
                         except Exception as le:

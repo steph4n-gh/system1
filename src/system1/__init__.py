@@ -184,7 +184,9 @@ _MODULE_MAP = {
     "LedgerWriteError": "system1.ledger",
     "IntegrityError": "system1.ledger",
     # guard
+    "ReflexGuard": "system1.guard",
     "ReflexGuardHook": "system1.guard",
+    "SystemOneGuard": "system1.guard",
     "SystemOneGuardHook": "system1.guard",
     "PolicyRule": "system1.guard",
     "PolicyEngine": "system1.guard",
@@ -310,7 +312,9 @@ __all__ = [
     "LedgerWriteError",
     "IntegrityError",
     # Reference Monitor & Guard
+    "ReflexGuard",
     "ReflexGuardHook",
+    "SystemOneGuard",
     "SystemOneGuardHook",
     "PolicyRule",
     "PolicyEngine",

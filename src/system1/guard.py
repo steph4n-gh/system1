@@ -1047,7 +1047,13 @@ class ReflexGuardHook:
                 pub_key = None
                 if self.enforcement_profile is not None and self.engine.signing_key is not None:
                     pub_key = self.engine.signing_key.public_key()
-                ledger_rec_id = self.ledger.record_decision_receipt(final_receipt, trusted_public_key=pub_key)
+                ledger_rec_id = self.ledger.record_decision_receipt(
+                    final_receipt,
+                    trusted_public_key=pub_key,
+                    tenant_id=proposal.tenant_id,
+                    principal_id=proposal.principal_id,
+                    scope=proposal.scope,
+                )
                 final_receipt = replace(final_receipt, ledger_record_id=ledger_rec_id)
             except Exception as ex:
                 if self.fail_closed_ledger:
@@ -1093,7 +1099,9 @@ class ReflexGuardHook:
         )
 
 
-# Compatibility alias
+# Compatibility aliases
+ReflexGuard = ReflexGuardHook
+SystemOneGuard = ReflexGuardHook
 SystemOneGuardHook = ReflexGuardHook
 
 __all__ = [
@@ -1109,9 +1117,11 @@ __all__ = [
     "PolicyDecision",
     "PolicyEngine",
     "PolicyRule",
+    "ReflexGuard",
     "ReflexGuardHook",
     "ResultStatus",
     "RiskLevel",
+    "SystemOneGuard",
     "SystemOneGuardHook",
 ]
 

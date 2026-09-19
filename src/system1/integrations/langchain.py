@@ -172,7 +172,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         result_payload={"result": str(output)[:500]},
                         tenant_id=self.tenant_id,
                         principal_id=str(run_id or self.principal_id),
-                        scope="langchain:tools:exec:outcome",
+                        scope="langchain:tools:exec",
                         trusted_public_key=pub_key,
                     )
                 except Exception as le:
@@ -220,7 +220,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         error_message=str(error),
                         tenant_id=self.tenant_id,
                         principal_id=str(run_id or self.principal_id),
-                        scope="langchain:tools:exec:outcome",
+                        scope="langchain:tools:exec",
                         trusted_public_key=pub_key,
                     )
                 except Exception as le:
@@ -379,7 +379,7 @@ class ReflexToolInterceptor:
                     error_message=str(exec_error) if exec_error is not None else None,
                     tenant_id="tenant_reflex_tool",
                     principal_id="agent_caller",
-                    scope="langchain:tool:invoke:outcome",
+                    scope="langchain:tool:invoke",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:
@@ -532,7 +532,7 @@ class ReflexToolInterceptor:
                     error_message=str(exec_error) if exec_error is not None else None,
                     tenant_id="tenant_reflex_tool",
                     principal_id="agent_caller",
-                    scope="langchain:tool:ainvoke:outcome",
+                    scope="langchain:tool:ainvoke",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:

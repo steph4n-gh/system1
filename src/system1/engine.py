@@ -1048,6 +1048,7 @@ class ReflexEngine:
                 projector_digest=p_dig,
                 calibration_digest=c_dig,
                 policy_epoch=self.policy_epoch,
+                explicit_embedding=(embedding is not None),
                 source="evaluation",
             )
 
@@ -1160,6 +1161,13 @@ class ReflexEngine:
             if hasattr(self.model, "model_version"):
                 self.model.model_version = self.model_version
 
+            if self.strict_mode:
+                for f_name in updated_fields:
+                    if f_name in self.calibrators:
+                        self.calibrators[f_name].is_calibrated = False
+                    if f_name in self.conformal_predictors:
+                        self.conformal_predictors[f_name].is_calibrated = False
+
             if self.use_cache and self.cache is not None:
                 self.cache.evict_prompt(prompt)
                 self.cache.invalidate_prior_versions(self.model_version)
@@ -1206,6 +1214,7 @@ class ReflexEngine:
                     projector_digest=p_dig,
                     calibration_digest=c_dig,
                     policy_epoch=self.policy_epoch,
+                    explicit_embedding=(emb is not None),
                 )
 
             total_ms = (time.perf_counter() - t0) * 1000.0

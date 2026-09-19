@@ -455,6 +455,7 @@ class SemanticReflexCache:
         projector_digest: str = "",
         calibration_digest: str = "",
         policy_epoch: int = 0,
+        explicit_embedding: bool = False,
     ) -> CacheEntry:
         """Stores or updates a result in the L1 cache."""
         _validate_cache_inputs(
@@ -587,7 +588,7 @@ class SemanticReflexCache:
                 policy_epoch=int(policy_epoch),
             )
             self._exact_index[key] = entry
-            if norm_emb is not None:
+            if norm_emb is not None and not explicit_embedding:
                 base_key = self._make_key(
                     prompt,
                     telemetry=telemetry,

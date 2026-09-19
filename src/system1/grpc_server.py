@@ -20,6 +20,7 @@ import logging
 import os
 from concurrent import futures
 from pathlib import Path
+import time
 from typing import Any, Dict, List, Optional, Sequence
 
 logger = logging.getLogger("reflex.grpc")
@@ -179,6 +180,7 @@ class ReflexServiceServicer(_BaseServicer):
     def Guard(self, request, context):
         """Run a prompt through the fail-closed guard reference monitor."""
         is_proto = _is_proto_call(request, context)
+        t0 = time.perf_counter()
         try:
             prompt = request.prompt if hasattr(request, "prompt") else request.get("prompt", "")
             schema_name = (request.schema_name if hasattr(request, "schema_name") else request.get("schema_name", "")) or "guard"
@@ -213,6 +215,7 @@ class ReflexServiceServicer(_BaseServicer):
 
             reason = res.reason
             decision = res.decision_result
+            measured_latency_ms = max(0.001, (time.perf_counter() - t0) * 1000.0)
             if decision is None:
                 from system1.engine import DecisionResult
                 receipt = getattr(res, "receipt", None)
@@ -233,7 +236,7 @@ class ReflexServiceServicer(_BaseServicer):
                         confidences={"policy": 1.0},
                         conformal_sets={},
                         probabilities={},
-                        latency_ms=0.1,
+                        latency_ms=measured_latency_ms,
                         is_ambiguous=False,
                         truth_ledger_head=self._ledger.head_hash() if self._ledger else "",
                         signing_key=self._signing_key,
@@ -253,7 +256,7 @@ class ReflexServiceServicer(_BaseServicer):
                     conformal_sets={},
                     probabilities={},
                     is_ambiguous=False,
-                    latency_ms=0.1,
+                    latency_ms=measured_latency_ms,
                     alpha=alpha,
                     receipt=receipt,
                 )

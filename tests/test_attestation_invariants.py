@@ -334,7 +334,12 @@ def test_execution_outcome_chaining_success(tmp_path):
         signing_key=signing_key,
         action_id="act_exec_001",
     )
-    receipt_hash = ledger.append(receipt)
+    receipt_hash = ledger.append(
+        receipt,
+        tenant_id="tenant_001",
+        principal_id="worker_001",
+        scope="fs:read",
+    )
     assert receipt_hash
     receipt_digest = receipt.compute_digest()
 
@@ -383,7 +388,12 @@ def test_execution_outcome_chaining_failure(tmp_path):
         signing_key=signing_key,
         action_id="act_exec_fail_002",
     )
-    ledger.append(receipt)
+    ledger.append(
+        receipt,
+        tenant_id="tenant_001",
+        principal_id="worker_001",
+        scope="execution_outcome",
+    )
     receipt_digest = receipt.compute_digest()
 
     outcome_hash = ledger.record_execution_outcome(
