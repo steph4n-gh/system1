@@ -49,8 +49,8 @@ class SystemOneMCPBlockedError(PermissionError):
                     "rule_id": self.policy_decision.rule_id if self.policy_decision else None,
                     "risk": self.policy_decision.risk.name if self.policy_decision else None,
                     "receipt_digest": (
-                        self.interception.decision_result.schema_digest
-                        if self.interception.decision_result
+                        self.interception.receipt.compute_digest()
+                        if self.interception.receipt is not None
                         else None
                     ),
                 },
@@ -247,7 +247,7 @@ class SystemOneMCPProxy:
             elif method == "initialize":
                 result = {
                     "protocolVersion": "2024-11-05",
-                    "serverInfo": {"name": "reflex-mcp-guard", "version": "0.2.1"},
+                    "serverInfo": {"name": "reflex-mcp-guard", "version": "0.2.2"},
                     "capabilities": {"tools": {}},
                 }
             elif method == "tools/list":
@@ -406,7 +406,7 @@ class SystemOneMCPProxy:
             elif method == "initialize":
                 result = {
                     "protocolVersion": "2024-11-05",
-                    "serverInfo": {"name": "reflex-mcp-guard", "version": "0.2.1"},
+                    "serverInfo": {"name": "reflex-mcp-guard", "version": "0.2.2"},
                     "capabilities": {"tools": {}},
                 }
             elif method == "tools/list":

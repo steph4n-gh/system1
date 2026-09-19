@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""System 1 vs TypeSafe AI: Enterprise Auto-Cutover Showcase.
+"""Legacy simulation: schema-augmented teaching and a relaxed promotion policy.
+Not production quality evidence; observe_routing.py demonstrates default gates.
+
+System 1 vs TypeSafe AI: Enterprise Auto-Cutover Showcase.
 
 Demonstrates the drop-in Trojan Horse compatibility layer (`mode="auto_cutover"`)
 for TypeSafe AI (Jev) SDK with:
@@ -695,6 +698,7 @@ def run_auto_cutover_showcase(
 
     # 3. Instantiate TypeSafeClient in auto_cutover mode
     # For fast illustrative showcase runs, provide explicit demo policy
+    print("Legacy simulation: augmented examples and relaxed gates; synthetic WAN metrics are not live measurements.")
     demo_policy = PromotionPolicy(
         min_agreement_threshold=0.75,
         false_allow_ceiling=0.0,
@@ -707,6 +711,7 @@ def run_auto_cutover_showcase(
         cutover_threshold=effective_threshold,
         min_agreement_threshold=0.8,
         promotion_policy=demo_policy,
+        augment=True, strict_mode=False,  # Legacy synthetic demonstration; see observe_routing.py for default gates.
         signing_key=signing_key,
         ledger=ledger,
         timeout=3.0,

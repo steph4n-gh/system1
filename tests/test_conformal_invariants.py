@@ -202,11 +202,11 @@ def test_score_and_serialization_harmonization_roundtrip(tmp_path: Path):
 def test_prediction_set_cardinality_escalation_in_strict_mode():
     """Verify that in strict mode, margin gating CANNOT suppress conformal ambiguity (|C(x)| != 1)."""
     cp = ConformalPredictor("severity", ["P1", "P2", "P3"])
-    cp.calibration_scores = np.linspace(0.80, 0.92, 20)
+    cp.calibration_scores = np.linspace(0.80, 0.96, 20)
     cp.is_calibrated = True
 
     # Test probability distribution where top candidate dominates runner-up, but alpha forces 2 candidates
-    # cum_mass = 0.85 < 50.0, so requires [P1, P2] (cardinality = 2)
+    # P1 + P2 = .95 <= .96: both are inside the calibrated threshold.
     test_probs = np.array([0.85, 0.10, 0.05])
 
     # In non-strict mode with low margin threshold, margin gate can activate
@@ -218,7 +218,7 @@ def test_prediction_set_cardinality_escalation_in_strict_mode():
         confidence_floor_tau0=0.10,
         strict=False,
     )
-    assert len(cset_relaxed.prediction_set) == 2
+    assert len(cset_relaxed.prediction_set) == 3
     assert cset_relaxed.raw_is_ambiguous is True
     assert cset_relaxed.margin_gate_active is True
     assert cset_relaxed.is_ambiguous is False  # Suppressed by margin gate

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Pokémon Showdown Competitive Ladder (#1 Peak Elo Bot): System 1 System 1 Engine.
+"""The main battle policy is a damage heuristic with minimax fallback. Online opponent updates are not wired into the supplied loops; no ladder performance is established.
+
+Pokémon Showdown Competitive Ladder (#1 Peak Elo Bot): System 1 System 1 Engine.
 
 Implements an autonomous, sub-millisecond competitive agent for Pokémon Showdown
 connecting via WebSocket (to `wss://sim3.psim.us/showdown/websocket` or local simulator)

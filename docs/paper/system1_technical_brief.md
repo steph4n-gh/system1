@@ -1,4 +1,7 @@
 # System 1: Technical Brief & Architecture Guide
+
+> **Release scope:** This is a research/design document with historical or illustrative claims. It is not a release guarantee or independent validation. See [current deployment boundaries](../deployment.md) and the [reproducible release benchmarks](https://github.com/steph4n-gh/system1#benchmarks). Statistical coverage is not a guarantee of safe tool execution; game simulations are not verified world records.
+
 **The On-Metal Decision Firewall for Autonomous AI Agents**
 
 ---
@@ -41,7 +44,7 @@ This architectural pattern creates three enterprise bottlenecks:
                              ▼                       ▼
               ┌─────────────────────────────┐  ┌───────────────────────────────┐
               │ Execute Locally on Metal    │  │ Halt Fail-Closed & Escalate   │
-              │ • SHA-256 Merkle Ledger     │  │ • Frontier Reasoning Governor │
+              │ • SHA-256 Hash-chain Ledger     │  │ • Frontier Reasoning Governor │
               │ • Ed25519 Signed Receipt    │  │   (OpenAI, Anthropic, Google) │
               └─────────────────────────────┘  └───────────────┬───────────────┘
                                                                │
@@ -168,7 +171,7 @@ System 1 includes native Prometheus and OpenTelemetry instrumentation:
 
 Every authorized or denied decision generates an immutable cryptographic proof:
 1. **DecisionWitnessReceipt**: Formatted as canonical JSON and signed by an on-device Ed25519 private key.
-2. **ActionLedger**: Stored in a local SQLite database utilizing Write-Ahead Logging (WAL) and SHA-256 rolling Merkle hash-chaining.
+2. **ActionLedger**: Stored in a local SQLite database utilizing Write-Ahead Logging (WAL) and SHA-256 linear hash chaining.
 3. **Offline Verifiability**: Third-party auditors can verify receipts without access to the runtime or model weights:
    ```bash
    reflex verify-receipt path/to/receipt.json
@@ -178,7 +181,7 @@ Every authorized or denied decision generates an immutable cryptographic proof:
 
 * **HIPAA**: Protected Health Information (PHI) evaluated within host process boundaries; 0 bytes transmitted over external networks.
 * **GDPR**: Data processing remains on-premise without international data transfers.
-* **SOC 2 Type II**: Non-repudiable audit trails recorded locally with software Ed25519 cryptographic receipts and SQLite Merkle chaining.
+* **SOC 2 Type II**: Non-repudiable audit trails recorded locally with software Ed25519 cryptographic receipts and SQLite hash chaining.
 
 ---
 

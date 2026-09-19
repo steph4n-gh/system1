@@ -241,7 +241,7 @@ def test_sliding_window_drift_detector():
     assert detector.is_drifted is False
 
 
-def test_post_cutover_cloud_fallback_routing():
+def test_post_cutover_cloud_fallback_routing(monkeypatch):
     """Verify that when allow_cloud_fallback=True, ambiguous queries route to cloud."""
     client = TypeSafeClient(
         mode="auto_cutover",
@@ -250,6 +250,10 @@ def test_post_cutover_cloud_fallback_routing():
         allow_cloud_fallback=True,
     )
     client._has_cutover = True
+    from system1.compat.typesafe import TypeSafeResponse
+    monkeypatch.setattr(client, "call_real_api", lambda **kwargs: (
+        TypeSafeResponse({"answers": {}, "local_execution": False}), 1.0, 100,
+    ))
 
     # Inject mock drift in detector
     client.drift_detector.record(is_ambiguous=True, is_ood=True, confidence=0.10)

@@ -68,6 +68,7 @@ class TestAttack1ArtifactSubstitution:
             ),
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast tier", "smart": "Smart tier"}),
@@ -121,6 +122,7 @@ class TestAttack1ArtifactSubstitution:
             ),
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast tier", "smart": "Smart tier"}),
@@ -160,6 +162,7 @@ class TestAttack1ArtifactSubstitution:
             ),
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast tier", "smart": "Smart tier"}),
@@ -311,6 +314,7 @@ class TestAttack3SmallSampleRelaxation:
             min_agreement_threshold=0.80,
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         # Check client's initial configuration
         assert client.promotion_policy is None
@@ -326,6 +330,7 @@ class TestAttack3SmallSampleRelaxation:
             min_agreement_threshold=0.80,
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast model", "smart": "Smart model"}),
@@ -697,6 +702,7 @@ class TestAttack6OverlappingFoldPoisoning:
             min_agreement_threshold=0.80,
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast model", "smart": "Smart model"}),

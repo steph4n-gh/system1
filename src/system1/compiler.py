@@ -1,15 +1,7 @@
-"""System 1 Compiler: Closed-Form Distillation & Static Model Serialization.
+"""Teach compact local decision skills from labeled examples using NumPy ridge
+regression, held-out uncertainty calibration, and portable .s1m serialization.
 
-Distills foundation models (or synthetic exemplars) into compact, non-autoregressive
-binary model files (.s1m) using closed-form Ridge Regression:
-    W* = (X^T X + lambda I)^(-1) X^T Y
-in pure NumPy with split conformal prediction calibration.
-
-Features:
-- Pure NumPy closed-form distillation (<10ms solve time).
-- Synthetic exemplar generator with rich domain template expansion.
-- Temperature and split conformal quantile calibration.
-- Binary .s1m serialization (<200KB) with magic header and SHA-256 integrity checks.
+Schema-derived synthetic examples remain available for bootstrapping demos.
 """
 
 from __future__ import annotations
@@ -49,6 +41,24 @@ from system1.core.telemetry import TelemetryProjector
 from system1.cache import SemanticSystemOneCache
 
 MAGIC_HEADER = b"S1M\x01"
+
+
+def _projector_config(projector: Any) -> Dict[str, Any]:
+    """Persist the settings that define the feature space, not just its width."""
+    from system1.core.embeddings import HybridProjector
+
+    if type(projector) is DeterministicSemanticProjector:
+        return {"type": "deterministic", "dimension": projector.dimension,
+                "recency_weighted": projector.recency_weighted}
+    if type(projector) is HybridProjector:
+        return {"type": "hybrid", "sparse_dim": projector.sparse_dim,
+                "dense_dim": projector.dense_dim, "alpha": projector.alpha,
+                "seed": projector.seed}
+    config = {"type": "external", "class": f"{type(projector).__module__}.{type(projector).__qualname__}",
+              "dimension": getattr(projector, "dimension", None)}
+    if callable(getattr(projector, "projector_digest", None)):
+        config["digest"] = projector.projector_digest()
+    return config
 
 
 @dataclass
@@ -351,6 +361,7 @@ class CompiledSystemOneModel:
         """
         header_meta = {
             "version": 1,
+            "projector": _projector_config(self.projector),
             "schema_name": self.schema.schema_name,
             "schema_dict": self.schema.to_dict(),
             "schema_digest": self.schema.schema_digest(),
@@ -437,6 +448,21 @@ class CompiledSystemOneModel:
         # Reconstruct schema
         schema = DecisionSchema.from_dict(meta["schema_dict"])
         dimension = int(meta["dimension"])
+        projector_config = meta.get("projector")
+        if projector_config is not None:
+            if projector is not None:
+                if _projector_config(projector) != projector_config:
+                    raise ValueError("Supplied projector does not match the saved skill's feature space")
+            elif projector_config["type"] == "deterministic":
+                projector = DeterministicSemanticProjector(
+                    dimension=projector_config["dimension"],
+                    recency_weighted=projector_config["recency_weighted"],
+                )
+            elif projector_config["type"] == "hybrid":
+                from system1.core.embeddings import HybridProjector
+                projector = HybridProjector(**{k: v for k, v in projector_config.items() if k != "type"}, backend=backend)
+            else:
+                raise ValueError("This skill requires its original external projector; pass projector= when loading")
 
         # Reconstruct head weights
         heads: Dict[str, CompiledHeadWeights] = {}
@@ -527,6 +553,8 @@ class SystemOneCompiler:
 
         self.dimension = dimension
         self.regularization = float(regularization)
+        if not math.isfinite(self.regularization) or self.regularization <= 0:
+            raise ValueError("regularization must be finite and positive")
         self.backend = backend
         self.forgetting_factor = float(forgetting_factor)
         self.relative_odds_ratio = float(relative_odds_ratio)
@@ -781,6 +809,59 @@ class SystemOneCompiler:
             )
         return weights.astype(np.float32), biases.astype(np.float32)
 
+    @staticmethod
+    def _prompt_key(prompt: str) -> str:
+        return " ".join(prompt.casefold().split())
+
+    def _validate_exemplars(self, dataset: Mapping[str, Sequence]) -> Dict[str, list]:
+        if not isinstance(dataset, Mapping):
+            raise ValueError("Examples must map schema field names to labeled samples")
+        unknown = set(dataset) - set(self.schema.fields)
+        if unknown:
+            raise ValueError(f"Unknown example fields: {sorted(unknown)}")
+        validated = {}
+        for name, rows in dataset.items():
+            field_def = self.schema.fields[name]
+            validated[name] = []
+            try:
+                rows = iter(rows)
+            except TypeError as exc:
+                raise ValueError(f"Examples for {name!r} must be a sequence of labeled samples") from exc
+            for index, row in enumerate(rows):
+                if not isinstance(row, (list, tuple)) or len(row) not in (2, 3):
+                    raise ValueError(f"{name}[{index}] must contain prompt, label, and optional telemetry")
+                prompt, label = row[:2]
+                if not isinstance(prompt, str) or not prompt.strip():
+                    raise ValueError(f"{name}[{index}] requires a nonempty text prompt")
+                if label is None:
+                    raise ValueError(f"{name}[{index}] requires an explicit label")
+                try:
+                    label = field_def.validate_value(label)
+                except (TypeError, ValueError) as exc:
+                    raise ValueError(f"Invalid label for {name}[{index}]: {exc}") from exc
+                validated[name].append((prompt, label, *row[2:]))
+        return validated
+
+    def _split_samples(self, samples: list, field_def: Optional[DecisionField], fraction: float) -> Tuple[list, list]:
+        groups: Dict[str, list] = {}
+        for row in samples:
+            groups.setdefault(self._prompt_key(row[0]), []).append(row)
+        # Stratify discrete fields, retaining at least one training group per class.
+        strata: Dict[Any, list] = {}
+        for key, rows in groups.items():
+            label = rows[0][1] if isinstance(field_def, (ChoiceField, BooleanField)) else None
+            strata.setdefault(label, []).append(key)
+        rng = np.random.RandomState(42)
+        held_out = set()
+        for keys in strata.values():
+            keys = sorted(keys)
+            rng.shuffle(keys)
+            count = min(len(keys) - 1, max(1, int(len(keys) * fraction))) if fraction else 0
+            held_out.update(keys[:count])
+        training = [row for row in samples if self._prompt_key(row[0]) not in held_out]
+        calibration = [row for row in samples if self._prompt_key(row[0]) in held_out]
+        return training, calibration
+
     def compile(
         self,
         exemplars: Optional[Dict[str, Sequence[Tuple[str, Any]]]] = None,
@@ -788,21 +869,50 @@ class SystemOneCompiler:
         samples_per_choice: int = 20,
         teacher: str = "synthetic",
         calibration_split: float = 0.25,
+        augment: bool = True,
+        calibration_exemplars: Optional[Dict[str, Sequence[Tuple[str, Any]]]] = None,
     ) -> CompiledSystemOneModel:
-        """Distills exemplars into optimal head hyperplanes with calibrated uncertainty."""
+        """Compile a local model, optionally using supplied examples only.
+
+        Set ``augment=False`` to teach only from the examples you supply.
+        Supply ``calibration_exemplars`` to control the held-out calibration set,
+        or reserve a fraction of unique prompts with ``calibration_split``.
+        A zero split produces an uncalibrated model; it never calibrates on training data.
+        Related paraphrases/workflows should be split by the caller before compilation.
+        """
+        if not math.isfinite(calibration_split) or not 0.0 <= calibration_split < 1.0:
+            raise ValueError("calibration_split must be finite and in [0, 1)")
+        if not augment and exemplars is None:
+            raise ValueError("Teaching without augmentation requires explicit exemplars")
+        if calibration_exemplars is not None and exemplars is None:
+            raise ValueError("Explicit calibration requires explicit training exemplars")
         if exemplars is None:
             dataset = self.generate_synthetic_exemplars(
                 samples_per_choice=samples_per_choice,
                 teacher=teacher,
             )
         else:
-            dataset = {k: list(v) for k, v in exemplars.items()}
+            dataset = exemplars
+
+        dataset = self._validate_exemplars(dataset)
+        calibration_data = (
+            self._validate_exemplars(calibration_exemplars)
+            if calibration_exemplars is not None else None
+        )
+        if calibration_data is not None:
+            training_prompts = {self._prompt_key(row[0]) for rows in dataset.values() for row in rows}
+            calibration_prompts = {self._prompt_key(row[0]) for rows in calibration_data.values() for row in rows}
+            if training_prompts & calibration_prompts:
+                raise ValueError("Training and calibration prompts must be disjoint")
 
         compiled_heads: Dict[str, CompiledHeadWeights] = {}
+        sample_counts: Dict[str, Dict[str, int]] = {}
 
         for field_name, f_def in self.schema.fields.items():
             samples = list(dataset.get(field_name, []))
             if not samples:
+                if not augment:
+                    raise ValueError(f"Teaching requires examples for field {field_name!r}")
                 # Fall back to default initialized head weights
                 head = DecisionFieldHead(f_def, dimension=self.dimension, projector=self.projector)
                 compiled_heads[field_name] = CompiledHeadWeights(
@@ -820,77 +930,116 @@ class SystemOneCompiler:
                 )
                 continue
 
-            # Class balance and synthetic augmentation across all field types
-            if isinstance(f_def, ChoiceField):
-                counts = {opt: sum(1 for s in samples if s[1] == opt) for opt in f_def.options}
-                max_c = max(counts.values()) if counts else 0
-                target_c = max(max_c, samples_per_choice, 15)
-                synth_all = self.generate_synthetic_exemplars(samples_per_choice=target_c)
-                synth_field = synth_all.get(field_name, [])
+            # Teaching from examples keeps repeated prompts in one partition.
+            # Preserve the existing synthetic-demo recipe for compatibility.
+            if calibration_data is not None:
+                calibration_samples = list(calibration_data.get(field_name, []))
+            elif not augment:
+                samples, calibration_samples = self._split_samples(samples, f_def, calibration_split)
+            else:
+                calibration_samples = []
+            if not augment:
+                observed = {row[1] for row in samples} if isinstance(f_def, (ChoiceField, BooleanField)) else None
+                required = set(f_def.options) if isinstance(f_def, ChoiceField) else {False, True}
+                if observed is not None and not required.issubset(observed):
+                    raise ValueError(f"Training examples for {field_name!r} must cover every class")
+            real_training_count = len(samples)
+            if augment:
+                # Class balance and synthetic augmentation across all field types
+                if isinstance(f_def, ChoiceField):
+                    counts = {opt: sum(1 for s in samples if s[1] == opt) for opt in f_def.options}
+                    max_c = max(counts.values()) if counts else 0
+                    target_c = max(max_c, samples_per_choice, 15)
+                    synth_all = self.generate_synthetic_exemplars(samples_per_choice=target_c)
+                    synth_field = synth_all.get(field_name, [])
 
-                for opt in f_def.options:
-                    curr_samples = [s for s in samples if s[1] == opt]
-                    deficit = target_c - len(curr_samples)
-                    if deficit > 0:
-                        synth_opt = [s for s in synth_field if s[1] == opt]
-                        if not synth_opt:
-                            synth_opt = [(f"Operation {opt}: {f_def.descriptions.get(opt, opt)}", opt)]
-                        for idx in range(deficit):
-                            samples.append(synth_opt[idx % len(synth_opt)])
+                    for opt in f_def.options:
+                        curr_samples = [s for s in samples if s[1] == opt]
+                        deficit = target_c - len(curr_samples)
+                        if deficit > 0:
+                            synth_opt = [s for s in synth_field if s[1] == opt]
+                            if not synth_opt:
+                                synth_opt = [(f"Operation {opt}: {f_def.descriptions.get(opt, opt)}", opt)]
+                            for idx in range(deficit):
+                                samples.append(synth_opt[idx % len(synth_opt)])
 
-            elif isinstance(f_def, BooleanField):
-                true_count = sum(1 for s in samples if bool(s[1]))
-                false_count = sum(1 for s in samples if not bool(s[1]))
-                target_c = max(true_count, false_count, samples_per_choice, 15)
-                synth_all = self.generate_synthetic_exemplars(samples_per_choice=target_c)
-                synth_field = synth_all.get(field_name, [])
+                elif isinstance(f_def, BooleanField):
+                    true_count = sum(1 for s in samples if bool(s[1]))
+                    false_count = sum(1 for s in samples if not bool(s[1]))
+                    target_c = max(true_count, false_count, samples_per_choice, 15)
+                    synth_all = self.generate_synthetic_exemplars(samples_per_choice=target_c)
+                    synth_field = synth_all.get(field_name, [])
 
-                true_deficit = target_c - true_count
-                false_deficit = target_c - false_count
-                if true_deficit > 0:
-                    synth_true = [s for s in synth_field if bool(s[1])]
-                    for idx in range(true_deficit):
-                        samples.append(synth_true[idx % len(synth_true)])
-                if false_deficit > 0:
-                    synth_false = [s for s in synth_field if not bool(s[1])]
-                    for idx in range(false_deficit):
-                        samples.append(synth_false[idx % len(synth_false)])
+                    true_deficit = target_c - true_count
+                    false_deficit = target_c - false_count
+                    if true_deficit > 0:
+                        synth_true = [s for s in synth_field if bool(s[1])]
+                        for idx in range(true_deficit):
+                            samples.append(synth_true[idx % len(synth_true)])
+                    if false_deficit > 0:
+                        synth_false = [s for s in synth_field if not bool(s[1])]
+                        for idx in range(false_deficit):
+                            samples.append(synth_false[idx % len(synth_false)])
 
-            elif isinstance(f_def, MultiChoiceField):
-                synth_all = self.generate_synthetic_exemplars(samples_per_choice=15)
-                synth_field = synth_all.get(field_name, [])
-                for p, lab in synth_field:
-                    samples.append((p, lab))
+                elif isinstance(f_def, MultiChoiceField):
+                    synth_all = self.generate_synthetic_exemplars(samples_per_choice=15)
+                    synth_field = synth_all.get(field_name, [])
+                    for p, lab in synth_field:
+                        samples.append((p, lab))
 
-            elif isinstance(f_def, ScoreField):
-                val_range = max(1e-6, f_def.max_value - f_def.min_value)
-                synth_all = self.generate_synthetic_exemplars(samples_per_choice=samples_per_choice)
-                synth_field = synth_all.get(field_name, [])
+                elif isinstance(f_def, ScoreField):
+                    val_range = max(1e-6, f_def.max_value - f_def.min_value)
+                    synth_all = self.generate_synthetic_exemplars(samples_per_choice=samples_per_choice)
+                    synth_field = synth_all.get(field_name, [])
 
-                low_synth = [s for s in synth_field if float(s[1]) <= f_def.min_value + 0.33 * val_range]
-                mid_synth = [s for s in synth_field if f_def.min_value + 0.33 * val_range < float(s[1]) <= f_def.min_value + 0.67 * val_range]
-                high_synth = [s for s in synth_field if float(s[1]) > f_def.min_value + 0.67 * val_range]
+                    low_synth = [s for s in synth_field if float(s[1]) <= f_def.min_value + 0.33 * val_range]
+                    mid_synth = [s for s in synth_field if f_def.min_value + 0.33 * val_range < float(s[1]) <= f_def.min_value + 0.67 * val_range]
+                    high_synth = [s for s in synth_field if float(s[1]) > f_def.min_value + 0.67 * val_range]
 
-                low_real = [s for s in samples if float(s[1]) <= f_def.min_value + 0.33 * val_range]
-                mid_real = [s for s in samples if f_def.min_value + 0.33 * val_range < float(s[1]) <= f_def.min_value + 0.67 * val_range]
-                high_real = [s for s in samples if float(s[1]) > f_def.min_value + 0.67 * val_range]
+                    low_real = [s for s in samples if float(s[1]) <= f_def.min_value + 0.33 * val_range]
+                    mid_real = [s for s in samples if f_def.min_value + 0.33 * val_range < float(s[1]) <= f_def.min_value + 0.67 * val_range]
+                    high_real = [s for s in samples if float(s[1]) > f_def.min_value + 0.67 * val_range]
 
-                target_c = max(len(low_real), len(mid_real), len(high_real), samples_per_choice, 15)
+                    target_c = max(len(low_real), len(mid_real), len(high_real), samples_per_choice, 15)
 
-                if low_synth:
-                    for idx in range(target_c - len(low_real)):
-                        samples.append(low_synth[idx % len(low_synth)])
-                if mid_synth:
-                    for idx in range(target_c - len(mid_real)):
-                        samples.append(mid_synth[idx % len(mid_synth)])
-                if high_synth:
-                    for idx in range(target_c - len(high_real)):
-                        samples.append(high_synth[idx % len(high_synth)])
+                    if low_synth:
+                        for idx in range(target_c - len(low_real)):
+                            samples.append(low_synth[idx % len(low_synth)])
+                    if mid_synth:
+                        for idx in range(target_c - len(mid_real)):
+                            samples.append(mid_synth[idx % len(mid_synth)])
+                    if high_synth:
+                        for idx in range(target_c - len(high_real)):
+                            samples.append(high_synth[idx % len(high_synth)])
 
-            # Deterministically shuffle samples to balance train and calib splits
-            rng_s = np.random.RandomState(42)
-            perm = rng_s.permutation(len(samples))
-            samples = [samples[i] for i in perm]
+
+                # Synthetic templates must not duplicate held-out prompts either.
+                held_out = {self._prompt_key(row[0]) for row in calibration_samples}
+                samples = [row for row in samples if self._prompt_key(row[0]) not in held_out]
+            if not samples:
+                raise ValueError(f"No training examples remain for field {field_name!r}")
+            generated_count = len(samples) - real_training_count
+            if augment and calibration_data is None:
+                rng = np.random.RandomState(42)
+                samples = [samples[i] for i in rng.permutation(len(samples))]
+                count = max(1, int(len(samples) * calibration_split)) if calibration_split and len(samples) >= 4 else 0
+                samples, calibration_samples = samples[:len(samples) - count], samples[len(samples) - count:]
+            # Temperature and conformal calibration also need disjoint prompts.
+            num_temperature = 0
+            if isinstance(f_def, ChoiceField) and not augment:
+                temperature_samples, conformal_samples = self._split_samples(calibration_samples, None, 0.5)
+                if conformal_samples:
+                    num_temperature = len(temperature_samples)
+                    calibration_samples = temperature_samples + conformal_samples
+            elif isinstance(f_def, ChoiceField) and len(calibration_samples) >= 2:
+                num_temperature = len(calibration_samples) // 2
+            num_train, num_calib = len(samples), len(calibration_samples)
+            sample_counts[field_name] = {
+                "fit": num_train, "calibration": num_calib,
+                "temperature": num_temperature,
+                "generated": generated_count,
+            }
+            samples = samples + calibration_samples
 
             # Prompts and labels
             prompts = [s[0] for s in samples]
@@ -910,11 +1059,8 @@ class SystemOneCompiler:
             X_all = np.stack(X_list, axis=0).astype(np.float32)
 
             N = len(prompts)
-            num_calib = max(1, int(N * calibration_split)) if N >= 4 else 0
-            num_train = max(1, N - num_calib)
-
             X_train = X_all[:num_train]
-            X_calib = X_all[num_train:] if num_calib > 0 else X_train
+            X_calib = X_all[num_train:]
 
             # Construct target Y matrix
             if isinstance(f_def, ChoiceField):
@@ -922,41 +1068,28 @@ class SystemOneCompiler:
                 K = len(f_def.options)
                 Y_all = np.zeros((N, K), dtype=np.float32)
                 for i, lab in enumerate(raw_labels):
-                    if lab in opt_to_idx:
-                        Y_all[i, opt_to_idx[lab]] = 1.0
-                    else:
-                        Y_all[i, 0] = 1.0
+                    Y_all[i, opt_to_idx[lab]] = 1.0
 
                 Y_train = Y_all[:num_train]
-                Y_calib = Y_all[num_train:] if num_calib > 0 else Y_train
+                Y_calib = Y_all[num_train:]
 
                 # Solve closed-form Ridge Regression
                 weights, biases, P_mat, B_mat = self._solve_ridge(
-                    X_train, Y_train, self.regularization, return_covariance=True
+                    X_train, Y_train, self.regularization, regularize_bias=augment, return_covariance=True
                 )
 
                 # Calibrate temperature and conformal bounds on independent held-out folds
                 logits_calib = (X_calib @ weights.T + biases) / 0.25
                 calib_labels = np.argmax(Y_calib, axis=1)
 
-                if len(calib_labels) >= 2:
-                    n_half = max(1, len(calib_labels) // 2)
-                    logits_temp = logits_calib[:n_half]
-                    labels_temp = calib_labels[:n_half]
-                    logits_conf = logits_calib[n_half:]
-                    labels_conf = calib_labels[n_half:]
-                else:
-                    logits_temp = logits_calib
-                    labels_temp = calib_labels
-                    logits_conf = logits_calib
-                    labels_conf = calib_labels
+                logits_temp, labels_temp = logits_calib[:num_temperature], calib_labels[:num_temperature]
+                logits_conf, labels_conf = logits_calib[num_temperature:], calib_labels[num_temperature:]
 
                 calibrator = DecisionCalibrator()
-                try:
+                learned_temp = 1.0
+                if len(labels_temp):
                     calibrator.fit(logits_temp, labels_temp)
                     learned_temp = float(calibrator.temperature)
-                except Exception:
-                    learned_temp = 1.0
                 probs_calib = calibrator.calibrate_logits(logits_conf)
 
                 # Adaptive Prediction Sets (APS) scoring matching calibration.py on held-out conformal fold
@@ -986,7 +1119,7 @@ class SystemOneCompiler:
                 alpha = 0.05
                 n_scores = len(sorted_calib_scores)
                 k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
-                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
+                conformal_q = (1.0 if k > n_scores else float(sorted_calib_scores[k - 1])) if n_scores else 0.0
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1027,7 +1160,7 @@ class SystemOneCompiler:
                 # Calibrate conformal bounds on X_calib
                 logits_calib = (X_calib @ weights.T + biases).flatten()
                 probs_calib = _stable_sigmoid(logits_calib, temperature=0.25)
-                calib_bools = [bool(lab) for lab in (raw_labels[num_train:] if num_calib > 0 else raw_labels[:num_train])]
+                calib_bools = [bool(lab) for lab in (raw_labels[num_train:])]
                 nonconf_scores = []
                 error_margins_bool = []
                 for i in range(len(calib_bools)):
@@ -1056,7 +1189,7 @@ class SystemOneCompiler:
                 alpha = 0.05
                 n_scores = len(sorted_calib_scores)
                 k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
-                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
+                conformal_q = (1.0 if k > n_scores else float(sorted_calib_scores[k - 1])) if n_scores else 0.0
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1109,7 +1242,7 @@ class SystemOneCompiler:
                 # Calibrate conformal bounds on X_calib
                 logits_calib = X_calib @ weights.T + biases
                 probs_calib = _stable_sigmoid(logits_calib, temperature=0.25)
-                calib_labels = raw_labels[num_train:] if num_calib > 0 else raw_labels[:num_train]
+                calib_labels = raw_labels[num_train:]
                 nonconf_scores = []
                 for i in range(len(probs_calib)):
                     active_set = set(calib_labels[i] if isinstance(calib_labels[i], (list, tuple, set)) else [calib_labels[i]])
@@ -1122,7 +1255,7 @@ class SystemOneCompiler:
                 alpha = 0.05
                 n_scores = len(sorted_calib_scores)
                 k = int(math.ceil((n_scores + 1) * (1.0 - alpha)))
-                conformal_q = 1.0 if k > n_scores else float(sorted_calib_scores[k - 1])
+                conformal_q = (1.0 if k > n_scores else float(sorted_calib_scores[k - 1])) if n_scores else 0.0
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1149,14 +1282,14 @@ class SystemOneCompiler:
                 Z_all = (0.25 * np.log(r / (1.0 - r))).astype(np.float32)
                 Z_train = Z_all[:num_train]
                 weights, biases, P_mat, B_mat = self._solve_ridge(
-                    X_train, Z_train, self.regularization, return_covariance=True
+                    X_train, Z_train, self.regularization, regularize_bias=augment, return_covariance=True
                 )
 
                 # Calibrate residual bounds on X_calib
                 logits_calib = (X_calib @ weights.T + biases).flatten()
                 probs_calib = _stable_sigmoid(logits_calib, temperature=0.25)
                 pred_vals = f_def.min_value + val_range * probs_calib
-                true_calib_floats = raw_floats[num_train:].flatten() if num_calib > 0 else raw_floats[:num_train].flatten()
+                true_calib_floats = raw_floats[num_train:].flatten()
                 residuals = [
                     float(abs(pred_vals[i] - true_calib_floats[i]))
                     for i in range(len(pred_vals))
@@ -1165,7 +1298,7 @@ class SystemOneCompiler:
                 alpha = 0.05
                 n_res = len(sorted_residuals)
                 k = int(math.ceil((n_res + 1) * (1.0 - alpha)))
-                conformal_q = float(val_range) if k > n_res else float(sorted_residuals[k - 1])
+                conformal_q = (float(val_range) if k > n_res else float(sorted_residuals[k - 1])) if n_res else 0.0
 
                 compiled_heads[field_name] = CompiledHeadWeights(
                     field_name=field_name,
@@ -1194,7 +1327,9 @@ class SystemOneCompiler:
             recency_weighted=self.recency_weighted,
             metadata={
                 "regularization": self.regularization,
-                "teacher": teacher,
+                "teacher": teacher if augment else None,
+                "teaching_mode": "schema_augmented" if augment else "examples",
+                "sample_counts": sample_counts,
                 "compiled_at": time.time(),
             },
         )
@@ -1205,12 +1340,19 @@ class SystemOneCompiler:
         exemplars: Optional[Dict[str, Sequence[Tuple[str, Any]]]] = None,
         samples_per_choice: int = 20,
         teacher: str = "synthetic",
+        *,
+        augment: bool = True,
+        calibration_split: float = 0.25,
+        calibration_exemplars: Optional[Dict[str, Sequence[Tuple[str, Any]]]] = None,
     ) -> CompiledSystemOneModel:
         """Compiles model and writes directly to target .s1m binary file."""
         model = self.compile(
             exemplars=exemplars,
             samples_per_choice=samples_per_choice,
             teacher=teacher,
+            augment=augment,
+            calibration_split=calibration_split,
+            calibration_exemplars=calibration_exemplars,
         )
         model.save(output_path)
         return model

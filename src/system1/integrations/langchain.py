@@ -77,6 +77,10 @@ class SystemOneIndeterminateExecutionError(RuntimeError):
 class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
     """LangChain CallbackHandler enforcing sub-millisecond System 1 safety before tool execution."""
 
+    # LangChain otherwise logs callback failures and continues executing the tool.
+    raise_error = True
+    run_inline = True
+
     def __init__(
         self,
         guard: Optional[SystemOneGuardHook] = None,
@@ -119,7 +123,7 @@ class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
         )
         proposal = ActionProposal.create(
             tenant_id=self.tenant_id,
-            principal_id=str(run_id or self.principal_id),
+            principal_id=self.principal_id,
             scope="langchain:tools:exec",
             tool=tool_name,
             arguments={"input": input_str},
@@ -130,11 +134,10 @@ class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
         context = f"{description}. Action: {tool_name} with {str(input_str)}."
         interception = self.guard.evaluate_proposal(proposal, context_prompt=context)
         self.interceptions.append(interception)
-        if run_id is not None:
-            self._active_runs[str(run_id)] = interception
-
         if interception.outcome != DecisionOutcome.ALLOW:
             raise SystemOneGuardBlockedException(interception)
+        if run_id is not None:
+            self._active_runs[str(run_id)] = interception
 
     def on_tool_end(
         self,
@@ -171,7 +174,7 @@ class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
                         status="SUCCEEDED",
                         result_payload={"result": str(output)[:500]},
                         tenant_id=self.tenant_id,
-                        principal_id=str(run_id or self.principal_id),
+                        principal_id=self.principal_id,
                         scope="langchain:tools:exec",
                         trusted_public_key=pub_key,
                     )
@@ -219,7 +222,7 @@ class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
                         status="FAILED",
                         error_message=str(error),
                         tenant_id=self.tenant_id,
-                        principal_id=str(run_id or self.principal_id),
+                        principal_id=self.principal_id,
                         scope="langchain:tools:exec",
                         trusted_public_key=pub_key,
                     )

@@ -55,11 +55,11 @@ def test_serialization_preserves_strict_prediction_set_at_boundary():
     e = engine(p=.9)
     e.use_cache = False
     p = e.decide('boundary', strict=True, record_receipt=False).probabilities['route']['north']
-    q = p + 1e-7 + 1e-9
+    q = p + 1e-9
     cp = e.conformal_predictors['route']
     cp.calibrate(np.tile([q, 1-q], (100, 1)), ['north'] * 100)
     before = e.decide('boundary', strict=True, record_receipt=False)
-    assert before.is_ambiguous
+    assert not before.is_ambiguous
     head = e.model.heads['route']
     ch = CompiledHeadWeights(field_name='route', field_type='choice', weights=head.weights.copy(),
           biases=head.biases.copy(), options=tuple(e.schema.fields['route'].options),

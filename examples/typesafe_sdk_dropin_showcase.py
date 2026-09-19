@@ -215,8 +215,8 @@ def showcase_part_5_side_by_side_comparison(api_key: str):
         print(f"Live TypeSafe API Key provided: [***{api_key[-4:]}]")
         print("Making live WAN HTTP request to https://api.typesafe.ai/v1/systemone (model: jev-latest)")
     else:
-        print("No TYPESAFE_API_KEY set: Using measured WAN socket RTT and realistic baseline profile")
-        print("Set TYPESAFE_API_KEY environment variable to test against live TypeSafe SaaS cloud endpoint.")
+        print("Live comparison skipped: no TYPESAFE_API_KEY provided.")
+        return
 
     client = TypeSafeClient(api_key=api_key, zero_egress=False)
 
@@ -255,22 +255,23 @@ def showcase_part_5_side_by_side_comparison(api_key: str):
     print("-" * 96)
 
     for name, prompt, questions in benchmark_cases:
-        comp = client.compare(prompt, questions, timeout=10.0)
+        try:
+            comp = client.compare(prompt, questions, timeout=10.0)
+        except Exception as exc:
+            print(f"{name}: comparison unavailable ({exc})")
+            continue
         local_lat = comp.local_latency_ms
         cloud_lat = comp.cloud_latency_ms
         speedup = comp.speedup_factor
         egress_diff = f"0 B vs {comp.cloud_egress_bytes} B"
-        receipt_str = "Verified (Ed25519)" if comp.local_receipt_verified else "None"
+        receipt_str = "Receipt verified" if comp.local_receipt_verified else "None"
 
         print(f"{name:<18} | {local_lat:>11.3f} ms     | {cloud_lat:>10.2f} ms    | {speedup:>9.1f}x  | {egress_diff:<14} | {receipt_str}")
 
     print("-" * 96)
-    print("\nMoat Highlights:")
-    print("  1. Latency:   System 1 runs locally on Apple Silicon Metal in ~1-3 ms (vs ~200-300 ms cloud roundtrips)")
-    print("  2. Privacy:   Zero bytes egress public internet vs full prompt text sent to cloud")
-    print("  3. Cost:      $0.00 token billing vs SaaS per-decision pricing")
-    print("  4. Bounds:    Split Conformal Prediction sets with exact finite-sample math guarantees")
-    print("  5. Audit:     Ed25519 witness receipt + SQLite SHA-256 tamper-evident ActionLedger")
+    print("\nMeasured successful calls only; timings do not establish decision-quality parity.")
+    print("Uncertainty coverage requires suitable independent calibration data.")
+
 
 
 def main():

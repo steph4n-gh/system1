@@ -50,7 +50,50 @@ python3 benchmarks/quality/run_quality_benchmarks.py --output my_results.json
 
 Run from the repository root. The script automatically adds `src/` to `sys.path`.
 
-## Output
+## Teaching comparison
+
+The main runner above measures schema-derived starter classifiers. To check what
+the existing compiler learns from task examples, run:
+
+```bash
+python benchmarks/quality/evaluate_teaching.py
+```
+
+The [recorded comparison](results/teaching_review.json) uses five fixed,
+label-stratified folds (seed 42). Each of the 100 examples per task is evaluated
+once, outside the examples used to teach or calibrate that fold's skill. Normalized
+duplicate prompts stay together. There are no workflow or paraphrase-group labels,
+so related cases may cross folds and inflate results. These development datasets
+have already informed implementation choices; they are not an untouched release test.
+
+Each taught skill uses only supplied examples, ridge regularization 1.0, and the
+default 25% calibration split. For choice fields, temperature and conformal
+calibration use separate parts of that split. We compare the unchanged default
+384 features with 2048 features. No parameter search is run by this script.
+
+| Task | Starter, 384 features | Taught, 384 features | Taught, 2048 features |
+|---|---|---|---|
+| Security triage accuracy | 50% | 68% | 71% |
+| Intent routing accuracy | 51% | 61% | 68% |
+| BLOCK predicted as ALLOW, out of 35 | 8 | 6 | 0 |
+
+**All variants requested review on all examples** in strict mode at alpha 0.05.
+The taught folds have only 9–10 conformal calibration examples; the resulting
+quantiles retain all choices here. Accepted accuracy is therefore undefined
+(`null` in the report), not 100%. Zero accepted errors with zero accepted decisions
+does not establish useful automatic routing or security enforcement.
+
+The 2048-feature skills were about 26 KB for triage and 34 KB for routing, with
+median decision times of 0.396 ms and 0.509 ms respectively on the review machine.
+Both caches and receipt generation were disabled. These are local measurements,
+not end-to-end service guarantees. The report includes environment details,
+dataset hashes, fold sizes, per-example predictions, review rates, and latency.
+
+The comparison demonstrates that teaching helps raw classification. To establish
+a useful skill, collect representative task examples, keep related workflows
+together, and check the resulting skill against a separate evaluation set.
+
+## Seed benchmark output
 
 Results are printed as human-readable tables to stdout **and** saved as JSON to `benchmarks/quality/results/`. Each run produces a timestamped JSON file containing:
 

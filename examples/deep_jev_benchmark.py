@@ -139,8 +139,8 @@ def call_jev_api(
     t0 = time.perf_counter()
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            latency_ms = (time.perf_counter() - t0) * 1000.0
             data = json.loads(resp.read().decode("utf-8"))
+            latency_ms = (time.perf_counter() - t0) * 1000.0
             return data, latency_ms, egress_bytes
     except Exception as e:
         latency_ms = (time.perf_counter() - t0) * 1000.0
@@ -309,6 +309,9 @@ def run_benchmark(api_key: str):
 
         # 1. Evaluate on TypeSafe AI (Jev)
         jev_resp, jev_lat, egress = call_jev_api(case["prompt"], case["jev_questions"], api_key=api_key)
+        if not jev_resp or not jev_resp.get("answers"):
+            print("    Comparison unavailable: failed teacher response excluded.")
+            continue
         jev_latencies.append(jev_lat)
         total_egress_bytes += egress
 
@@ -355,6 +358,10 @@ def run_benchmark(api_key: str):
             "jev_answers": jev_answers_summary,
             "system1_answers": system1_res.values,
         })
+
+    if not results_table:
+        print("No successful paired API responses; no speedup can be reported.")
+        return []
 
     # Print Summary Table
     print("\n" + "=" * 92)

@@ -204,8 +204,8 @@ class TestInvariant6ConformalPredictorStress:
     def test_strict_mode_suppresses_margin_gating(self):
         """Strict mode must strictly enforce cardinality escalation (|C(x)| != 1) without margin bypass."""
         cp = ConformalPredictor("action", ["ALLOW", "DENY", "REVIEW"])
-        # Calibrate such that q_hat is high (0.85)
-        cp.calibration_scores = np.full(50, 0.85)
+        # Both leading labels have cumulative score <= .95.
+        cp.calibration_scores = np.full(50, 0.95)
         cp.is_calibrated = True
 
         # Candidate probabilities with high margin: ALLOW=0.80, DENY=0.10, REVIEW=0.10

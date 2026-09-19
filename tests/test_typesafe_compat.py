@@ -104,8 +104,8 @@ def test_question_types_construction():
     s = Score("Rate difficulty", criteria=["Easy", "Medium", "Hard"])
     sd = s.to_dict()
     assert sd["type"] == "score"
-    assert sd["min_value"] == 0.0
-    assert sd["max_value"] == 2.0
+    assert sd["criteria"] == ["Easy", "Medium", "Hard"]
+    assert "min_value" not in sd  # Official ordinal wire contract
 
 
 def test_typesafe_client_sync_evaluation():
@@ -453,11 +453,11 @@ def test_typesafe_compat_edge_cases_and_error_handling():
     client = TypeSafeClient()
 
     # 1. Non-string state raises TypeError
-    with pytest.raises(TypeError, match="Expected prompt state to be a string"):
+    with pytest.raises(TypeError, match="State must be text"):
         client.system_one(12345, {"q": Choice("Q", criteria=["a", "b"])})
 
     # 2. Empty questions dict raises ValueError (schema has no fields)
-    with pytest.raises(ValueError, match="no fields defined"):
+    with pytest.raises(ValueError, match="At least one question"):
         client.system_one("Prompt", {})
 
     # 3. Invalid question specification type raises TypeError
@@ -760,8 +760,8 @@ def test_typesafe_client_compare():
     assert comparison.local_tokens == 0
     assert comparison.cloud_tokens > 0
     assert comparison.local_cost_usd == 0.0
-    assert comparison.cloud_cost_usd > 0.0
-    assert comparison.speedup_factor > 1.0
+    assert comparison.cloud_cost_usd is None
+    assert comparison.speedup_factor is None  # Simulated fallback is not live performance evidence
     assert comparison.local_receipt_verified is True
     assert comparison.cloud_receipt_verified is False
     assert comparison.local_response.receipt is not None
@@ -777,7 +777,7 @@ async def test_async_typesafe_client_compare():
     }
 
     comparison = await client.compare("Check system health", questions)
-    assert comparison.speedup_factor > 1.0
+    assert comparison.speedup_factor is None  # Simulated fallback is not live performance evidence
     assert comparison.local_egress_bytes == 0
     assert comparison.cloud_egress_bytes > 0
 
@@ -791,7 +791,7 @@ def test_top_level_compare_convenience():
     }
 
     comp = ts_compare("Great service, thank you!", questions, zero_egress=False, fallback_baseline=True)
-    assert comp.speedup_factor > 1.0
+    assert comp.speedup_factor is None
     assert comp.local_response.answers.sentiment.choice in ("positive", "negative")
 
 
@@ -905,10 +905,10 @@ def test_compare_flags_and_fallback_baseline_toggle():
     assert comp.is_live is False
     assert comp.baseline_fallback is True
 
-    # With fallback_baseline=False and empty key / offline endpoint, cloud_response is None
-    comp2 = client.compare("Test state", questions, fallback_baseline=False)
-    assert comp2.is_live is False
-    assert comp2.baseline_fallback is True
+    # Without an explicit simulation, failed HTTP stays a failure.
+    import urllib.error
+    with pytest.raises(urllib.error.URLError):
+        client.compare("Test state", questions, fallback_baseline=False)
 def test_paperclips_dropin_compatibility():
     """Verify that the Universal Paperclips Jev prompt and dynamic choices work seamlessly with drop-in patch."""
     patch_typesafe()
@@ -976,7 +976,7 @@ def test_paperclips_compare_and_cutover_compatibility():
     assert comp.local_response.answers.next_action.choice in choices
     assert comp.cloud_response is not None
     assert comp.cloud_response.answers.next_action.choice in choices
-    assert comp.local_latency_ms < comp.cloud_latency_ms
+    assert comp.speedup_factor is None
 
     # 2. Auto-cutover mode
     ledger = ActionLedger(":memory:")
@@ -991,6 +991,7 @@ def test_paperclips_compare_and_cutover_compatibility():
         cutover_threshold=3,
         min_agreement_threshold=0.5,
         promotion_policy=demo_policy,
+        augment=True, strict_mode=False,
         ledger=ledger,
         signing_key=signing_key,
         zero_egress=False,
@@ -1017,7 +1018,6 @@ def test_paperclips_compare_and_cutover_compatibility():
     r4 = client_cut.system_one(state=state, questions={"next_action": q})
     assert r4.answers.next_action.choice in choices
     assert r4.local_execution is True
-
 
 
 

@@ -21,6 +21,7 @@ import argparse
 import json
 import math
 import os
+import platform
 import statistics
 import sys
 import time
@@ -563,6 +564,11 @@ def main() -> None:
 
     all_results: Dict[str, Any] = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
+        "environment": {
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "machine": platform.machine(),
+        },
         "benchmarks": {},
     }
 
@@ -586,6 +592,7 @@ def main() -> None:
     else:
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         out_path = RESULTS_DIR / f"quality_results_{ts}.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Make raw_results JSON-serialisable (strip numpy/dataclass artefacts)
     with open(out_path, "w", encoding="utf-8") as f:
@@ -622,6 +629,8 @@ def main() -> None:
                 f"P99: {lat.get('p99_ms', 0):.3f}ms"
             )
     print(f"{'─' * 80}\n")
+    if any("error" in report for report in all_results["benchmarks"].values()):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

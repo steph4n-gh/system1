@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Pokémon Live Game Boy GUI Spectator & System 1 System 1 Agent.
+"""Integration prototype: navigation and live-battle button loops include scripts. This does not establish autonomous campaign completion.
+
+Pokémon Live Game Boy GUI Spectator & System 1 System 1 Agent.
 
 Runs the official Pokémon Game Boy cartridges on PyBoy with a native graphical
 macOS SDL2 window, full sprite animations, and real-time System 1 System 1

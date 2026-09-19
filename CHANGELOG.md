@@ -1,0 +1,23 @@
+# Changelog
+
+## 0.2.2 — 2026-09-19
+
+- Preserve the complete validated skill through takeover and reload: projector settings, schema identity, calibration, distributions and review behavior. Gate normal promotion on useful local acceptance as well as teacher agreement.
+- Make observed-only teaching and strict review the TypeSafe adapter defaults. Group related observations across all supplied lineage identifiers; insufficient evidence continues using the teacher.
+- Support SDK context managers, JSON object/array state, typed response accessors and ordinal score distributions. Document the supported contract and reject unsupported transport/response options.
+- Correct strict conformal sets to invert their calibrated cumulative-probability scores; retain conservative review when calibration is insufficient.
+- Add the complete offline observation-to-local-reuse example, with optional real Jev observation. Remove fabricated speedups after HTTP failures, counter-only campaign takeover, reconstructed probability distributions and unsupported example claims.
+
+- Teach a skill from supplied examples with `compile(..., augment=False)` or CLI `--dataset`, rejecting malformed labels instead of inventing replacements. Keep repeated prompts out of separate calibration partitions and preserve uncalibrated status when no calibration examples exist.
+- Load saved skills directly with `system1 decide --model skill.s1m`, using strict uncertainty gating. Add a small teaching example and reproducible comparison on unseen examples.
+- Replace the three primary showcases with focused, offline teaching demonstrations: explicit labeled datasets, separate calibration and evaluation cases, saved skills, and measured quality, review frequency, size, and speed. Keep agent permissions under deterministic policy rules.
+- Propagate LangChain callback denials and approval requirements through synchronous and asynchronous tool dispatch. Preserve the configured principal instead of substituting a run ID.
+- Handle non-object JSON, malformed multipart text, disconnects, and one-time body replay in the ASGI gateway; respect structured escalation signals.
+- Return actual receipt digests in gateway headers and MCP errors.
+- Add real LangChain dispatch regression tests, built-distribution checks, Python 3.14 CI coverage, and release-tag validation.
+- Update package build requirements and the lockfile; include examples and test support files in source distributions.
+- Replace unsupported launch claims with reproducible benchmark results, executable quickstarts, and explicit deployment boundaries.
+
+## 0.2.1
+
+Previous published baseline. See the [repository history](https://github.com/steph4n-gh/system1/commits/main/) for earlier changes.

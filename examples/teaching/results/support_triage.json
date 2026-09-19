@@ -1,0 +1,421 @@
+{
+  "name": "support_triage",
+  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark.",
+  "policy": {
+    "billing": "Existing payments, invoices, refunds, subscriptions, or billing records.",
+    "technical_support": "Product defects, errors, integrations, performance, or installation.",
+    "account_security": "Login credentials, identity verification, account access, or suspicious sign-ins.",
+    "sales": "Prospective purchases, demos, enterprise quotes, or commercial contract terms.",
+    "scope": "English, single-issue support requests. Use the primary requested action; mixed issues and unfamiliar requests need human judgment."
+  },
+  "dataset_sha256": "8083b4c48cf692afef003105e8fe145fa46a526d681cca4269360cabc6349230",
+  "skill_path": ".system1/examples/support_triage/skill.s1m",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "system1": "0.2.2"
+  },
+  "settings": {
+    "dimension": 2048,
+    "regularization": 1.0,
+    "alpha": 0.05,
+    "strict": true,
+    "cache": false,
+    "receipts": false
+  },
+  "counts": {
+    "teach": {
+      "billing": 16,
+      "technical_support": 16,
+      "account_security": 16,
+      "sales": 16
+    },
+    "calibration": {
+      "billing": 12,
+      "technical_support": 12,
+      "account_security": 12,
+      "sales": 12
+    },
+    "evaluate": {
+      "billing": 6,
+      "technical_support": 6,
+      "account_security": 6,
+      "sales": 6
+    }
+  },
+  "compiler_counts": {
+    "fit": 64,
+    "calibration": 48,
+    "temperature": 24,
+    "generated": 0
+  },
+  "teaching_ms": 158.49612501915544,
+  "save_ms": 3.2359170145355165,
+  "load_ms": 4.15300001623109,
+  "skill_bytes": 32966,
+  "starter_accuracy": 0.625,
+  "accuracy": 0.875,
+  "accepted_count": 1,
+  "review_count": 23,
+  "accepted_accuracy": 1.0,
+  "set_coverage": 0.9166666666666666,
+  "confusion_matrix": {
+    "billing": {
+      "billing": 4,
+      "technical_support": 1,
+      "account_security": 0,
+      "sales": 1
+    },
+    "technical_support": {
+      "billing": 1,
+      "technical_support": 5,
+      "account_security": 0,
+      "sales": 0
+    },
+    "account_security": {
+      "billing": 0,
+      "technical_support": 0,
+      "account_security": 6,
+      "sales": 0
+    },
+    "sales": {
+      "billing": 0,
+      "technical_support": 0,
+      "account_security": 0,
+      "sales": 6
+    }
+  },
+  "decision_p50_ms": 0.4997079959139228,
+  "decision_p95_ms": 0.7229875598568469,
+  "predictions": [
+    {
+      "group": "refund-tracking",
+      "prompt": "The refund is marked complete but the money is missing from my statement.",
+      "label": "billing",
+      "starter_prediction": "account_security",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "billing",
+        "account_security"
+      ],
+      "latency_ms": 0.7016670424491167
+    },
+    {
+      "group": "invoice-reissue",
+      "prompt": "Please reissue the paid invoice under our company's new legal name.",
+      "label": "billing",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
+        "billing",
+        "sales",
+        "technical_support"
+      ],
+      "latency_ms": 0.6325420108623803
+    },
+    {
+      "group": "card-authorization",
+      "prompt": "The invoice payment left a pending authorization on my credit card.",
+      "label": "billing",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [],
+      "latency_ms": 0.5180420121178031
+    },
+    {
+      "group": "discount-missing",
+      "prompt": "The promised subscription discount is absent from this month's charge.",
+      "label": "billing",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
+        "billing",
+        "technical_support",
+        "sales"
+      ],
+      "latency_ms": 0.7267500041052699
+    },
+    {
+      "group": "renewal-optout",
+      "prompt": "Remove automatic renewal so we are not billed for another year.",
+      "label": "billing",
+      "starter_prediction": "account_security",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "account_security",
+        "technical_support"
+      ],
+      "latency_ms": 0.482166011352092
+    },
+    {
+      "group": "receipt-currency",
+      "prompt": "Can you provide the payment receipt with the original transaction currency?",
+      "label": "billing",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
+        "billing",
+        "technical_support",
+        "sales"
+      ],
+      "latency_ms": 0.5261250189505517
+    },
+    {
+      "group": "image-thumbnail",
+      "prompt": "Uploaded images show broken thumbnails throughout the application.",
+      "label": "technical_support",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "billing",
+        "sales"
+      ],
+      "latency_ms": 0.5030410247854888
+    },
+    {
+      "group": "api-rate-limit",
+      "prompt": "Our integration hits an API rate limit even at a low request rate.",
+      "label": "technical_support",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "sales",
+        "account_security"
+      ],
+      "latency_ms": 0.46870799269527197
+    },
+    {
+      "group": "app-launch",
+      "prompt": "After the latest update the desktop app fails to launch.",
+      "label": "technical_support",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4279580316506326
+    },
+    {
+      "group": "editor-freeze",
+      "prompt": "The document editor freezes when I paste a large table.",
+      "label": "technical_support",
+      "starter_prediction": "sales",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "billing",
+        "account_security"
+      ],
+      "latency_ms": 0.4361249739304185
+    },
+    {
+      "group": "export-encoding",
+      "prompt": "Exported CSV files corrupt accented characters in customer names.",
+      "label": "technical_support",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
+        "billing",
+        "sales",
+        "technical_support"
+      ],
+      "latency_ms": 0.538624997716397
+    },
+    {
+      "group": "notification-link",
+      "prompt": "Clicking a notification opens a blank page instead of the project.",
+      "label": "technical_support",
+      "starter_prediction": "account_security",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "billing",
+        "account_security"
+      ],
+      "latency_ms": 0.5126249743625522
+    },
+    {
+      "group": "mfa-travel",
+      "prompt": "I cannot receive the second factor login code while travelling abroad.",
+      "label": "account_security",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "technical_support",
+        "billing"
+      ],
+      "latency_ms": 0.49637496704235673
+    },
+    {
+      "group": "password-manager",
+      "prompt": "Help me replace the account password exposed in a password manager breach.",
+      "label": "account_security",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "technical_support"
+      ],
+      "latency_ms": 0.6700420053675771
+    },
+    {
+      "group": "unknown-passkey",
+      "prompt": "A passkey I never registered has been added to my profile.",
+      "label": "account_security",
+      "starter_prediction": "sales",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "billing",
+        "sales"
+      ],
+      "latency_ms": 0.42866700096055865
+    },
+    {
+      "group": "admin-recovery",
+      "prompt": "Our only account administrator lost access to the recovery email.",
+      "label": "account_security",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "technical_support",
+        "billing"
+      ],
+      "latency_ms": 0.4897500039078295
+    },
+    {
+      "group": "login-ip",
+      "prompt": "Block further sign-ins to my account from an unfamiliar device.",
+      "label": "account_security",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "billing",
+        "sales"
+      ],
+      "latency_ms": 0.46491698594763875
+    },
+    {
+      "group": "identity-check",
+      "prompt": "I need to complete the account identity check after changing my name.",
+      "label": "account_security",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "billing"
+      ],
+      "latency_ms": 0.5044589634053409
+    },
+    {
+      "group": "branch-rollout",
+      "prompt": "Prepare a license quote for rolling your product out to twelve branches.",
+      "label": "sales",
+      "starter_prediction": "technical_support",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "technical_support",
+        "account_security"
+      ],
+      "latency_ms": 0.5544170271605253
+    },
+    {
+      "group": "demo-workflow",
+      "prompt": "Can we book a sales demo focused on our procurement workflow?",
+      "label": "sales",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "billing",
+        "technical_support"
+      ],
+      "latency_ms": 0.43708295561373234
+    },
+    {
+      "group": "charity-contract",
+      "prompt": "Our charity wants to buy an enterprise plan with discounted licensing.",
+      "label": "sales",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "billing",
+        "account_security"
+      ],
+      "latency_ms": 0.4895420279353857
+    },
+    {
+      "group": "purchase-timeline",
+      "prompt": "A sales representative should contact us about purchasing next quarter.",
+      "label": "sales",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "technical_support",
+        "account_security"
+      ],
+      "latency_ms": 0.738792004995048
+    },
+    {
+      "group": "trial-commercial",
+      "prompt": "We finished evaluating the trial and want a commercial proposal.",
+      "label": "sales",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "technical_support",
+        "account_security"
+      ],
+      "latency_ms": 0.4888750263489783
+    },
+    {
+      "group": "bundle-negotiation",
+      "prompt": "Can we negotiate a bundle price for licenses and onboarding services?",
+      "label": "sales",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "account_security",
+        "billing"
+      ],
+      "latency_ms": 0.48908399185165763
+    }
+  ]
+}

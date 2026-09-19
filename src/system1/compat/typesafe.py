@@ -1,13 +1,7 @@
-"""TypeSafe AI (Jev) Drop-in Compatibility Layer.
+"""TypeSafe-style questions and responses with local execution and observed teaching.
 
-Provides binary and API-level drop-in replacement for TypeSafe AI's Jev client.
-Enables instant migration from cloud HTTP-based TypeSafe AI to System 1 / System 1
-local on-device execution with:
-- Sub-2ms local latency (vs 70-500ms cloud WAN roundtrips)
-- Zero data egress (no prompt or schema sent to third-party servers)
-- Mathematically rigorous Split Conformal Prediction guarantees
-- Cryptographically verifiable Ed25519 witness receipts and ActionLedger audit log
-- Zero per-token inference charges
+Supports the SDK's basic sync/async decision workflow. Transport extensions and
+model-management APIs are outside this adapter's contract; see docs/typesafe.md.
 """
 
 from __future__ import annotations
@@ -49,7 +43,7 @@ from typing import (
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from system1.engine import DecisionResult, SystemOneEngine, SystemOneEngine
+from system1.engine import DecisionResult, SystemOneEngine
 from system1.ledger import ActionLedger
 from system1.receipt import DecisionWitnessReceipt
 from system1.core import (
@@ -137,6 +131,36 @@ def compute_wilson_score_lower(
     return max(0.0, min(1.0, lower))
 
 
+def _evidence_keys(item: Mapping[str, Any]) -> Set[str]:
+    keys = {f"{key}:{item[key]}" for key in ("group_id", "lineage_id", "request_id", "id", "nonce")
+            if item.get(key) is not None}
+    state = item.get("state", "")
+    if state:
+        text = _content_text(state)
+        keys.add("state:" + " ".join(text.split()).casefold())
+    return keys
+
+
+def _evidence_groups(history: Sequence[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
+    """Keep every connected request/lineage/prompt family in one evidence unit."""
+    parent = list(range(len(history)))
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    seen = {}
+    for i, item in enumerate(history):
+        for key in _evidence_keys(item):
+            if key in seen:
+                parent[find(i)] = find(seen[key])
+            seen[key] = i
+    groups = collections.defaultdict(list)
+    for i, item in enumerate(history):
+        groups[find(i)].append(item)
+    return list(groups.values())
+
+
 @dataclass
 class CutoverPartition:
     """Disjoint data partitions for cutover distillation, calibration, and validation."""
@@ -151,23 +175,9 @@ class CutoverPartition:
 
     def assert_disjoint(self) -> None:
         """Verify that training, calibration, and validation partitions do not share identical records or lineages."""
-        def _get_keys(x: Any) -> set:
-            if isinstance(x, dict):
-                keys = set()
-                for field in ("group_id", "lineage_id", "request_id", "id", "nonce"):
-                    val = x.get(field)
-                    if val is not None:
-                        keys.add(f"{field}:{val}")
-                s_str = str(x.get("state", ""))
-                ans = x.get("answers")
-                a_str = json.dumps(ans, sort_keys=True) if isinstance(ans, dict) else str(ans)
-                keys.add(hashlib.sha256(f"{s_str}|{a_str}".encode("utf-8")).hexdigest())
-                return keys
-            return {f"obj:{id(x)}"}
-
-        train_keys = set().union(*(_get_keys(x) for x in self.train_history)) if self.train_history else set()
-        calib_keys = set().union(*(_get_keys(x) for x in self.calib_history)) if self.calib_history else set()
-        val_keys = set().union(*(_get_keys(x) for x in self.val_history)) if self.val_history else set()
+        train_keys = set().union(*(_evidence_keys(x) for x in self.train_history))
+        calib_keys = set().union(*(_evidence_keys(x) for x in self.calib_history))
+        val_keys = set().union(*(_evidence_keys(x) for x in self.val_history))
 
         train_ids = {id(x) for x in self.train_history}
         calib_ids = {id(x) for x in self.calib_history}
@@ -208,57 +218,17 @@ def partition_cutover_history(
             val_ratio=val_ratio,
         )
 
-    if total == 3:
-        return CutoverPartition(
-            train_history=[history[0]],
-            calib_history=[history[1]],
-            val_history=[history[2]],
-            total_samples=3,
-            train_ratio=train_ratio,
-            calib_ratio=calib_ratio,
-            val_ratio=val_ratio,
-        )
-
-    n_val = max(1, int(math.floor(total * val_ratio)))
-    n_calib = max(1, int(math.floor(total * calib_ratio)))
-    n_train = total - n_val - n_calib
-
-    if n_train < 1:
-        n_train = 1
-        if n_calib > 1:
-            n_calib -= 1
-        elif n_val > 1:
-            n_val -= 1
-
-    # Group items by stable lineage identifier (e.g. group_id, request_id, or state prompt)
-    groups: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
-    for idx, item in enumerate(history):
-        g_key = (
-            item.get("group_id")
-            or item.get("lineage_id")
-            or item.get("request_id")
-            or item.get("state")
-            or f"idx_{idx}"
-        )
-        groups[str(g_key)].append(item)
-
+    groups = _evidence_groups(history)
     if len(groups) < 3:
         raise ValueError("Insufficient evidence: distinct groups cannot supply the 3 required folds")
-    elif len(groups) == total:
-        train_part = list(history[:n_train])
-        calib_part = list(history[n_train : n_train + n_calib])
-        val_part = list(history[n_train + n_calib :])
-    else:
-        train_part = []
-        calib_part = []
-        val_part = []
-        for g_items in groups.values():
-            if len(train_part) < n_train:
-                train_part.extend(g_items)
-            elif len(calib_part) < n_calib:
-                calib_part.extend(g_items)
-            else:
-                val_part.extend(g_items)
+    n_val = max(1, int(math.floor(len(groups) * val_ratio)))
+    n_calib = max(1, int(math.floor(len(groups) * calib_ratio)))
+    n_train = len(groups) - n_val - n_calib
+    if n_train < 1:
+        raise ValueError("Partition ratios leave no fitting groups")
+    train_part = [row for group in groups[:n_train] for row in group]
+    calib_part = [row for group in groups[n_train:n_train + n_calib] for row in group]
+    val_part = [row for group in groups[n_train + n_calib:] for row in group]
 
     return CutoverPartition(
         train_history=train_part,
@@ -283,6 +253,8 @@ class PromotionPolicy:
     })
     false_allow_ceiling: float = 0.0  # Exactly 0.0% tolerance: zero false-allows permitted
     require_statistical_bound: bool = True
+    # Explicit demo policies may opt out; the client's production policy requires 80%.
+    min_local_acceptance: float = 0.0
 
 
 @dataclass
@@ -302,6 +274,10 @@ class PromotionReport:
     metrics_per_field: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     artifact_digest: str = ""
     manifest: Dict[str, Any] = field(default_factory=dict)
+    validation_requests: int = 0
+    accepted_requests: int = 0
+    local_acceptance_rate: float = 0.0
+    accepted_agreement_rate: Optional[float] = None
 
 
 def _is_critical_class(value: Any, critical_classes: Set[str]) -> bool:
@@ -350,41 +326,13 @@ def evaluate_promotion_eligibility(
         "total": 0, "matching": 0, "false_allows": 0, "critical_targets": 0
     })
 
-    # Build connected components for independent units
-    parent = {i: i for i in range(len(val_history))}
-    def find(i):
-        while parent[i] != i:
-            parent[i] = parent[parent[i]]
-            i = parent[i]
-        return i
-    def union(i, j):
-        root_i, root_j = find(i), find(j)
-        if root_i != root_j:
-            parent[root_i] = root_j
-
-    key_to_idx = {}
-    for i, item in enumerate(val_history):
-        keys = []
-        for k in ("group_id", "lineage_id", "request_id", "id", "nonce"):
-            v = item.get(k)
-            if v is not None:
-                keys.append(f"{k}:{v}")
-        s = item.get("state", "")
-        if s:
-            keys.append(f"state:{hash(s)}")
-        for k in keys:
-            if k in key_to_idx:
-                union(i, key_to_idx[k])
-            key_to_idx[k] = i
-
-    groups = collections.defaultdict(list)
-    for i, item in enumerate(val_history):
-        groups[find(i)].append(item)
+    groups = _evidence_groups(val_history)
 
     scored_units = 0
     sum_unit_rates = 0.0
+    validation_requests = accepted_requests = accepted_checks = accepted_matches = 0
 
-    for g_key, g_items in groups.items():
+    for g_items in groups:
         unit_has_scored_evidence = False
         unit_matching = 0
         unit_total = 0
@@ -396,6 +344,9 @@ def evaluate_promotion_eligibility(
                 continue
 
             res = engine.decide(state, record_receipt=False)
+            validation_requests += 1
+            accepted = not getattr(res, "is_ambiguous", True)
+            accepted_requests += int(accepted)
 
             for f_name, f_def in schema.fields.items():
                 if f_name not in answers or answers[f_name] is None:
@@ -403,6 +354,8 @@ def evaluate_promotion_eligibility(
 
                 target_v = answers[f_name]
                 pred_v = res.values.get(f_name)
+                if f_def.metadata.get("typesafe_score_levels"):
+                    pred_v = sum(float(k) * p for k, p in res.probabilities[f_name].items())
 
                 total_checks += 1
                 unit_total += 1
@@ -441,6 +394,9 @@ def evaluate_promotion_eligibility(
                     if is_target_critical and _is_allow_class(pred_v):
                         false_allows += 1
                         per_field_stats[f_name]["false_allows"] += 1
+                if accepted:
+                    accepted_checks += 1
+                    accepted_matches += int(is_match)
 
         if unit_has_scored_evidence:
             scored_units += 1
@@ -457,6 +413,8 @@ def evaluate_promotion_eligibility(
     effective_matching = agreement_rate * effective_n
     wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
+    acceptance_rate = accepted_requests / validation_requests if validation_requests else 0.0
+    accepted_agreement = accepted_matches / accepted_checks if accepted_checks else None
 
     effective_thresh = policy.min_agreement_threshold
 
@@ -480,6 +438,13 @@ def evaluate_promotion_eligibility(
             f"Critical false-allow rate ({false_allow_rate:.4f}, count={false_allows}) exceeds strict ceiling ({policy.false_allow_ceiling:.4f})"
         )
 
+    if acceptance_rate < policy.min_local_acceptance:
+        rejection_reasons.append(
+            f"Local acceptance rate ({acceptance_rate:.4f}) below required threshold ({policy.min_local_acceptance:.4f})"
+        )
+    if policy.min_local_acceptance > 0 and accepted_agreement is not None and accepted_agreement < policy.min_agreement_threshold:
+        rejection_reasons.append("Agreement on accepted decisions below the required threshold")
+
     is_eligible = len(rejection_reasons) == 0
 
     return PromotionReport(
@@ -496,6 +461,10 @@ def evaluate_promotion_eligibility(
         metrics_per_field=dict(per_field_stats),
         artifact_digest="",
         manifest={},
+        validation_requests=validation_requests,
+        accepted_requests=accepted_requests,
+        local_acceptance_rate=round(acceptance_rate, 4),
+        accepted_agreement_rate=round(accepted_agreement, 4) if accepted_agreement is not None else None,
     )
 
 
@@ -556,6 +525,33 @@ class DriftDetector:
     @property
     def sample_count(self) -> int:
         return len(self._window)
+
+
+def _content_text(value: Any) -> str:
+    """Canonical local representation; HTTP requests keep the original JSON value."""
+    if isinstance(value, str):
+        return value
+    if value is None:
+        return ""
+    return json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
+
+
+def _teaching_target(field: DecisionField, value: Any) -> Any:
+    if field.metadata.get("typesafe_score_levels"):
+        return str(max(0, min(len(field.options) - 1, int(math.floor(float(value) + 0.5)))))
+    return value
+
+
+def _ordinal_answer(field: DecisionField, probabilities: Mapping[str, float]) -> Dict[str, Any]:
+    levels = field.metadata["typesafe_score_levels"]
+    probs = {int(k): float(v) for k, v in probabilities.items()}
+    score = sum(k * p for k, p in probs.items())
+    return {"score": score, "value": score, "probabilities": probs,
+            "legend": dict(enumerate(levels))}
+
+
+# The official SDK exposes this constructor as a TypedDict.
+NoulCriteria = dict
 
 
 class DotDict(dict):
@@ -654,6 +650,9 @@ class TypeSafeResponse(DotDict):
                         if "score" not in v_dict and "value" in v_dict:
                             v_dict["score"] = v_dict["value"]
                         v_dict.setdefault("conformal_set", None)
+                        for key in ("probabilities", "legend"):
+                            if key in v_dict:
+                                v_dict[key] = {int(level): value for level, value in v_dict[key].items()}
                     elif ans_type in ("multi_choice", "multichoice"):
                         if "value" not in v_dict and "choices" in v_dict:
                             v_dict["value"] = v_dict["choices"]
@@ -673,6 +672,18 @@ class TypeSafeResponse(DotDict):
 
     def to_dict(self) -> Dict[str, Any]:
         return dict(self)
+
+    @property
+    def choices(self) -> DotDict:
+        return DotDict({k: v for k, v in self.answers.items() if v.get("type") == "choice"})
+
+    @property
+    def nouls(self) -> DotDict:
+        return DotDict({k: v for k, v in self.answers.items() if v.get("type") == "noul"})
+
+    @property
+    def scores(self) -> DotDict:
+        return DotDict({k: v for k, v in self.answers.items() if v.get("type") == "score"})
 
 
 # Answer type aliases for drop-in TypeSafe AI type annotation parity
@@ -710,7 +721,7 @@ class Choice:
             elif isinstance(criteria, Mapping):
                 self.criteria = dict(criteria)
                 self.options = tuple(str(k) for k in criteria.keys())
-                self.descriptions = {str(k): str(v) for k, v in criteria.items()}
+                self.descriptions = {str(k): _content_text(v) if v is not None else str(k) for k, v in criteria.items()}
             elif isinstance(criteria, (Sequence, set)):
                 self.criteria = list(criteria)
                 self.options = tuple(str(x) for x in criteria)
@@ -742,7 +753,7 @@ class Choice:
             options=list(self.options),
             descriptions=self.descriptions,
             default=self.default,
-            description=self.instructions,
+            description=_content_text(self.instructions),
             required=self.required,
         )
         if name:
@@ -790,14 +801,18 @@ class Noul:
         }
 
     def to_field(self, name: Optional[str] = None) -> BooleanField:
-        true_desc = self.criteria.get("true", "True / Positive")
-        false_desc = self.criteria.get("false", "False / Negative")
+        true_desc = _content_text(self.criteria.get("true")) or "True / Positive"
+        false_desc = _content_text(self.criteria.get("false")) or "False / Negative"
+        instructions = _content_text(self.instructions)
+        if instructions:
+            true_desc = f"{instructions} Yes. {true_desc}"
+            false_desc = f"{instructions} No. {false_desc}"
         field = BooleanField(
             threshold=self.threshold,
             true_description=true_desc,
             false_description=false_desc,
             default=self.default,
-            description=self.instructions,
+            description=instructions,
             required=self.required,
         )
         if name:
@@ -813,8 +828,8 @@ class Score:
         instructions: str = "",
         criteria: Optional[Union[Sequence[str], Mapping[str, str]]] = None,
         *,
-        min_value: float = 0.0,
-        max_value: float = 1.0,
+        min_value: Optional[float] = None,
+        max_value: Optional[float] = None,
         default: Optional[float] = None,
         description: str = "",
         required: bool = True,
@@ -825,21 +840,24 @@ class Score:
         self.description = description or instructions
         self.default = default
         self.required = required
-        self.min_value = float(min_value)
+        self.ordinal = isinstance(criteria, (list, tuple)) and min_value is None and max_value is None
+        if self.ordinal and not 2 <= len(criteria) <= 10:
+            raise ValueError("Ordinal Score requires between 2 and 10 levels")
+        self.min_value = float(min_value if min_value is not None else 0.0)
 
         # In TypeSafe, if criteria is a list of rating labels like ['Trivial', 'Easy', 'Moderate', 'Hard'],
         # the score range spans from 0 to len(criteria)-1 (or max_value if explicitly provided).
-        if criteria is not None and isinstance(criteria, (list, tuple)) and len(criteria) > 1 and max_value == 1.0:
+        if criteria is not None and isinstance(criteria, (list, tuple)) and len(criteria) > 1 and max_value is None:
             self.max_value = float(len(criteria) - 1)
         else:
-            self.max_value = float(max_value)
+            self.max_value = float(max_value if max_value is not None else 1.0)
 
         self.criteria = criteria
 
     def _get_criteria_list(self) -> List[str]:
         if self.criteria is not None:
             if isinstance(self.criteria, (list, tuple, set)):
-                return [str(x) for x in self.criteria]
+                return list(self.criteria)
             elif isinstance(self.criteria, Mapping):
                 try:
                     sorted_keys = sorted(self.criteria.keys(), key=lambda k: float(k))
@@ -853,15 +871,26 @@ class Score:
         return ["Min", "Max"]
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        result = {
             "type": "score",
             "instructions": self.instructions,
             "criteria": self._get_criteria_list(),
-            "min_value": self.min_value,
-            "max_value": self.max_value,
         }
+        if not self.ordinal:
+            result.update(min_value=self.min_value, max_value=self.max_value)
+        return result
 
-    def to_field(self, name: Optional[str] = None) -> ScoreField:
+    def to_field(self, name: Optional[str] = None) -> DecisionField:
+        if self.ordinal:
+            field = ChoiceField(
+                options=[str(i) for i in range(len(self.criteria))],
+                descriptions={str(i): _content_text(level) for i, level in enumerate(self.criteria)},
+                description=_content_text(self.instructions), required=self.required,
+                metadata={"typesafe_score_levels": list(self.criteria)},
+            )
+            if name:
+                field.bind_name(name)
+            return field
         low_desc = "Minimum boundary"
         high_desc = "Maximum boundary"
         if isinstance(self.criteria, (list, tuple)) and self.criteria:
@@ -881,7 +910,7 @@ class Score:
             low_description=low_desc,
             high_description=high_desc,
             default=self.default,
-            description=self.instructions,
+            description=_content_text(self.instructions),
             required=self.required,
         )
         if name:
@@ -972,6 +1001,9 @@ def _build_field_from_question(name: str, q_spec: Any) -> DecisionField:
         q_spec.bind_name(name)
         return q_spec
 
+    if hasattr(q_spec, "model_dump"):
+        q_spec = q_spec.model_dump(exclude_none=True)
+
     if isinstance(q_spec, Mapping):
         q_type = str(q_spec.get("type", "")).lower().strip()
         instructions = q_spec.get("instructions", q_spec.get("description", ""))
@@ -983,8 +1015,8 @@ def _build_field_from_question(name: str, q_spec: Any) -> DecisionField:
             thresh = float(q_spec.get("threshold", 0.5))
             return Noul(instructions=instructions, criteria=criteria, threshold=thresh).to_field(name)
         elif q_type == "score":
-            min_v = float(q_spec.get("min_value", 0.0))
-            max_v = float(q_spec.get("max_value", 1.0))
+            min_v = q_spec.get("min_value")
+            max_v = q_spec.get("max_value")
             return Score(instructions=instructions, criteria=criteria, min_value=min_v, max_value=max_v).to_field(name)
         elif q_type in ("multi_choice", "multichoice"):
             opts = list(criteria.keys()) if isinstance(criteria, Mapping) else list(criteria or [])
@@ -1038,7 +1070,7 @@ def create_typesafe_baseline_response(
         egress_bytes = len(json.dumps(payload).encode("utf-8"))
 
     # Estimate realistic token consumption
-    prompt_tokens = max(10, len(state.split()))
+    prompt_tokens = max(10, len(_content_text(state).split()))
     question_tokens = max(20, len(json.dumps(serialized_questions)) // 4)
     input_tokens = prompt_tokens + question_tokens
     output_tokens = max(15, 20 * len(questions))
@@ -1049,7 +1081,7 @@ def create_typesafe_baseline_response(
         from system1.core.model import SystemOneModel
         schema_obj = _build_dynamic_schema(questions)
         zs_model = SystemOneModel(schema_obj)
-        zs_res = zs_model.forward_single(state)
+        zs_res = zs_model.forward_single(_content_text(state))
         zero_shot_fields = zs_res.fields
     except Exception:
         zero_shot_fields = {}
@@ -1129,6 +1161,13 @@ def create_typesafe_baseline_response(
                 "conformal_set": None,
             })
         elif q_type == "score":
+            ordinal_field = _build_field_from_question(q_name, q_spec)
+            if ordinal_field.metadata.get("typesafe_score_levels") and zs_field is not None:
+                answers[q_name] = ScoreAnswer({
+                    "type": "score", "confidence": float(zs_field.confidence), "conformal_set": None,
+                    **_ordinal_answer(ordinal_field, dict(zip(zs_field.options, zs_field.raw_probabilities))),
+                })
+                continue
             min_v = 0.0
             max_v = 1.0
             if hasattr(q_spec, "min_value"):
@@ -1230,6 +1269,8 @@ def call_real_typesafe_api(
 
     serialized_questions: Dict[str, Any] = {}
     for k, v in questions.items():
+        if hasattr(v, "model_dump"):
+            v = v.model_dump(exclude_none=True)
         if hasattr(v, "to_dict"):
             serialized_questions[k] = v.to_dict()
         elif isinstance(v, Mapping):
@@ -1257,6 +1298,11 @@ def call_real_typesafe_api(
             serialized_questions[k] = q_dict
         else:
             serialized_questions[k] = str(v)
+
+    for question in serialized_questions.values():
+        if isinstance(question, dict) and question.get("type") == "score":
+            question.pop("min_value", None)
+            question.pop("max_value", None)
 
     payload = {
         "model": model,
@@ -1303,10 +1349,12 @@ def call_real_typesafe_api(
 
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            measured_latency_ms = (time.perf_counter() - t0) * 1000.0
             data = json.loads(resp.read().decode("utf-8"))
+            measured_latency_ms = (time.perf_counter() - t0) * 1000.0
             if isinstance(data, dict):
                 data.setdefault("egress_bytes", egress_bytes)
+                data.setdefault("local_execution", False)
+                data.setdefault("latency_ms", measured_latency_ms)
             return TypeSafeResponse(data), measured_latency_ms, egress_bytes
     except urllib.error.HTTPError as err:
         last_error = err
@@ -1318,8 +1366,6 @@ def call_real_typesafe_api(
     except Exception as err:
         last_error = err
         measured_latency_ms = (time.perf_counter() - t0) * 1000.0
-        if measured_latency_ms < 5.0:
-            measured_latency_ms = 220.0
 
     if fallback_baseline:
         baseline = create_typesafe_baseline_response(
@@ -1399,6 +1445,13 @@ class TypeSafeClient:
         self.timeout = timeout
         self.baseline_handler = kwargs.get("baseline_handler", None)
         self.extra_kwargs = kwargs
+        self.strict_mode = bool(kwargs.get("strict_mode", True))
+        self.augment = bool(kwargs.get("augment", False))
+        self.default_model = kwargs.get("model") or "jev-latest"
+        self._closed = False
+        for name in ("retry", "headers", "transport", "http_client"):
+            if kwargs.get(name) is not None:
+                raise NotImplementedError(f"The local adapter does not implement the SDK's {name!r} option")
 
         self._engine_cache: Dict[str, SystemOneEngine] = {}
         self._engine_lock = threading.Lock()
@@ -1418,6 +1471,10 @@ class TypeSafeClient:
             )
         if self._compiled_model is not None:
             self._has_cutover = True
+            saved_strict = self._compiled_model.metadata.get("typesafe_strict_mode", True)
+            if "strict_mode" in kwargs and self.strict_mode != saved_strict:
+                raise ValueError("strict_mode must match the saved skill's evaluated setting")
+            self.strict_mode = saved_strict
         self._cutover_audit_log: List[Dict[str, Any]] = []
 
         if self.zero_egress:
@@ -1434,6 +1491,17 @@ class TypeSafeClient:
                 raise ValueError(
                     "Incompatible configuration: allow_cloud_fallback=True cannot be combined with zero_egress=True."
                 )
+
+    def __enter__(self) -> TypeSafeClient:
+        if self._closed:
+            raise RuntimeError("Client is closed")
+        return self
+
+    def close(self) -> None:
+        self._closed = True
+
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.close()
 
     @property
     def is_cutover(self) -> bool:
@@ -1487,50 +1555,24 @@ class TypeSafeClient:
         cm.save(path)
         return True
 
+    def _new_engine(self, schema: DecisionSchema, compiled_model: Any = None) -> SystemOneEngine:
+        if compiled_model is not None:
+            if compiled_model.schema.schema_digest() != schema.schema_digest():
+                raise ValueError("Saved skill does not match these questions; teach a separate skill for this schema")
+            compiled_model.use_cache = False
+        return SystemOneEngine(
+            schema, model=compiled_model, signing_key=self.signing_key, ledger=self.ledger,
+            dimension=self.dimension, backend=self.backend, projector=self.projector,
+            strict_mode=self.strict_mode, use_cache=False,
+        )
+
     def _get_engine(self, questions: Mapping[str, Any]) -> SystemOneEngine:
         schema = _build_dynamic_schema(questions)
         digest = schema.schema_digest()
         with self._engine_lock:
             if digest not in self._engine_cache:
-                engine = SystemOneEngine(
-                    schema,
-                    signing_key=self.signing_key,
-                    ledger=self.ledger,
-                    dimension=self.dimension,
-                    backend=self.backend,
-                    projector=self.projector,
-                )
-                cm = self._compiled_models.get(digest) or self._compiled_model
-                if cm is not None:
-                    import numpy as np
-                    from system1.schema import ChoiceField
-                    for f_name, ch in cm.heads.items():
-                        if f_name in engine.model.heads:
-                            target_head = engine.model.heads[f_name]
-                            f_def = schema.fields.get(f_name)
-                            if isinstance(f_def, ChoiceField) and getattr(ch, "options", None):
-                                target_opts = f_def.options
-                                src_opts = ch.options
-                                if target_opts == src_opts:
-                                    target_head.set_weights(ch.weights, ch.biases)
-                                else:
-                                    aligned_w = np.zeros_like(target_head.weights)
-                                    aligned_b = np.zeros_like(target_head.biases)
-                                    src_opt_map = {opt: i for i, opt in enumerate(src_opts)}
-                                    for tgt_idx, opt in enumerate(target_opts):
-                                        if opt in src_opt_map:
-                                            src_idx = src_opt_map[opt]
-                                            aligned_w[tgt_idx, :] = ch.weights[src_idx, :]
-                                            aligned_b[tgt_idx] = ch.biases[src_idx]
-                                        else:
-                                            aligned_w[tgt_idx, :] = target_head.weights[tgt_idx, :]
-                                            aligned_b[tgt_idx] = target_head.biases[tgt_idx]
-                                    target_head.set_weights(aligned_w, aligned_b)
-                            else:
-                                target_head.set_weights(ch.weights, ch.biases)
-                self._engine_cache[digest] = engine
-            else:
-                engine = self._engine_cache[digest]
+                model = self._compiled_models.get(digest) or self._compiled_model
+                self._engine_cache[digest] = self._new_engine(schema, model)
             return self._engine_cache[digest]
 
     def _execute_local(
@@ -1546,7 +1588,7 @@ class TypeSafeClient:
         """Executes single-pass System 1 evaluation locally on the prompt state."""
         engine = self._get_engine(questions)
         t0 = time.perf_counter()
-        result = engine.decide(state, alpha=alpha, record_receipt=record_receipt)
+        result = engine.decide(_content_text(state), alpha=alpha, record_receipt=record_receipt)
         latency_ms = (time.perf_counter() - t0) * 1000.0
 
         answers: Dict[str, Any] = {}
@@ -1584,13 +1626,17 @@ class TypeSafeClient:
                 })
             elif q_type == "score":
                 score_val = float(val) if val is not None else 0.0
-                answers[q_name] = ScoreAnswer({
+                answer = {
                     "type": "score",
                     "score": score_val,
                     "value": score_val,
                     "confidence": conf,
                     "conformal_set": cset,
-                })
+                }
+                field = engine.schema.fields[q_name]
+                if field.metadata.get("typesafe_score_levels"):
+                    answer.update(_ordinal_answer(field, result.probabilities[q_name]))
+                answers[q_name] = ScoreAnswer(answer)
             elif q_type in ("multi_choice", "multichoice"):
                 choices_list = list(val) if val is not None else []
                 answers[q_name] = MultiChoiceAnswer({
@@ -1641,66 +1687,43 @@ class TypeSafeClient:
         # Decouple history into train (60%), calib (20%), and val (20%) partitions
         # Invariant 10: Training, calibration, and promotion validation must be strictly disjoint!
         schema_history = self._history[digest]
-        partition = partition_cutover_history(schema_history)
-        if len(schema_history) >= 2:
-            partition.assert_disjoint()
-
-        exemplars: Dict[str, List[Tuple[str, Any]]] = {
-            f_name: [] for f_name in schema.fields.keys()
-        }
-        for item in partition.train_history:
-            p = item["state"]
-            ans = item["answers"]
-            for f_name in schema.fields.keys():
-                if f_name in ans and ans[f_name] is not None:
-                    exemplars[f_name].append((p, ans[f_name]))
+        def examples_from(history):
+            return {
+                name: [(item["state"], _teaching_target(field, item["answers"][name]))
+                       for item in history if item["answers"].get(name) is not None]
+                for name, field in schema.fields.items()
+            }
 
         compiler = SystemOneCompiler(
-            schema=schema,
-            dimension=self.dimension,
-            projector=self.projector,
-            backend=self.backend,
+            schema=schema, dimension=self.dimension, projector=self.projector, backend=self.backend,
         )
-        compiled_model = compiler.compile(exemplars=exemplars)
-
-        engine = SystemOneEngine(
-            schema,
-            signing_key=self.signing_key,
-            ledger=self.ledger,
-            dimension=self.dimension,
-            backend=self.backend,
-            projector=self.projector,
-        )
-        for f_name, ch in compiled_model.heads.items():
-            if f_name in engine.model.heads:
-                engine.model.heads[f_name].set_weights(ch.weights, ch.biases)
-
-        # Calibrate temperature and empirical conformal prediction sets strictly on calib_history
-        calib_dataset = [
-            (item["state"], item["answers"])
-            for item in partition.calib_history
-            if "state" in item and "answers" in item
-        ]
-        if calib_dataset:
-            try:
-                engine.calibrate(calib_dataset, n_bins=min(5, max(2, len(calib_dataset))))
-                for f_name, ch in compiled_model.heads.items():
-                    if f_name in engine.calibrators:
-                        ch.temperature = engine.calibrators[f_name].temperature
-                    if f_name in engine.conformal_predictors:
-                        cp = engine.conformal_predictors[f_name]
-                        ch.calibration_scores = tuple(cp.calibration_scores) if getattr(cp, "calibration_scores", None) is not None else ()
-                    elif f_name in engine.regression_conformal_predictors:
-                        rcp = engine.regression_conformal_predictors[f_name]
-                        ch.calibration_scores = tuple(rcp.residuals) if getattr(rcp, "residuals", None) is not None else ()
-            except Exception:
-                pass
+        try:
+            partition = partition_cutover_history(schema_history)
+            partition.assert_disjoint()
+            compiled_model = compiler.compile(
+                exemplars=examples_from(partition.train_history), augment=self.augment,
+                calibration_exemplars=examples_from(partition.calib_history), calibration_split=0,
+            )
+        except (ValueError, AssertionError) as exc:
+            # Missing classes or disjoint evidence defer promotion, not the teacher's answer.
+            self._last_promotion_report = PromotionReport(
+                False, 0, 0, 0.0, 0.0, 0, 0, 0.0, [str(exc)], schema_digest=digest,
+            )
+            self._cutover_audit_log.append({
+                "event": "trojan_horse_cutover_deferred", "schema_digest": digest,
+                "rejection_reasons": [str(exc)], "status": "deferred_insufficient_evidence",
+                "report": self._last_promotion_report,
+            })
+            return
+        compiled_model.metadata["typesafe_strict_mode"] = self.strict_mode
+        engine = self._new_engine(schema, compiled_model)
 
         # Evaluate promotion eligibility strictly on held-out validation fold
         policy = self.promotion_policy or PromotionPolicy(
             min_agreement_threshold=self.min_agreement_threshold,
             false_allow_ceiling=0.0,
             require_statistical_bound=True,
+            min_local_acceptance=0.8,
         )
 
         report = evaluate_promotion_eligibility(
@@ -1746,7 +1769,7 @@ class TypeSafeClient:
                     "val_samples": len(partition.val_history),
                 },
                 "teacher_provenance": {
-                    "provider_model": "jev-latest",
+                    "provider_model": schema_history[-1].get("teacher", "unknown"),
                     "total_samples": len(schema_history),
                     "timestamp": time.time(),
                 },
@@ -1789,7 +1812,7 @@ class TypeSafeClient:
                 "message": (
                     f"Autonomous Trojan Horse cutover completed with {report.agreement_rate*100:.1f}% agreement "
                     f"across {len(partition.val_history)} held-out validation samples (threshold: {policy.min_agreement_threshold*100:.1f}%). "
-                    f"100% local execution active ($0 cost, sub-2ms latency)."
+                    f"Local execution active; uncertain responses may still require review."
                 ),
                 "report": report,
             }
@@ -1806,8 +1829,8 @@ class TypeSafeClient:
             event = {
                 "event": "trojan_horse_cutover_deferred",
                 "timestamp": time.time(),
-                "call_count": self._call_count,
-                "samples_collected": len(self._history),
+                "call_count": self._call_count[digest],
+                "samples_collected": len(schema_history),
                 "agreement_rate": report.agreement_rate,
                 "min_agreement_threshold": policy.min_agreement_threshold,
                 "wilson_lower_bound": report.wilson_lower_bound,
@@ -1837,17 +1860,26 @@ class TypeSafeClient:
 
     def systemone(
         self,
-        state: str,
+        state: Union[str, Dict[str, Any], List[Any]],
         questions: Mapping[str, Any],
-        model: str = "jev-latest",
+        model: Optional[str] = None,
         *,
         alpha: float = 0.05,
         record_receipt: bool = True,
         **kwargs: Any,
     ) -> TypeSafeResponse:
         """Evaluates prompt state matching the client's configured execution mode."""
-        if not isinstance(state, str):
-            raise TypeError(f"Expected prompt state to be a string, got {type(state).__name__}")
+        if self._closed:
+            raise RuntimeError("Client is closed")
+        if not isinstance(state, (str, dict, list)):
+            raise TypeError("State must be text, a JSON object, or an array")
+        encoded_state = _content_text(state)
+        if not questions:
+            raise ValueError("At least one question is required")
+        for option in ("retry", "extra_headers", "extra_body", "response_model"):
+            if kwargs.get(option) is not None:
+                raise NotImplementedError(f"The local adapter does not implement {option!r}")
+        model = model or self.default_model
 
         # Passthrough Mode: Always forward to TypeSafe AI
         if self.mode == "passthrough":
@@ -1875,8 +1907,8 @@ class TypeSafeClient:
                 already_cutover = self._has_cutover or (digest in self._has_cutover_schemas)
 
             if not already_cutover:
-                if self.baseline_handler is not None and (self.zero_egress or not self.api_key):
-                    cloud_resp = self.baseline_handler(state, questions)
+                if self.baseline_handler is not None:
+                    cloud_resp = TypeSafeResponse(self.baseline_handler(state, questions))
                     egress_bytes = int(cloud_resp.get("egress_bytes", 0 if self.zero_egress else 800))
                 else:
                     if self.zero_egress:
@@ -1899,8 +1931,11 @@ class TypeSafeClient:
                     self._teacher_sample_count[digest] += 1
                     current_count = self._call_count[digest]
                     sample_record = {
-                        "state": state,
+                        "state": encoded_state,
+                        "teacher": ("simulated_baseline" if cloud_resp.get("baseline_fallback") else
+                                    "callback" if self.baseline_handler is not None else model),
                         "questions": dict(questions),
+                        **{k: kwargs[k] for k in ("group_id", "lineage_id", "request_id") if k in kwargs},
                         "answers": {
                             k: (v.get("value") if isinstance(v, dict) else v)
                             for k, v in getattr(cloud_resp, "answers", {}).items()
@@ -1964,7 +1999,7 @@ class TypeSafeClient:
                         questions=questions,
                         model=model,
                         timeout=self.timeout,
-                        fallback_baseline=True,
+                        fallback_baseline=self.fallback_baseline,
                     )
                     fallback_resp["auto_cutover_active"] = True
                     fallback_resp["is_cutover"] = True
@@ -2013,7 +2048,7 @@ class TypeSafeClient:
                     questions=questions,
                     model=model,
                     timeout=self.timeout,
-                    fallback_baseline=True,
+                    fallback_baseline=self.fallback_baseline,
                 )
                 fallback_resp["fallback_routed"] = True
                 fallback_resp["drift_detected"] = True
@@ -2037,7 +2072,7 @@ class TypeSafeClient:
         self,
         states: Sequence[str],
         questions: Mapping[str, Any],
-        model: str = "jev-latest",
+        model: Optional[str] = None,
         *,
         alpha: float = 0.05,
         record_receipt: bool = True,
@@ -2104,31 +2139,16 @@ class TypeSafeClient:
                 "Instantiate TypeSafeClient(zero_egress=False) to enable WAN comparison."
             )
         fb = self.fallback_baseline if fallback_baseline is None else fallback_baseline
-        local_resp = self.systemone(state, questions, model=model, alpha=alpha)
-        try:
-            cloud_resp, cloud_lat, cloud_egress = self.call_real_api(
-                state,
-                questions,
-                model=model,
-                timeout=timeout,
-                fallback_baseline=fb,
-                zero_egress=False,
-            )
-        except Exception:
-            cloud_resp = None
-            cloud_lat = 220.0
-            cloud_egress = 0
-
-        speedup = cloud_lat / local_resp.latency_ms if local_resp.latency_ms > 0 else 100.0
-        cloud_tokens = (
-            cloud_resp.usage.total_tokens
-            if cloud_resp and hasattr(cloud_resp, "usage") and cloud_resp.usage
-            else 0
+        local_resp = self._execute_local(state, questions, model=model, alpha=alpha)
+        cloud_resp, cloud_lat, cloud_egress = self.call_real_api(
+            state, questions, model=model, timeout=timeout,
+            fallback_baseline=fb, zero_egress=False,
         )
-        cloud_cost = cloud_tokens * 0.000002
-
-        receipt_verified = bool(local_resp.receipt is not None)
         is_live = bool(cloud_resp and not cloud_resp.get("baseline_fallback", False))
+        speedup = cloud_lat / local_resp.latency_ms if is_live and local_resp.latency_ms > 0 else None
+        cloud_tokens = cloud_resp.usage.total_tokens if cloud_resp and cloud_resp.get("usage") else 0
+        from system1.receipt import verify_decision_witness_receipt
+        receipt_verified = bool(local_resp.receipt) and verify_decision_witness_receipt(local_resp.receipt)
 
         return DotDict({
             "state": state,
@@ -2136,16 +2156,16 @@ class TypeSafeClient:
             "cloud_response": cloud_resp,
             "local_latency_ms": local_resp.latency_ms,
             "cloud_latency_ms": cloud_lat,
-            "speedup_factor": round(speedup, 1),
+            "speedup_factor": round(speedup, 1) if speedup is not None else None,
             "local_egress_bytes": 0,
             "cloud_egress_bytes": cloud_egress,
             "local_tokens": 0,
             "cloud_tokens": cloud_tokens,
             "local_cost_usd": 0.0,
-            "cloud_cost_usd": round(cloud_cost, 6),
+            "cloud_cost_usd": None,  # Provider billing is not available in this response.
             "local_receipt_verified": receipt_verified,
             "cloud_receipt_verified": False,
-            "has_conformal_guarantee": True,
+            "has_conformal_guarantee": False,  # Coverage requires exchangeable, independent evidence.
             "is_live": is_live,
             "baseline_fallback": not is_live,
         })
@@ -2192,6 +2212,18 @@ class AsyncTypeSafeClient:
             drift_detector=drift_detector,
             **kwargs,
         )
+
+    async def __aenter__(self) -> AsyncTypeSafeClient:
+        self._sync_client.__enter__()
+        return self
+
+    async def close(self) -> None:
+        self._sync_client.close()
+
+    aclose = close
+
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        await self.aclose()
 
     @property
     def api_key(self) -> str:
@@ -2260,9 +2292,9 @@ class AsyncTypeSafeClient:
 
     async def systemone(
         self,
-        state: str,
+        state: Union[str, Dict[str, Any], List[Any]],
         questions: Mapping[str, Any],
-        model: str = "jev-latest",
+        model: Optional[str] = None,
         *,
         alpha: float = 0.05,
         record_receipt: bool = True,
@@ -2287,7 +2319,7 @@ class AsyncTypeSafeClient:
         self,
         states: Sequence[str],
         questions: Mapping[str, Any],
-        model: str = "jev-latest",
+        model: Optional[str] = None,
         *,
         alpha: float = 0.05,
         record_receipt: bool = True,
@@ -2544,13 +2576,13 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
             class PassthroughTypeSafeClient(TypeSafeClient):
                 def __init__(self, *args: Any, mode: str = "passthrough", **kwargs: Any) -> None:
                     kwargs.setdefault("zero_egress", False)
-                    kwargs.setdefault("fallback_baseline", True)
+                    kwargs.setdefault("fallback_baseline", False)
                     super().__init__(*args, mode=mode, **kwargs)
 
             class AsyncPassthroughTypeSafeClient(AsyncTypeSafeClient):
                 def __init__(self, *args: Any, mode: str = "passthrough", **kwargs: Any) -> None:
                     kwargs.setdefault("zero_egress", False)
-                    kwargs.setdefault("fallback_baseline", True)
+                    kwargs.setdefault("fallback_baseline", False)
                     super().__init__(*args, mode=mode, **kwargs)
 
             client_cls: Any = PassthroughTypeSafeClient
@@ -2608,6 +2640,7 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
             "Choice": Choice,
             "MultiChoice": MultiChoice,
             "Noul": Noul,
+            "NoulCriteria": NoulCriteria,
             "Score": Score,
             "TypeSafeResponse": TypeSafeResponse,
             "SystemOneResponse": SystemOneResponse,
@@ -2642,6 +2675,7 @@ def _apply_patch(mode: str = "local") -> _Unpatcher:
             "Choice",
             "MultiChoice",
             "Noul",
+            "NoulCriteria",
             "Score",
             "TypeSafeResponse",
             "SystemOneResponse",
@@ -2788,6 +2822,7 @@ __all__ = [
     "Choice",
     "MultiChoice",
     "Noul",
+    "NoulCriteria",
     "Score",
     "TypeSafeResponse",
     "SystemOneResponse",

@@ -1,0 +1,341 @@
+{
+  "teacher": "offline",
+  "data": "Synthetic structured tickets; repeated vocabulary, new ticket IDs. Lifecycle evidence only.",
+  "promoted": true,
+  "observations": 190,
+  "observation_ms": 5556.309207982849,
+  "final_observation_and_teaching_ms": 67.4980420153588,
+  "promotion": {
+    "is_eligible": true,
+    "total_validation_checks": 38,
+    "matching_checks": 38,
+    "agreement_rate": 1.0,
+    "wilson_lower_bound": 0.9082,
+    "false_allow_count": 0,
+    "critical_class_count": 0,
+    "false_allow_rate": 0.0,
+    "rejection_reasons": [],
+    "schema_digest": "cf00ebd067cc48dc95412a155a9a701cb082dfcb1904c6241b2ec68e1f71dafb",
+    "metrics_per_field": {
+      "queue": {
+        "total": 38,
+        "matching": 38,
+        "false_allows": 0,
+        "critical_targets": 0
+      }
+    },
+    "artifact_digest": "8cb406c5d17a0176e4bbe7d3754160cb6cf0ab235cc5e94969ccfd9575dcf68c",
+    "manifest": {
+      "training_set_digest": "6e9da4ea75e1730e18dd7f96dd2fe96238358b08db6637f9398e683b4d1e6849",
+      "calibration_set_digest": "186b42d2bee8a7751133b65344719b26f42130c1127879c5c28fded4422f5145",
+      "validation_set_digest": "134383b3154e9fe10ad50b220d5a0f03faf0303a5a7e34c6c78d2b2ff7d70c55",
+      "dataset_manifest": {
+        "train_digest": "6e9da4ea75e1730e18dd7f96dd2fe96238358b08db6637f9398e683b4d1e6849",
+        "calib_digest": "186b42d2bee8a7751133b65344719b26f42130c1127879c5c28fded4422f5145",
+        "val_digest": "134383b3154e9fe10ad50b220d5a0f03faf0303a5a7e34c6c78d2b2ff7d70c55",
+        "train_samples": 114,
+        "calib_samples": 38,
+        "val_samples": 38
+      },
+      "teacher_provenance": {
+        "provider_model": "callback",
+        "total_samples": 190,
+        "timestamp": 1789838252.945895
+      }
+    },
+    "validation_requests": 38,
+    "accepted_requests": 37,
+    "local_acceptance_rate": 0.9737,
+    "accepted_agreement_rate": 1.0
+  },
+  "local_evaluations": 40,
+  "correct": 40,
+  "accepted": 40,
+  "accepted_errors": 0,
+  "local_latency_median_ms": 0.452,
+  "artifact_bytes": 4960,
+  "reload_identical": true,
+  "teacher_calls_after_takeover": 0,
+  "predictions": [
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.448
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.515
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.467
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.479
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.445
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.461
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.509
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.417
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.42
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.437
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.512
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.378
+    },
+    {
+      "topic": "payment",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.44
+    },
+    {
+      "topic": "payment",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.366
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.418
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.486
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.41
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.378
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.466
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.418
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.345
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.399
+    },
+    {
+      "topic": "password",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.496
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.427
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.488
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.558
+    },
+    {
+      "topic": "password",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.488
+    },
+    {
+      "topic": "password",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.446
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.515
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.456
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.478
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.692
+    },
+    {
+      "topic": "password",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.442
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.491
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.514
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.448
+    },
+    {
+      "topic": "payment",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.431
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.43
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.529
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.485
+    }
+  ]
+}

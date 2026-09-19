@@ -1533,7 +1533,7 @@ class System1BattleAgent:
             self.compiled_model = None
         elif compiled_model is not None:
             self.compiled_model = compiled_model
-            self.engine = None
+            self.engine = SystemOneEngine(compiled_model.schema, model=compiled_model, strict_mode=True, use_cache=False)
         else:
             self.engine = SystemOneEngine(PokemonBattleSystemOne)
             self.compiled_model = None
@@ -1547,37 +1547,19 @@ class System1BattleAgent:
         prompt = state.to_prompt()
         t0 = time.perf_counter()
 
-        if self.compiled_model is not None:
-            # Compiled zero-dependency path
-            raw = self.compiled_model.forward_single(prompt)
-            lat = (time.perf_counter() - t0) * 1000.0
+        res: DecisionResult = self.engine.decide(prompt, alpha=self.alpha, record_receipt=False)
+        lat = (time.perf_counter() - t0) * 1000.0
 
-            action_val = raw.fields["action"].selected_value
-            action_conf = raw.fields["action"].confidence
-            move_val = raw.fields["chosen_move"].selected_value
-            move_conf = raw.fields["chosen_move"].confidence
-            danger_val = bool(raw.fields["critical_danger"].selected_value)
-            threat_val = float(raw.fields["threat_level"].selected_value)
+        action_val = res.action
+        action_conf = res.confidences.get("action", 0.90)
+        move_val = res.chosen_move
+        move_conf = res.confidences.get("chosen_move", 0.90)
+        danger_val = bool(res.critical_danger)
+        threat_val = float(res.threat_level)
 
-            # Heuristic conformal sets for compiled model
-            action_set = [action_val] if action_conf >= (1.0 - self.alpha) else [action_val, "switch_pokemon"]
-            move_set = [move_val] if move_conf >= (1.0 - self.alpha) else [move_val, "move_slot_1"]
-            is_ambiguous = len(action_set) > 1 or len(move_set) > 1
-        else:
-            # Full SystemOneEngine path
-            res: DecisionResult = self.engine.decide(prompt, alpha=self.alpha, record_receipt=False)
-            lat = (time.perf_counter() - t0) * 1000.0
-
-            action_val = res.action
-            action_conf = res.confidences.get("action", 0.90)
-            move_val = res.chosen_move
-            move_conf = res.confidences.get("chosen_move", 0.90)
-            danger_val = bool(res.critical_danger)
-            threat_val = float(res.threat_level)
-
-            action_set = res.conformal_sets.get("action", [action_val])
-            move_set = res.conformal_sets.get("chosen_move", [move_val])
-            is_ambiguous = res.is_ambiguous or (len(action_set) > 1) or (len(move_set) > 1)
+        action_set = res.conformal_sets.get("action", [action_val])
+        move_set = res.conformal_sets.get("chosen_move", [move_val])
+        is_ambiguous = res.is_ambiguous or (len(action_set) > 1) or (len(move_set) > 1)
 
         self.total_decisions += 1
         self.total_latency_ms += lat

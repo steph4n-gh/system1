@@ -1,5 +1,7 @@
 # System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts
 
+> **Release scope:** This is a research/design document with historical or illustrative claims. It is not a release guarantee or independent validation. See [current deployment boundaries](../deployment.md) and the [reproducible release benchmarks](https://github.com/steph4n-gh/system1#benchmarks). Statistical coverage is not a guarantee of safe tool execution; game simulations are not verified world records.
+
 **steph4n** (`@steph4n` on X)  
 *System 1 Core Research Team*  
 Repository: [`https://github.com/steph4n-gh/system1`](https://github.com/steph4n-gh/system1)  
@@ -557,7 +559,7 @@ Under a multi-threaded stress test simulating 8 concurrent worker threads execut
 1. **Speculative Decoding & Draft Models**: Leviathan et al. (2023) introduced speculative decoding using small autoregressive draft models to propose token sequences verified in parallel by larger models. While effective for prose generation, speculative decoding remains fundamentally autoregressive and cannot achieve the sub-millisecond execution envelope required for real-time discrete state decisions.
 2. **Dual-Process Cognitive AI**: Booch et al. (2021) and Bengio (2017) formalized the conceptual integration of fast intuitive heuristics (System 1) with deliberate symbolic or neural reasoning (System 2). In late-2026 architectures, frontier models (OpenAI Astra & GPT-6 series, Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, and xAI Grok) represent powerful System 2 governors; System 1 provides the first machine-native, non-autoregressive System 1 runtime engineered to interface directly with these governors.
 3. **Conformal Risk Control & Uncertainty Quantification**: Vovk et al. (2005) and Angelopoulos & Bates (2021) developed distribution-free conformal prediction frameworks guaranteeing finite-sample error coverage. System 1 operationalizes conformal prediction for discrete agentic control, replacing uncalibrated softmax heuristics with provable fail-closed escalation gates.
-4. **Hardware-Attested Computing & Ledger Transparency**: Prior verifiable computing frameworks rely on confidential hardware enclaves (e.g., Intel SGX, AMD SEV) with significant virtualization overhead. System 1 establishes cryptographic non-repudiation at the application runtime layer through append-only SQLite Merkle chains and Ed25519 witness receipts (Bernstein et al., 2012).
+4. **Hardware-Attested Computing & Ledger Transparency**: Prior verifiable computing frameworks rely on confidential hardware enclaves (e.g., Intel SGX, AMD SEV) with significant virtualization overhead. System 1 establishes cryptographic non-repudiation at the application runtime layer through append-only SQLite hash chains and Ed25519 witness receipts (Bernstein et al., 2012).
 
 ---
 

@@ -221,6 +221,8 @@ class SystemOneEngine:
             self.model = model
             self.dimension = getattr(model, "dimension", dimension)
             self.backend = getattr(model, "backend", backend)
+            self.projector = getattr(model, "projector", projector)
+            self.recency_weighted = getattr(model, "recency_weighted", self.recency_weighted)
         else:
             self.model = SystemOneModel(
                 self.schema,
@@ -233,6 +235,7 @@ class SystemOneEngine:
             )
             self.dimension = self.model.dimension
             self.backend = self.model.backend
+            self.projector = self.model.projector
 
         # Calibrators and Conformal Predictors per field
         self.calibrators: Dict[str, DecisionCalibrator] = {
@@ -326,7 +329,8 @@ class SystemOneEngine:
         """Computes deterministic digest of neural projector."""
         if hasattr(self.projector, "projector_digest") and callable(self.projector.projector_digest):
             return self.projector.projector_digest()
-        p_str = f"dim:{getattr(self.projector, 'dimension', self.dimension)}"
+        from system1.compiler import _projector_config
+        p_str = json.dumps(_projector_config(self.projector), sort_keys=True)
         return hashlib.sha256(p_str.encode("utf-8")).hexdigest()
 
     def _calibration_digest(self) -> str:
@@ -1361,4 +1365,3 @@ __all__ = [
     "DecisionResult",
     "BenchmarkReport",
 ]
-

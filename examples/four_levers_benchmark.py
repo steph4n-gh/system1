@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Benchmark and Showcase for the 4 Tier 1 Architectural Levers:
+"""The repeated-stream teacher is a fixed simulated answer. Cache/escalation figures demonstrate mechanics, not held-out decision quality.
+
+Benchmark and Showcase for the 4 Tier 1 Architectural Levers:
 
 1. Lever 1: Tier 0 Semantic System 1 Cache (L1 Vector/Exact Cache, <0.05ms execution)
 2. Lever 2: Online Sherman-Morrison Distillation (closed-form rank-1 update, <0.1ms)
@@ -78,7 +80,7 @@ def run_benchmark():
     compiled_model = compiler.compile(exemplars=exemplars)
 
     model_bytes = compiled_model.to_bytes()
-    print(f"  ✓ Model successfully compiled: {len(model_bytes):,} bytes (< 20 KB footprint)")
+    print(f"  Model compiled: {len(model_bytes):,} bytes; under 20 KiB: {len(model_bytes) < 20 * 1024}")
 
     engine = SystemOneEngine(
         CloudGatewayFirewallSchema,
@@ -163,7 +165,7 @@ def run_benchmark():
     print(f"  Rank-1 Single Field Head:     {single_p50_us:>8.2f} µs ({single_p50_us/1000.0:.4f} ms) [<50µs target]")
     print(f"  Rank-1 Multi-Field (3 heads): {update_p50_us:>8.2f} µs ({update_p50_us/1000.0:.3f} ms)")
     print(f"  Post-Adaptation Decision:     action={post_res.values['action']}, risk_score={post_res.values['risk_score']:.1f}")
-    print(f"  Decision Hyperplane Shifting: Successfully Adapted in < 50 µs/field without full retrain")
+    print(f"  Single-field update under 50 µs: {single_p50_us < 50}")
 
     # ==========================================================================
     # Lever 3: Margin-Based Conformal Gating

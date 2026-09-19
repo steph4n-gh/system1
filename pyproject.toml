@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "system1"
-version = "0.2.1"
-description = "Machine-Native System 1 Decision Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
+version = "0.2.2"
+description = "Local structured decisions, deterministic tool policies, conformal uncertainty gating, and signed audit receipts."
 readme = "README.md"
 license = "Apache-2.0"
 authors = [{name = "System 1 Authors"}]
@@ -76,6 +76,9 @@ grpc = [
     "grpcio>=1.80.0",
     "grpcio-tools>=1.80.0",
     "protobuf>=7.35.1",
+]
+langchain = [
+    "langchain-core>=1.0,<2",
 ]
 
 [project.scripts]

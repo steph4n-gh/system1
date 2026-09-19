@@ -1,5 +1,7 @@
 # System 1 System 1: World Record & #1 Title Game Engines
 
+> **Release scope:** This is a research/design document with historical or illustrative claims. It is not a release guarantee or independent validation. See [current deployment boundaries](deployment.md) and the [reproducible release benchmarks](https://github.com/steph4n-gh/system1#benchmarks). Statistical coverage is not a guarantee of safe tool execution; game simulations are not verified world records.
+
 This document specifies the architecture, algorithmic formulations, and operational instructions for three autonomous game-playing engines powered by the **System 1 / System 1** dual-process cognitive runtime:
 1. **Option A: Universal Paperclips Speedrun (Speedrun.com World Record attempt)**
 2. **Option B: Pokémon Showdown Competitive Ladder (#1 Peak Elo bot)**

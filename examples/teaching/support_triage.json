@@ -1,0 +1,697 @@
+{
+  "name": "support_triage",
+  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark.",
+  "policy": {
+    "billing": "Existing payments, invoices, refunds, subscriptions, or billing records.",
+    "technical_support": "Product defects, errors, integrations, performance, or installation.",
+    "account_security": "Login credentials, identity verification, account access, or suspicious sign-ins.",
+    "sales": "Prospective purchases, demos, enterprise quotes, or commercial contract terms.",
+    "scope": "English, single-issue support requests. Use the primary requested action; mixed issues and unfamiliar requests need human judgment."
+  },
+  "teach": [
+    {
+      "group": "double-renewal",
+      "prompt": "My subscription renewed twice and I need the extra charge refunded.",
+      "label": "billing"
+    },
+    {
+      "group": "invoice-address",
+      "prompt": "Please correct the company address printed on our invoice.",
+      "label": "billing"
+    },
+    {
+      "group": "failed-card",
+      "prompt": "The card payment for my monthly subscription was declined.",
+      "label": "billing"
+    },
+    {
+      "group": "annual-cancel",
+      "prompt": "Cancel my annual subscription and explain the refund amount.",
+      "label": "billing"
+    },
+    {
+      "group": "missing-receipt",
+      "prompt": "I paid yesterday but never received a payment receipt.",
+      "label": "billing"
+    },
+    {
+      "group": "tax-exemption",
+      "prompt": "Our invoice includes sales tax although our organization is tax exempt.",
+      "label": "billing"
+    },
+    {
+      "group": "bank-transfer",
+      "prompt": "Can you match our bank transfer to the unpaid invoice?",
+      "label": "billing"
+    },
+    {
+      "group": "expired-payment-card",
+      "prompt": "I need to replace the expired credit card used for billing.",
+      "label": "billing"
+    },
+    {
+      "group": "credit-balance",
+      "prompt": "Why was my account credit not applied to this month's bill?",
+      "label": "billing"
+    },
+    {
+      "group": "unexpected-fee",
+      "prompt": "There is an unexpected service fee on my latest invoice.",
+      "label": "billing"
+    },
+    {
+      "group": "prorated-downgrade",
+      "prompt": "Calculate the prorated credit for my subscription downgrade.",
+      "label": "billing"
+    },
+    {
+      "group": "currency-charge",
+      "prompt": "The payment was charged in dollars instead of euros.",
+      "label": "billing"
+    },
+    {
+      "group": "billing-email",
+      "prompt": "Send future billing receipts to our finance mailbox.",
+      "label": "billing"
+    },
+    {
+      "group": "refund-status",
+      "prompt": "When will the approved refund reach my bank account?",
+      "label": "billing"
+    },
+    {
+      "group": "payment-history",
+      "prompt": "Please export my payment history for the accountant.",
+      "label": "billing"
+    },
+    {
+      "group": "subscription-pause",
+      "prompt": "Pause recurring subscription payments while our office is closed.",
+      "label": "billing"
+    },
+    {
+      "group": "csv-crash",
+      "prompt": "The application crashes whenever I import a CSV file.",
+      "label": "technical_support"
+    },
+    {
+      "group": "webhook-timeout",
+      "prompt": "Our webhook integration times out before the callback completes.",
+      "label": "technical_support"
+    },
+    {
+      "group": "installer-error",
+      "prompt": "The desktop installer stops with error code E42.",
+      "label": "technical_support"
+    },
+    {
+      "group": "search-slow",
+      "prompt": "Searching a large project takes several minutes to load results.",
+      "label": "technical_support"
+    },
+    {
+      "group": "api-pagination",
+      "prompt": "The API returns the same records on every pagination request.",
+      "label": "technical_support"
+    },
+    {
+      "group": "mobile-sync",
+      "prompt": "Changes made in the mobile app do not synchronize to desktop.",
+      "label": "technical_support"
+    },
+    {
+      "group": "pdf-export",
+      "prompt": "Exporting a report as PDF produces blank pages.",
+      "label": "technical_support"
+    },
+    {
+      "group": "dashboard-render",
+      "prompt": "The dashboard chart disappears when the browser window is resized.",
+      "label": "technical_support"
+    },
+    {
+      "group": "sdk-import",
+      "prompt": "Importing your Python SDK raises a module error.",
+      "label": "technical_support"
+    },
+    {
+      "group": "upload-progress",
+      "prompt": "File uploads freeze at ninety percent without an error message.",
+      "label": "technical_support"
+    },
+    {
+      "group": "notification-delay",
+      "prompt": "Product notifications arrive hours after the event occurred.",
+      "label": "technical_support"
+    },
+    {
+      "group": "filter-bug",
+      "prompt": "The date filter returns records outside the selected range.",
+      "label": "technical_support"
+    },
+    {
+      "group": "integration-schema",
+      "prompt": "Our integration fails because the API response schema changed.",
+      "label": "technical_support"
+    },
+    {
+      "group": "memory-leak",
+      "prompt": "The desktop application consumes more memory until it crashes.",
+      "label": "technical_support"
+    },
+    {
+      "group": "offline-mode",
+      "prompt": "Offline edits disappear when the app reconnects to the server.",
+      "label": "technical_support"
+    },
+    {
+      "group": "video-playback",
+      "prompt": "Embedded videos will not play in the project viewer.",
+      "label": "technical_support"
+    },
+    {
+      "group": "forgot-password",
+      "prompt": "I forgot my password and need a reset link.",
+      "label": "account_security"
+    },
+    {
+      "group": "lost-authenticator",
+      "prompt": "I lost the phone containing my two factor authenticator.",
+      "label": "account_security"
+    },
+    {
+      "group": "unknown-login",
+      "prompt": "There is a login from a country I have never visited.",
+      "label": "account_security"
+    },
+    {
+      "group": "locked-profile",
+      "prompt": "My account is locked after too many failed sign-in attempts.",
+      "label": "account_security"
+    },
+    {
+      "group": "recovery-email",
+      "prompt": "Change the recovery email for my account after identity verification.",
+      "label": "account_security"
+    },
+    {
+      "group": "revoke-sessions",
+      "prompt": "Sign my account out of every other active session.",
+      "label": "account_security"
+    },
+    {
+      "group": "stolen-device",
+      "prompt": "My laptop was stolen and I need to secure my account.",
+      "label": "account_security"
+    },
+    {
+      "group": "backup-codes",
+      "prompt": "Where can I regenerate my two factor recovery codes?",
+      "label": "account_security"
+    },
+    {
+      "group": "password-expired",
+      "prompt": "My password expired and the login page requires a new one.",
+      "label": "account_security"
+    },
+    {
+      "group": "sso-access",
+      "prompt": "I cannot sign in through our company single sign-on provider.",
+      "label": "account_security"
+    },
+    {
+      "group": "verify-identity",
+      "prompt": "What documents are needed to verify account ownership?",
+      "label": "account_security"
+    },
+    {
+      "group": "compromised-password",
+      "prompt": "Someone obtained my password and is using my account.",
+      "label": "account_security"
+    },
+    {
+      "group": "email-verification",
+      "prompt": "The account verification link has expired before I could use it.",
+      "label": "account_security"
+    },
+    {
+      "group": "security-key",
+      "prompt": "Help me register a hardware security key for sign-in.",
+      "label": "account_security"
+    },
+    {
+      "group": "remove-admin",
+      "prompt": "A former employee still has administrator access to our account.",
+      "label": "account_security"
+    },
+    {
+      "group": "login-alert",
+      "prompt": "I received a security alert for a sign-in I do not recognize.",
+      "label": "account_security"
+    },
+    {
+      "group": "enterprise-seats",
+      "prompt": "We would like a quote for two hundred enterprise seats.",
+      "label": "sales"
+    },
+    {
+      "group": "product-demo",
+      "prompt": "Can your sales team arrange a product demonstration for our company?",
+      "label": "sales"
+    },
+    {
+      "group": "volume-discount",
+      "prompt": "What volume discounts apply when we purchase more licenses?",
+      "label": "sales"
+    },
+    {
+      "group": "nonprofit-plan",
+      "prompt": "Do you offer a nonprofit discount on a new subscription?",
+      "label": "sales"
+    },
+    {
+      "group": "contract-length",
+      "prompt": "What contract lengths are available for enterprise purchases?",
+      "label": "sales"
+    },
+    {
+      "group": "trial-extension",
+      "prompt": "Can we extend our evaluation trial before making a purchase?",
+      "label": "sales"
+    },
+    {
+      "group": "procurement-form",
+      "prompt": "Our procurement team needs a vendor form before signing a contract.",
+      "label": "sales"
+    },
+    {
+      "group": "custom-package",
+      "prompt": "We want to discuss a custom commercial package for our departments.",
+      "label": "sales"
+    },
+    {
+      "group": "reseller-partner",
+      "prompt": "How can our consultancy become a reseller partner?",
+      "label": "sales"
+    },
+    {
+      "group": "seat-expansion",
+      "prompt": "Please price an expansion from fifty to five hundred users.",
+      "label": "sales"
+    },
+    {
+      "group": "education-offer",
+      "prompt": "Is there a licensing offer for universities buying campus access?",
+      "label": "sales"
+    },
+    {
+      "group": "service-agreement",
+      "prompt": "Can we negotiate a service level agreement for an enterprise deal?",
+      "label": "sales"
+    },
+    {
+      "group": "competitive-evaluation",
+      "prompt": "We are comparing vendors and would like a sales consultation.",
+      "label": "sales"
+    },
+    {
+      "group": "purchase-order",
+      "prompt": "Will your team accept a purchase order for a new enterprise contract?",
+      "label": "sales"
+    },
+    {
+      "group": "regional-pricing",
+      "prompt": "Please send a commercial quote for our offices in three countries.",
+      "label": "sales"
+    },
+    {
+      "group": "pilot-program",
+      "prompt": "We want to arrange a paid pilot before purchasing an annual plan.",
+      "label": "sales"
+    }
+  ],
+  "calibration": [
+    {
+      "group": "incorrect-seat-bill",
+      "prompt": "Our last invoice billed fifteen seats although we only paid for ten.",
+      "label": "billing"
+    },
+    {
+      "group": "refund-destination",
+      "prompt": "Can my refund be returned to the original payment card?",
+      "label": "billing"
+    },
+    {
+      "group": "invoice-number",
+      "prompt": "The finance team needs the invoice number for last week's payment.",
+      "label": "billing"
+    },
+    {
+      "group": "direct-debit",
+      "prompt": "How do I change the bank account used for subscription direct debit?",
+      "label": "billing"
+    },
+    {
+      "group": "renewal-date",
+      "prompt": "Please tell me the date of our next subscription charge.",
+      "label": "billing"
+    },
+    {
+      "group": "late-penalty",
+      "prompt": "Why did an overdue payment penalty appear on the bill?",
+      "label": "billing"
+    },
+    {
+      "group": "credit-note",
+      "prompt": "Please issue a credit note for the invoice you cancelled.",
+      "label": "billing"
+    },
+    {
+      "group": "billing-contact",
+      "prompt": "Our billing contact left; please redirect invoices to the new accountant.",
+      "label": "billing"
+    },
+    {
+      "group": "payment-confirmation",
+      "prompt": "Confirm that the outstanding invoice has been paid in full.",
+      "label": "billing"
+    },
+    {
+      "group": "vat-number",
+      "prompt": "Add our VAT registration number to the invoice we already received.",
+      "label": "billing"
+    },
+    {
+      "group": "overpayment",
+      "prompt": "We accidentally paid more than the invoice total and need the balance back.",
+      "label": "billing"
+    },
+    {
+      "group": "monthly-cancel",
+      "prompt": "Stop automatic monthly billing at the end of this subscription period.",
+      "label": "billing"
+    },
+    {
+      "group": "spreadsheet-export",
+      "prompt": "The spreadsheet export contains empty columns instead of our data.",
+      "label": "technical_support"
+    },
+    {
+      "group": "button-broken",
+      "prompt": "Clicking the save button does nothing in the latest application build.",
+      "label": "technical_support"
+    },
+    {
+      "group": "api-500",
+      "prompt": "Our API integration receives a server error on every request.",
+      "label": "technical_support"
+    },
+    {
+      "group": "calendar-sync",
+      "prompt": "The calendar integration fails to synchronize new appointments.",
+      "label": "technical_support"
+    },
+    {
+      "group": "large-file",
+      "prompt": "Uploading a large attachment crashes the browser tab.",
+      "label": "technical_support"
+    },
+    {
+      "group": "mobile-layout",
+      "prompt": "Text overlaps the navigation controls in your mobile application.",
+      "label": "technical_support"
+    },
+    {
+      "group": "duplicate-events",
+      "prompt": "Your webhook sends duplicate events for a single update.",
+      "label": "technical_support"
+    },
+    {
+      "group": "installation-permissions",
+      "prompt": "The app installation fails with a filesystem permission error.",
+      "label": "technical_support"
+    },
+    {
+      "group": "sort-order",
+      "prompt": "The table sorting feature places numbers in the wrong order.",
+      "label": "technical_support"
+    },
+    {
+      "group": "connection-reset",
+      "prompt": "The SDK repeatedly reports a connection reset when fetching projects.",
+      "label": "technical_support"
+    },
+    {
+      "group": "search-index",
+      "prompt": "Recently created documents never appear in the product search results.",
+      "label": "technical_support"
+    },
+    {
+      "group": "report-timezone",
+      "prompt": "The reporting tool displays timestamps in the wrong time zone.",
+      "label": "technical_support"
+    },
+    {
+      "group": "recovery-phone",
+      "prompt": "My recovery phone number is obsolete and I cannot access my account.",
+      "label": "account_security"
+    },
+    {
+      "group": "reset-link",
+      "prompt": "The password reset email never arrives in my inbox.",
+      "label": "account_security"
+    },
+    {
+      "group": "suspicious-session",
+      "prompt": "Please revoke an active session that I do not recognize.",
+      "label": "account_security"
+    },
+    {
+      "group": "twofactor-enable",
+      "prompt": "I want to enable two factor authentication on my profile.",
+      "label": "account_security"
+    },
+    {
+      "group": "login-code",
+      "prompt": "The sign-in verification code says it has already expired.",
+      "label": "account_security"
+    },
+    {
+      "group": "account-takeover",
+      "prompt": "An attacker changed my account email and password.",
+      "label": "account_security"
+    },
+    {
+      "group": "passkey-device",
+      "prompt": "How do I remove a passkey linked to an old device?",
+      "label": "account_security"
+    },
+    {
+      "group": "sso-disabled",
+      "prompt": "Our identity provider disabled my login and I need access restored.",
+      "label": "account_security"
+    },
+    {
+      "group": "ownership-transfer",
+      "prompt": "Help verify identity before transferring account ownership to a colleague.",
+      "label": "account_security"
+    },
+    {
+      "group": "suspicious-reset",
+      "prompt": "Someone requested a password reset that I did not initiate.",
+      "label": "account_security"
+    },
+    {
+      "group": "session-timeout",
+      "prompt": "Require my account to sign out automatically after inactivity.",
+      "label": "account_security"
+    },
+    {
+      "group": "security-audit",
+      "prompt": "Show me the recent sign-in history for my account.",
+      "label": "account_security"
+    },
+    {
+      "group": "startup-pricing",
+      "prompt": "What purchase discounts are offered to early stage startups?",
+      "label": "sales"
+    },
+    {
+      "group": "demo-language",
+      "prompt": "Can a sales representative give our team a demonstration in Spanish?",
+      "label": "sales"
+    },
+    {
+      "group": "enterprise-terms",
+      "prompt": "Please send the commercial terms for a new enterprise subscription.",
+      "label": "sales"
+    },
+    {
+      "group": "licenses-budget",
+      "prompt": "We have a budget for eighty licenses; can you prepare a quote?",
+      "label": "sales"
+    },
+    {
+      "group": "evaluation-meeting",
+      "prompt": "Our buying committee would like a call to evaluate your product.",
+      "label": "sales"
+    },
+    {
+      "group": "implementation-quote",
+      "prompt": "Include onboarding services in the quote for our initial purchase.",
+      "label": "sales"
+    },
+    {
+      "group": "multi-year-deal",
+      "prompt": "Would a three year enterprise contract reduce the license price?",
+      "label": "sales"
+    },
+    {
+      "group": "partner-program",
+      "prompt": "We are interested in a commercial partnership to distribute your product.",
+      "label": "sales"
+    },
+    {
+      "group": "public-sector",
+      "prompt": "Does your sales team support public sector procurement contracts?",
+      "label": "sales"
+    },
+    {
+      "group": "trial-upgrade",
+      "prompt": "Who can help turn our trial into a paid enterprise agreement?",
+      "label": "sales"
+    },
+    {
+      "group": "regional-demo",
+      "prompt": "Arrange a product demo for prospective customers in our regional office.",
+      "label": "sales"
+    },
+    {
+      "group": "contract-redlines",
+      "prompt": "Our legal department has changes to the proposed sales contract.",
+      "label": "sales"
+    }
+  ],
+  "evaluate": [
+    {
+      "group": "refund-tracking",
+      "prompt": "The refund is marked complete but the money is missing from my statement.",
+      "label": "billing"
+    },
+    {
+      "group": "invoice-reissue",
+      "prompt": "Please reissue the paid invoice under our company's new legal name.",
+      "label": "billing"
+    },
+    {
+      "group": "card-authorization",
+      "prompt": "The invoice payment left a pending authorization on my credit card.",
+      "label": "billing"
+    },
+    {
+      "group": "discount-missing",
+      "prompt": "The promised subscription discount is absent from this month's charge.",
+      "label": "billing"
+    },
+    {
+      "group": "renewal-optout",
+      "prompt": "Remove automatic renewal so we are not billed for another year.",
+      "label": "billing"
+    },
+    {
+      "group": "receipt-currency",
+      "prompt": "Can you provide the payment receipt with the original transaction currency?",
+      "label": "billing"
+    },
+    {
+      "group": "image-thumbnail",
+      "prompt": "Uploaded images show broken thumbnails throughout the application.",
+      "label": "technical_support"
+    },
+    {
+      "group": "api-rate-limit",
+      "prompt": "Our integration hits an API rate limit even at a low request rate.",
+      "label": "technical_support"
+    },
+    {
+      "group": "app-launch",
+      "prompt": "After the latest update the desktop app fails to launch.",
+      "label": "technical_support"
+    },
+    {
+      "group": "editor-freeze",
+      "prompt": "The document editor freezes when I paste a large table.",
+      "label": "technical_support"
+    },
+    {
+      "group": "export-encoding",
+      "prompt": "Exported CSV files corrupt accented characters in customer names.",
+      "label": "technical_support"
+    },
+    {
+      "group": "notification-link",
+      "prompt": "Clicking a notification opens a blank page instead of the project.",
+      "label": "technical_support"
+    },
+    {
+      "group": "mfa-travel",
+      "prompt": "I cannot receive the second factor login code while travelling abroad.",
+      "label": "account_security"
+    },
+    {
+      "group": "password-manager",
+      "prompt": "Help me replace the account password exposed in a password manager breach.",
+      "label": "account_security"
+    },
+    {
+      "group": "unknown-passkey",
+      "prompt": "A passkey I never registered has been added to my profile.",
+      "label": "account_security"
+    },
+    {
+      "group": "admin-recovery",
+      "prompt": "Our only account administrator lost access to the recovery email.",
+      "label": "account_security"
+    },
+    {
+      "group": "login-ip",
+      "prompt": "Block further sign-ins to my account from an unfamiliar device.",
+      "label": "account_security"
+    },
+    {
+      "group": "identity-check",
+      "prompt": "I need to complete the account identity check after changing my name.",
+      "label": "account_security"
+    },
+    {
+      "group": "branch-rollout",
+      "prompt": "Prepare a license quote for rolling your product out to twelve branches.",
+      "label": "sales"
+    },
+    {
+      "group": "demo-workflow",
+      "prompt": "Can we book a sales demo focused on our procurement workflow?",
+      "label": "sales"
+    },
+    {
+      "group": "charity-contract",
+      "prompt": "Our charity wants to buy an enterprise plan with discounted licensing.",
+      "label": "sales"
+    },
+    {
+      "group": "purchase-timeline",
+      "prompt": "A sales representative should contact us about purchasing next quarter.",
+      "label": "sales"
+    },
+    {
+      "group": "trial-commercial",
+      "prompt": "We finished evaluating the trial and want a commercial proposal.",
+      "label": "sales"
+    },
+    {
+      "group": "bundle-negotiation",
+      "prompt": "Can we negotiate a bundle price for licenses and onboarding services?",
+      "label": "sales"
+    }
+  ]
+}

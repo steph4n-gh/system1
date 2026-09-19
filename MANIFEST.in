@@ -1,0 +1,7 @@
+include LICENSE README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md uv.lock
+recursive-include tests *.py
+recursive-include examples *.py *.json *.md
+recursive-include scripts *.py
+recursive-include benchmarks *.py *.json *.md
+recursive-include docs *.md *.json
+recursive-include assets *.svg *.png *.jpg *.gif

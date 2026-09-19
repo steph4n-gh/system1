@@ -148,7 +148,7 @@ def main() -> None:
         file_size_kb = s1m_file_path.stat().st_size / 1024.0
 
         print(f"3. Expert successfully serialized to: {s1m_file_path.name}")
-        print(f"   Binary File Size:    {file_size_kb:.2f} KB (< 20 KB footprint target achieved!)")
+        print(f"   Binary File Size:    {file_size_kb:.2f} KB (under 20 KiB: {file_size_kb < 20})")
         print(f"   Compilation Time:    {compile_time_ms:.2f} ms")
 
         # --------------------------------------------------------------------
@@ -340,7 +340,7 @@ def main() -> None:
             print(f"    Total MoE Latency: {total_moe_ms:.3f} ms (< 1.0 ms pipeline SLA!)")
 
     print("\n" + "=" * 80)
-    print("  ALL REFLEX DOMAIN EXPERT PATHWAYS VERIFIED SUCCESSFULLY!")
+    print("  EXAMPLE PATHWAYS COMPLETED; REVIEW THE MEASURED RESULTS ABOVE.")
     print("=" * 80 + "\n")
 
 

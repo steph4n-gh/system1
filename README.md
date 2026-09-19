@@ -1,498 +1,249 @@
-<br>
 <p align="center">
-  <a href="https://github.com/steph4n-gh/system1">
-    <img src="assets/system1-logo.jpg" alt="System 1 Logo" width="128" />
-  </a>
+  <img src="https://raw.githubusercontent.com/steph4n-gh/system1/main/assets/system1-logo.jpg" alt="System 1 logo" width="128" />
 </p>
 
-<h1 align="center">System 1: On-Metal Decision Firewall for AI Agents</h1>
+# System 1: Local Decision Runtime for AI Agents
 
-<p align="center">
-  <strong>Sub-millisecond ALLOW / DENY / ESCALATE decisions on local hardware.<br>Zero egress. Zero tokens. Cryptographic audit receipts.</strong>
-</p>
+Teach a repeatable decision skill from examples or by observing a teacher such as Jev. Validate it, take over locally, and save the skill for reuse.
 
-<p align="center">
-  <a href="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
-  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-982%20passed-brightgreen.svg" alt="982 Tests Passed" /></a>
-  <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-%3C1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
-  <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/network_egress-0_bytes-success.svg" alt="Zero Network Egress" /></a>
-  <a href="#-why-system-1"><img src="https://img.shields.io/badge/cloud_tokens-0-ff69b4.svg" alt="Zero Cloud Tokens" /></a>
-  <a href="#-why-system-1"><img src="https://img.shields.io/badge/cloud_bills-%240.00-brightgreen.svg" alt="Zero Cloud Bills" /></a>
-  <a href="#-how-it-works"><img src="https://img.shields.io/badge/vibe_checks-disallowed-purple.svg" alt="Vibe Checks Disallowed" /></a>
-</p>
+[![CI](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg)](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/system1.svg)](https://pypi.org/project/system1/)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 
-<p align="center">
-  <a href="#-why-system-1">Why System 1</a> •
-  <a href="#-5-minute-quickstart">Quickstart</a> •
-  <a href="#-how-it-works">How It Works</a> •
-  <a href="#-integrations">Integrations</a> •
-  <a href="#-decision-quality--benchmark-metrics">Accuracy</a> •
-  <a href="#-performance">Performance</a> •
-  <a href="#-privacy--zero-data-egress">Privacy</a> •
-  <a href="#-production-demos">Demos</a> •
-  <a href="#-cli-reference">CLI</a> •
-  <a href="#-technical-deep-dive">Papers</a>
-</p>
+**Status: beta.** System 1 provides a small local classifier and a separate deterministic policy guard. The included seed models need evaluation and calibration on your workload. They are not a general-purpose detector of malicious actions or prompt injection.
 
----
+[Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [Limits and deployment](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
-## 💡 Why System 1
+## What it does
 
-Every AI agent framework — LangChain, CrewAI, OpenHands, AutoGen — lets agents call tools. None of them can tell you whether a tool call is safe **before** it executes.
+- **Observe → teach → validate → run locally:** keep the teacher answering until the observed skill passes held-out checks, then use the same call site locally. Save and reload the validated skill with its uncertainty behavior intact.
+- **Structured classification:** choice, boolean, multi-choice, and score fields using local NumPy projections, with optional MLX acceleration.
+- **Uncertainty handling:** calibration and conformal prediction sets for routing uncertain decisions to application-defined review or fallback paths.
+- **Deterministic permissions:** `PolicyEngine` evaluates explicit rules; `SystemOneGuard(enforcement_profile=True)` requires a matching permission grant, signing key, and durable ledger before returning `ALLOW`.
+- **Audit evidence:** Ed25519 software signatures (RFC 8032) on decision receipts and a SHA-256 hash-chained SQLite ledger. Applications remain responsible for authenticating callers and enforcing decisions at the tool boundary.
+- **Local execution:** the core decision path requires no network or cloud API. Optional fallback clients, telemetry exporters, and application tools can use the network.
 
-Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency**, costs real API dollars, and sends your proprietary context over the public internet. For routine decisions — routing, classification, safety gating — this is wasteful and dangerous.
+## Quickstart
 
-**System 1 is the on-metal decision firewall that sits between your agent and its tools.** It evaluates every action in under a millisecond on your hardware, with zero cloud dependencies, zero data egress, and mathematically rigorous safety guarantees.
-
-| Dimension | Without System 1 | With System 1 |
-|---|---|---|
-| **Decision Latency** | 300 ms – 2,000+ ms (cloud roundtrip) | **< 1.0 ms P50** (local metal) |
-| **Cost** | $5.00 – $30.00 per million tokens | **$0.00 per decision** |
-| **Data Exposure** | Full payload over public WAN | **0 bytes leave your network** |
-| **Failure Mode** | Uncalibrated confidence; silent errors | **Conformal safety gate with fail-closed escalation** |
-| **Audit Trail** | Provider API logs (opaque) | **Ed25519 signed, SHA-256 hash-chained receipts** |
-
-System 1 retains **95% – 99%** of routine decisions locally under calibrated empirical workloads and conformal prediction bounds (at user-selected significance $\alpha$). Actual local retention is workload- and distribution-dependent. The remaining 1% – 5% genuine edge cases or ambiguous distributions are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok)—or fail-closed via offline abstention—with full cryptographic audit trails.
-
-The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import reflex` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
-
----
-
-## ⚡ 5-Minute Quickstart
-
-Install the `system1` package in any Python 3.11+ environment:
+The project is packaged on PyPI as `system1`. Use Python 3.11 or newer:
 
 ```bash
-pip install system1
-# Or install locally in editable mode:
-pip install -e .
+python -m pip install system1
 ```
 
-### Enforcing Policy Guard Quickstart (Durable Ledger + Ed25519 Signing)
+To try the code in this repository:
 
-Configure a deterministic permission policy, Ed25519 signer, and persistent SQLite WAL audit ledger:
+```bash
+git clone https://github.com/steph4n-gh/system1.git
+cd system1
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+```
+
+Define the outputs you need, then evaluate a prompt:
 
 ```python
+from system1 import ChoiceField, DecisionSchema, System1Engine
+
+class SupportRoute(DecisionSchema):
+    team = ChoiceField(
+        options=["billing", "technical_support"],
+        descriptions={
+            "billing": "Invoices, payments, subscription plans, and refunds",
+            "technical_support": "Software installation, errors, and debugging",
+        },
+    )
+
+engine = System1Engine(SupportRoute)
+decision = engine.decide("I need a refund for my subscription")
+print(decision.values)
+print(f"Latency: {decision.latency_ms:.2f} ms")
+print(f"Needs review: {decision.is_ambiguous}")
+print(f"Prediction sets: {decision.conformal_sets}")
+```
+
+This starts with schema-derived seed prototypes. Outputs and latency depend on the schema, data, and hardware. A predicted value is not permission to execute a tool.
+
+## Observe a teacher, then take over
+
+```bash
+python examples/observe_routing.py
+```
+
+This short offline example shows the complete journey: observe answers, teach one routing skill, pass the normal promotion gates, disconnect the teacher, evaluate fresh requests locally, then save and reopen the skill. In the recorded run it needed **190 observations**, answered **40/40 fresh synthetic tickets correctly**, accepted all 40, and saved a **5 KB** skill. Reloading preserved answers, probabilities, and review decisions. Local median latency was about **0.45 ms** on the review machine.
+
+The default teacher is a rule over a small structured-ticket vocabulary, clearly labeled as a simulation. It demonstrates the lifecycle, not general language understanding or Jev quality parity. `--teacher jev` observes actual Jev responses with your API key; another API can use the existing teacher callback. See the [adapter guide and compatibility contract](docs/typesafe.md) and [recorded evidence](examples/teaching/results/observed_routing.json).
+
+Promotion depends on evidence, not a fixed turn count. Insufficient evidence keeps the teacher active, and uncertain local responses still request review.
+
+## Teach a skill
+
+Give System 1 labeled examples of one task, save the resulting `.s1m` skill, and reuse it locally. A person or System 2 can supply the examples; teaching does not require an LLM. The existing compiler fits a small decision head using NumPy.
+
+```bash
+python examples/support_triage.py
+python examples/model_routing.py
+python examples/agent_guard.py
+system1 decide "Please correct the invoice address" --model .system1/examples/support_triage/skill.s1m --json
+```
+
+Each primary example supplies labeled teaching cases, separate calibration cases, and 24 unseen evaluation cases. One command teaches, saves, reloads, and reports the results. On the review machine, teaching plus calibration took 127–159 ms, saved skills were 25–32 KiB, and uncached decisions took about 0.5 ms. Preparing good labeled examples takes additional work.
+
+The authored demonstration cases reached 87.5% support-routing accuracy, 91.7% model-routing accuracy, and 100% operation-triage accuracy. Strict uncertainty checks requested review on 23/24 support cases, all 24 routing cases, and 22/24 operation cases. The three accepted responses were correct. See the [complete results, data, and limits](examples/teaching/README.md); these are demonstrations, not production quality guarantees.
+
+For the smallest API example, see [teach one skill](examples/teach_skill.py). The [teaching guide](docs/guides/training_experts.md) covers your own data and evaluation. In Python, use `compile(examples, augment=False)` and `System1Engine(..., strict_mode=True)` for this workflow.
+
+## Policy guard
+
+This executable example permits one configuration lookup for one application-supplied principal, records the actual lookup result, and verifies the ledger. Other keys or tools have no grant. It persists a local demonstration key across runs.
+
+```python
+from pathlib import Path
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from system1 import ActionLedger, PolicyEngine, PolicyRule, SystemOneGuard, ActionProposal
-from system1.guard import DecisionOutcome
-
-# 1. Establish persistent tamper-evident audit storage and trust anchor
-ledger = ActionLedger("audit_ledger.sqlite", require_durable=True)
-signing_key = Ed25519PrivateKey.generate()
-
-# 2. Define deterministic permission policy
-policy = PolicyEngine(
-    rules=[
-        PolicyRule(rule_id="read_rule", tools=["read_file"], outcome=DecisionOutcome.ALLOW, allowed_principals=["agent-worker"]),
-        PolicyRule(rule_id="bash_rule", tools=["execute_bash"], outcome=DecisionOutcome.REQUIRE_APPROVAL),
-        PolicyRule(rule_id="db_rule", tools=["delete_database"], outcome=DecisionOutcome.DENY),
-    ],
-    denied_tools=["delete_database"],
+from system1 import (
+    ActionLedger, ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule,
+    RiskLevel, SystemOneGuard, load_private_key, save_keypair,
 )
 
-# 3. Instantiate fail-closed Guard reference monitor
-guard = SystemOneGuard(
-    policy=policy,
-    ledger=ledger,
-    signing_key=signing_key,
-    enforcement_profile=True,
-)
+key_path = Path(".system1/demo-identity/identity.key")
+if not key_path.exists():
+    save_keypair(Ed25519PrivateKey.generate(), key_path.parent)
+signing_key = load_private_key(key_path)
 
-# 4. Evaluate proposal under strict authenticated enforcement
-proposal = ActionProposal.create(
-    tenant_id="prod-us-east",
-    principal_id="agent-worker",
-    scope="tool_execution",
-    tool="read_file",
-    arguments={"path": "reports/q3_summary.pdf"},
-    purpose="Inspect quarterly compliance report",
-)
+policy = PolicyEngine(rules=[PolicyRule(
+    rule_id="read_service_name",
+    tools=["read_config"],
+    allowed_principals=["agent-worker"],
+    allowed_tenants=["demo"],
+    allowed_scopes=["config:read"],
+    argument_limits={"key": ["service_name"]},
+    outcome=DecisionOutcome.ALLOW,
+    risk=RiskLevel.READ_ONLY,
+)])
 
-auth = guard.evaluate_proposal(proposal)
+with ActionLedger(".system1/demo-audit.sqlite", require_durable=True) as ledger:
+    guard = SystemOneGuard(
+        policy=policy, ledger=ledger, signing_key=signing_key,
+        enforcement_profile=True,
+    )
+    proposal = ActionProposal.create(
+        tenant_id="demo", principal_id="agent-worker", scope="config:read",
+        tool="read_config", arguments={"key": "service_name"},
+        canonical_target="config:service_name", purpose="Inspect service name",
+    )
+    auth = guard.evaluate_proposal(proposal)
+    if auth.outcome != DecisionOutcome.ALLOW:
+        raise PermissionError(auth.reason)
 
-if auth.outcome == DecisionOutcome.ALLOW:
-    # Action authorized; receipt is cryptographically signed and durable in the ledger
-    print(f"Authorized! Receipt Digest: {auth.receipt.compute_digest()[:16]}...")
-    # Execute tool, then cryptographically bind outcome to the authorization
+    # Execute exactly the authorized operation and arguments.
+    result = {"service_name": "system1-demo"}[proposal.arguments["key"]]
     ledger.record_execution_outcome(
-        action_id=auth.receipt.decision_id,
+        action_id=proposal.action_id,
         receipt_digest=auth.receipt.compute_digest(),
-        status="SUCCEEDED",
-        tenant_id="prod-us-east",
-        principal_id="agent-worker",
-        scope="tool_execution",
-        result_payload={"bytes_read": 1024},
+        status="SUCCEEDED", result_payload={"value": result},
+        tenant_id=proposal.tenant_id, principal_id=proposal.principal_id,
+        scope=proposal.scope, trusted_public_key=signing_key.public_key(),
     )
-elif auth.outcome == DecisionOutcome.REQUIRE_APPROVAL:
-    print(f"Action escalated to human reviewer: {auth.reason}")
-else:
-    print(f"Action DENIED: {auth.reason}")
+    assert ledger.verify_integrity(trusted_public_key=signing_key.public_key())
+    print(result)
 ```
 
-> **Architecture Separation**:
-> - **Deterministic Policy Enforcement (`SystemOneGuard` / `PolicyEngine`)**: Fail-closed rule evaluation, principal/argument constraints, Ed25519 signed receipts, and durable hash-chained outcome recording.
-> - **Statistical Decision Classification (`System1Engine` / `DecisionSchema`)**: Non-autoregressive linear projection, split-conformal uncertainty prediction, and online covariance updates. Current strict permission grants follow the deterministic rule path to guarantee zero false allows.
+The application must derive identity from its authenticated session, constrain tool arguments and targets, and keep agent code from bypassing the guard. Policy correctness is the operator's responsibility. The default guard without `enforcement_profile=True` can use statistical classification to allow actions. See [deployment boundaries](docs/deployment.md) before granting consequential permissions.
 
-### Define a Custom Decision Schema (Statistical Classification)
+## Integrations
+
+### LangChain
+
+Install `python -m pip install 'system1[langchain]'`. Attach a configured guard to actual tool invocations:
 
 ```python
-from system1 import DecisionSchema, ChoiceField, BooleanField, ScoreField, System1Engine
-
-class SecurityTriage(DecisionSchema):
-    action = ChoiceField(
-        options=["ALLOW", "QUARANTINE", "BLOCK"],
-        descriptions={
-            "ALLOW": "Benign read-only operational request",
-            "QUARANTINE": "Unrecognized or abnormal data access pattern",
-            "BLOCK": "Active exploit, prompt injection, or malicious payload",
-        }
-    )
-    is_safe = BooleanField(
-        threshold=0.5,
-        true_description="Safe to execute without human review",
-        false_description="Requires human approval or investigation",
-    )
-    threat_score = ScoreField(
-        min_value=0.0, max_value=10.0,
-        low_description="No threat detected",
-        high_description="Critical active exploit",
-    )
-
-engine = System1Engine(SecurityTriage)
-decision = engine.decide("Suspicious outbound SSH traffic to unknown IP range")
-
-print(f"Action:  {decision.values['action']}")       # BLOCK
-print(f"Safe:    {decision.values['is_safe']}")       # False
-print(f"Threat:  {decision.values['threat_score']:.1f}")  # 8.2
-print(f"Latency: {decision.latency_ms:.2f} ms")      # 0.94 ms
-```
-
----
-
-## 🧠 How It Works
-
-System 1 implements a non-autoregressive decision engine inspired by Daniel Kahneman's dual-process cognitive framework:
-
-<p align="center">
-  <img src="assets/architecture.svg" alt="System 1 Architecture" width="100%" />
-</p>
-
-### The Decision Pipeline
-
-1. **Exact-Match Cache (< 10 µs):** SHA-256 hash lookup in host memory. Repeated queries resolve instantly without re-evaluation.
-
-2. **Non-Autoregressive Forward Pass (< 1 ms):** Hybrid sparse-dense vector projection maps the input to a high-dimensional semantic space. A single matrix multiplication across multi-head linear hyperplanes produces calibrated probability vectors — no token-by-token generation.
-
-3. **Conformal Safety Gate:** Split Conformal Prediction provides mathematically guaranteed error coverage. If the prediction set contains a single confident answer, System 1 executes locally. If the input is genuinely ambiguous, System 1 **halts fail-closed** and escalates to your frontier reasoning model.
-
-4. **Online Learning (< 50 µs):** When a frontier model provides a resolution, a Sherman-Morrison rank-1 covariance update instantly rotates the decision boundary. Future occurrences resolve locally — no GPU backpropagation, no retraining pipelines.
-
-### Conformal Gating: Why It Matters
-
-Most classification systems return uncalibrated softmax probabilities. A model reporting "92% confident" may be wrong 30% of the time under distribution shift. System 1 replaces this with **distribution-free finite-sample guarantees**: the conformal prediction set provably contains the correct answer with high probability, regardless of the underlying data distribution.
-
-When the conformal set size is 1 and the margin of dominance exceeds the threshold, the decision is safe. When the set is larger, the input is genuinely ambiguous and escalation is warranted. This eliminates both false confidence and unnecessary escalation.
-
----
-
-## 🔌 Integrations
-
-System 1 ships with native adapters for modern agent and API stacks.
-
-### 1. MCP Safety Proxy
-
-Intercept Model Context Protocol tool calls with fail-closed safety:
-
-```python
-from system1.integrations import System1MCPProxy
-
-proxy = System1MCPProxy(tenant_id="prod_cluster")
-allowed, err_resp, result = proxy.intercept_jsonrpc(mcp_request_json)
-
-if not allowed:
-    return err_resp  # JSON-RPC 2.0 error with Ed25519 audit proof
-```
-
-### 2. FastAPI / Starlette Gateway Middleware
-
-Route confident classifications locally and escalate edge cases to frontier models:
-
-```python
-from fastapi import FastAPI
-from system1.integrations import add_system1_gateway
-from system1 import DecisionSchema, ChoiceField
-
-app = FastAPI()
-
-class IntentRouter(DecisionSchema):
-    route = ChoiceField(
-        options=["technical_support", "billing_inquiry", "escalate_to_frontier"],
-        descriptions={
-            "technical_support": "Software setup, installation, or debugging questions",
-            "billing_inquiry": "Invoices, subscription plans, and refunds",
-            "escalate_to_frontier": "Complex reasoning, novel queries, or ambiguous disputes",
-        }
-    )
-
-add_system1_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
-```
-
-### 3. LangChain Agent Guard
-
-Block destructive tool calls before invocation:
-
-```python
-from system1.integrations import SystemOneGuardCallbackHandler, wrap_langchain_tool
-
-guard_handler = SystemOneGuardCallbackHandler()
-agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
-
-# Or guard specific tools directly
-guarded_tool = wrap_langchain_tool(bash_tool, tool_name="system_terminal")
-```
-
-### 4. Prometheus & OpenTelemetry Observability
-
-Monitor decision counts, latency histograms, escalation rates, and cache hit ratios:
-
-```python
-from system1 import System1Engine
-from system1.integrations import System1MetricsExporter
-
-engine = System1Engine(SecurityTriage)
-metrics = System1MetricsExporter()
-metrics.instrument(engine)        # Automatically instruments decide()
-metrics.start_server(port=9090)   # Serves standard /metrics HTTP endpoint
-```
-
-*Pre-built Grafana dashboard available in [`docs/observability/grafana-dashboard.json`](docs/observability/grafana-dashboard.json).*
-
-### 5. Polyglot gRPC Sidecar & Kubernetes Deployment
-
-Deploy System 1 alongside agents written in Go, Rust, or TypeScript via standard protobuf contracts:
-
-```bash
-# Launch gRPC server on port 50051
-system1 serve --grpc --port 50051
-
-# Or deploy via Docker & Kubernetes sidecar
-docker run -p 50051:50051 reflex:latest
-```
-
-*Kubernetes deployment manifests available in [`deploy/kubernetes/`](deploy/kubernetes/).*
-
----
-
-## 🎯 Decision Quality & Benchmark Metrics
-
-Latency without decision accuracy is meaningless. System 1 includes a standalone Quality Benchmark Suite evaluating decision correctness across high-stakes security, routing, and scoring tasks:
-
-<p align="center">
-  <img src="assets/quality-vs-latency.svg" alt="System 1 Decision Quality vs Latency Landscape" width="100%" />
-</p>
-
-```bash
-python3 benchmarks/quality/run_quality_benchmarks.py
-```
-
-| Benchmark Task | Primary Metric | System 1 Score | Latency (P50) | Latency (P99) | Description |
-|---|---|---|---|---|---|
-| **Security Triage** | Macro-F1 / Precision | **0.76 Block Precision** | **0.56 ms** | **1.25 ms** | 100 labeled agent tool actions (ALLOW / QUARANTINE / BLOCK) |
-| **Intent Routing** | Accuracy / Macro-F1 | **0.65 Billing F1** | **0.70 ms** | **1.77 ms** | 100 enterprise queries (Tech Support / Billing / Sales / Escalate) |
-| **Threat Scoring** | MAE / Pearson $r$ | **3.07 MAE** | **0.58 ms** | **1.30 ms** | 100 CVSS-style threat evaluations (0.0 – 10.0 scale) |
-
-*Full datasets and evaluation methodology documented in [`benchmarks/quality/README.md`](benchmarks/quality/README.md).*
-
----
-
-## ⚡ Performance
-
-Benchmarked on Apple M3 Max (14-core CPU, 36 GB Unified Memory) across 10,000 independent trials:
-
-<p align="center">
-  <img src="assets/benchmark-chart.svg" alt="System 1 Latency Benchmark" width="100%" />
-</p>
-
-| Runtime | Hardware | Execution Model | P50 Latency | P99 Latency | Network Egress |
-|---|---|---|---|---|---|
-| **System 1 (L1 Cache Hit)** | Host Memory | In-Process Hash Lookup | **9.8 µs** | **14 µs** | **0 Bytes** |
-| **System 1 (Cold Forward Pass)** | Host Metal / BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **0 Bytes** |
-| Local 8B LLM (vLLM / Ollama) | Local GPU | Autoregressive (KV Cache) | 180 ms | 245 ms | 0 Bytes |
-| Cloud Fast API (Groq / Cerebras) | US-East WAN | Autoregressive Specialized ASIC | 220 ms | 410 ms | Full Payload |
-| Frontier Reasoning Model | Cloud WAN | Autoregressive Deliberation | 850 ms | 1,480 ms | Full Payload |
-| Multi-Turn Agent Loop | Cloud WAN | Multi-Call Tool Reasoning | 3,200 ms | 6,800 ms | Full Payload |
-
-### Throughput
-
-- **Concurrent workers:** Sustained over **2,200 QPS** across 8 threads with zero SQLite lock contention (WAL journal mode).
-- **Real-time control:** In a 60 FPS Game Boy emulator testbed, System 1 evaluated memory-mapped combat states in **38 µs** per frame — consuming 5.9% of the 16.6 ms frame budget.
-
----
-
-## 🔒 Privacy & Zero Data Egress
-
-<p align="center">
-  <img src="assets/privacy-zero-egress.svg" alt="System 1 Zero Data Egress" width="100%" />
-</p>
-
-- **100% On-Device Execution:** All inference, calibration, and cryptographic receipt generation run in-process. Zero web sockets, zero telemetry pings, zero cloud dependencies.
-- **Privacy & Governance Controls:** System 1 provides architectural controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures:
-  - **HIPAA Compliance Support:** Protected Health Information (PHI) stays strictly on-host without unauthorized network transmission.
-  - **GDPR Compliance Support:** PII is evaluated on-premise without unconsented cross-border or third-party data transfers.
-  - **SOC 2 Type II Controls:** Tamper-evident `DecisionWitnessReceipt` signed in software by on-device Ed25519 keys (RFC 8032) with SHA-256 SQLite Merkle hash chaining. Hardware enclave / HSM root-of-trust is supported as an architectural integration option.
-
-> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When System 1 escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic depending on distribution and conformal significance $\alpha$), those escalated queries traverse the network only if fallback routing is explicitly configured. In privacy-restricted zero-egress environments (`zero_egress=True`), System 1 executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
-
----
-
-## 🚀 Production Demos
-
-System 1 includes **18 runnable demonstrations** across enterprise security, migration, and real-time control:
-
-### Enterprise Security & Agent Safety
-
-| # | Demo | Script | Highlights |
-|:---:|---|---|---|
-| 1 | **Autonomous Agent Firewall** | `examples/autonomous_agent_firewall_showcase.py` | 48 attack vectors, CVSS scoring, 1,000+ QPS stress test |
-| 2 | **Agent Tool Guard & ActionLedger** | `examples/agent_guard.py` | Fail-closed tool interception, SHA-256 hash chaining |
-| 3 | **Enterprise Multi-Threaded Stress Runner** | `examples/enterprise_stress_showcase.py` | Concurrent tool evaluation, SQLite WAL ActionLedger |
-| 4 | **5 Enterprise Use Cases Live Test** | `examples/killer_use_cases_live_test.py` | Financial, medical, and security multi-domain tests |
-
-### Migration & Compatibility
-
-| # | Demo | Script | Highlights |
-|:---:|---|---|---|
-| 5 | **Autonomous Cutover Engine** | `examples/auto_cutover_showcase.py` | Shadow distillation from cloud APIs to 100% local metal |
-| 6 | **Cloud vs. Local Benchmark** | `examples/deep_jev_benchmark.py` | Apple Silicon Metal vs cloud API latency comparison |
-| 7 | **SDK Drop-in Validation** | `examples/typesafe_sdk_dropin_showcase.py` | Zero-code-change drop-in validation |
-| 8 | **4 Enterprise Use-Case Comparison** | `examples/jev_comparison_demos.py` | Routing, triage, tool auth head-to-head |
-| 9 | **Universal Paperclips + Drop-in** | `examples/paperclips_typesafe_dropin.py` | 1-line patch, 4 modes, dual-pane ASCII HUD |
-
-### Architecture & Core
-
-| # | Demo | Script | Highlights |
-|:---:|---|---|---|
-| 10 | **4-Component Empirical Benchmark** | `examples/four_levers_benchmark.py` | Cache (< 10µs), Online Learning (< 50µs) |
-| 11 | **Pure NumPy Standalone Evaluator** | `examples/core_standalone_evaluator.py` | Zero-dependency < 0.5ms forward pass |
-| 12 | **Front-Line AI Gateway Router** | `examples/model_routing.py` | Cache → local → frontier routing with conformal bounds |
-| 13 | **Customer Support Ticket Triage** | `examples/support_triage.py` | Department routing, urgency, frustration in ~1ms |
-| 14 | **Domain Expert Training & MoE** | `examples/train_expert.py` | 5 training pathways, < 20KB .s1m, sub-50µs adaptation |
-
-### Real-Time Control (Gaming)
-
-| # | Demo | Script | Highlights |
-|:---:|---|---|---|
-| 15 | **Multi-Cartridge Pokémon Benchmark** | `examples/gaming/pokemon_all_games_benchmark.py` | 10,000+ FPS, 38µs neural forward pass |
-| 16 | **60 FPS Battle System 1 Agent** | `examples/gaming/pokemon_battle_system1.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
-| 17 | **10-Chapter Campaign Speedrun** | `examples/gaming/pokemon_full_campaign_speedrun.py` | Pallet Town to Indigo Plateau |
-| 18 | **Live Game Boy Spectator GUI** | `examples/gaming/pokemon_gameboy_gui.py` | Live desktop window, turbo intro skip |
-
----
-
-## 🎓 Training & Distilling Domain Experts
-
-System 1 supports 4 training pathways to create compact, portable `.s1m` decision models (< 20 KB):
-
-1. **Zero-Shot Seed Expert:** Instant deployment from schema definitions without training data.
-2. **Synthetic Teacher Distillation:** Closed-form Ridge Regression via frontier reasoning models.
-3. **Supervised Dataset Compilation:** Direct compilation from historical JSON/CSV logs.
-4. **Live Autonomous Cutover:** Zero-downtime migration from cloud APIs to 100% on-metal execution.
-
-👉 **[Complete Training Guide](docs/guides/training_experts.md)**
-
-```bash
-python3 examples/train_expert.py
-```
-
----
-
-## 🔄 Compatibility
-
-### TypeSafe AI / Jev SDK
-
-System 1 ships with a drop-in compatibility layer for TypeSafe AI's Jev SDK. Existing codebases using `typesafe` or `typesafe_sdk` can redirect to local on-metal execution:
-
-```python
-from system1.compat.typesafe import patch_typesafe
-patch_typesafe()
-
-# Existing TypeSafe code now runs locally in < 1ms with $0 cost
-import typesafe
-client = typesafe.Client()
-```
-
-For gradual migration, the autonomous cutover mode transparently proxies initial calls to the cloud API, records exemplars, and cuts over to local execution once confidence is established:
-
-```python
-from system1.compat.typesafe import TypeSafeClient
-
-client = TypeSafeClient(
-    mode="auto_cutover",
-    cutover_threshold=50,
-    api_key="your_api_key",
+from system1.integrations import SystemOneGuardCallbackHandler
+
+# guard is your configured SystemOneGuard, with a live ledger and signing key.
+handler = SystemOneGuardCallbackHandler(
+    guard=guard, tenant_id="demo", principal_id="agent-worker",
 )
+result = your_tool.invoke(tool_arguments, config={"callbacks": [handler]})
 ```
 
-### Twin Namespace
+The callback uses scope `langchain:tools:exec` and the serialized tool input in its proposal. Match policy rules to that contract. `SystemOneGuardBlockedException` propagates to the caller on a deny or approval requirement. `wrap_langchain_tool` also supports guarding Python callables directly.
 
-`import reflex` and `import system1` are fully symmetric — identical exports, identical behavior:
+### MCP
 
-```python
-import reflex
-import system1
+`System1MCPProxy` intercepts JSON-RPC tool calls. Supply your configured guard and authenticated identity, then use `handle_call(request, executor)` or `async_handle_call(request, executor)` to connect it to your application's executor. See [integration tests](tests/test_integrations.py) for the dispatch contract. Diagnostic mode does not produce trusted signed enforcement evidence by default.
 
-assert reflex.__version__ == system1.__version__
-assert reflex.System1Engine is system1.System1Engine
-```
+### FastAPI / ASGI
 
----
+`add_system1_gateway(app, schema=YourSchema)` can respond to confident classification requests locally and pass uncertain requests to the downstream application. Install your ASGI framework separately. Configure authentication and request-size limits **outside** this middleware: local responses bypass downstream endpoint dependencies. This is a classification gateway, not a tool authorization boundary. See [deployment guidance](docs/deployment.md#asgi-gateway).
 
-## 🛠️ CLI Reference
+### gRPC
 
 ```bash
-# Evaluate a structured decision
+python -m pip install 'system1[grpc]'
+system1 serve --grpc --host 127.0.0.1 --port 50051
+```
+
+The bundled [protobuf contract](src/system1/proto/system1.proto) supports clients generated for other languages. The CLI server is a local diagnostic service with insecure gRPC transport. Configure signing, ledger, and policy through the Python `serve(...)` API for a custom deployment. The repository does not supply a published Docker image or Kubernetes manifests.
+
+### Observability
+
+Install `system1[observability]` for Prometheus or `system1[otel]` for OpenTelemetry. See the [observability guide](docs/observability/README.md) and [Grafana dashboard](docs/observability/grafana-dashboard.json). Starting a metrics server or configuring an exporter changes the application's network behavior.
+
+## Benchmarks
+
+Reproduce the included seed-model benchmarks from the repository root:
+
+```bash
+python benchmarks/quality/run_quality_benchmarks.py
+system1 bench --schema triage --iterations 200 --json
+```
+
+The 100-example datasets are small, repository-authored evaluations, not independent security certifications. The launch-review run measured:
+
+| Task | Overall quality | Additional metric | Median latency |
+|---|---|---|---|
+| Security triage | 50% accuracy; 0.486 macro-F1 | BLOCK recall: 0.371 | 0.410 ms |
+| Intent routing | 51% accuracy; 0.495 macro-F1 | Billing F1: 0.653 | 0.488 ms |
+| Threat scoring, 0–10 | MAE: 3.068; RMSE: 3.480 | Pearson r: 0.309 | 0.469 ms |
+
+See the [recorded results and environment](benchmarks/quality/results/launch_review.json) and [methodology](benchmarks/quality/README.md). These are raw classification results, not the accuracy of authorized tool actions. Latency is workload- and hardware-dependent; these measurements do not establish durable end-to-end authorization latency or a service-level guarantee. No cloud providers were measured in this run.
+
+Teaching from the existing examples improves raw accuracy in a separate five-fold development check: intent routing reaches 68% and security triage 71% with 2048 features. Both still require review on every case under strict uncertainty gating; their calibration sets are too small. This is evidence that examples help, not release acceptance evidence. See the [teaching comparison](benchmarks/quality/README.md#teaching-comparison) for default-dimension results, protocol, and limitations.
+
+Conformal coverage applies to prediction sets under exchangeability and appropriate held-out calibration. It does not guarantee that a singleton prediction is safe, control the error rate conditional on local acceptance, or imply a particular local-retention percentage. Distribution shift and model updates require reevaluation. See [limits](docs/deployment.md#statistical-limits) and the [conformal prediction introduction](https://arxiv.org/abs/2107.07511).
+
+## Examples and research
+
+- [Support triage](examples/support_triage.py), [model routing](examples/model_routing.py), and [agent guard](examples/agent_guard.py) teach and check one skill each. Their [datasets and measured results](examples/teaching/README.md) are included.
+- [Teach one skill](examples/teach_skill.py), [advanced expert examples](examples/train_expert.py), and [observed teaching and takeover](examples/observe_routing.py). Cloud modes require explicit configuration.
+- [Gaming examples](examples/gaming/) explore simulated environments and optional local emulation; they are not independently verified world records. ROMs are not included.
+- [Research manuscripts](docs/paper/) describe the design and earlier experiments. Their historical timing and quality claims are not release acceptance criteria; use the reproducible measurements above.
+
+Both `import system1` and the legacy `import reflex` expose the same API. The `reflex` namespace can conflict with the separate Reflex web-framework package, so use separate environments when needed. The [TypeSafe adapter](docs/typesafe.md) supports the basic sync/async decision API, structured state, typed response accessors, and ordinal score distributions. Its documented contract does not include the entire SDK transport/Pydantic surface.
+
+## CLI
+
+```bash
 system1 decide "How do I reset my password?" --schema triage --json
-
-# Run a latency benchmark
-system1 bench --schema triage --iterations 200 --target 20.0
-
-# Verify an Ed25519 decision witness receipt offline
-system1 verify-receipt path/to/receipt.json
-
-# Calibrate conformal prediction bounds
+system1 decide "Read documentation" --schema guard --sign --ledger audit.sqlite --json
+system1 verify-receipt receipt.json --public-key identity.pub
 system1 calibrate --dataset data.json --schema triage --bins 10
-
-# Compile a portable < 20KB binary model
 system1 compile --schema triage --output triage.s1m --json
 ```
 
----
+Use `system1 --help` or `system1 <command> --help` for options. Receipt verification requires a trusted public key supplied independently of the receipt.
 
-## 🧪 Testing
+## Development
 
 ```bash
-python3 -m pytest tests/ -v
+python -m pip install -e '.[dev,langchain]'
+python -m pytest tests/ -q
 ```
 
-- **982 tests passed** (100% pass rate across unit, e2e, observability, and gRPC suites)
-- **0 failures, 0 errors, 0 warnings**
-- Verified on macOS Apple Silicon and Linux (Python 3.11, 3.12, 3.13)
+Or use the committed lockfile with `uv sync --locked --extra dev --extra langchain` and `uv run --no-sync pytest -q`. CI tests Linux and macOS, checks built distributions, and exercises real LangChain dispatch. Optional MLX and emulator tests require their extras and suitable hardware/assets. See [contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
 
----
+## License
 
-## 📚 Technical Deep Dive
-
-- **[Academic Paper: Conformal Ambiguity Gating](docs/paper/conformal_gating.md)** — Formal mathematical proof of Theorem 1 (Simplex Equiangular Separation & Welch optimality), finite-sample coverage guarantees, and Sherman-Morrison online rank-1 adaptation.
-- **[Technical Architecture & System Brief](docs/paper/system1_technical_brief.md)** — Comprehensive architecture brief for CISOs, security engineers, and platform architects evaluating the on-metal decision firewall.
-- **[Training, Distilling, and Deploying Domain Experts](docs/guides/training_experts.md)** — Practitioner guide covering 4 training pathways, Sherman-Morrison online adaptation, and Mixture of Experts dispatching.
-- **[Foundational Whitepaper](docs/paper/system1_whitepaper.md)** — Complete research monograph covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
-- **[Technical Architecture Specification](docs/architecture/technical_specification.md)** — Exhaustive engineering specification covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
-
----
-
-## 📄 License
-
-System 1 is open source software licensed under the [Apache License, Version 2.0](LICENSE).
+[Apache License 2.0](LICENSE).

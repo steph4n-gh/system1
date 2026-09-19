@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Pokémon Full Campaign Speedrun: 100% Autonomous Spectator Engine.
+"""Campaign navigation, leveling and milestones are scripted. Battle suggestions can use a model; this is not evidence of a completed model-controlled campaign.
+
+Pokémon Full Campaign Speedrun: 100% Autonomous Spectator Engine.
 
 A high-fidelity demonstration of System 1 + System 2 Dual-Process Cognitive Architecture
 completing 100% of Pokémon Red/Blue across all 10 major campaign chapters:
@@ -1555,7 +1557,7 @@ def compile_speedrun_campaign_model(
 # ============================================================================
 
 class CampaignSpeedrunEngine:
-    """End-to-End Autonomous Pokémon Speedrun Engine with Dual-Process Control.
+    """Scripted campaign simulation with model-backed battle suggestions.
 
     - System 1 (Local Metal System 1): Executes sub-millisecond combat decisions ($0 egress).
     - System 2 (Campaign Planner): Navigates 10-chapter route graph and solves HM puzzle gates.
@@ -1594,7 +1596,11 @@ class CampaignSpeedrunEngine:
         if self.compare_typesafe or self.cutover_threshold is not None:
             try:
                 from system1.compat.typesafe import TypeSafeClient
-                self.typesafe_client = TypeSafeClient(api_key=typesafe_api_key)
+                self.typesafe_client = TypeSafeClient(
+                    api_key=typesafe_api_key, zero_egress=False, fallback_baseline=False,
+                    mode="auto_cutover" if self.cutover_threshold is not None else "local",
+                    cutover_threshold=self.cutover_threshold or 50,
+                )
                 self.typesafe_questions = get_typesafe_pokemon_questions()
             except Exception as _ts_err:
                 if not quiet:
@@ -1888,64 +1894,39 @@ class CampaignSpeedrunEngine:
 
     def _evaluate_decision(self, battle: BattleState) -> Tuple[Dict[str, Any], bool, str]:
         """Evaluates a battle decision turn via System 1 System 1 and optionally compares or auto-cutovers with TypeSafe AI."""
-        # Check if in pre-cutover apprentice phase
-        in_apprentice = (
-            self.cutover_threshold is not None
-            and not self.has_cutover
-            and self.state.total_decisions < self.cutover_threshold
-        )
-
         t0 = time.perf_counter()
         telemetry, should_escalate, reason = self.agent.evaluate(battle)
         lat = (time.perf_counter() - t0) * 1000.0
 
-        if in_apprentice and self.typesafe_client is not None and self.typesafe_questions:
+        if self.cutover_threshold is not None and self.typesafe_client is not None and self.typesafe_questions:
             try:
-                prompt_ts = battle.to_prompt()
-                cloud_resp, c_lat, c_egress = self.typesafe_client.call_real_api(
-                    state=prompt_ts,
-                    questions=self.typesafe_questions,
-                    timeout=5.0,
-                    fallback_baseline=True,
-                )
-                lat = c_lat
-                self.cloud_latencies.append(c_lat)
-                t_count = cloud_resp.usage.total_tokens if hasattr(cloud_resp, "usage") and cloud_resp.usage else 450
-                self.cloud_tokens_total += t_count
-                self.cloud_egress_total += c_egress
-                if cloud_resp and hasattr(cloud_resp, "answers"):
-                    if "action" in cloud_resp.answers:
-                        telemetry["action"] = cloud_resp.answers.action.choice
-                    if "chosen_move" in cloud_resp.answers:
-                        telemetry["chosen_move"] = cloud_resp.answers.chosen_move.choice
-            except Exception:
-                pass
+                response = self.typesafe_client.systemone(battle.to_prompt(), self.typesafe_questions)
+                self.has_cutover = self.typesafe_client.is_cutover
+                for name, answer in response.answers.items():
+                    telemetry[name] = answer.value
+                lat = response.get("latency_ms", lat)
+                if not response.get("local_execution", False):
+                    self.cloud_latencies.append(lat)
+                    self.cloud_tokens_total += response.usage.total_tokens if response.get("usage") else 0
+                    self.cloud_egress_total += response.get("egress_bytes", 0)
+                if response.get("is_ambiguous") or response.get("abstain"):
+                    should_escalate, reason = True, "Observed skill requests review"
+            except Exception as exc:
+                # A failed teacher is a failed observation; never announce a counter-based takeover.
+                should_escalate, reason = True, f"Teacher unavailable: {exc}"
+                self.state.log.append(reason)
+        elif self.compare_typesafe and self.typesafe_client is not None and self.typesafe_questions:
+            try:
+                comp = self.typesafe_client.compare(battle.to_prompt(), self.typesafe_questions, timeout=5.0)
+                if comp.is_live:
+                    self.cloud_latencies.append(comp.cloud_latency_ms)
+                    self.cloud_tokens_total += comp.cloud_tokens
+                    self.cloud_egress_total += comp.cloud_egress_bytes
+            except Exception as exc:
+                self.state.log.append(f"Comparison unavailable: {exc}")
 
         self.state.total_decisions += 1
         self.state.total_latency_ms += lat
-
-        # Check cutover trigger
-        if self.cutover_threshold is not None and not self.has_cutover and self.state.total_decisions >= self.cutover_threshold:
-            self.has_cutover = True
-            msg = f"⚡ [AUTO-CUTOVER] Reached Step {self.cutover_threshold}! Distilled hyperplanes into local metal. Zero cloud egress activated!"
-            self.state.log.append(msg)
-            if not self.quiet:
-                print(f"\n  {msg}\n")
-
-        elif self.compare_typesafe and self.typesafe_client is not None and self.typesafe_questions:
-            try:
-                prompt_ts = battle.to_prompt()
-                comp = self.typesafe_client.compare(
-                    state=prompt_ts,
-                    questions=self.typesafe_questions,
-                    timeout=5.0,
-                    fallback_baseline=True,
-                )
-                self.cloud_latencies.append(comp.cloud_latency_ms)
-                self.cloud_tokens_total += comp.cloud_tokens
-                self.cloud_egress_total += comp.cloud_egress_bytes
-            except Exception:
-                pass
 
         return telemetry, should_escalate, reason
 

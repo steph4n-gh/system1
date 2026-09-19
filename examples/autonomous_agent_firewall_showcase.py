@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""System 1 vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase.
+"""Legacy simulation: schema-augmented teaching and a relaxed promotion policy.
+Not production quality evidence; observe_routing.py demonstrates default gates.
+
+System 1 vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase.
 
 Comprehensive Enterprise Stress Showcase demonstrating:
 1. High-Stakes, Multi-Head Schema Complexity:
@@ -1205,6 +1208,7 @@ def run_autonomous_firewall_showcase(
 
     # Instantiate TypeSafeClient in auto_cutover mode
     # Fast illustrative demo runs use explicit demo policy without weakening production defaults
+    print("Legacy simulation: augmented examples and relaxed gates; synthetic WAN metrics are not live measurements.")
     demo_policy = PromotionPolicy(
         min_agreement_threshold=0.75,
         false_allow_ceiling=0.0,
@@ -1217,6 +1221,7 @@ def run_autonomous_firewall_showcase(
         cutover_threshold=cutover_threshold,
         min_agreement_threshold=0.80,
         promotion_policy=demo_policy,
+        augment=True, strict_mode=False,  # Legacy synthetic demonstration; see observe_routing.py for default gates.
         signing_key=signing_key,
         ledger=ledger,
         timeout=3.0,
@@ -1230,11 +1235,7 @@ def run_autonomous_firewall_showcase(
     print(f"  • Cutover Threshold: {client.cutover_threshold} queries before closed-form distillation")
     print(f"  • Is Cutover:        {client.is_cutover}")
     print(f"  • Queries Queued:    {len(queries)}")
-    if api_key:
-        print(f"  • Live SaaS API:     https://api.typesafe.ai/v1 (Key: ***{api_key[-4:]})")
-    else:
-        print(f"  • Live SaaS API:     Realistic Cloud SaaS WAN Baseline (No TYPESAFE_API_KEY set)")
-    print("\nBeginning Live Query Stream Processing...\n")
+    print("  • Teacher:          offline labeled lookup (simulated WAN profile)")
 
     results: List[Dict[str, Any]] = []
     cutover_event_logged: Optional[Dict[str, Any]] = None

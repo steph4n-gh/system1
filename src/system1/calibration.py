@@ -511,7 +511,18 @@ class ConformalPredictor:
             cum_mass = 0.0
             total_mass = float(np.sum(probs))
             # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
-            if total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
+            if strict:
+                # Invert the calibrated score s(x,y) = cumulative mass through y.
+                # Including the next label after crossing q_hat inflates every set.
+                # Empty sets request review; insufficient evidence includes all labels.
+                if k > n:
+                    prediction_set = list(self.options)
+                elif np.all(np.isfinite(probs)) and np.all(probs >= 0) and np.isclose(total_mass, 1.0):
+                    for idx in sorted_indices:
+                        cum_mass += float(probs[idx])
+                        if cum_mass <= q_hat + 1e-12:
+                            prediction_set.append(self.options[idx])
+            elif total_mass >= q_hat - 1e-7 and total_mass >= 0.5:
                 for idx in sorted_indices:
                     opt = self.options[idx]
                     p = float(probs[idx])
@@ -696,4 +707,3 @@ __all__ = [
     "compute_ece_and_bins",
     "compute_nll",
 ]
-

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Universal Paperclips Speedrun: Playwright / Chromium Autonomous World Record Engine.
+"""This runner uses a handwritten three-phase policy. Timing is simulator/browser throughput, not learned control or a verified world record.
+
+Universal Paperclips Speedrun: Playwright / Chromium Autonomous World Record Engine.
 
 Achieves high-frequency (50-100 Hz) browser automation for Frank Lantz's 'Universal Paperclips'
 (https://www.decisionproblem.com/paperclips/index2.html) using Playwright / Chromium and System 1 System 1.
@@ -118,7 +120,7 @@ class PaperclipsSplitTimer:
         total_inner = w1 + w2 + w3 + w4 + 3  # 77
         lines = [
             "┌" + "─" * total_inner + "┐",
-            "│ " + "UNIVERSAL PAPERCLIPS WORLD RECORD SPLIT TIMER (Speedrun.com)".center(total_inner - 2) + " │",
+            "│ " + "PAPERCLIPS SCRIPTED POLICY — REFERENCE SPLITS".center(total_inner - 2) + " │",
             "├" + "─" * w1 + "┬" + "─" * w2 + "┬" + "─" * w3 + "┬" + "─" * w4 + "┤",
             f"│ {'Split Milestone':<{w1-2}} │ {'Target WR':>{w2-2}} │ {'Live Time':>{w3-2}} │ {'Live Delta':>{w4-2}} │",
             "├" + "─" * w1 + "┼" + "─" * w2 + "┼" + "─" * w3 + "┼" + "─" * w4 + "┤",
@@ -1137,7 +1139,7 @@ class PaperclipsSpeedrunRunner:
         latencies: List[float] = []
 
         print("\n" + "=" * 70)
-        print("  UNIVERSAL PAPERCLIPS WORLD RECORD SPEEDRUN (REFLEX SYSTEM 1)")
+        print("  UNIVERSAL PAPERCLIPS SCRIPTED POLICY SIMULATION")
         print("=" * 70)
         print(f"Engine Mode:  {self.mode.upper()} ({'Headless Chromium' if self.headless else 'Headed Chromium'})")
         print(f"Target Phase: Phase {target_phase}")

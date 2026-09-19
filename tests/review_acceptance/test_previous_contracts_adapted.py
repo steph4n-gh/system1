@@ -36,7 +36,7 @@ def engine(*,p=.99999,strict=True,ledger=None,key=None):
                    margin_threshold=.1,ledger=ledger,signing_key=key)
     h=e.model.heads['route']
     h.set_weights(np.zeros_like(h.weights),np.log([p,1-p]).astype(np.float32)*.25)
-    c=e.conformal_predictors['route'];c.is_calibrated=True;c.calibration_scores=np.array([.99]*100)
+    c=e.conformal_predictors['route'];c.is_calibrated=True;c.calibration_scores=np.array([(1 + p) / 2]*100)
     return e
 
 def proposal(tool='sentinel'):
@@ -148,7 +148,7 @@ def test_supplied_embedding_is_part_of_exact_cache_identity():
     assert b.values==c.values, {'cached':b.values,'uncached':c.values,'hit':b.is_cache_hit}
 
 def test_distinct_valid_alphas_do_not_alias_across_order_statistic():
-    e=engine(p=.8);e.conformal_predictors['route'].calibration_scores=np.array([.7]*95+[.99]*5)
+    e=engine(p=.8);e.conformal_predictors['route'].calibration_scores=np.array([.85]*95+[1.0]*5)
     permissive=.0594061;stricter=.0594058
     a=e.decide('same text',alpha=permissive,strict=True);assert not a.is_ambiguous
     b=e.decide('same text',alpha=stricter,strict=True)
@@ -175,7 +175,7 @@ def make_promoted_client():
     questions={'route':compat.Choice('Route',criteria={'north':'north route','south':'south route'})}
     c=compat.TypeSafeClient(mode='auto_cutover',dimension=16,backend='numpy',zero_egress=True,
         baseline_handler=lambda *args: None,promotion_policy=compat.PromotionPolicy(min_agreement_threshold=.8))
-    c._history[compat._build_dynamic_schema(questions).schema_digest()]=[{'state':f'north route read north item {i}', 'answers':{'route':'north'},'questions':questions} for i in range(100)]
+    c._history[compat._build_dynamic_schema(questions).schema_digest()]=[{'state':f'{direction} route read {direction} item {i}', 'answers':{'route':direction},'questions':questions} for i in range(100) for direction in ['north', 'south']]
     assert c.distill_and_cutover(questions), c._last_promotion_report
     return c,questions
 

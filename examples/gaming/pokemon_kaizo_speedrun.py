@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine.
+"""This is a scripted route and damage-risk heuristic, without fitted conformal calibration or a taught decision model. Historical conformal_* names are retained for compatibility.
+
+Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine.
 
 Demonstration of System 1 System 1 + System 2 Dual-Process Cognitive Architecture:
 1. Uncapped Headless PyBoy Turbo Runner:
@@ -107,14 +109,14 @@ class WorstCaseDamageAssessment:
 
 
 class KaizoZeroWipeGate:
-    """Zero-Wipe Conformal Prediction Gate.
+    """Damage-risk heuristic for the scripted demonstration.
 
-    Guarantees 0% wipe rate across modeled state-space benchmark trials by computing
-    the upper conformal confidence bound of incoming damage rolls and enemy speed-based critical hits.
+    Estimates risk for this scripted simulation by computing
+    a heuristic upper estimate of incoming damage rolls and enemy speed-based critical hits.
     """
 
     def __init__(self, alpha: float = 0.01) -> None:
-        self.alpha = alpha  # 99% conformal safety coverage
+        self.alpha = alpha  # Historical parameter; this heuristic has no fitted coverage guarantee.
         self.interventions_count = 0
         self.signing_key = Ed25519PrivateKey.generate()
         self.ledger = ActionLedger(":memory:")

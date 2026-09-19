@@ -62,7 +62,11 @@ class SystemOneGatewayMiddleware:
                         return content
                     elif isinstance(content, list):
                         # Multi-part content
-                        text_parts = [p.get("text", "") for p in content if isinstance(p, dict) and p.get("type") == "text"]
+                        text_parts = [
+                            p["text"] for p in content
+                            if isinstance(p, dict) and p.get("type") == "text"
+                            and isinstance(p.get("text"), str)
+                        ]
                         return " ".join(text_parts)
         return None
 
@@ -122,19 +126,31 @@ class SystemOneGatewayMiddleware:
         more_body = True
         while more_body:
             message = await receive()
+            if message["type"] == "http.disconnect":
+                return
             body_chunks.append(message.get("body", b""))
             more_body = message.get("more_body", False)
 
         body_bytes = b"".join(body_chunks)
 
         # Re-inject body so downstream can read if escalated
+        body_replayed = False
+
         async def replay_receive() -> Dict[str, Any]:
-            return {"type": "http.request", "body": body_bytes, "more_body": False}
+            nonlocal body_replayed
+            if not body_replayed:
+                body_replayed = True
+                return {"type": "http.request", "body": body_bytes, "more_body": False}
+            return await receive()
 
         try:
             body_json = json.loads(body_bytes) if body_bytes else {}
-        except Exception:
+        except (json.JSONDecodeError, UnicodeDecodeError):
             # If payload is not valid JSON, escalate downstream
+            await self.app(scope, replay_receive, send)
+            return
+
+        if not isinstance(body_json, dict):
             await self.app(scope, replay_receive, send)
             return
 
@@ -164,6 +180,8 @@ class SystemOneGatewayMiddleware:
                         break
 
             if self.require_singleton_conformal and is_confident:
+                if decision.is_ambiguous or decision.escalated_fields:
+                    is_confident = False
                 for k, cset in decision.conformal_sets.items():
                     if len(cset) != 1:
                         is_confident = False
@@ -178,8 +196,12 @@ class SystemOneGatewayMiddleware:
                 (b"content-type", b"application/json"),
                 (b"x-reflex-status", b"fastpath"),
                 (b"x-reflex-latency-ms", f"{latency_ms:.3f}".encode("utf-8")),
-                (b"x-reflex-receipt-digest", str(decision.schema_digest or "").encode("utf-8")),
             ]
+            if decision.receipt is not None:
+                res_headers.append((
+                    b"x-reflex-receipt-digest",
+                    decision.receipt.compute_digest().encode("utf-8"),
+                ))
 
             await send({
                 "type": "http.response.start",

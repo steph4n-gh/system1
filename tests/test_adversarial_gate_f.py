@@ -419,7 +419,8 @@ class TestAttack3ProtobufPolyglotInteroperability:
     """Stress-test external protoc compilation, client stub generation, and polyglot wire serialization."""
 
     @pytest.fixture(scope="class")
-    def generated_grpc_stubs(self):
+    @staticmethod
+    def generated_grpc_stubs():
         """Compile system1.proto into a dedicated temporary directory and dynamically import stubs."""
         from grpc_tools import protoc
 
@@ -504,7 +505,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
                 assert h_resp.status == adv_pb2.HealthCheckResponse.SERVING
-                assert h_resp.version == "0.2.1"
+                assert h_resp.version == "0.2.2"
 
                 # 2. Decide with numeric telemetry features
                 d_req = adv_pb2.DecideRequest(

@@ -415,16 +415,8 @@ def run_paperclips_dropin_demo(steps: int = 5, use_dropin: bool = True) -> None:
             chosen_action = response.answers.next_action.choice
             conf = response.answers.next_action.confidence
 
-            # Build probability distribution across choices for display
-            # In System 1/Jev, calibrated confidence concentrates on top choice with remainder split across runners-up
-            probabilities: Dict[str, float] = {}
-            remaining = max(0.0, 1.0 - conf)
-            other_count = max(1, len(choices) - 1)
-            for c in choices:
-                if c == chosen_action:
-                    probabilities[c] = conf
-                else:
-                    probabilities[c] = remaining / other_count
+            # Retain the returned distribution; do not reconstruct it from confidence.
+            probabilities = dict(response.answers.next_action.get("probabilities") or {})
 
             # Apply chosen action to game
             action_outcome = state.apply_action(chosen_action)
@@ -495,16 +487,19 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     print("  UNIVERSAL PAPERCLIPS + TYPESAFE DROP-IN & HEAD-TO-HEAD SHOWCASE")
     print("=" * 80)
     print(f"Target:   Recreating Diogo Almeida's Jev showcase")
-    print(f"Mode:     {mode.upper()}{f' (Cutover at Step {threshold})' if mode == 'cutover' else ''}")
-    print(f"API Key:  {'[DETECTED] Authenticating with Live TypeSafe AI Cloud' if is_live_key_present else '[SIMULATED BASELINE] No key found (using realistic SaaS WAN profile)'}")
+    print(f"Mode:     {mode.upper()}{f' (Cutover after sufficient evidence (minimum {threshold} observations))' if mode == 'cutover' else ''}")
+    print(f"API Key:  {'[DETECTED] Authenticating with Live TypeSafe AI Cloud' if is_live_key_present else 'No key found; live teacher modes require TYPESAFE_API_KEY'}")
     print(f"Log:      {run_file.relative_to(REPO_ROOT)}\n")
+
+    if mode in ("baseline", "compare", "cutover") and not is_live_key_present:
+        raise ValueError("Live teacher modes require TYPESAFE_API_KEY; use --mode dropin offline")
 
     if mode in ("dropin", "compare"):
         print("[1/3] Initializing System 1 System 1 engine on local metal...")
         patch_typesafe()
         import typesafe
     elif mode == "cutover":
-        print(f"[1/3] Initializing System 1 Trojan Horse (Apprentice -> Local Metal at Step {threshold})...")
+        print(f"[1/3] Initializing System 1 Trojan Horse (Apprentice -> Local Metal after sufficient evidence (minimum {threshold} observations))...")
         patch_typesafe()
         import typesafe
     else:
@@ -521,17 +516,12 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     ledger = ActionLedger(":memory:")
 
     if mode == "cutover":
-        demo_policy = typesafe.PromotionPolicy(
-            min_agreement_threshold=0.5,
-            false_allow_ceiling=0.0,
-            require_statistical_bound=False,
-        )
         client = typesafe.Client(
             api_key=api_key or "",
             mode="auto_cutover",
             cutover_threshold=max(3, threshold),
-            min_agreement_threshold=0.5,
-            promotion_policy=demo_policy,
+            zero_egress=False,
+            fallback_baseline=False,
             signing_key=signing_key,
             ledger=ledger,
         )
@@ -540,6 +530,8 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
             client = typesafe.Client(
                 api_key=api_key or "",
                 mode="passthrough",
+                zero_egress=False,
+                fallback_baseline=False,
                 signing_key=signing_key,
                 ledger=ledger,
             )
@@ -585,7 +577,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                     questions={"next_action": action_question},
                     model="jev-latest",
                     alpha=0.05,
-                    fallback_baseline=True,
+                    fallback_baseline=False,
                 )
                 response = comp.local_response
                 cloud_response = comp.cloud_response
@@ -603,19 +595,12 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                 elapsed_ms = (time.perf_counter() - t0) * 1000.0
                 latencies_local.append(elapsed_ms)
                 cloud_response = None
-                cloud_ms = 220.0
+                cloud_ms = 0.0
 
             chosen_action = response.answers.next_action.choice
             conf = response.answers.next_action.confidence
 
-            probabilities: Dict[str, float] = {}
-            remaining = max(0.0, 1.0 - conf)
-            other_count = max(1, len(choices) - 1)
-            for c in choices:
-                if c == chosen_action:
-                    probabilities[c] = conf
-                else:
-                    probabilities[c] = remaining / other_count
+            probabilities = dict(response.answers.next_action.get("probabilities") or {})
 
             action_outcome = state.apply_action(chosen_action)
             state_after = json.loads(state.to_json_state())

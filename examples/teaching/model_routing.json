@@ -1,0 +1,646 @@
+{
+  "name": "model_routing",
+  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark.",
+  "policy": {
+    "local_small": "Mechanical formatting, extraction, sorting, or syntax conversion with the needed input supplied.",
+    "standard_chat": "Ordinary drafting, summarization, translation, or explanation; no formal proof or complex design investigation.",
+    "frontier_reasoning": "Formal proofs, correctness analysis, difficult diagnosis, or multi-constraint architecture and planning.",
+    "scope": "A demonstration routing policy, not a claim about any vendor model. Classify only; do not call a model or send prompts over the network."
+  },
+  "teach": [
+    {
+      "group": "json-indent",
+      "prompt": "Format this JSON object using two spaces of indentation.",
+      "label": "local_small"
+    },
+    {
+      "group": "csv-to-tsv",
+      "prompt": "Convert these supplied CSV rows to tab separated values.",
+      "label": "local_small"
+    },
+    {
+      "group": "email-extract",
+      "prompt": "Extract the email addresses from the following text.",
+      "label": "local_small"
+    },
+    {
+      "group": "sort-names",
+      "prompt": "Sort this list of customer names alphabetically.",
+      "label": "local_small"
+    },
+    {
+      "group": "trim-whitespace",
+      "prompt": "Remove trailing whitespace from each line of this file.",
+      "label": "local_small"
+    },
+    {
+      "group": "snake-case",
+      "prompt": "Convert these variable names from camelCase to snake_case.",
+      "label": "local_small"
+    },
+    {
+      "group": "timestamp-format",
+      "prompt": "Reformat the supplied timestamps as ISO dates.",
+      "label": "local_small"
+    },
+    {
+      "group": "deduplicate-list",
+      "prompt": "Remove exact duplicate entries from this list of identifiers.",
+      "label": "local_small"
+    },
+    {
+      "group": "markdown-table",
+      "prompt": "Turn the supplied rows and column names into a Markdown table.",
+      "label": "local_small"
+    },
+    {
+      "group": "url-extract",
+      "prompt": "List every URL appearing in this provided paragraph.",
+      "label": "local_small"
+    },
+    {
+      "group": "pretty-xml",
+      "prompt": "Indent this XML document without changing its contents.",
+      "label": "local_small"
+    },
+    {
+      "group": "lowercase-text",
+      "prompt": "Convert this supplied string to lowercase.",
+      "label": "local_small"
+    },
+    {
+      "group": "sort-json-keys",
+      "prompt": "Sort the keys in this JSON object without changing values.",
+      "label": "local_small"
+    },
+    {
+      "group": "quote-strings",
+      "prompt": "Wrap each supplied identifier in double quotes and separate with commas.",
+      "label": "local_small"
+    },
+    {
+      "group": "syntax-colon",
+      "prompt": "Add the missing colon to this Python function declaration.",
+      "label": "local_small"
+    },
+    {
+      "group": "date-separators",
+      "prompt": "Replace slashes with hyphens in the following date strings.",
+      "label": "local_small"
+    },
+    {
+      "group": "number-lines",
+      "prompt": "Add sequential line numbers to this block of text.",
+      "label": "local_small"
+    },
+    {
+      "group": "extract-integers",
+      "prompt": "Extract all integer literals from the supplied log lines.",
+      "label": "local_small"
+    },
+    {
+      "group": "welcome-email",
+      "prompt": "Draft a friendly welcome email to a new employee.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "meeting-summary",
+      "prompt": "Summarize the main points in these provided meeting notes.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-recursion",
+      "prompt": "Explain recursion to a beginner with a short example.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "translate-menu",
+      "prompt": "Translate the supplied restaurant menu into French.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "social-caption",
+      "prompt": "Write three cheerful captions for our product launch photo.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "rewrite-polite",
+      "prompt": "Rewrite this complaint in a polite professional tone.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "describe-cache",
+      "prompt": "Explain what a cache does in everyday language.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "newsletter-intro",
+      "prompt": "Draft an opening paragraph for a community newsletter.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "article-summary",
+      "prompt": "Summarize this supplied article in five bullet points.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "thank-you-note",
+      "prompt": "Write a thank you note to the conference organizers.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "brainstorm-slogan",
+      "prompt": "Suggest several short slogans for a bicycle repair shop.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-dns",
+      "prompt": "Describe how DNS translates a website name into an address.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "release-notes",
+      "prompt": "Turn these supplied feature notes into readable release notes.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "translate-email",
+      "prompt": "Translate this customer email from German to English.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "short-story",
+      "prompt": "Write a short bedtime story about a curious lighthouse keeper.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "project-update",
+      "prompt": "Draft a concise project update from the provided progress notes.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-consensus",
+      "prompt": "Explain the idea of distributed consensus to a nontechnical audience.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "interview-questions",
+      "prompt": "Suggest introductory interview questions for a customer research call.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "lockfree-proof",
+      "prompt": "Prove that this lock-free queue preserves linearizability under concurrent access.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "distributed-deadlock",
+      "prompt": "Diagnose an intermittent deadlock spanning these three distributed services.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "consensus-failure",
+      "prompt": "Analyze the safety of this consensus protocol during overlapping network partitions.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "migration-plan",
+      "prompt": "Design a zero downtime database migration with rollback and consistency constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "theorem-proof",
+      "prompt": "Construct a rigorous proof of the stated graph theory theorem.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "scheduling-optimum",
+      "prompt": "Find an optimal production schedule under these conflicting resource constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "crypto-analysis",
+      "prompt": "Analyze whether this cryptographic protocol resists the specified attacker model.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "memory-model",
+      "prompt": "Prove this atomic algorithm is correct under a weak memory model.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "architecture-tradeoffs",
+      "prompt": "Evaluate competing storage architectures under durability, cost, and latency constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "invariant-counterexample",
+      "prompt": "Find a counterexample to the claimed invariant in this concurrent state machine.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "distributed-trace",
+      "prompt": "Determine the root cause of a distributed failure from these interleaved traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "optimization-derivation",
+      "prompt": "Derive the constrained optimization solution and justify its convergence conditions.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "formal-verification",
+      "prompt": "Formally verify that the payment state machine cannot charge an order twice.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "capacity-planning",
+      "prompt": "Design a capacity plan satisfying peak load, regional failover, and budget constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "complexity-proof",
+      "prompt": "Prove the worst case time complexity of this recursive algorithm.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "transaction-anomaly",
+      "prompt": "Analyze whether this transaction history violates serializability and construct a proof.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "recovery-design",
+      "prompt": "Design a recovery strategy for simultaneous data corruption and regional outage.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "causal-diagnosis",
+      "prompt": "Evaluate competing causal explanations for the regressions in these experimental results.",
+      "label": "frontier_reasoning"
+    }
+  ],
+  "calibration": [
+    {
+      "group": "minify-json",
+      "prompt": "Minify the supplied JSON by removing unnecessary whitespace.",
+      "label": "local_small"
+    },
+    {
+      "group": "extract-ip",
+      "prompt": "Extract the IP addresses from this supplied access log.",
+      "label": "local_small"
+    },
+    {
+      "group": "sort-versions",
+      "prompt": "Sort this list of numeric version tuples in ascending order.",
+      "label": "local_small"
+    },
+    {
+      "group": "csv-header",
+      "prompt": "Rename these CSV headers using the provided mapping.",
+      "label": "local_small"
+    },
+    {
+      "group": "indent-python",
+      "prompt": "Reindent the supplied Python function using four spaces.",
+      "label": "local_small"
+    },
+    {
+      "group": "extract-dates",
+      "prompt": "List the dates that occur in the following text.",
+      "label": "local_small"
+    },
+    {
+      "group": "semicolon-lines",
+      "prompt": "Join these supplied lines into one semicolon separated string.",
+      "label": "local_small"
+    },
+    {
+      "group": "title-case",
+      "prompt": "Convert each supplied heading to title case.",
+      "label": "local_small"
+    },
+    {
+      "group": "json-array",
+      "prompt": "Convert this list of strings into a JSON array.",
+      "label": "local_small"
+    },
+    {
+      "group": "remove-blank-lines",
+      "prompt": "Remove empty lines from this supplied text block.",
+      "label": "local_small"
+    },
+    {
+      "group": "sort-columns",
+      "prompt": "Reorder the columns in this CSV according to the supplied list.",
+      "label": "local_small"
+    },
+    {
+      "group": "format-phone",
+      "prompt": "Format these provided phone numbers with the requested separators.",
+      "label": "local_small"
+    },
+    {
+      "group": "html-strip",
+      "prompt": "Strip HTML tags from the supplied snippet and retain its text.",
+      "label": "local_small"
+    },
+    {
+      "group": "extract-fields",
+      "prompt": "Extract the name and city fields from each supplied JSON record.",
+      "label": "local_small"
+    },
+    {
+      "group": "bracket-fix",
+      "prompt": "Close the missing bracket in this short Python list expression.",
+      "label": "local_small"
+    },
+    {
+      "group": "tab-conversion",
+      "prompt": "Replace each tab with four spaces in this code snippet.",
+      "label": "local_small"
+    },
+    {
+      "group": "apology-letter",
+      "prompt": "Draft a brief apology for a delayed shipment.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "transcript-summary",
+      "prompt": "Summarize this supplied interview transcript for our team.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-encryption",
+      "prompt": "Explain encryption to a high school student without equations.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "translate-review",
+      "prompt": "Translate this product review into Spanish.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "invitation-copy",
+      "prompt": "Write an inviting description for a neighborhood book club event.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "rewrite-concise",
+      "prompt": "Make this supplied paragraph shorter and easier to read.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-index",
+      "prompt": "Explain why a database index can speed up queries.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "faq-draft",
+      "prompt": "Draft a customer FAQ from the supplied product details.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "speech-outline",
+      "prompt": "Write an outline for a short graduation speech.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "friendly-reminder",
+      "prompt": "Compose a friendly reminder about tomorrow's team lunch.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "blog-summary",
+      "prompt": "Give a plain language summary of this provided blog post.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "name-ideas",
+      "prompt": "Suggest ten names for a community gardening project.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "translate-instructions",
+      "prompt": "Translate these installation instructions into Italian.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-threads",
+      "prompt": "Describe the difference between a process and a thread for beginners.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "product-description",
+      "prompt": "Write a short product description from these supplied specifications.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "executive-summary",
+      "prompt": "Summarize the supplied quarterly update for an executive audience.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "raft-reconfiguration",
+      "prompt": "Prove that this membership change procedure preserves consensus safety.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "race-diagnosis",
+      "prompt": "Find the root cause of a rare race condition from these concurrent traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "schema-evolution",
+      "prompt": "Design a database schema evolution plan with reversible migration steps and strict uptime constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "formal-liveness",
+      "prompt": "Prove liveness of this protocol under the stated fairness assumptions.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "routing-optimization",
+      "prompt": "Solve this constrained vehicle routing problem and justify the optimal solution.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "cache-coherence",
+      "prompt": "Analyze the correctness of this cache coherence algorithm during node failures.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "proof-gap",
+      "prompt": "Identify and repair the logical gap in this mathematical proof.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "distributed-recovery",
+      "prompt": "Design a recovery protocol that reconciles divergent replicas without losing acknowledged writes.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "isolation-analysis",
+      "prompt": "Determine which isolation anomalies are possible in this transaction schedule.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "latency-investigation",
+      "prompt": "Diagnose the nonlinear latency regression from these production profiles and traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "invariant-preservation",
+      "prompt": "Prove that every transition preserves the specified state machine invariant.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "multi-region-design",
+      "prompt": "Choose a multi-region architecture under conflicting availability and consistency requirements.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "combinatorial-proof",
+      "prompt": "Derive and prove a bound for this combinatorial optimization problem.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "failure-tree",
+      "prompt": "Analyze cascading failure paths in this system and propose a justified containment design.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "termination-proof",
+      "prompt": "Prove that this recursive procedure terminates for every permitted input.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "resource-allocation",
+      "prompt": "Optimize resource allocation subject to these coupled scheduling and budget constraints.",
+      "label": "frontier_reasoning"
+    }
+  ],
+  "evaluate": [
+    {
+      "group": "extract-order-ids",
+      "prompt": "Extract the order identifiers from these supplied log entries.",
+      "label": "local_small"
+    },
+    {
+      "group": "yaml-json",
+      "prompt": "Convert this small supplied YAML mapping into equivalent JSON.",
+      "label": "local_small"
+    },
+    {
+      "group": "sort-unique-codes",
+      "prompt": "Deduplicate and alphabetically sort the following product codes.",
+      "label": "local_small"
+    },
+    {
+      "group": "format-bullets",
+      "prompt": "Turn these supplied lines into a Markdown bullet list.",
+      "label": "local_small"
+    },
+    {
+      "group": "normalize-spacing",
+      "prompt": "Collapse repeated spaces in this supplied paragraph to single spaces.",
+      "label": "local_small"
+    },
+    {
+      "group": "column-extraction",
+      "prompt": "Extract the second column from each of these tab separated rows.",
+      "label": "local_small"
+    },
+    {
+      "group": "kebab-case",
+      "prompt": "Convert these supplied names from snake_case to kebab-case.",
+      "label": "local_small"
+    },
+    {
+      "group": "comma-json",
+      "prompt": "Fix the missing comma between these two JSON properties.",
+      "label": "local_small"
+    },
+    {
+      "group": "congratulate-team",
+      "prompt": "Draft a congratulatory message for the team that shipped our release.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-load-balancer",
+      "prompt": "Explain the purpose of a load balancer to a new developer.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "policy-summary",
+      "prompt": "Summarize this supplied travel policy in plain language.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "translate-announcement",
+      "prompt": "Translate the provided office announcement into Portuguese.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "event-promotion",
+      "prompt": "Write a welcoming promotional paragraph for our science fair.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "rewrite-neutral",
+      "prompt": "Rewrite this supplied customer response in a neutral tone.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "story-outline",
+      "prompt": "Suggest a short adventure story outline set in a floating city.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "explain-transactions",
+      "prompt": "Give a beginner-friendly explanation of a database transaction.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "queue-aba",
+      "prompt": "Analyze whether this concurrent queue is vulnerable to the ABA problem and prove the conclusion.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "partitioned-commit",
+      "prompt": "Design an atomic commit protocol that handles coordinator failure during a network partition.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "proof-induction",
+      "prompt": "Construct an induction proof for the stated recurrence relation.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "memory-corruption",
+      "prompt": "Diagnose the cause of this intermittent memory corruption from the supplied execution traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "placement-constraints",
+      "prompt": "Find an optimal service placement satisfying these interacting resource and resilience constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "replication-invariant",
+      "prompt": "Prove that the proposed replication algorithm cannot acknowledge a write that is later lost.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "schema-rollback",
+      "prompt": "Analyze rollback correctness for this multi-phase database migration under partial failures.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "availability-budget",
+      "prompt": "Design a deployment architecture meeting the supplied recovery, latency, and cost requirements.",
+      "label": "frontier_reasoning"
+    }
+  ]
+}

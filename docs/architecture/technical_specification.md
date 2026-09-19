@@ -1,5 +1,7 @@
 # System 1: Technical Architecture & System Specification
 
+> **Release scope:** This is a research/design document with historical or illustrative claims. It is not a release guarantee or independent validation. See [current deployment boundaries](../deployment.md) and the [reproducible release benchmarks](https://github.com/steph4n-gh/system1#benchmarks). Statistical coverage is not a guarantee of safe tool execution; game simulations are not verified world records.
+
 **Author:** steph4n (2026)  
 **Affiliation:** System 1 Core Research Team  
 **Contact:** [`@steph4n`](https://x.com/steph4n) on X (Twitter)  

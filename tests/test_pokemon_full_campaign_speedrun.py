@@ -706,3 +706,38 @@ def test_overworld_path_resolution_and_starter_transition():
     assert "up" in r1
 
 
+
+
+def test_campaign_cannot_cut_over_without_teacher_observations():
+    engine = CampaignSpeedrunEngine(quiet=True, speed='instant', cutover_threshold=2)
+    engine.typesafe_client = None
+    battle = BattleState(player_pokemon=create_starter_pokemon('squirtle'),
+                         opponent_pokemon=create_starter_pokemon('charmander'), battle_type=BattleType.WILD)
+    for _ in range(4):
+        engine._evaluate_decision(battle)
+    assert not engine.has_cutover
+    assert engine.cloud_latencies == []
+
+
+def test_campaign_uses_adapter_promotion_not_its_turn_counter():
+    from system1.compat.typesafe import TypeSafeResponse
+    engine = CampaignSpeedrunEngine(quiet=True, speed='instant', cutover_threshold=2)
+    calls = []
+
+    class TeacherAdapter:
+        is_cutover = False
+        def systemone(self, state, questions):
+            calls.append(state)
+            return TypeSafeResponse({'answers': {'action': {'type': 'choice', 'value': 'fight'}},
+                                     'local_execution': False, 'latency_ms': 2, 'egress_bytes': 100})
+
+    engine.typesafe_client = TeacherAdapter()
+    battle = BattleState(player_pokemon=create_starter_pokemon('squirtle'),
+                         opponent_pokemon=create_starter_pokemon('charmander'), battle_type=BattleType.WILD)
+    for _ in range(4):
+        engine._evaluate_decision(battle)
+    assert len(calls) == 4
+    assert not engine.has_cutover
+    engine.typesafe_client.is_cutover = True
+    engine._evaluate_decision(battle)
+    assert engine.has_cutover

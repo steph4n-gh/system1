@@ -531,6 +531,7 @@ class TestArtifactPromotionIntegrity:
             ),
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "tier": Choice("Model tier", criteria={"fast": "Fast model", "smart": "Reasoning model"}),
@@ -602,6 +603,7 @@ class TestSmallSampleEliminationAndZeroChecks:
             min_agreement_threshold=0.80,
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "action": Choice("Action", criteria={"allow": "Allow", "deny": "Deny"}),
@@ -626,6 +628,7 @@ class TestSmallSampleEliminationAndZeroChecks:
             cutover_threshold=2,
             zero_egress=False,
             fallback_baseline=True,
+            augment=True, strict_mode=False,
         )
         questions = {
             "action": Choice("Action", criteria={"allow": "Allow", "deny": "Deny"}),

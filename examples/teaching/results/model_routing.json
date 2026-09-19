@@ -1,0 +1,392 @@
+{
+  "name": "model_routing",
+  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark.",
+  "policy": {
+    "local_small": "Mechanical formatting, extraction, sorting, or syntax conversion with the needed input supplied.",
+    "standard_chat": "Ordinary drafting, summarization, translation, or explanation; no formal proof or complex design investigation.",
+    "frontier_reasoning": "Formal proofs, correctness analysis, difficult diagnosis, or multi-constraint architecture and planning.",
+    "scope": "A demonstration routing policy, not a claim about any vendor model. Classify only; do not call a model or send prompts over the network."
+  },
+  "dataset_sha256": "0bc7aa8166e7fd5bba7e7104fcfb944657d355d609b106eb7264489f33d195ef",
+  "skill_path": ".system1/examples/model_routing/skill.s1m",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "system1": "0.2.2"
+  },
+  "settings": {
+    "dimension": 2048,
+    "regularization": 1.0,
+    "alpha": 0.05,
+    "strict": true,
+    "cache": false,
+    "receipts": false
+  },
+  "counts": {
+    "teach": {
+      "local_small": 18,
+      "standard_chat": 18,
+      "frontier_reasoning": 18
+    },
+    "calibration": {
+      "local_small": 16,
+      "standard_chat": 16,
+      "frontier_reasoning": 16
+    },
+    "evaluate": {
+      "local_small": 8,
+      "standard_chat": 8,
+      "frontier_reasoning": 8
+    }
+  },
+  "compiler_counts": {
+    "fit": 54,
+    "calibration": 48,
+    "temperature": 24,
+    "generated": 0
+  },
+  "teaching_ms": 134.79300000471994,
+  "save_ms": 1.7148340120911598,
+  "load_ms": 3.365500015206635,
+  "skill_bytes": 25375,
+  "starter_accuracy": 0.5416666666666666,
+  "accuracy": 0.9166666666666666,
+  "accepted_count": 0,
+  "review_count": 24,
+  "accepted_accuracy": null,
+  "set_coverage": 1.0,
+  "confusion_matrix": {
+    "local_small": {
+      "local_small": 8,
+      "standard_chat": 0,
+      "frontier_reasoning": 0
+    },
+    "standard_chat": {
+      "local_small": 0,
+      "standard_chat": 8,
+      "frontier_reasoning": 0
+    },
+    "frontier_reasoning": {
+      "local_small": 2,
+      "standard_chat": 0,
+      "frontier_reasoning": 6
+    }
+  },
+  "decision_p50_ms": 0.5580624856520444,
+  "decision_p95_ms": 0.7711624435614794,
+  "predictions": [
+    {
+      "group": "extract-order-ids",
+      "prompt": "Extract the order identifiers from these supplied log entries.",
+      "label": "local_small",
+      "starter_prediction": "standard_chat",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.6929169758222997
+    },
+    {
+      "group": "yaml-json",
+      "prompt": "Convert this small supplied YAML mapping into equivalent JSON.",
+      "label": "local_small",
+      "starter_prediction": "local_small",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "standard_chat"
+      ],
+      "latency_ms": 0.5568329943343997
+    },
+    {
+      "group": "sort-unique-codes",
+      "prompt": "Deduplicate and alphabetically sort the following product codes.",
+      "label": "local_small",
+      "starter_prediction": "local_small",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.6530410028062761
+    },
+    {
+      "group": "format-bullets",
+      "prompt": "Turn these supplied lines into a Markdown bullet list.",
+      "label": "local_small",
+      "starter_prediction": "local_small",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "standard_chat"
+      ],
+      "latency_ms": 0.43820799328386784
+    },
+    {
+      "group": "normalize-spacing",
+      "prompt": "Collapse repeated spaces in this supplied paragraph to single spaces.",
+      "label": "local_small",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "standard_chat"
+      ],
+      "latency_ms": 0.7717499975115061
+    },
+    {
+      "group": "column-extraction",
+      "prompt": "Extract the second column from each of these tab separated rows.",
+      "label": "local_small",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.4861250054091215
+    },
+    {
+      "group": "kebab-case",
+      "prompt": "Convert these supplied names from snake_case to kebab-case.",
+      "label": "local_small",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.4534579929895699
+    },
+    {
+      "group": "comma-json",
+      "prompt": "Fix the missing comma between these two JSON properties.",
+      "label": "local_small",
+      "starter_prediction": "local_small",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.431500026024878
+    },
+    {
+      "group": "congratulate-team",
+      "prompt": "Draft a congratulatory message for the team that shipped our release.",
+      "label": "standard_chat",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.5099999834783375
+    },
+    {
+      "group": "explain-load-balancer",
+      "prompt": "Explain the purpose of a load balancer to a new developer.",
+      "label": "standard_chat",
+      "starter_prediction": "local_small",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.431500026024878
+    },
+    {
+      "group": "policy-summary",
+      "prompt": "Summarize this supplied travel policy in plain language.",
+      "label": "standard_chat",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "local_small"
+      ],
+      "latency_ms": 0.476707995403558
+    },
+    {
+      "group": "translate-announcement",
+      "prompt": "Translate the provided office announcement into Portuguese.",
+      "label": "standard_chat",
+      "starter_prediction": "local_small",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "local_small"
+      ],
+      "latency_ms": 0.5256250151433051
+    },
+    {
+      "group": "event-promotion",
+      "prompt": "Write a welcoming promotional paragraph for our science fair.",
+      "label": "standard_chat",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.47862500650808215
+    },
+    {
+      "group": "rewrite-neutral",
+      "prompt": "Rewrite this supplied customer response in a neutral tone.",
+      "label": "standard_chat",
+      "starter_prediction": "standard_chat",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "local_small"
+      ],
+      "latency_ms": 0.6093329866416752
+    },
+    {
+      "group": "story-outline",
+      "prompt": "Suggest a short adventure story outline set in a floating city.",
+      "label": "standard_chat",
+      "starter_prediction": "standard_chat",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.5328749539330602
+    },
+    {
+      "group": "explain-transactions",
+      "prompt": "Give a beginner-friendly explanation of a database transaction.",
+      "label": "standard_chat",
+      "starter_prediction": "standard_chat",
+      "prediction": "standard_chat",
+      "needs_review": true,
+      "prediction_set": [
+        "standard_chat",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.5515419761650264
+    },
+    {
+      "group": "queue-aba",
+      "prompt": "Analyze whether this concurrent queue is vulnerable to the ABA problem and prove the conclusion.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "local_small",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "local_small"
+      ],
+      "latency_ms": 0.7597499643452466
+    },
+    {
+      "group": "partitioned-commit",
+      "prompt": "Design an atomic commit protocol that handles coordinator failure during a network partition.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "standard_chat"
+      ],
+      "latency_ms": 0.7678329711779952
+    },
+    {
+      "group": "proof-induction",
+      "prompt": "Construct an induction proof for the stated recurrence relation.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "standard_chat"
+      ],
+      "latency_ms": 0.5592919769696891
+    },
+    {
+      "group": "memory-corruption",
+      "prompt": "Diagnose the cause of this intermittent memory corruption from the supplied execution traces.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "standard_chat",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.8682910120114684
+    },
+    {
+      "group": "placement-constraints",
+      "prompt": "Find an optimal service placement satisfying these interacting resource and resilience constraints.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "standard_chat"
+      ],
+      "latency_ms": 0.7222919957712293
+    },
+    {
+      "group": "replication-invariant",
+      "prompt": "Prove that the proposed replication algorithm cannot acknowledge a write that is later lost.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "local_small"
+      ],
+      "latency_ms": 0.6583750364370644
+    },
+    {
+      "group": "schema-rollback",
+      "prompt": "Analyze rollback correctness for this multi-phase database migration under partial failures.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "frontier_reasoning",
+      "needs_review": true,
+      "prediction_set": [
+        "frontier_reasoning",
+        "local_small"
+      ],
+      "latency_ms": 0.6675829645246267
+    },
+    {
+      "group": "availability-budget",
+      "prompt": "Design a deployment architecture meeting the supplied recovery, latency, and cost requirements.",
+      "label": "frontier_reasoning",
+      "starter_prediction": "frontier_reasoning",
+      "prediction": "local_small",
+      "needs_review": true,
+      "prediction_set": [
+        "local_small",
+        "frontier_reasoning"
+      ],
+      "latency_ms": 0.6686249980702996
+    }
+  ]
+}

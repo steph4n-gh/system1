@@ -224,8 +224,9 @@ def call_jev_api(prompt: str, questions: Dict[str, Any], api_key: str) -> Tuple[
     t0 = time.perf_counter()
     try:
         with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
             elapsed = (time.perf_counter() - t0) * 1000.0
-            return json.loads(resp.read().decode("utf-8")), elapsed, len(raw_bytes)
+            return data, elapsed, len(raw_bytes)
     except Exception as e:
         elapsed = (time.perf_counter() - t0) * 1000.0
         print(f"    [!] Warning: Jev API request failed ({type(e).__name__}: {e})")
@@ -445,6 +446,9 @@ def run_use_case_tests(api_key: str):
 
         # 1. Execute on TypeSafe AI (Jev)
         jev_resp, jev_lat, egress_bytes = call_jev_api(prompt_text, scen["jev_questions"], api_key)
+        if not jev_resp or not jev_resp.get("answers"):
+            print("    Comparison unavailable: failed teacher response excluded.")
+            continue
 
         # 2. Execute on System 1 System 1
         engine = SystemOneEngine(scen["schema_cls"], signing_key=signing_key, ledger=ledger, backend="auto")
@@ -499,6 +503,10 @@ def run_use_case_tests(api_key: str):
             "speedup": speedup,
             "receipt_valid": receipt_valid,
         })
+
+    if not summary_records:
+        print("No successful paired API responses; no speedup can be reported.")
+        return []
 
     # Summary Table
     print("\n" + "=" * 90)

@@ -122,7 +122,13 @@ def handle_decide_command(args: argparse.Namespace) -> int:
         print("[SYSTEM1 ERROR] No prompt provided. Use system1 decide '...' or --prompt '...'", file=sys.stderr)
         return 1
 
-    schema = _load_schema(getattr(args, "schema", None))
+    model = None
+    if getattr(args, "model", None):
+        from system1.compiler import CompiledSystemOneModel
+        model = CompiledSystemOneModel.load(args.model)
+        schema = model.schema
+    else:
+        schema = _load_schema(getattr(args, "schema", None))
     alpha = float(getattr(args, "alpha", 0.05))
     sign = bool(getattr(args, "sign", False))
     ledger_path = getattr(args, "ledger", None)
@@ -179,7 +185,10 @@ def handle_decide_command(args: argparse.Namespace) -> int:
     if ledger_path:
         ledger = ActionLedger(ledger_path)
 
-    engine = SystemOneEngine(schema, signing_key=signing_key, ledger=ledger)
+    engine = SystemOneEngine(
+        schema, model=model, signing_key=signing_key, ledger=ledger,
+        strict_mode=model is not None,
+    )
     result = engine.decide(prompt, alpha=alpha, record_receipt=True)
 
     if getattr(args, "json", False):
@@ -409,6 +418,31 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
         return 1
 
 
+def _load_examples(path: str) -> Dict[str, list]:
+    """Read explicit labeled examples without inventing missing prompts or labels."""
+    with open(path, encoding="utf-8") as stream:
+        data = json.load(stream)
+    if isinstance(data, dict):
+        if not data or any(not isinstance(rows, list) or not rows for rows in data.values()):
+            raise ValueError("Example fields must contain nonempty lists of labeled examples")
+        return data
+    if not isinstance(data, list) or not data:
+        raise ValueError("Dataset must be a nonempty list of labeled examples or a field mapping")
+    examples: Dict[str, list] = {}
+    for index, row in enumerate(data):
+        if not isinstance(row, dict):
+            raise ValueError(f"Example {index} must be an object")
+        labels = row.get("labels", row.get("values"))
+        if not isinstance(labels, dict) or not labels:
+            raise ValueError(f"Example {index} requires explicit labels")
+        for field, label in labels.items():
+            sample = (row.get("prompt"), label)
+            if "telemetry" in row:
+                sample += (row["telemetry"],)
+            examples.setdefault(field, []).append(sample)
+    return examples
+
+
 def handle_compile_command(args: argparse.Namespace) -> int:
     """CLI handler for 'system1 compile'."""
     from system1.compiler import SystemOneCompiler
@@ -416,30 +450,18 @@ def handle_compile_command(args: argparse.Namespace) -> int:
     t0 = time.perf_counter()
     schema = _load_schema(args.schema)
 
-    # Parse optional dataset if provided
-    exemplars = None
-    if getattr(args, "dataset", None):
-        ds_path = Path(args.dataset)
-        if ds_path.is_file():
-            with open(ds_path, "r", encoding="utf-8") as f:
-                raw_data = json.load(f)
-                if isinstance(raw_data, dict):
-                    exemplars = {}
-                    for k, v in raw_data.items():
-                        exemplars[k] = [
-                            (item[0], item[1]) if isinstance(item, (list, tuple)) else (str(item), k)
-                            for item in v
-                        ]
-                elif isinstance(raw_data, list):
-                    exemplars = {}
-                    for entry in raw_data:
-                        p = entry.get("prompt", "")
-                        labels = entry.get("labels", entry.get("values", {}))
-                        for fk, fv in labels.items():
-                            exemplars.setdefault(fk, []).append((p, fv))
+    dataset_path = getattr(args, "dataset", None)
+    calibration_path = getattr(args, "calibration_dataset", None)
+    try:
+        exemplars = _load_examples(dataset_path) if dataset_path else None
+        calibration_exemplars = _load_examples(calibration_path) if calibration_path else None
+    except (OSError, ValueError) as exc:
+        print(f"[SYSTEM1 ERROR] Cannot load examples: {exc}", file=sys.stderr)
+        return 1
 
     compiler = SystemOneCompiler(
         schema=schema,
+        dimension=getattr(args, "dimension", 384),
         regularization=getattr(args, "regularization", 1.0),
     )
 
@@ -447,12 +469,18 @@ def handle_compile_command(args: argparse.Namespace) -> int:
     teacher = getattr(args, "teacher", "synthetic")
     samples_per_choice = getattr(args, "samples_per_choice", 20)
 
-    compiled_model = compiler.compile_and_save(
-        output_path=output_path,
-        exemplars=exemplars,
-        samples_per_choice=samples_per_choice,
-        teacher=teacher,
-    )
+    try:
+        compiled_model = compiler.compile_and_save(
+            output_path=output_path,
+            exemplars=exemplars,
+            samples_per_choice=samples_per_choice,
+            teacher=teacher,
+            augment=exemplars is None or bool(getattr(args, "augment", False)),
+            calibration_exemplars=calibration_exemplars,
+        )
+    except (TypeError, ValueError) as exc:
+        print(f"[SYSTEM1 ERROR] Cannot compile examples: {exc}", file=sys.stderr)
+        return 1
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
     out_file = Path(output_path)
@@ -466,7 +494,9 @@ def handle_compile_command(args: argparse.Namespace) -> int:
         "file_size_kb": round(file_size_kb, 2),
         "fields_compiled": list(schema.fields.keys()),
         "regularization": getattr(args, "regularization", 1.0),
-        "teacher": teacher,
+        "teacher": compiled_model.metadata["teacher"],
+        "teaching_mode": compiled_model.metadata["teaching_mode"],
+        "sample_counts": compiled_model.metadata["sample_counts"],
         "compilation_latency_ms": round(elapsed_ms, 2),
     }
 
@@ -536,7 +566,9 @@ def build_parser() -> argparse.ArgumentParser:
     decide_parser = subparsers.add_parser("decide", help="Evaluate inputs against typed decision schemas")
     decide_parser.add_argument("prompt", nargs="?", default=None, help="Decision input prompt")
     decide_parser.add_argument("--prompt", dest="opt_prompt", help="Alternative prompt flag")
-    decide_parser.add_argument("--schema", help="Schema preset ('triage', 'guard'), import path, or path to JSON schema file")
+    decide_source = decide_parser.add_mutually_exclusive_group()
+    decide_source.add_argument("--schema", help="Schema preset ('triage', 'guard'), import path, or path to JSON schema file")
+    decide_source.add_argument("--model", help="Run a taught .s1m skill with strict uncertainty gating")
     decide_parser.add_argument("--alpha", type=float, default=0.05, help="Conformal significance level (default: 0.05 for 95%% coverage)")
     decide_parser.add_argument("--sign", action="store_true", help="Generate Ed25519 signature on decision receipt")
     decide_parser.add_argument("--ledger", help="Path to SQLite ActionLedger file")
@@ -575,7 +607,10 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.add_argument("--schema", required=True, help="Schema preset ('triage', 'guard'), import path (e.g. app.schemas.Triage), or JSON schema file")
     compile_parser.add_argument("--teacher", default="synthetic", help="Teacher model/strategy ('synthetic', 'mock', 'jev', 'claude', 'gpt4o')")
     compile_parser.add_argument("--output", "-o", default="model.s1m", help="Output path for compiled .s1m binary model")
-    compile_parser.add_argument("--dataset", help="Optional path to training/exemplars JSON dataset")
+    compile_parser.add_argument("--dataset", help="Labeled JSON examples for teaching a skill; no synthetic augmentation by default")
+    compile_parser.add_argument("--calibration-dataset", help="Separate labeled examples for checking uncertainty")
+    compile_parser.add_argument("--augment", action="store_true", help="Explicitly add schema-derived synthetic examples")
+    compile_parser.add_argument("--dimension", type=int, default=384, help="Feature dimension (default: 384)")
     compile_parser.add_argument("--samples-per-choice", type=int, default=20, help="Number of synthetic samples to generate per choice")
     compile_parser.add_argument("--regularization", type=float, default=1.0, help="Ridge regression L2 regularization lambda")
     compile_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON compilation summary")
@@ -617,4 +652,3 @@ __all__ = [
 
 if __name__ == "__main__":
     sys.exit(main())
-

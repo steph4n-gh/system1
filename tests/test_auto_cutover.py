@@ -54,6 +54,7 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
         ledger=ledger,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
 
     questions = {
@@ -118,6 +119,7 @@ def test_auto_cutover_respects_min_agreement_threshold():
         min_agreement_threshold=1.01,  # Impossible threshold to force deferral
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     questions = {
         "tier": Choice("Tier", criteria={"fast": "Fast model", "smart": "Smart reasoning model"}),
@@ -154,6 +156,7 @@ def test_auto_cutover_high_concurrency_thread_safety():
         ledger=ledger,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     questions = {
         "action": Choice("Action", criteria={"allow": "Allow", "deny": "Deny"}),
@@ -190,6 +193,7 @@ def test_manual_distill_and_cutover():
         promotion_policy=demo_policy,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     questions = {
         "route": Choice("Route", criteria={"sales": "Sales", "support": "Support"}),
@@ -228,6 +232,7 @@ async def test_async_typesafe_client_auto_cutover():
         promotion_policy=demo_policy,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     questions = {
         "verdict": Choice("Verdict", criteria={"allow": "Allow action", "deny": "Deny action"}),
@@ -264,6 +269,7 @@ async def test_auto_cutover_model_export(tmp_path: Path):
         promotion_policy=demo_policy,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     assert sync_client.compiled_model is None
     sync_model_path = str(tmp_path / "sync_export.s1m")
@@ -292,6 +298,7 @@ async def test_auto_cutover_model_export(tmp_path: Path):
         promotion_policy=demo_policy,
         zero_egress=False,
         fallback_baseline=True,
+        augment=True, strict_mode=False,
     )
     async_model_path = str(tmp_path / "async_export.s1m")
     assert (await async_client.export_model(async_model_path)) is False

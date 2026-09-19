@@ -148,7 +148,7 @@ def test_grpc_health_check_wire_call(live_grpc_server):
     assert isinstance(resp, system1_pb2.HealthCheckResponse)
     assert resp.status == system1_pb2.HealthCheckResponse.SERVING
     assert "auth_policy" in resp.loaded_schemas
-    assert resp.version == "0.2.1"
+    assert resp.version == "0.2.2"
 
 
 def test_protobuf_binary_serialization_round_trip():

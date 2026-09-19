@@ -67,7 +67,7 @@ def test_split_timer_board_rendering():
     timer = PaperclipsSplitTimer()
     timer.check_and_record_split("s1_clips_1k", current_elapsed=42.5)
     board = timer.render_split_board()
-    assert "UNIVERSAL PAPERCLIPS WORLD RECORD SPLIT TIMER" in board
+    assert "PAPERCLIPS SCRIPTED POLICY" in board
     assert "First 1,000 Clips" in board
     assert "TOTAL ELAPSED" in board
 
@@ -314,4 +314,3 @@ async def test_playwright_controller_action_dispatch_phase2_phase3():
     assert res_power == "Not connected"
     res_rebal = await ctrl.execute_action("phase3_probe_rebalance", {"matrix": {"rep": 8, "haz": 5}})
     assert res_rebal == "Not connected"
-

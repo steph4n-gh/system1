@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""System 1 System 1 Decision Engine — Live Demos & Head-to-Head Comparison vs TypeSafe AI (Jev).
+"""System 1 System 1 Decision Engine — Local TypeSafe-style schema demonstrations.
 
 Showcases 4 canonical software automation decision workloads highlighted by TypeSafe AI:
 1. Model Gateway & Dynamic Router (Routing to fast vs frontier models)
 2. Customer Support Ticket Triage & Escalation
-3. Agent Tool Guard & Confinement (Hardware-enforced reference monitor & ActionLedger)
+3. Agent Tool Guard & Confinement (Action classification & ActionLedger)
 4. Trust, Safety & Content Moderation with Multi-Label Tags
 """
 
@@ -96,7 +96,7 @@ def run_model_routing_demo():
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
         print(f"\n[PROMPT]: \"{p}\"")
-        print(f"  -> Decision Latency:     {elapsed_ms:.3f} ms  (Jev: ~150 ms cloud API)")
+        print(f"  -> Decision Latency:     {elapsed_ms:.3f} ms")
         print(f"  -> Target Model Tier:    {result.target_tier} (Confidence: {result.confidences['target_tier']:.1%})")
         print(f"  -> Conformal Set:        {result.conformal_sets['target_tier']}")
         print(f"  -> Task Category:        {result.task_category} ({result.confidences['task_category']:.1%})")
@@ -286,24 +286,10 @@ def run_content_moderation_demo():
 
 
 def print_comparison_matrix():
-    print("\n" + "=" * 76)
-    print("  HEAD-TO-HEAD COMPARISON MATRIX: REFLEX SYSTEM 1 vs TYPE-SAFE AI (JEV)")
-    print("=" * 76)
-    matrix = [
-        ("Architecture", "Hardware-aware Non-Autoregressive", "Hardware-aware Non-Autoregressive", "TIE (Both non-autoregressive)"),
-        ("P50 Latency", "0.75 - 1.2 ms (Local Metal/BLAS)", "70 - 500 ms (Cloud Network Roundtrip)", "REFLEX is ~150x - 200x FASTER"),
-        ("Throughput", ">1,100 decisions / sec per core", "API rate-limited / network queue", "REFLEX WINS (Local GPU unified RAM)"),
-        ("Data Privacy", "100% On-Device / Zero Egress", "Cloud API (Code/Prompts leave network)", "REFLEX WINS (Air-gapped capable)"),
-        ("Cost", "$0 incremental (Runs on existing hardware)", "Per-decision SaaS billing", "REFLEX WINS ($0 API cost)"),
-        ("Uncertainty Modeling", "Split Conformal Prediction (1-alpha sets)", "Probability calibration only", "REFLEX WINS (Formal math bounds)"),
-        ("Cryptographic Proof", "Ed25519 RunWitnessEnvelope + ActionLedger", "None (Vendor JSON response)", "REFLEX WINS (Verifiable proof)"),
-        ("Action Enforcement", "macOS Seatbelt Sandbox + Reference Monitor", "Advisory only (Software caller must enforce)", "REFLEX WINS (Hard kernel firewall)"),
-    ]
-    print(f"{'Feature':<22} | {'System 1 System 1':<36} | {'TypeSafe AI (Jev)':<34} | {'Outcome'}")
-    print("-" * 115)
-    for feat, system1_val, jev, outcome in matrix:
-        print(f"{feat:<22} | {system1_val:<36} | {jev:<34} | {outcome}")
-    print("=" * 76 + "\n")
+    print("\nThese are local schema demonstrations, with repeated calibration examples.")
+    print("No Jev requests or comparative quality measurements were made.")
+    print("Use observe_routing.py for the teaching lifecycle, or the live HTTP harness with a key.")
+    print("The action-classification demo does not enforce a tool permission boundary.")
 
 
 if __name__ == "__main__":
