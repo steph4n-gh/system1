@@ -11,7 +11,7 @@ Teach a repeatable decision skill from examples or by observing a teacher such a
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 
-**Status: beta.** System 1 provides a small local classifier and a separate deterministic policy guard. The included seed models need evaluation and calibration on your workload. They are not a general-purpose detector of malicious actions or prompt injection.
+**Version 1.0:** a stable core for teaching bounded decisions, validated local takeover, portable skills, and explicit tool policies. Evaluate each skill on your workload; the included seed models are starting points. See the [release evidence and migration guide](docs/releases/1.0.md).
 
 [Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [Limits and deployment](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
@@ -42,29 +42,17 @@ source .venv/bin/activate
 python -m pip install -e '.[dev]'
 ```
 
-Define the outputs you need, then evaluate a prompt:
+Start with a complete taught skill:
 
-```python
-from system1 import ChoiceField, DecisionSchema, System1Engine
-
-class SupportRoute(DecisionSchema):
-    team = ChoiceField(
-        options=["billing", "technical_support"],
-        descriptions={
-            "billing": "Invoices, payments, subscription plans, and refunds",
-            "technical_support": "Software installation, errors, and debugging",
-        },
-    )
-
-engine = System1Engine(SupportRoute)
-decision = engine.decide("I need a refund for my subscription")
-print(decision.values)
-print(f"Latency: {decision.latency_ms:.2f} ms")
-print(f"Needs review: {decision.is_ambiguous}")
-print(f"Prediction sets: {decision.conformal_sets}")
+```bash
+python examples/support_triage.py
+system1 decide "Please correct the invoice address" --model .system1/examples/support_triage/skill.s1m --json
 ```
 
-This starts with schema-derived seed prototypes. Outputs and latency depend on the schema, data, and hardware. A predicted value is not permission to execute a tool.
+The example teaches support routing, calibrates uncertainty, saves the skill,
+reloads it, and checks separate evaluation cases. It runs entirely locally.
+For the smallest self-contained Python API example, see [teach one skill](examples/teach_skill.py).
+A predicted value is not permission to execute a tool.
 
 ## Observe a teacher, then take over
 
@@ -72,9 +60,9 @@ This starts with schema-derived seed prototypes. Outputs and latency depend on t
 python examples/observe_routing.py
 ```
 
-This short offline example shows the complete journey: observe answers, teach one routing skill, pass the normal promotion gates, disconnect the teacher, evaluate fresh requests locally, then save and reopen the skill. In the recorded run it needed **190 observations**, answered **40/40 fresh synthetic tickets correctly**, accepted all 40, and saved a **5 KB** skill. Reloading preserved answers, probabilities, and review decisions. Local median latency was about **0.45 ms** on the review machine.
+This example observes answers, teaches one routing skill, passes the normal promotion gates, disconnects the teacher, evaluates fresh requests locally, then saves and reopens the skill. Both the offline run and the **live Jev run** promoted after **357 observations**, answered **40/40 fresh synthetic tickets correctly**, accepted all 40, and saved a **5 KB** skill. Reloading preserved answers, probabilities, and review decisions. Live observation took about two minutes; local median decisions took about **0.4 ms** on the review machine.
 
-The default teacher is a rule over a small structured-ticket vocabulary, clearly labeled as a simulation. It demonstrates the lifecycle, not general language understanding or Jev quality parity. `--teacher jev` observes actual Jev responses with your API key; another API can use the existing teacher callback. See the [adapter guide and compatibility contract](docs/typesafe.md) and [recorded evidence](examples/teaching/results/observed_routing.json).
+The default teacher is a rule over a small structured-ticket vocabulary. `--teacher jev` uses actual Jev responses with your API key; another API can use the existing teacher callback. These tickets demonstrate the lifecycle, not broad language understanding. See the [adapter contract](docs/typesafe.md), [live result](benchmarks/quality/results/jev_live_cutover.json), and [three-skill Jev comparison](docs/releases/1.0.md).
 
 Promotion depends on evidence, not a fixed turn count. Insufficient evidence keeps the teacher active, and uncertain local responses still request review.
 
@@ -89,9 +77,15 @@ python examples/agent_guard.py
 system1 decide "Please correct the invoice address" --model .system1/examples/support_triage/skill.s1m --json
 ```
 
-Each primary example supplies labeled teaching cases, separate calibration cases, and 24 unseen evaluation cases. One command teaches, saves, reloads, and reports the results. On the review machine, teaching plus calibration took 127–159 ms, saved skills were 25–32 KiB, and uncached decisions took about 0.5 ms. Preparing good labeled examples takes additional work.
+Each command teaches from explicit examples, uses separate calibration cases, then saves, reloads, and evaluates the skill. On the review machine, teaching plus calibration took about **0.2 seconds**, saved skills were **25–32 KiB**, and uncached decisions took about **0.5 ms**. Preparing and reviewing labeled examples takes additional work.
 
-The authored demonstration cases reached 87.5% support-routing accuracy, 91.7% model-routing accuracy, and 100% operation-triage accuracy. Strict uncertainty checks requested review on 23/24 support cases, all 24 routing cases, and 22/24 operation cases. The three accepted responses were correct. See the [complete results, data, and limits](examples/teaching/README.md); these are demonstrations, not production quality guarantees.
+| Taught skill | Accepted locally | Correct among accepted |
+|---|---:|---:|
+| Support triage | 92/104 (88.5%) | 91/92 (98.9%) |
+| Model routing | 94/96 (97.9%) | 94/94 (100%) |
+| Operation triage | 125/132 (94.7%) | 125/125 (100%) |
+
+Teaching from recorded **actual Jev answers** achieved the same counts. These are authored demonstrations; operation triage includes development cases and a separate fresh confirmation set. The support result contains one accepted error. See [data, confidence intervals, and limitations](examples/teaching/README.md). They do not establish general Jev parity or security detection capability.
 
 For the smallest API example, see [teach one skill](examples/teach_skill.py). The [teaching guide](docs/guides/training_experts.md) covers your own data and evaluation. In Python, use `compile(examples, augment=False)` and `System1Engine(..., strict_mode=True)` for this workflow.
 
@@ -193,7 +187,15 @@ Install `system1[observability]` for Prometheus or `system1[otel]` for OpenTelem
 
 ## Benchmarks
 
-Reproduce the included seed-model benchmarks from the repository root:
+Reproduce the release teaching and recorded Jev comparison from the repository root:
+
+```bash
+python benchmarks/quality/evaluate_release.py
+```
+
+This command uses saved real responses and blocks network access during local evaluation. It exits unsuccessfully if any primary skill misses 95% accepted accuracy or 80% acceptance. These are observed demonstration targets, not population guarantees.
+
+The following **historical 0.2.2 seed-model measurements** remain available for comparison:
 
 ```bash
 python benchmarks/quality/run_quality_benchmarks.py
@@ -210,7 +212,7 @@ The 100-example datasets are small, repository-authored evaluations, not indepen
 
 See the [recorded results and environment](benchmarks/quality/results/launch_review.json) and [methodology](benchmarks/quality/README.md). These are raw classification results, not the accuracy of authorized tool actions. Latency is workload- and hardware-dependent; these measurements do not establish durable end-to-end authorization latency or a service-level guarantee. No cloud providers were measured in this run.
 
-Teaching from the existing examples improves raw accuracy in a separate five-fold development check: intent routing reaches 68% and security triage 71% with 2048 features. Both still require review on every case under strict uncertainty gating; their calibration sets are too small. This is evidence that examples help, not release acceptance evidence. See the [teaching comparison](benchmarks/quality/README.md#teaching-comparison) for default-dimension results, protocol, and limitations.
+Teaching from the existing examples improves raw accuracy in a separate five-fold development check: intent routing reaches 68% and security triage 71% with 2048 features. In that recorded pre-1.0 run, both required review on every case under strict uncertainty gating; their calibration sets are too small. This is evidence that examples help, not release acceptance evidence. See the [teaching comparison](benchmarks/quality/README.md#teaching-comparison) for default-dimension results, protocol, and limitations.
 
 Conformal coverage applies to prediction sets under exchangeability and appropriate held-out calibration. It does not guarantee that a singleton prediction is safe, control the error rate conditional on local acceptance, or imply a particular local-retention percentage. Distribution shift and model updates require reevaluation. See [limits](docs/deployment.md#statistical-limits) and the [conformal prediction introduction](https://arxiv.org/abs/2107.07511).
 

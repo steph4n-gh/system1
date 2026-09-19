@@ -53,9 +53,9 @@ class RoutingSchema(reflex.DecisionSchema):
 # 1. MCP Safety Proxy Tests
 # ---------------------------------------------------------------------------
 
-def test_mcp_proxy_jsonrpc_allow():
+def test_mcp_proxy_jsonrpc_allow(read_policy):
     """Verify MCP tools/call for safe operations passes through and injects receipt metadata."""
-    proxy = SystemOneMCPProxy(tenant_id="test_tenant")
+    proxy = SystemOneMCPProxy(tenant_id="test_tenant", guard=system1.SystemOneGuardHook(policy=read_policy))
 
     rpc_req = {
         "jsonrpc": "2.0",

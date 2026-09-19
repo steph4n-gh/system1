@@ -116,9 +116,9 @@ def test_conformal_coverage_monotonicity_across_alpha(calibrated_conformal_engin
     assert size_50 <= size_95 <= size_99, f"Monotonicity violated: {size_50} <= {size_95} <= {size_99}"
 
 
-def test_guard_hook_fail_closed_on_ambiguity_and_risk():
+def test_guard_hook_fail_closed_on_ambiguity_and_risk(read_policy):
     """Verify SystemOneGuardHook enforces fail-closed decisions and sets .allowed property."""
-    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10, policy=read_policy)
 
     # 1. Benign safe action -> ALLOW
     safe_prop = ActionProposal.create(

@@ -30,6 +30,7 @@ def test_learning_marks_previous_calibration_stale():
             return {"updated_fields": ["label"]}
             
     engine.model = DummyModel()
+    engine.model_version = engine.model.model_version
     
     # Fake calibration
     engine.calibrators["label"].is_calibrated = True

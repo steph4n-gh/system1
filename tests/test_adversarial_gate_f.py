@@ -41,6 +41,7 @@ from unittest.mock import MagicMock
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 import grpc
 import pytest
+from system1 import __version__
 
 from system1.cli import build_parser
 from system1.grpc_server import SystemOneServiceServicer, serve
@@ -505,7 +506,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
                 assert h_resp.status == adv_pb2.HealthCheckResponse.SERVING
-                assert h_resp.version == "0.2.2"
+                assert h_resp.version == __version__
 
                 # 2. Decide with numeric telemetry features
                 d_req = adv_pb2.DecideRequest(

@@ -2,14 +2,14 @@
 """System 1 Domain Expert Training, Distillation, and Deployment Example.
 
 Demonstrates end-to-end workflows for training, distilling, and deploying System 1
-Domain Experts (.s1m binaries) running on local host silicon (CPU/Metal) in < 1ms:
+Domain Experts (.s1m binaries) running locally, with measured latency:
 
 1. Defining a domain schema (IncidentTriageSchema).
-2. Pathway A: Synthetic distillation and compilation to a portable <20KB .s1m binary.
+2. Pathway A: Synthetic distillation and compilation to a portable .s1m binary.
 3. Pathway B: Offline supervised dataset compilation from historical domain exemplars.
-4. Pathway C: Evaluating the compiled expert, measuring sub-millisecond latency (P50/P99),
+4. Pathway C: Evaluating the compiled expert, measuring latency (P50/P99),
    and validating conformal prediction sets and margin dominance.
-5. Pathway D: Online Sherman-Morrison fine-tuning with exponential forgetting factor λ_f = 0.995.
+5. Pathway D: Online Sherman-Morrison corrections with exponential forgetting factor λ_f = 0.995.
 6. Pathway E: Composing a 2-tier Mixture of Experts (Router Expert -> Specialized Domain Experts).
 """
 
@@ -109,7 +109,7 @@ class MoERouterSchema(DecisionSchema):
 def main() -> None:
     print("=" * 80)
     print("  REFLEX DOMAIN EXPERT: TRAINING, DISTILLATION & DEPLOYMENT GUIDE")
-    print(f"  System 1 Version: {reflex.__version__} | Target SLA: Sub-1ms on local silicon")
+    print(f"  System 1 Version: {reflex.__version__} | Experimental synthetic teaching and composition")
     print("=" * 80)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -196,7 +196,7 @@ def main() -> None:
         # Pathway C: Evaluating Expert, Latency SLA & Conformal Calibration
         # --------------------------------------------------------------------
         print("\n" + "-" * 80)
-        print("  PATHWAY C: Evaluating Compiled Expert & Measuring Sub-1ms Latency")
+        print("  PATHWAY C: Evaluating Compiled Expert & Measuring Latency")
         print("-" * 80)
 
         # Load expert binary from disk
@@ -239,7 +239,6 @@ def main() -> None:
         p95 = float(np.percentile(bench_latencies, 95))
         p99 = float(np.percentile(bench_latencies, 99))
         print(f"   Benchmark Latency P50: {p50:.3f} ms | P95: {p95:.3f} ms | P99: {p99:.3f} ms")
-        assert p50 < 1.0, f"Expected P50 < 1.0 ms, got {p50:.3f} ms"
 
         # --------------------------------------------------------------------
         # Pathway D: Online Sherman-Morrison Fine-Tuning (λ_f = 0.995)
@@ -273,7 +272,7 @@ def main() -> None:
         per_head_us = rank1_math_us / max(1, num_updated)
 
         print(f"   Rank-1 Math Duration:      {rank1_math_us:.1f} µs ({per_head_us:.1f} µs/head across {num_updated} heads)")
-        print(f"   Total Adaptation Time:     {update_latency_us:.1f} µs (< 1.0 ms online adaptation SLA achieved!)")
+        print(f"   Total Adaptation Time:     {update_latency_us:.1f} µs")
         print(f"   Updated Fields:            {update_result['updated_fields']}")
 
         # Re-evaluate
@@ -312,12 +311,12 @@ def main() -> None:
         for q in moe_queries:
             t0_moe = time.perf_counter()
 
-            # Step 1: Router Expert evaluation (< 0.3 ms)
+            # Step 1: Router Expert evaluation
             route_res = router_expert.forward_single(q)
             selected_domain = route_res.fields["target_expert"].selected_value
             route_conf = route_res.fields["target_expert"].confidence
 
-            # Step 2: Specialized Expert evaluation (< 0.4 ms)
+            # Step 2: Specialized Expert evaluation
             chosen_expert = moe_experts[selected_domain]
             expert_res = chosen_expert.forward_single(q)
             total_moe_ms = (time.perf_counter() - t0_moe) * 1000.0
@@ -337,7 +336,7 @@ def main() -> None:
             print(f"\n  [Query]: \"{q}\"")
             print(f"    Router Dispatch:   {selected_domain} (Confidence: {route_conf:.1%})")
             print(f"    Specialized Action:{spec_action}")
-            print(f"    Total MoE Latency: {total_moe_ms:.3f} ms (< 1.0 ms pipeline SLA!)")
+            print(f"    Total MoE Latency: {total_moe_ms:.3f} ms")
 
     print("\n" + "=" * 80)
     print("  EXAMPLE PATHWAYS COMPLETED; REVIEW THE MEASURED RESULTS ABOVE.")

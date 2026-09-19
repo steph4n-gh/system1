@@ -1,6 +1,6 @@
 # Deployment boundaries and release limitations
 
-System 1 is beta software. The supported release claims are the behavior demonstrated by the current source, tests, and [recorded quality run](../benchmarks/quality/results/launch_review.json). Earlier research manuscripts and graphics contain historical or illustrative measurements; they are not deployment guarantees.
+System 1 1.0 stabilizes the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. The supported release claims are documented with [measured release evidence](releases/1.0.md). Earlier research manuscripts and graphics contain historical or illustrative measurements; they are not deployment guarantees.
 
 ## Deterministic tool authorization
 
@@ -10,7 +10,7 @@ A guard result evaluates the policy you configured. It does not authenticate the
 
 The application must check the outcome and execute only the authorized operation with the authorized arguments. The library is an in-process hook, not an OS sandbox; it cannot stop code that bypasses it. A receipt is evidence of a recorded decision, not a one-use execution capability. Add application-level replay prevention when it is required.
 
-Default/diagnostic guard mode can grant permission through the statistical path and does not require durable storage or signing. Use it for experiments, not as a substitute for an enforcement configuration.
+Default/diagnostic guard mode can grant permission through a sufficiently calibrated statistical path and does not require durable storage or signing. Its ten built-in calibration examples are insufficient for default strict acceptance; repeated examples no longer manufacture confidence. Use it for experiments, not as a substitute for an enforcement configuration.
 
 ## Statistical limits
 
@@ -18,7 +18,7 @@ The seed projector uses local features and schema descriptions. The included sec
 
 Split-conformal coverage requires calibration examples and future examples to be exchangeable, with the scoring model fixed independently of the conformal calibration fold. Its finite-sample guarantee concerns marginal membership of the true label in a prediction set. It does not guarantee correctness conditional on accepting a singleton, simultaneous coverage across every field, or adversarial robustness. An empty set is an abstention signal, not proof of distribution shift. See [Angelopoulos and Bates](https://arxiv.org/abs/2107.07511).
 
-Use separate training, calibration, and evaluation data. Recalibrate after model updates and measure behavior on your deployment distribution. Neither the significance level `alpha` nor a confidence threshold implies a fixed escalation or local-retention rate. Optional fallback routing is application behavior; `System1Engine.decide()` itself returns structured values and uncertainty rather than executing a frontier model or tool.
+Use separate teaching, calibration, and evaluation data. Recalibrate after model updates and measure behavior on your deployment distribution. Neither the significance level `alpha` nor a confidence threshold implies a fixed escalation or local-retention rate. Optional fallback routing is application behavior; `System1Engine.decide()` itself returns structured values and uncertainty rather than executing a frontier model or tool.
 
 ## Audit evidence and privacy
 
@@ -54,4 +54,4 @@ No maintained Docker image, Kubernetes manifests, HSM integration, or hardware e
 
 Sub-millisecond timings in the recorded run are median decision timings for small seed-model workloads. They do not include durable authorization, complete tool execution, or network services. Measure whole-operation latency and throughput on your own hardware; the ledger's integrity checks can grow with ledger history.
 
-The base package uses NumPy and cryptography. MLX acceleration and Game Boy emulation are optional and depend on platform support and user-provided assets. The `reflex` compatibility namespace shares a name with a separate web framework; avoid installing both distributions in the same environment.
+The base package uses NumPy and cryptography. MLX acceleration, neural-head experiments, gaming environments, and Game Boy emulation remain experimental and depend on platform support and user-provided assets. Their inclusion does not imply the stable core has learned those tasks. The `reflex` compatibility namespace shares a name with a separate web framework; avoid installing both distributions in the same environment.

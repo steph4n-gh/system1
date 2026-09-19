@@ -1,5 +1,22 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## Stable release evaluation
+
+```bash
+python benchmarks/quality/evaluate_release.py
+```
+
+Reproduces three manually taught skills and the same skills taught from recorded
+live Jev answers. No API key is needed. Local evaluation blocks network access and
+checks saved/reloaded behavior. The command exits unsuccessfully if any skill
+misses 95% accepted correctness or 80% acceptance on these authored cases.
+
+See the [1.0 evidence and limitations](../../docs/releases/1.0.md),
+[recorded results](results/stable_release.json), and
+[data and development history](../../examples/teaching/README.md).
+These point-estimate targets do not certify population accuracy. The seed and
+five-fold results below are retained as historical 0.2.2 comparisons.
+
 ## Overview
 
 This benchmark suite measures the **decision quality** (accuracy, precision, recall, F1, MAE, RMSE, correlation) of the System 1 non-autoregressive decision engine. It complements the existing latency benchmarks by providing the first published accuracy/quality metrics.

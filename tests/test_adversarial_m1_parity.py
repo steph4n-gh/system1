@@ -171,7 +171,7 @@ def test_guard_interception_result_allowed_property_stress():
         res_allow.outcome = DecisionOutcome.DENY  # frozen dataclass
 
 
-def test_guard_hooks_twin_allowed_behavior():
+def test_guard_hooks_twin_allowed_behavior(read_policy):
     """Verify both SystemOneGuardHook and SystemOneGuardHook produce identical .allowed verdicts."""
     proposal_safe = ActionProposal.create(
         tenant_id="t1",
@@ -191,7 +191,7 @@ def test_guard_hooks_twin_allowed_behavior():
     )
 
     for hook_cls in (SystemOneGuardHook, SystemOneGuardHook):
-        hook = hook_cls(min_confidence=0.50, alpha=0.10)
+        hook = hook_cls(min_confidence=0.50, alpha=0.10, policy=read_policy)
         res_safe = hook.evaluate_proposal(proposal_safe, context_prompt="Inspect read-only project documentation in README.md")
         assert res_safe.outcome == DecisionOutcome.ALLOW
         assert res_safe.allowed is True

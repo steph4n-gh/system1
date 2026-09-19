@@ -5,6 +5,16 @@ import urllib.request
 import pytest
 
 
+@pytest.fixture
+def read_policy():
+    """Integration fixtures explicitly authorize their harmless read tools."""
+    from system1.guard import DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
+    return PolicyEngine(rules=[PolicyRule(
+        rule_id="permit_test_reads", tools={"read_file", "cat", "safe_observation"},
+        outcome=DecisionOutcome.ALLOW, risk=RiskLevel.READ_ONLY,
+    )])
+
+
 @pytest.fixture(autouse=True)
 def block_live_typesafe_http(monkeypatch):
     original = urllib.request.urlopen

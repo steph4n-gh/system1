@@ -1,6 +1,7 @@
 """Tests for System 1 Fail-Closed Reference Monitor / Guard Hook."""
 
 import pytest
+from dataclasses import replace
 
 from system1 import (
     ActionProposal,
@@ -29,8 +30,14 @@ def _make_proposal(tool: str, target: str, args: str = "") -> ActionProposal:
     )
 
 
-def test_guard_hook_allows_safe_confident_action():
+def test_guard_hook_allows_safe_confident_action(monkeypatch):
     hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    decide = hook.engine.decide
+    def confident(*args, **kwargs):
+        result = decide(*args, **kwargs)
+        return replace(result, conformal_sets={"is_safe": ["True"], "risk_category": ["read_only"]},
+                       is_ambiguous=False, ambiguous_fields=[], escalated_fields=[])
+    monkeypatch.setattr(hook.engine, "decide", confident)
     proposal = _make_proposal(
         tool="read_file",
         target="/Volumes/Storage/project/README.md",
@@ -65,8 +72,15 @@ def test_guard_hook_denies_unsafe_action():
     assert interception.policy_decision.outcome == DecisionOutcome.DENY
 
 
-def test_guard_hook_requires_approval_on_low_confidence():
+def test_guard_hook_requires_approval_on_low_confidence(monkeypatch):
     hook = SystemOneGuardHook(min_confidence=0.999, alpha=0.05)
+    decide = hook.engine.decide
+    def low_confidence(*args, **kwargs):
+        result = decide(*args, **kwargs)
+        return replace(result, conformal_sets={"is_safe": ["True"], "risk_category": ["network_call"]},
+                       confidences={"is_safe": 0.9, "risk_category": 0.9},
+                       is_ambiguous=False, ambiguous_fields=[], escalated_fields=[])
+    monkeypatch.setattr(hook.engine, "decide", low_confidence)
     proposal = _make_proposal(
         tool="network_request",
         target="https://external-service.org/webhook",
@@ -80,6 +94,14 @@ def test_guard_hook_requires_approval_on_low_confidence():
     assert interception.outcome == DecisionOutcome.REQUIRE_APPROVAL
     assert "below required threshold" in interception.reason
     assert interception.policy_decision.outcome == DecisionOutcome.REQUIRE_APPROVAL
+
+
+def test_default_guard_examples_do_not_manufacture_calibration_evidence():
+    hook = SystemOneGuardHook(min_confidence=0.5, alpha=0.05)
+    assert len(hook.engine.conformal_predictors["is_safe"].calibration_scores) == 5
+    proposal = _make_proposal(tool="read_file", target="README.md")
+    result = hook.evaluate_proposal(proposal, context_prompt="Inspect read-only project documentation")
+    assert result.outcome == DecisionOutcome.REQUIRE_APPROVAL
 
 
 def test_guard_hook_handles_multichoice_without_false_ambiguity():

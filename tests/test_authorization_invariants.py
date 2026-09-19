@@ -121,9 +121,9 @@ def test_invariant_1_mcp_tools_list_does_not_invoke_executor():
     assert sentinel.call_count == 0
 
 
-def test_invariant_1_mcp_tools_call_dispatches_when_allowed():
+def test_invariant_1_mcp_tools_call_dispatches_when_allowed(read_policy):
     """Method 'tools/call' dispatches to executor when allowed by guard."""
-    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10, policy=read_policy)
     proxy = SystemOneMCPProxy(guard=hook)
     sentinel = SentinelExecutor()
 

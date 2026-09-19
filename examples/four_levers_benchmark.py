@@ -272,17 +272,17 @@ def run_benchmark():
     print(f"  Vanilla System 1 Escalations: {baseline_escalations}/100 ({baseline_escalations}%) | Total Time: {t_vanilla_ms:.2f} ms")
     print(f"  4-Levers System 1 Escalations:  {smart_escalations}/100 ({smart_escalations}%) | Total Time: {t_smart_ms:.2f} ms")
     print(f"  Tier 2 Escalation Reduction:  {((baseline_escalations - smart_escalations) / max(1, baseline_escalations)) * 100.0:.1f}% reduction")
-    print(f"  Second-Pass Repeat Ambiguity: 0% (100% Certified Execution via L1 Cache & Distillation)")
+    print("  Repeated scripted answers measure update/cache mechanics, not certified execution.")
 
     # Scorecard
     print("\n" + "┌" + "─" * 78 + "┐")
     print("│                     TIER 1 ARCHITECTURAL LEVERS SCORECARD                    │")
     print("├" + "─" * 78 + "┤")
-    print(f"│  Lever 1 (L1 Cache Hit Latency)    │ {exact_p50_us:>10.2f} µs ({exact_p50_us/1000.0:.4f} ms)  │ Sub-0.05ms Target MET │")
-    print(f"│  Lever 2 (Sherman-Morrison Update) │ {single_p50_us:>10.2f} µs ({single_p50_us/1000.0:.4f} ms)  │ Sub-0.05ms Target MET │")
-    print(f"│  Lever 3 (Margin Conformal Gate)   │ Dominance Gating Active     │ Suppresses False Halts│")
-    print(f"│  Lever 4 (Telemetry Vector Fusion) │ Robust Multi-Modal Fusion   │ Sharp Hyperplane Shift│")
-    print(f"│  Escalation Collapse Rate          │ {baseline_escalations}% -> {smart_escalations}% -> 0%           │ Tier 2 Shielded 100%  │")
+    print(f"│  Lever 1 (L1 Cache Hit Latency)    │ {exact_p50_us:>10.2f} µs ({exact_p50_us/1000.0:.4f} ms)  │ Measured above │")
+    print(f"│  Lever 2 (Sherman-Morrison Update) │ {single_p50_us:>10.2f} µs ({single_p50_us/1000.0:.4f} ms)  │ Measured above │")
+    print(f"│  Lever 3 (Margin Conformal Gate)   │ Dominance Gating Active     │ Heuristic review│")
+    print(f"│  Lever 4 (Telemetry Vector Fusion) │ Robust Multi-Modal Fusion   │ Numeric telemetry│")
+    print(f"│  Escalation Collapse Rate          │ {baseline_escalations}% -> {smart_escalations}%                  │ Measured stream  │")
     print("└" + "─" * 78 + "┘\n")
 
 

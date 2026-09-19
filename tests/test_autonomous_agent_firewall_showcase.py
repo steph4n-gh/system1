@@ -231,89 +231,35 @@ def test_enterprise_stress_showcase_alias():
     assert enterprise_stress_showcase.run_multithreaded_stress_test is run_multithreaded_stress_test
 
 
-def test_firewall_classification_and_conformal_accuracy():
-    """Verify distilled firewall achieves high accuracy across benign, admin, exploit, and multi-choice tags."""
+def test_firewall_defers_when_full_decisions_disagree():
+    """Getting some fields right must not promote an unreliable five-field skill."""
     from system1.core.embeddings import HybridProjector
-    from system1.compiler import SystemOneCompiler
-    from system1.compat.typesafe import _build_dynamic_schema
 
-    schema_dict = get_autonomous_agent_firewall_schema()
-    schema = _build_dynamic_schema(schema_dict)
+    questions = get_autonomous_agent_firewall_schema()
     dataset = get_autonomous_agent_firewall_dataset()
     stream = get_interleaved_query_stream(dataset)
-
-    projector = HybridProjector(dimension=384)
-    demo_policy = PromotionPolicy(
-        min_agreement_threshold=0.75,
-        false_allow_ceiling=0.0,
-        require_statistical_bound=False,
-    )
     handler = make_firewall_baseline_handler(dataset)
     client = TypeSafeClient(
-        mode="auto_cutover",
-        cutover_threshold=20,
-        min_agreement_threshold=0.8,
-        promotion_policy=demo_policy,
-        augment=True, strict_mode=False,  # Legacy synthetic demonstration; see observe_routing.py for default gates.
-        projector=projector,
-        dimension=384,
+        mode="auto_cutover", cutover_threshold=20,
+        promotion_policy=PromotionPolicy(
+            min_agreement_threshold=0.75, false_allow_ceiling=0.0,
+            require_statistical_bound=False, min_local_acceptance=0.0,
+        ),
+        augment=True, strict_mode=False,
+        projector=HybridProjector(dimension=384), dimension=384,
         baseline_handler=handler,
     )
+    for query in stream:
+        response = client.systemone(query["prompt"], questions)
+        assert not response.local_execution
+        assert response.answers == handler(query["prompt"], questions).answers
 
-    # Run through full 48 stream
-    responses = [client.systemone(q["prompt"], schema_dict) for q in stream]
-    assert client.is_cutover is True
-
-    # Check post-cutover performance (queries 21-48, 28 queries)
-    post_cutover = stream[20:]
-    post_responses = responses[20:]
-
-    correct_actions = 0
-    covered_actions = 0
-    detected_tags = 0
-    total_tags = 0
-
-    for i, q in enumerate(post_cutover):
-        resp = post_responses[i]
-        assert resp.local_execution is True
-
-        pred_action = resp.answers["action_decision"].choice
-        cset = resp.answers["action_decision"].conformal_set or []
-        target_action = q["target_decision"]
-
-        if pred_action == target_action:
-            correct_actions += 1
-        if target_action in cset:
-            covered_actions += 1
-
-        # Check CVSS scores: benign must be low, exploit must be high
-        cvss = float(resp.answers["cvss_risk_score"].value)
-        if q["category"].startswith("Benign"):
-            if cvss >= 3.0:
-                assert resp.get("abstain") or resp.is_ambiguous, "Uncertain risk estimate must request review"
-            assert resp.answers["is_safe_to_execute"].value is True
-            assert pred_action == "ALLOW_IMMEDIATE"
-
-        # Check policy violations
-        pred_viols = resp.answers["policy_violations"].choices or []
-        target_viols = q["target_violations"]
-        if target_viols:
-            total_tags += len(target_viols)
-            for t in target_viols:
-                if t in pred_viols:
-                    detected_tags += 1
-
-    # Accuracy must exceed 85%
-    accuracy = correct_actions / len(post_cutover)
-    assert accuracy >= 0.85, f"Post-cutover action accuracy too low: {accuracy:.1%}"
-
-    # Conformal coverage must be 100%
-    coverage = covered_actions / len(post_cutover)
-    assert coverage >= 0.95, f"Recorded fixture coverage below regression baseline: {coverage:.1%}"
-
-    # MultiChoice recall must be non-zero (exceeding 50%)
-    tag_recall = detected_tags / total_tags
-    assert tag_recall >= 0.50, f"Policy violation tag recall too low: {tag_recall:.1%}"
+    assert not client.is_cutover
+    report = client.last_promotion_report
+    assert report is not None and not report.is_eligible
+    assert report.matching_checks > 0
+    assert report.agreement_rate < client.promotion_policy.min_agreement_threshold
+    assert any("Held-out agreement" in reason for reason in report.rejection_reasons)
 
 
 def test_demonstrate_monkey_patching_accuracy():

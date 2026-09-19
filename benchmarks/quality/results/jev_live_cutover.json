@@ -1,10 +1,10 @@
 {
-  "teacher": "offline",
+  "teacher": "jev",
   "data": "Synthetic structured tickets; repeated vocabulary, new ticket IDs. Lifecycle evidence only.",
   "promoted": true,
   "observations": 357,
-  "observation_ms": 631.087000016123,
-  "final_observation_and_teaching_ms": 117.91204201290384,
+  "observation_ms": 115891.61391695961,
+  "final_observation_and_teaching_ms": 424.18791697127745,
   "promotion": {
     "is_eligible": true,
     "total_validation_checks": 71,
@@ -24,7 +24,7 @@
         "critical_targets": 0
       }
     },
-    "artifact_digest": "2f82d039d998a21eeeaeca495a6482a511f94008d16cc08ba3e1c20f667401e2",
+    "artifact_digest": "ea14950adbb5358611edbacee34049092c0bf937b0c080deffb793d562d53032",
     "manifest": {
       "training_set_digest": "d09220ffa114f6399e41a85c6ac71d2d17c433dd2417e226a590d44da64c6c25",
       "calibration_set_digest": "e41062e46c05bf30913817c4b10ca284f38c25b039837e7faa731f00f1b86ed0",
@@ -38,9 +38,9 @@
         "val_samples": 71
       },
       "teacher_provenance": {
-        "provider_model": "callback",
+        "provider_model": "jev-1.13.0",
         "total_samples": 357,
-        "timestamp": 1789853514.873128
+        "timestamp": 1789853209.5467892
       }
     },
     "validation_requests": 71,
@@ -56,7 +56,7 @@
   "correct": 40,
   "accepted": 40,
   "accepted_errors": 0,
-  "local_latency_median_ms": 0.425,
+  "local_latency_median_ms": 0.395,
   "artifact_bytes": 5075,
   "reload_identical": true,
   "teacher_calls_after_takeover": 0,
@@ -66,7 +66,175 @@
       "expected": "billing",
       "prediction": "billing",
       "needs_review": false,
-      "latency_ms": 0.449
+      "latency_ms": 0.457
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.548
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.436
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.479
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.392
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.392
+    },
+    {
+      "topic": "authentication",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.389
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.481
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.391
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.409
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.43
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.365
+    },
+    {
+      "topic": "payment",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.643
+    },
+    {
+      "topic": "payment",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.359
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.368
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.37
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.398
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.386
+    },
+    {
+      "topic": "subscription",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.406
+    },
+    {
+      "topic": "account",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.4
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.352
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.618
+    },
+    {
+      "topic": "password",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.352
+    },
+    {
+      "topic": "login",
+      "expected": "access",
+      "prediction": "access",
+      "needs_review": false,
+      "latency_ms": 0.373
+    },
+    {
+      "topic": "invoice",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.375
     },
     {
       "topic": "authentication",
@@ -76,270 +244,102 @@
       "latency_ms": 0.484
     },
     {
-      "topic": "subscription",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.38
-    },
-    {
-      "topic": "subscription",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.429
-    },
-    {
-      "topic": "login",
+      "topic": "password",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.429
+      "latency_ms": 0.455
     },
     {
-      "topic": "subscription",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.514
-    },
-    {
-      "topic": "authentication",
+      "topic": "password",
       "expected": "access",
       "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.425
-    },
-    {
-      "topic": "login",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.371
-    },
-    {
-      "topic": "invoice",
-      "expected": "billing",
-      "prediction": "billing",
       "needs_review": false,
       "latency_ms": 0.417
     },
     {
-      "topic": "login",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.5
-    },
-    {
-      "topic": "subscription",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.483
-    },
-    {
-      "topic": "account",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.456
-    },
-    {
-      "topic": "payment",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.464
-    },
-    {
-      "topic": "payment",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.453
-    },
-    {
-      "topic": "login",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.377
-    },
-    {
-      "topic": "account",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.361
-    },
-    {
-      "topic": "refund",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.403
-    },
-    {
-      "topic": "login",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.408
-    },
-    {
-      "topic": "subscription",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.416
-    },
-    {
-      "topic": "account",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.395
-    },
-    {
-      "topic": "refund",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.382
-    },
-    {
-      "topic": "refund",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.429
-    },
-    {
-      "topic": "password",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.415
-    },
-    {
-      "topic": "login",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.496
-    },
-    {
-      "topic": "invoice",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.397
-    },
-    {
       "topic": "authentication",
       "expected": "access",
       "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.51
-    },
-    {
-      "topic": "password",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.361
-    },
-    {
-      "topic": "password",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.408
-    },
-    {
-      "topic": "authentication",
-      "expected": "access",
-      "prediction": "access",
-      "needs_review": false,
-      "latency_ms": 0.461
-    },
-    {
-      "topic": "refund",
-      "expected": "billing",
-      "prediction": "billing",
-      "needs_review": false,
-      "latency_ms": 0.425
-    },
-    {
-      "topic": "refund",
-      "expected": "billing",
-      "prediction": "billing",
       "needs_review": false,
       "latency_ms": 0.402
     },
     {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.37
+    },
+    {
+      "topic": "refund",
+      "expected": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "latency_ms": 0.383
+    },
+    {
       "topic": "invoice",
       "expected": "billing",
       "prediction": "billing",
       "needs_review": false,
-      "latency_ms": 0.458
+      "latency_ms": 0.398
     },
     {
       "topic": "password",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.442
+      "latency_ms": 0.39
     },
     {
       "topic": "account",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.653
+      "latency_ms": 0.427
     },
     {
       "topic": "subscription",
       "expected": "billing",
       "prediction": "billing",
       "needs_review": false,
-      "latency_ms": 0.426
+      "latency_ms": 0.474
     },
     {
       "topic": "invoice",
       "expected": "billing",
       "prediction": "billing",
       "needs_review": false,
-      "latency_ms": 0.347
+      "latency_ms": 0.371
     },
     {
       "topic": "payment",
       "expected": "billing",
       "prediction": "billing",
       "needs_review": false,
-      "latency_ms": 0.395
+      "latency_ms": 0.381
     },
     {
       "topic": "login",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.364
+      "latency_ms": 0.383
     },
     {
       "topic": "authentication",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.477
+      "latency_ms": 0.641
     },
     {
       "topic": "login",
       "expected": "access",
       "prediction": "access",
       "needs_review": false,
-      "latency_ms": 0.391
+      "latency_ms": 0.357
     }
   ]
 }

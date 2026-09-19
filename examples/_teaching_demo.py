@@ -12,6 +12,24 @@ import numpy as np
 
 from system1 import System1Engine, __version__
 from system1.compiler import CompiledSystemOneModel, SystemOneCompiler
+from system1.compat.typesafe import compute_wilson_score_lower
+
+
+def quality_metrics(rows):
+    accepted = [row for row in rows if not row["needs_review"]]
+    correct = sum(row["prediction"] == row["label"] for row in rows)
+    accepted_correct = sum(row["prediction"] == row["label"] for row in accepted)
+    def interval(successes, total):
+        return [compute_wilson_score_lower(successes, total),
+                1 - compute_wilson_score_lower(total - successes, total)] if total else None
+    accuracy = accepted_correct / len(accepted) if accepted else None
+    acceptance = len(accepted) / len(rows) if rows else 0
+    return {"cases": len(rows), "correct": correct, "accepted": len(accepted),
+            "accepted_correct": accepted_correct, "accepted_accuracy": accuracy,
+            "acceptance_rate": acceptance, "accuracy_interval_95": interval(correct, len(rows)),
+            "accepted_accuracy_interval_95": interval(accepted_correct, len(accepted)),
+            "acceptance_interval_95": interval(len(accepted), len(rows)),
+            "meets_routing_targets": accuracy is not None and accuracy >= .95 and acceptance >= .8}
 
 
 def load_cases(path):
@@ -54,7 +72,7 @@ def run_example(schema, name, argv=None):
     examples = {field: [(row["prompt"], row["label"]) for row in data["teach"]]}
     calibration = {field: [(row["prompt"], row["label"]) for row in data["calibration"]]}
     start = time.perf_counter()
-    skill = SystemOneCompiler(schema, dimension=2048).compile(
+    skill = SystemOneCompiler(schema, dimension=2048, regularization=0.1).compile(
         examples, augment=False, calibration_exemplars=calibration,
     )
     teaching_ms = (time.perf_counter() - start) * 1000
@@ -91,7 +109,7 @@ def run_example(schema, name, argv=None):
         "dataset_sha256": data_digest, "skill_path": str(path),
         "environment": {"python": platform.python_version(), "platform": platform.platform(),
                         "numpy": np.__version__, "system1": __version__},
-        "settings": {"dimension": 2048, "regularization": 1.0, "alpha": 0.05,
+        "settings": {"dimension": 2048, "regularization": skill.metadata["regularization"], "alpha": 0.05,
                      "strict": True, "cache": False, "receipts": False},
         "counts": {split: dict(Counter(row["label"] for row in data[split]))
                    for split in ("teach", "calibration", "evaluate")},
@@ -108,6 +126,11 @@ def run_example(schema, name, argv=None):
         "decision_p50_ms": float(np.median([row["latency_ms"] for row in rows])),
         "decision_p95_ms": float(np.percentile([row["latency_ms"] for row in rows], 95)),
         "predictions": rows,
+        "quality": quality_metrics(rows),
+        "evaluation_cohorts": {
+            cohort: quality_metrics([row for row in rows if row.get("evaluation_cohort", "reference") == cohort])
+            for cohort in sorted({row.get("evaluation_cohort", "reference") for row in rows})
+        },
     }
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(f"\n{name}: {len(data['teach'])} teaching + {len(data['calibration'])} calibration + {len(rows)} unseen cases")

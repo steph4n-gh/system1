@@ -109,8 +109,9 @@ Keep three uses of examples separate:
 3. **Evaluate:** unseen examples used to measure the finished skill.
 
 The compiler reserves about 25% of the supplied unique prompts for calibration by
-default. For choice fields it divides that portion again between temperature
-and conformal calibration. Repeated prompts, ignoring whitespace and case, stay
+default. For categorical and Boolean fields it divides that portion again between temperature
+and conformal calibration; MultiChoice also separates temperature fitting from
+its joint assignment score. Each normalized prompt is one evidence unit. Repeated prompts, ignoring whitespace and case, stay
 in the same partition. It does not detect paraphrases, related customer threads,
 or shared source documents.
 
@@ -141,10 +142,11 @@ Use workload evidence before changing this setting.
 
 Review a mistake, correct its label, add representative examples of that case,
 and compile again. Recheck with separate calibration and evaluation examples.
-Saving the revised skill uses the same file format and runtime.
+Saving the revised skill uses the same runtime. Version 1.0 writes format v2
+and reads older v1 skills; older runtimes must be upgraded before reading v2.
 
-The existing online correction methods remain available for experiments; after
-changing a skill, old calibration evidence may no longer describe it. The
+Online correction methods invalidate the changed heads' calibration in memory
+and in saved artifacts. Strict mode then requires review until recalibration. The
 simplest reproducible workflow is to retain your examples and recompile.
 
 The broader [expert examples](../../examples/train_expert.py) explore synthetic

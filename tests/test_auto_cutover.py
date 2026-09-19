@@ -50,6 +50,7 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
             min_agreement_threshold=0.75,
             false_allow_ceiling=0.0,
             require_statistical_bound=False,
+            min_local_acceptance=0.0,  # This fixture tests lifecycle mechanics with relaxed demo gates.
         ),
         ledger=ledger,
         zero_egress=False,

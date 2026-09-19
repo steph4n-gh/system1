@@ -11,6 +11,7 @@ import sys
 from unittest import mock
 
 import pytest
+from system1 import __version__
 
 # ---------------------------------------------------------------------------
 # Check whether grpcio is available.  Tests that need it will be skipped
@@ -307,7 +308,7 @@ class TestHealthCheckRPC:
         resp = servicer.HealthCheck(_Req(), ctx)
         assert resp is not None
         assert resp.status == 1  # SERVING
-        assert resp.version == "0.2.2"
+        assert resp.version == __version__
         assert isinstance(resp.loaded_schemas, list)
 
     def test_health_check_with_loaded_schemas(self):
@@ -476,7 +477,7 @@ class TestResponseSerialization:
         resp = _build_health_response(["guard", "triage"])
         assert resp.status == 1
         assert resp.loaded_schemas == ["guard", "triage"]
-        assert resp.version == "0.2.2"
+        assert resp.version == __version__
 
     def test_build_verify_response(self):
         from system1.grpc_server import _build_verify_response

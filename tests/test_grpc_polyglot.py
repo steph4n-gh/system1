@@ -16,6 +16,7 @@ import concurrent.futures
 from pathlib import Path
 from typing import Any, Dict
 import pytest
+from system1 import __version__
 try:
     import grpc
     from system1.proto import system1_pb2, system1_pb2_grpc, system1_proto_path as s1_proto_path
@@ -148,7 +149,7 @@ def test_grpc_health_check_wire_call(live_grpc_server):
     assert isinstance(resp, system1_pb2.HealthCheckResponse)
     assert resp.status == system1_pb2.HealthCheckResponse.SERVING
     assert "auth_policy" in resp.loaded_schemas
-    assert resp.version == "0.2.2"
+    assert resp.version == __version__
 
 
 def test_protobuf_binary_serialization_round_trip():

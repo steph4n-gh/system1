@@ -437,8 +437,8 @@ def render_cutover_banner(event: Dict[str, Any]) -> None:
     print(f"║  Samples Distilled:      {samples} query/decision exemplars ingested into SystemOneCompiler{' ':>24}║")
     print(f"║  Closed-Form Solve:      Ridge Regression Hyperplanes: W* = (X^T X + λI)^(-1) X^T Y{' ':>29}║")
     print(f"║  Local Model Agreement:  {agreement:.1f}% (Required Threshold: {threshold:.1f}%){' ':>45}║")
-    print(f"║  New Execution Status:   100% LOCAL ON-DEVICE EXECUTION ACTIVE ($0 cost, sub-2ms latency){' ':>16}║")
-    print(f"║  Data Egress Status:     PERMANENT ZERO-EGRESS LOCK (No prompt or schema leaves this machine){' ':>12}║")
+    print(f"║  New Execution Status:   LOCAL EXECUTION ACTIVE; SEE MEASURED LATENCY{' ':>16}║")
+    print(f"║  Data Egress Status:     Adapter local path active; application networking is separate{' ':>12}║")
     print("╚" + "═" * 108 + "╝\n")
 
 
@@ -703,6 +703,7 @@ def run_auto_cutover_showcase(
         min_agreement_threshold=0.75,
         false_allow_ceiling=0.0,
         require_statistical_bound=False,
+        min_local_acceptance=0.0,
     )
     effective_threshold = max(3, cutover_threshold) if cutover_threshold <= 2 and total_queries >= 3 else cutover_threshold
     client = TypeSafeClient(
@@ -835,8 +836,8 @@ def run_auto_cutover_showcase(
         demonstrate_monkey_patching(use_case, questions, queries)
 
     print("\n" + "=" * 110)
-    print("  AUTONOMOUS TROJAN HORSE CUTOVER SHOWCASE SUCCESSFULLY COMPLETED!")
-    print("  Enterprise SLA Met: 200x+ Latency Drop | Zero Egress | $0 Token Cost | Ed25519 Verified")
+    print("  SIMULATED CUTOVER SHOWCASE FINISHED — SEE MEASUREMENTS AND PROMOTION STATUS ABOVE")
+    print("  Simulated teacher and relaxed gates; measured results above are not production SLAs.")
     print("=" * 110 + "\n")
 
 

@@ -1,10 +1,12 @@
 # Complete example review — 19 September 2026
 
+> Historical review of 0.2.2 and earlier behavior. For resolved findings, current results, and supported versus experimental scope, see the [1.0 release evidence](releases/1.0.md). The measurements below are retained as review history.
+
 **Release follow-up:** the ordered corrections below have now been implemented.
 The new [flagship](../examples/observe_routing.py) adds one entry point (25 Python
 files total). It passes the normal gates using observed labels, disconnects its
 offline rule teacher, and checks complete reload equivalence. The
-[adapter contract](typesafe.md) describes supported SDK calls and beta limits.
+[adapter contract](typesafe.md) describes supported SDK calls and release boundaries.
 The original review findings and measurements below remain as the pre-change
 record. The two enterprise showcases explicitly retain their legacy augmentation
 and relaxed gates; they are simulation examples, not production quality evidence.

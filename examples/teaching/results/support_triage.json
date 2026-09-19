@@ -8,17 +8,17 @@
     "sales": "Prospective purchases, demos, enterprise quotes, or commercial contract terms.",
     "scope": "English, single-issue support requests. Use the primary requested action; mixed issues and unfamiliar requests need human judgment."
   },
-  "dataset_sha256": "8083b4c48cf692afef003105e8fe145fa46a526d681cca4269360cabc6349230",
+  "dataset_sha256": "7db3b54d8f5ca0475709f933a64bbba10ed192c6153160725183aacfd6c023d7",
   "skill_path": ".system1/examples/support_triage/skill.s1m",
   "environment": {
     "python": "3.13.5",
     "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
     "numpy": "2.5.3",
-    "system1": "0.2.2"
+    "system1": "1.0.0"
   },
   "settings": {
     "dimension": 2048,
-    "regularization": 1.0,
+    "regularization": 0.1,
     "alpha": 0.05,
     "strict": true,
     "cache": false,
@@ -26,304 +26,531 @@
   },
   "counts": {
     "teach": {
-      "billing": 16,
-      "technical_support": 16,
-      "account_security": 16,
-      "sales": 16
+      "billing": 48,
+      "technical_support": 48,
+      "account_security": 48,
+      "sales": 48
     },
     "calibration": {
-      "billing": 12,
-      "technical_support": 12,
-      "account_security": 12,
-      "sales": 12
+      "billing": 28,
+      "technical_support": 28,
+      "account_security": 28,
+      "sales": 28
     },
     "evaluate": {
-      "billing": 6,
-      "technical_support": 6,
-      "account_security": 6,
-      "sales": 6
+      "billing": 26,
+      "technical_support": 26,
+      "account_security": 26,
+      "sales": 26
     }
   },
   "compiler_counts": {
-    "fit": 64,
-    "calibration": 48,
-    "temperature": 24,
+    "fit": 192,
+    "calibration": 112,
+    "temperature": 56,
     "generated": 0
   },
-  "teaching_ms": 158.49612501915544,
-  "save_ms": 3.2359170145355165,
-  "load_ms": 4.15300001623109,
-  "skill_bytes": 32966,
-  "starter_accuracy": 0.625,
-  "accuracy": 0.875,
-  "accepted_count": 1,
-  "review_count": 23,
-  "accepted_accuracy": 1.0,
-  "set_coverage": 0.9166666666666666,
+  "teaching_ms": 198.79558397224173,
+  "save_ms": 1.4879999798722565,
+  "load_ms": 3.872916044201702,
+  "skill_bytes": 32671,
+  "starter_accuracy": 0.5576923076923077,
+  "accuracy": 0.9423076923076923,
+  "accepted_count": 92,
+  "review_count": 12,
+  "accepted_accuracy": 0.9891304347826086,
+  "set_coverage": 0.9903846153846154,
   "confusion_matrix": {
     "billing": {
-      "billing": 4,
+      "billing": 22,
       "technical_support": 1,
-      "account_security": 0,
-      "sales": 1
+      "account_security": 1,
+      "sales": 2
     },
     "technical_support": {
       "billing": 1,
-      "technical_support": 5,
+      "technical_support": 25,
       "account_security": 0,
       "sales": 0
     },
     "account_security": {
-      "billing": 0,
+      "billing": 1,
       "technical_support": 0,
-      "account_security": 6,
+      "account_security": 25,
       "sales": 0
     },
     "sales": {
       "billing": 0,
       "technical_support": 0,
       "account_security": 0,
-      "sales": 6
+      "sales": 26
     }
   },
-  "decision_p50_ms": 0.4997079959139228,
-  "decision_p95_ms": 0.7229875598568469,
+  "decision_p50_ms": 0.5037495284341276,
+  "decision_p95_ms": 0.6197001115651801,
   "predictions": [
     {
       "group": "refund-tracking",
       "prompt": "The refund is marked complete but the money is missing from my statement.",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
-      "prediction": "technical_support",
-      "needs_review": true,
+      "prediction": "billing",
+      "needs_review": false,
       "prediction_set": [
-        "technical_support",
-        "billing",
-        "account_security"
+        "billing"
       ],
-      "latency_ms": 0.7016670424491167
+      "latency_ms": 0.6408340414054692
     },
     {
       "group": "invoice-reissue",
       "prompt": "Please reissue the paid invoice under our company's new legal name.",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "billing",
       "prediction": "billing",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "billing",
-        "sales",
-        "technical_support"
+        "billing"
       ],
-      "latency_ms": 0.6325420108623803
+      "latency_ms": 0.5303749931044877
     },
     {
       "group": "card-authorization",
       "prompt": "The invoice payment left a pending authorization on my credit card.",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "billing",
       "prediction": "billing",
-      "needs_review": true,
-      "prediction_set": [],
-      "latency_ms": 0.5180420121178031
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.6876669940538704
     },
     {
       "group": "discount-missing",
       "prompt": "The promised subscription discount is absent from this month's charge.",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "billing",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "billing",
-        "technical_support",
-        "sales"
+        "billing"
       ],
-      "latency_ms": 0.7267500041052699
+      "latency_ms": 0.5091250059194863
     },
     {
       "group": "renewal-optout",
       "prompt": "Remove automatic renewal so we are not billed for another year.",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "sales",
       "needs_review": true,
       "prediction_set": [
         "sales",
-        "account_security",
-        "technical_support"
+        "billing"
       ],
-      "latency_ms": 0.482166011352092
+      "latency_ms": 0.4724999889731407
     },
     {
       "group": "receipt-currency",
       "prompt": "Can you provide the payment receipt with the original transaction currency?",
       "label": "billing",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "billing",
       "prediction": "billing",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "billing",
-        "technical_support",
-        "sales"
+        "billing"
       ],
-      "latency_ms": 0.5261250189505517
+      "latency_ms": 0.5459160311147571
     },
     {
       "group": "image-thumbnail",
       "prompt": "Uploaded images show broken thumbnails throughout the application.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "technical_support",
       "prediction": "technical_support",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "technical_support",
-        "billing",
-        "sales"
+        "technical_support"
       ],
-      "latency_ms": 0.5030410247854888
+      "latency_ms": 0.546208000741899
     },
     {
       "group": "api-rate-limit",
       "prompt": "Our integration hits an API rate limit even at a low request rate.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "technical_support",
       "prediction": "technical_support",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "technical_support",
-        "sales",
-        "account_security"
+        "technical_support"
       ],
-      "latency_ms": 0.46870799269527197
+      "latency_ms": 0.4914170131087303
     },
     {
       "group": "app-launch",
       "prompt": "After the latest update the desktop app fails to launch.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "billing",
       "prediction": "technical_support",
       "needs_review": false,
       "prediction_set": [
         "technical_support"
       ],
-      "latency_ms": 0.4279580316506326
+      "latency_ms": 0.4246669705025852
     },
     {
       "group": "editor-freeze",
       "prompt": "The document editor freezes when I paste a large table.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "sales",
       "prediction": "technical_support",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "technical_support",
-        "billing",
-        "account_security"
+        "technical_support"
       ],
-      "latency_ms": 0.4361249739304185
+      "latency_ms": 0.4427919629961252
     },
     {
       "group": "export-encoding",
       "prompt": "Exported CSV files corrupt accented characters in customer names.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
-      "prediction": "billing",
-      "needs_review": true,
+      "prediction": "technical_support",
+      "needs_review": false,
       "prediction_set": [
-        "billing",
-        "sales",
         "technical_support"
       ],
-      "latency_ms": 0.538624997716397
+      "latency_ms": 0.4978330107405782
     },
     {
       "group": "notification-link",
       "prompt": "Clicking a notification opens a blank page instead of the project.",
       "label": "technical_support",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "technical_support",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "technical_support",
-        "billing",
-        "account_security"
+        "technical_support"
       ],
-      "latency_ms": 0.5126249743625522
+      "latency_ms": 0.500874943099916
     },
     {
       "group": "mfa-travel",
       "prompt": "I cannot receive the second factor login code while travelling abroad.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "account_security",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "account_security",
-        "technical_support",
-        "billing"
+        "account_security"
       ],
-      "latency_ms": 0.49637496704235673
+      "latency_ms": 0.5205419729463756
     },
     {
       "group": "password-manager",
       "prompt": "Help me replace the account password exposed in a password manager breach.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "account_security",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "account_security",
-        "technical_support"
+        "account_security"
       ],
-      "latency_ms": 0.6700420053675771
+      "latency_ms": 0.5452909972518682
     },
     {
       "group": "unknown-passkey",
       "prompt": "A passkey I never registered has been added to my profile.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "sales",
       "prediction": "account_security",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "account_security",
-        "billing",
-        "sales"
+        "account_security"
       ],
-      "latency_ms": 0.42866700096055865
+      "latency_ms": 0.46387501060962677
     },
     {
       "group": "admin-recovery",
       "prompt": "Our only account administrator lost access to the recovery email.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "account_security",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "account_security",
-        "technical_support",
-        "billing"
+        "account_security"
       ],
-      "latency_ms": 0.4897500039078295
+      "latency_ms": 0.5034580244682729
     },
     {
       "group": "login-ip",
       "prompt": "Block further sign-ins to my account from an unfamiliar device.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
       "starter_prediction": "account_security",
       "prediction": "account_security",
-      "needs_review": true,
+      "needs_review": false,
       "prediction_set": [
-        "account_security",
-        "billing",
-        "sales"
+        "account_security"
       ],
-      "latency_ms": 0.46491698594763875
+      "latency_ms": 0.47466601245105267
     },
     {
       "group": "identity-check",
       "prompt": "I need to complete the account identity check after changing my name.",
       "label": "account_security",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5069999606348574
+    },
+    {
+      "group": "branch-rollout",
+      "prompt": "Prepare a license quote for rolling your product out to twelve branches.",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "technical_support",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5337090115062892
+    },
+    {
+      "group": "demo-workflow",
+      "prompt": "Can we book a sales demo focused on our procurement workflow?",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.47020899364724755
+    },
+    {
+      "group": "charity-contract",
+      "prompt": "Our charity wants to buy an enterprise plan with discounted licensing.",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5128750344738364
+    },
+    {
+      "group": "purchase-timeline",
+      "prompt": "A sales representative should contact us about purchasing next quarter.",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5398329813033342
+    },
+    {
+      "group": "trial-commercial",
+      "prompt": "We finished evaluating the trial and want a commercial proposal.",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.4876669845543802
+    },
+    {
+      "group": "bundle-negotiation",
+      "prompt": "Can we negotiate a bundle price for licenses and onboarding services?",
+      "label": "sales",
+      "evaluation_cohort": "0.2.2 reference",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5109579651616514
+    },
+    {
+      "group": "acceptance-3a0d1716a374b70a",
+      "prompt": "You took the annual fee even though I switched off renewal last week.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "billing"
+      ],
+      "latency_ms": 0.5151249933987856
+    },
+    {
+      "group": "acceptance-8db91603b3030a4d",
+      "prompt": "The refund email arrived on Monday; my card balance still hasn't changed.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5182080203667283
+    },
+    {
+      "group": "acceptance-fd7299874d707bc2",
+      "prompt": "Our accountant needs the document proving we paid for March.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.4533330211415887
+    },
+    {
+      "group": "acceptance-ae648c885562996e",
+      "prompt": "Why does my bank show a second debit for the same subscription?",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.45849999878555536
+    },
+    {
+      "group": "acceptance-205c25a2dea34ea3",
+      "prompt": "Please put our registered company name on the tax invoice.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.436166999861598
+    },
+    {
+      "group": "acceptance-ed43886f896ab504",
+      "prompt": "I closed the account but the recurring payment is still being collected.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5212079850025475
+    },
+    {
+      "group": "acceptance-3c8cf611a006c3ae",
+      "prompt": "The credit for the removed licenses hasn't appeared on this statement.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5285419756546617
+    },
+    {
+      "group": "acceptance-51e2491409bf25c2",
+      "prompt": "We sent the wire yesterday and the payment reminder is still arriving.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5073749925941229
+    },
+    {
+      "group": "acceptance-b634cddc72b0d734",
+      "prompt": "The promised promotional rate disappeared from our renewal bill.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.48824999248608947
+    },
+    {
+      "group": "acceptance-79731071620c4246",
+      "prompt": "Can the unused subscription period be reimbursed to the original card?",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5169169744476676
+    },
+    {
+      "group": "acceptance-0813b7824019817e",
+      "prompt": "The amount on the receipt and the amount debited from my card differ.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.4811669932678342
+    },
+    {
+      "group": "acceptance-89ecf79363ea32cb",
+      "prompt": "I need to change which bank account pays for our current plan.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
       "starter_prediction": "account_security",
       "prediction": "account_security",
       "needs_review": true,
@@ -331,91 +558,967 @@
         "account_security",
         "billing"
       ],
-      "latency_ms": 0.5044589634053409
+      "latency_ms": 0.45137497363612056
     },
     {
-      "group": "branch-rollout",
-      "prompt": "Prepare a license quote for rolling your product out to twelve branches.",
-      "label": "sales",
-      "starter_prediction": "technical_support",
-      "prediction": "sales",
-      "needs_review": true,
+      "group": "acceptance-21762c2b6655fcce",
+      "prompt": "We're exempt from tax, yet the latest charge includes it.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "billing",
+      "needs_review": false,
       "prediction_set": [
-        "sales",
-        "technical_support",
-        "account_security"
+        "billing"
       ],
-      "latency_ms": 0.5544170271605253
+      "latency_ms": 0.4338750150054693
     },
     {
-      "group": "demo-workflow",
-      "prompt": "Can we book a sales demo focused on our procurement workflow?",
-      "label": "sales",
+      "group": "acceptance-e9c4982897189453",
+      "prompt": "There is a hold on my card from an abandoned payment attempt.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
       "starter_prediction": "sales",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.4577079671435058
+    },
+    {
+      "group": "acceptance-115f83c7ac13e854",
+      "prompt": "Please tell me what this unfamiliar charge from your company covers.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
       "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.7029579719528556
+    },
+    {
+      "group": "acceptance-6abdfce26335e3ca",
+      "prompt": "I paid the outstanding balance and want confirmation it was allocated.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.6210000137798488
+    },
+    {
+      "group": "acceptance-b626e959160acc66",
+      "prompt": "Can our existing subscription invoices go to the finance team instead?",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.569665979128331
+    },
+    {
+      "group": "acceptance-aa635ff7838914fd",
+      "prompt": "I only wanted one license, but the payment covered three.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.46787498285993934
+    },
+    {
+      "group": "acceptance-c59f1294bdb62e32",
+      "prompt": "Our renewal should have been cancelled before this billing cycle.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.5221670144237578
+    },
+    {
+      "group": "acceptance-9537fbd21e014d74",
+      "prompt": "The invoice credits don't add up to the reimbursement we agreed.",
+      "label": "billing",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": false,
+      "prediction_set": [
+        "billing"
+      ],
+      "latency_ms": 0.4942919476889074
+    },
+    {
+      "group": "acceptance-7d5f5c2b33ab3e78",
+      "prompt": "The entire page goes white whenever I expand a report row.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4714159877039492
+    },
+    {
+      "group": "acceptance-0013c94b370cb51e",
+      "prompt": "Our connector has stopped delivering updates to the other system.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5255420110188425
+    },
+    {
+      "group": "acceptance-e0897e20a81b2067",
+      "prompt": "Every image attachment downloads as a file with zero bytes.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4772500251419842
+    },
+    {
+      "group": "acceptance-c2cfaf6d317337fd",
+      "prompt": "The app quits as soon as the camera upload finishes.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4200830007903278
+    },
+    {
+      "group": "acceptance-cce43c74d7a7d11b",
+      "prompt": "The installer says a required component is missing on a supported machine.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5784580134786665
+    },
+    {
+      "group": "acceptance-7ec0636768ed5864",
+      "prompt": "The export has corrupted text wherever a customer's name contains an accent.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5720000481233001
+    },
+    {
+      "group": "acceptance-c88c56f28e84589a",
+      "prompt": "I can reproduce a crash by dragging a column in the table.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
       "needs_review": true,
       "prediction_set": [
-        "sales",
+        "technical_support",
+        "sales"
+      ],
+      "latency_ms": 0.4570829914882779
+    },
+    {
+      "group": "acceptance-694bbe0405d86116",
+      "prompt": "The search index never includes records added this week.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
         "billing",
         "technical_support"
       ],
-      "latency_ms": 0.43708295561373234
+      "latency_ms": 0.4575000493787229
     },
     {
-      "group": "charity-contract",
-      "prompt": "Our charity wants to buy an enterprise plan with discounted licensing.",
-      "label": "sales",
+      "group": "acceptance-cc81cee7e2e74877",
+      "prompt": "Our webhook receiver gets the same event dozens of times.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.45424996642395854
+    },
+    {
+      "group": "acceptance-9a6ed2185e004180",
+      "prompt": "The API gives us a server error for a request from your own example.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
       "starter_prediction": "sales",
-      "prediction": "sales",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4912920412607491
+    },
+    {
+      "group": "acceptance-c60880a52fa917cc",
+      "prompt": "Scrolling the timeline causes the browser to use several gigabytes of memory.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5861670360900462
+    },
+    {
+      "group": "acceptance-a3cdd2708aa011d0",
+      "prompt": "The printed report omits the last two columns.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.38808403769508004
+    },
+    {
+      "group": "acceptance-3b73343ea65dd4d5",
+      "prompt": "The sync indicator spins forever and none of our changes arrive.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.484999967738986
+    },
+    {
+      "group": "acceptance-58e444769ce67f1b",
+      "prompt": "The application has become painfully slow since the most recent release.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.541082990821451
+    },
+    {
+      "group": "acceptance-5473dee25ce22f2d",
+      "prompt": "A valid spreadsheet upload is rejected as an unsupported format.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
       "needs_review": true,
       "prediction_set": [
-        "sales",
+        "technical_support",
+        "sales"
+      ],
+      "latency_ms": 0.5155419930815697
+    },
+    {
+      "group": "acceptance-af3f840d6aa05248",
+      "prompt": "The date selector saves yesterday instead of the day I selected.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4975000047124922
+    },
+    {
+      "group": "acceptance-26badc2ae6272b5d",
+      "prompt": "Your mobile app doesn't respect the selected language.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.4354590200819075
+    },
+    {
+      "group": "acceptance-845c86c534c5ca2f",
+      "prompt": "The saved query returns a different result after I reload the page.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5040410323999822
+    },
+    {
+      "group": "acceptance-a195609310a7a3a9",
+      "prompt": "I'm getting a certificate error from the integration endpoint.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "technical_support",
+      "needs_review": false,
+      "prediction_set": [
+        "technical_support"
+      ],
+      "latency_ms": 0.5061670090071857
+    },
+    {
+      "group": "acceptance-8a42aedfd9feb518",
+      "prompt": "A notification takes me to a nonexistent project URL.",
+      "label": "technical_support",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "technical_support",
+      "needs_review": true,
+      "prediction_set": [
+        "technical_support",
+        "account_security"
+      ],
+      "latency_ms": 0.44420798076316714
+    },
+    {
+      "group": "acceptance-1b543448082b85c9",
+      "prompt": "A login from another continent just appeared in my activity history.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5202909815125167
+    },
+    {
+      "group": "acceptance-24131633754c49f2",
+      "prompt": "My phone was stolen and it was the only way to approve a sign-in.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4544999683275819
+    },
+    {
+      "group": "acceptance-036d2a9d7df85bea",
+      "prompt": "The recovery address belongs to an employee who left years ago.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4809160018339753
+    },
+    {
+      "group": "acceptance-795a94d91dc5a008",
+      "prompt": "Please lock out the unfamiliar device currently connected to my account.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5709169781766832
+    },
+    {
+      "group": "acceptance-6713f9c7feea6967",
+      "prompt": "I followed a phishing link and typed my account password into it.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.49058301374316216
+    },
+    {
+      "group": "acceptance-4ba9b9258d054046",
+      "prompt": "Nobody on our team can get into the organization owner's account.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.48629200318828225
+    },
+    {
+      "group": "acceptance-815298a2b3ea7089",
+      "prompt": "The password reset message never reaches my registered mailbox.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4986659623682499
+    },
+    {
+      "group": "acceptance-a1f0010865bab67b",
+      "prompt": "I can't pass verification because my legal surname has changed.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4895830061286688
+    },
+    {
+      "group": "acceptance-dae6fb223812d940",
+      "prompt": "There is a security key on my profile that I didn't add.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4270420176908374
+    },
+    {
+      "group": "acceptance-c1a16cf1366bf8c3",
+      "prompt": "Our previous contractor appears to have an active session.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.46375003876164556
+    },
+    {
+      "group": "acceptance-0f99c439017dfa20",
+      "prompt": "I lost both my authenticator and the printed emergency codes.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.47800003085285425
+    },
+    {
+      "group": "acceptance-456cb2c9c2d21081",
+      "prompt": "My password works, but I can't complete the second verification step.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5117919645272195
+    },
+    {
+      "group": "acceptance-307caefa6f3687f1",
+      "prompt": "Someone replaced the recovery phone number while I was offline.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5152079975232482
+    },
+    {
+      "group": "acceptance-b9fc9595a5e87e4c",
+      "prompt": "I need every existing session invalidated after a credential leak.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "billing",
+      "needs_review": true,
+      "prediction_set": [
         "billing",
-        "account_security"
-      ],
-      "latency_ms": 0.4895420279353857
-    },
-    {
-      "group": "purchase-timeline",
-      "prompt": "A sales representative should contact us about purchasing next quarter.",
-      "label": "sales",
-      "starter_prediction": "sales",
-      "prediction": "sales",
-      "needs_review": true,
-      "prediction_set": [
-        "sales",
-        "technical_support",
-        "account_security"
-      ],
-      "latency_ms": 0.738792004995048
-    },
-    {
-      "group": "trial-commercial",
-      "prompt": "We finished evaluating the trial and want a commercial proposal.",
-      "label": "sales",
-      "starter_prediction": "sales",
-      "prediction": "sales",
-      "needs_review": true,
-      "prediction_set": [
-        "sales",
-        "technical_support",
-        "account_security"
-      ],
-      "latency_ms": 0.4888750263489783
-    },
-    {
-      "group": "bundle-negotiation",
-      "prompt": "Can we negotiate a bundle price for licenses and onboarding services?",
-      "label": "sales",
-      "starter_prediction": "sales",
-      "prediction": "sales",
-      "needs_review": true,
-      "prediction_set": [
-        "sales",
         "account_security",
+        "technical_support"
+      ],
+      "latency_ms": 0.5379999638535082
+    },
+    {
+      "group": "acceptance-d6e7d8228e2ffdc9",
+      "prompt": "My account was locked while somebody was guessing the password.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4860420012846589
+    },
+    {
+      "group": "acceptance-a1765fd8d6b6aba7",
+      "prompt": "I can no longer authenticate through the company's identity provider.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5309999687597156
+    },
+    {
+      "group": "acceptance-cc56aa4def88b31f",
+      "prompt": "The ownership check rejects the identification I submitted.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.4882500506937504
+    },
+    {
+      "group": "acceptance-16309b0413f7cb3a",
+      "prompt": "I left my account signed in on a hotel computer.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.39529200876131654
+    },
+    {
+      "group": "acceptance-ff6fcb3f1c4838bd",
+      "prompt": "An email says my sign-in credentials were changed without my request.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": false,
+      "prediction_set": [
+        "account_security"
+      ],
+      "latency_ms": 0.5112909711897373
+    },
+    {
+      "group": "acceptance-8c50116e5f306b0f",
+      "prompt": "Help me regain access after the hardware passkey stopped working.",
+      "label": "account_security",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "account_security",
+      "needs_review": true,
+      "prediction_set": [
+        "account_security",
+        "technical_support"
+      ],
+      "latency_ms": 0.5017080111429095
+    },
+    {
+      "group": "acceptance-1f79ea82f71a9ff2",
+      "prompt": "We're shortlisting software for a new division and need a commercial quote.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5518340039998293
+    },
+    {
+      "group": "acceptance-924aadd408f7af3e",
+      "prompt": "Can someone demonstrate the platform to our purchasing committee?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
         "billing"
       ],
-      "latency_ms": 0.48908399185165763
+      "latency_ms": 0.5191249656490982
+    },
+    {
+      "group": "acceptance-0a8ad74d4eb928f1",
+      "prompt": "We want an enterprise offer covering offices in three countries.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.4957080236636102
+    },
+    {
+      "group": "acceptance-7a1864d43ff3b780",
+      "prompt": "Our charity is considering your service and wants to discuss license pricing.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5629999795928597
+    },
+    {
+      "group": "acceptance-a0894dd20a7b209b",
+      "prompt": "Please connect us with the account executive for a potential multi-year purchase.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "account_security",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.6065830239094794
+    },
+    {
+      "group": "acceptance-85cdbbd061f80f89",
+      "prompt": "We need a formal proposal before our budget committee meets.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.46954199206084013
+    },
+    {
+      "group": "acceptance-63998e54a93cb3e7",
+      "prompt": "Do you offer a company-wide license for a prospective customer of our size?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5447080475278199
+    },
+    {
+      "group": "acceptance-9ff8b97e94151080",
+      "prompt": "Can we discuss a new contract that includes implementation assistance?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5467500304803252
+    },
+    {
+      "group": "acceptance-66dcf68e0b7b97ac",
+      "prompt": "We liked the evaluation and are ready to negotiate a purchase.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.47283299500122666
+    },
+    {
+      "group": "acceptance-7e32df13a565c95b",
+      "prompt": "Our procurement process requires a supplier presentation next month.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "technical_support",
+        "account_security"
+      ],
+      "latency_ms": 0.5450409953482449
+    },
+    {
+      "group": "acceptance-f1308adc3c01f11d",
+      "prompt": "Please price a rollout for six hundred employees.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.4135000053793192
+    },
+    {
+      "group": "acceptance-e845db227952aa07",
+      "prompt": "We are exploring a reseller agreement with your company.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.45420799870043993
+    },
+    {
+      "group": "acceptance-133477359dacd2d9",
+      "prompt": "Can your sales team review the commercial terms in our proposed agreement?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5406669806689024
+    },
+    {
+      "group": "acceptance-cdba5666213c7380",
+      "prompt": "We need an estimate for including your product in next year's budget.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5047909799031913
+    },
+    {
+      "group": "acceptance-64e3dc085926578a",
+      "prompt": "Who can arrange a demonstration focused on our public-sector requirements?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "billing",
+      "prediction": "sales",
+      "needs_review": true,
+      "prediction_set": [
+        "sales",
+        "technical_support"
+      ],
+      "latency_ms": 0.8784169913269579
+    },
+    {
+      "group": "acceptance-9bf4a21d8266a94d",
+      "prompt": "We're interested in purchasing a package combining licenses and onboarding.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.6123339990153909
+    },
+    {
+      "group": "acceptance-f0e4cbe00d897f93",
+      "prompt": "Our university needs an education pricing proposal.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.6306659779511392
+    },
+    {
+      "group": "acceptance-cffa6e3b852b7dd1",
+      "prompt": "A competitor's contract is ending and we want to discuss buying your product.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "technical_support",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.5656659486703575
+    },
+    {
+      "group": "acceptance-729893a0bccc20b0",
+      "prompt": "Can a commercial representative help us choose a licensing arrangement?",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.548708951100707
+    },
+    {
+      "group": "acceptance-f1d6f390ee353a90",
+      "prompt": "We'd like to invite your sales team to respond to our tender.",
+      "label": "sales",
+      "evaluation_cohort": "stable held-out",
+      "starter_prediction": "sales",
+      "prediction": "sales",
+      "needs_review": false,
+      "prediction_set": [
+        "sales"
+      ],
+      "latency_ms": 0.44308294309303164
     }
-  ]
+  ],
+  "quality": {
+    "cases": 104,
+    "correct": 98,
+    "accepted": 92,
+    "accepted_correct": 91,
+    "accepted_accuracy": 0.9891304347826086,
+    "acceptance_rate": 0.8846153846153846,
+    "accuracy_interval_95": [
+      0.8798107321520116,
+      0.9732934543646655
+    ],
+    "accepted_accuracy_interval_95": [
+      0.9409721438693747,
+      0.9980786709599083
+    ],
+    "acceptance_interval_95": [
+      0.809079503703942,
+      0.9327502237018642
+    ],
+    "meets_routing_targets": true
+  },
+  "evaluation_cohorts": {
+    "0.2.2 reference": {
+      "cases": 24,
+      "correct": 23,
+      "accepted": 23,
+      "accepted_correct": 23,
+      "accepted_accuracy": 1.0,
+      "acceptance_rate": 0.9583333333333334,
+      "accuracy_interval_95": [
+        0.7975819352134406,
+        0.9926065438344942
+      ],
+      "accepted_accuracy_interval_95": [
+        0.8568833815495732,
+        1.0
+      ],
+      "acceptance_interval_95": [
+        0.7975819352134406,
+        0.9926065438344942
+      ],
+      "meets_routing_targets": true
+    },
+    "stable held-out": {
+      "cases": 80,
+      "correct": 75,
+      "accepted": 69,
+      "accepted_correct": 68,
+      "accepted_accuracy": 0.9855072463768116,
+      "acceptance_rate": 0.8625,
+      "accuracy_interval_95": [
+        0.8618985123272557,
+        0.973010624329158
+      ],
+      "accepted_accuracy_interval_95": [
+        0.922368775388553,
+        0.9974370753554115
+      ],
+      "acceptance_interval_95": [
+        0.770328999330134,
+        0.9214528567566089
+      ],
+      "meets_routing_targets": true
+    }
+  }
 }

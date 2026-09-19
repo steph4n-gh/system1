@@ -76,7 +76,7 @@ def test_serialization_preserves_strict_prediction_set_at_boundary():
 
 
 def prediction_fixture():
-    return SimpleNamespace(decide=lambda *a, **kw: SimpleNamespace(values={'route': 'north'}))
+    return SimpleNamespace(decide=lambda *a, **kw: SimpleNamespace(values={'route': 'north'}, is_ambiguous=False))
 
 
 def test_shared_lineage_is_not_overridden_by_distinct_group_ids():

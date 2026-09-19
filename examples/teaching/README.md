@@ -24,11 +24,11 @@ system1 decide "Inspect the local source files" --model .system1/examples/agent_
 
 ## What each skill learns
 
-| Example | Decision | Teaching cases | Calibration cases | Unseen cases |
+| Example | Decision | Teaching cases | Calibration cases | Evaluation cases |
 |---|---|---:|---:|---:|
-| [Support triage](../support_triage.py) | Billing, product support, account security, or sales | 64 | 48 | 24 |
-| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 54 | 48 | 24 |
-| [Agent guard](../agent_guard.py) | Inspect, change, or restricted operation | 54 | 48 | 24 |
+| [Support triage](../support_triage.py) | Billing, product support, account security, or sales | 192 | 112 | 104 |
+| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 150 | 96 | 96 |
+| [Agent guard](../agent_guard.py) | Inspect, change, or restricted operation | 306 | 125 | 132 |
 
 The agent example additionally demonstrates an explicit permission rule: a local
 configuration lookup is allowed, a private-key lookup is denied, and the signed
@@ -43,7 +43,7 @@ specific language models' capabilities or call any of those models.
 All three use the same existing API:
 
 ```python
-skill = SystemOneCompiler(Schema, dimension=2048).compile(
+skill = SystemOneCompiler(Schema, dimension=2048, regularization=0.1).compile(
     examples,
     augment=False,
     calibration_exemplars=calibration_examples,
@@ -61,63 +61,84 @@ These files are demonstration bundles containing three splits, policy notes,
 and case groups. The helper converts each split to the compiler's field mapping;
 a whole bundle is not itself a CLI `--dataset` file.
 
-## Recorded run
+## Recorded 1.0 run
 
-Measured on the review machine (Apple M4 Pro, Python 3.13.5). These timings cover
-fitting and calibration once the labeled examples exist; they exclude authoring
-and reviewing examples, interpreter startup, and imports.
+Measured on Apple M4 Pro with Python 3.13.5. These timings cover fitting and
+calibration once labeled examples exist. They exclude authoring/reviewing data,
+interpreter startup, imports, and application tool execution.
 
-| Skill | Teach + calibrate | Saved size | Starter → taught accuracy | Decision median |
-|---|---:|---:|---:|---:|
-| Support triage | 158.5 ms | 32.2 KiB | 62.5% → 87.5% (21/24) | 0.500 ms |
-| Model routing | 134.8 ms | 24.8 KiB | 54.2% → 91.7% (22/24) | 0.558 ms |
-| Operation triage | 127.3 ms | 24.8 KiB | 37.5% → 100% (24/24) | 0.478 ms |
+| Skill | Teach + calibrate | Saved size | Raw correct | Accepted locally | Correct among accepted | Decision median |
+|---|---:|---:|---:|---:|---:|---:|
+| Support triage | 198.8 ms | 31.9 KiB | 98/104 | 92/104 (88.5%) | 91/92 (98.9%) | 0.504 ms |
+| Model routing | 175.4 ms | 24.9 KiB | 95/96 | 94/96 (97.9%) | 94/94 (100%) | 0.509 ms |
+| Operation triage | 212.2 ms | 24.9 KiB | 131/132 | 125/132 (94.7%) | 125/125 (100%) | 0.459 ms |
 
 Raw reports: [support](results/support_triage.json),
 [routing](results/model_routing.json), [operations](results/agent_guard.json).
-They include every prediction and error, per-label confusion matrices, teaching
-counts, dataset hashes, save/load times, and environment details.
+They include every prediction and error, confusion matrices, counts, dataset
+hashes, environment, and 95% Wilson intervals. Accepted-accuracy intervals are
+94.1–99.8%, 96.1–100%, and 97.0–100%, respectively. These descriptive intervals
+assume independent cases; shared authorship and vocabulary limit that assumption.
+In particular, the support result does not establish 95% population precision.
 
-Both the starter and taught models use 2048 features in this comparison, with
-ridge regularization 1.0 for teaching. The library default remains 384. The
-saved skill is used for evaluation. Both inference caches and receipt generation
-are disabled for decision timings; the separate guard's authorization and ledger
-work is not included in that measurement. Settings and labels were fixed before
-this first recorded evaluation; the examples were not revised to remove its errors.
+The helper uses 2048 fixed features, ridge regularization 0.1, examples-only
+teaching, alpha 0.05, and strict LAC uncertainty sets. Regularization was selected
+using teaching-only cross-validation. The library defaults remain 384 features
+and regularization 1.0. Both inference caches and receipts are disabled for these
+decision timings. The separate guard's authorization and ledger work is excluded.
 
-**Raw accuracy is not the same as answering without review.** At alpha 0.05 with
-strict uncertainty checks, support answered 1/24 cases without review and
-operation triage answered 2/24. All three accepted answers were correct.
-Routing requested review for all 24, so its accepted accuracy is undefined.
-The strict set rule now inverts the calibrated cumulative-probability score;
-empty sets request review too. Acceptance remains a limitation of these small
-natural-language demonstrations. More examples do not automatically guarantee
-a useful acceptance rate.
+**One accepted support answer was wrong.** Review decisions and errors remain in
+the reports. The example guard separately permits one explicit configuration
+lookup and denies a private-key lookup; classifier labels grant no permission.
 
-For observation-driven teaching and successful default-gate takeover on a simpler
-structured workload, run [observe_routing.py](../observe_routing.py). Its
-[separate report](results/observed_routing.json) uses a rule-based offline teacher
-and synthetic tickets, not these natural-language cases.
+## Actual Jev comparison
 
-## How the data is separated
+```bash
+python benchmarks/quality/evaluate_release.py
+```
 
-The JSON files contain explicit, AI-authored demonstration cases, not real
-customer traffic or independent benchmarks. Each file states its label policy.
-The three splits are fixed in the file before teaching:
+The command replays [1,313 actual Jev responses](../../benchmarks/quality/results/jev_observations.json),
+teaches each skill from Jev's labels, calibrates on separate responses, saves and
+reloads, then blocks socket connections while evaluating locally. It checks
+identical answers, probabilities, prediction sets, and review behavior after
+reload. Each of the three skills reaches the same accepted counts and correctness
+shown above. Jev agrees with every evaluation label, but disagrees with three
+operation-teaching labels; those differences are preserved.
 
-- `teach` supplies examples to fit the decision head.
-- `calibration` supplies separate examples to assess uncertainty. The compiler
-  divides these into 24 temperature and 24 conformal calibration cases.
-- `evaluate` is used only after saving and reloading the skill.
+This is teaching from recorded live responses, separate from automatic stream
+promotion. The [live structured-ticket example](../../benchmarks/quality/results/jev_live_cutover.json)
+proves that second path: 357 teacher observations, default-gate promotion, then
+40/40 correct and accepted local answers with no further teacher calls.
 
-Each case has a scenario group. The loader rejects groups or normalized prompts
-that cross these boundaries, and rejects repeated prompts within a split. These
-checks catch accidental reuse, but do not establish semantic independence:
-single-author examples share vocabulary, topics, and style across splits.
-No templates are expanded and no examples are generated during teaching.
+The comparison runs offline by default and is checked in CI. `--refresh-teacher`
+collects only missing responses using `TYPESAFE_API_KEY` and makes billable HTTP
+calls. See the [release evidence](../../docs/releases/1.0.md) for methods and limits.
 
-These small, focused demonstrations show the mechanics and measured benefit of
-teaching. They do not replace testing on representative user data. Retain the
-errors, review rates, and provenance when sharing the results. Once an evaluation
-case informs an improvement, treat it as development data and use fresh cases
-for the next independent evaluation.
+## Data separation and development history
+
+These are explicit AI-authored demonstration cases, not customer traffic or an
+independent benchmark. Each file states its label policy and contains:
+
+- `teach`: examples used to fit the decision head.
+- `calibration`: separate examples, divided between temperature fitting and
+  conformal calibration (56/56 support, 48/48 routing, 63/62 operations).
+- `evaluate`: examples used after saving and reloading, never fitted or calibrated.
+
+The loader rejects repeated normalized prompts and groups crossing these splits.
+These checks catch accidental reuse; they do not prove semantic independence.
+Authored read/edit contrast pairs in the operation teaching data share object
+families, with family groups kept together. No examples are generated at runtime.
+
+Each evaluation retains the original 24 cases as `0.2.2 reference`. Before
+expanding teaching, we froze 80 new support cases, 72 routing cases, and 72
+operation cases as `stable held-out`. Support and routing met the targets on the
+first evaluation. Operation acceptance informed further teaching improvements,
+so its 72 cases are now development evidence. After selecting the final teaching
+data and settings, we authored a separate 36-case `stable confirmation` cohort:
+35/36 were accepted and all 35 accepted answers were correct. That small cohort
+remains authored demonstration evidence, not an independent security evaluation.
+
+Recorded targets are at least 95% correctness among accepted answers and 80%
+acceptance. Passing point estimates is not a population guarantee. For deployment,
+use representative traffic, retain errors and review rates, and collect fresh
+evaluation cases whenever previous results have informed an improvement.

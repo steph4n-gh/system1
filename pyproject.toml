@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "system1"
-version = "0.2.2"
+version = "1.0.0"
 description = "Local structured decisions, deterministic tool policies, conformal uncertainty gating, and signed audit receipts."
 readme = "README.md"
 license = "Apache-2.0"
@@ -24,7 +24,7 @@ keywords = [
     "audit-receipts",
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",

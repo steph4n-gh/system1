@@ -12,7 +12,7 @@ Demonstrates seamless zero-code-change drop-in replacement for TypeSafe AI (Jev)
 4. Async client execution:
    `AsyncTypeSafeClient`
 5. Side-by-side comparison with live TypeSafe API (or realistic baseline fallback)
-6. Split Conformal Prediction guarantees & Ed25519 cryptographic receipts
+6. Conformal uncertainty sets & Ed25519 signed receipts
 """
 
 from __future__ import annotations

@@ -18,14 +18,16 @@ tickets, saves `routing.s1m`, and checks identical answers, probabilities,
 prediction sets, and review decisions after reload. It writes a complete JSON
 report under `.system1/observe-routing/`.
 
-On the review machine, promotion occurred after 190 observations: 114 fitting
-cases, 38 calibration cases, and 38 validation cases. The calibration cases
-split again into temperature fitting and conformal calibration. Validation
-agreement was 38/38 and 37/38 responses were accepted. All 40 subsequent local
-cases were correct and accepted. The saved skill was about 5 KB. These inputs
-reuse a small topic vocabulary with new ticket IDs: this demonstrates the
-lifecycle, **not open-ended language understanding or Jev quality parity**.
-Do not interpret the ticket IDs as independent real-world scenario diversity.
+The recorded offline and live Jev runs both promoted after 357 observations:
+215 fitting cases, 71 calibration cases, and 71 validation cases. Calibration
+splits again between temperature and conformal scoring. All 71 validation
+decisions agreed and were accepted on attempt ten; all 40 subsequent local
+cases were correct and accepted. The saved skill is about 5 KB. The live run
+took 116 seconds to observe and teach, then about 0.4 ms per local decision.
+
+These inputs reuse a small topic vocabulary with new ticket IDs: this proves the
+lifecycle on that structured workload. Ticket IDs do not establish independent
+real-world scenario diversity. See the [live evidence](../benchmarks/quality/results/jev_live_cutover.json).
 
 To observe real Jev answers with the same example:
 
@@ -35,8 +37,7 @@ python examples/observe_routing.py --teacher jev --output-dir .system1/observe-j
 ```
 
 There is no simulated fallback in that mode. Insufficient evidence leaves the
-teacher active. No live Jev quality result is included in this release. The
-fresh evaluation compares against the example's stated routing policy; it does
+teacher active. The fresh evaluation compares against the example's stated routing policy; it does
 not call Jev again after disconnection.
 
 ## Integrate the same lifecycle
@@ -85,13 +86,25 @@ repeated prompts, request IDs and lineage groups must not cross fitting,
 calibration and validation folds. Supply group/lineage identifiers for related
 requests; the runtime cannot discover every paraphrase automatically.
 
-The normal policy checks held-out agreement, its Wilson lower bound, critical
-false-allows, and at least 80% local acceptance. Agreement among accepted
-responses must also meet the agreement threshold. Validation is per schema;
-adding an unrelated question creates a different skill. `cutover_threshold=50`
-is the earliest attempt, not a promise that 50 observations suffice. Repeated
-validation attempts and changing traffic require independent deployment
-validation; these checks are not a sequential statistical guarantee.
+The normal policy checks complete-decision agreement, critical false-allows,
+and at least 80% local acceptance. All fields must agree, including exact
+MultiChoice sets. Related observations count as one validation group; repeating
+an easy request cannot inflate either agreement or acceptance. Agreement among
+accepted decisions must also meet the threshold.
+
+For the statistical gate, both agreement and acceptance must pass exact
+one-sided binomial lower bounds. At validation attempt `k`, each bound spends
+`(1 - confidence) / (2 * k * (k + 1))`; the total across attempts is bounded by
+`1 - confidence`. Each attempt needs an entirely fresh validation block. This
+controls repeated checks only under independent, representative validation
+groups and a candidate fixed before its validation. Correlated templates,
+adaptive traffic, or changed workloads do not satisfy those assumptions merely
+because their IDs differ. The Wilson lower bound remains a diagnostic and an
+additional conservative gate.
+
+Validation and drift state are per schema. `cutover_threshold=50` is the earliest
+attempt, not a promise that 50 observations suffice. The default statistical
+policy may need hundreds of examples. Deployment validation remains necessary.
 
 Promotion enables local execution, which can still return `is_ambiguous` or
 `abstain`. Applications must honor review requests. Cloud fallback is off by
@@ -127,6 +140,28 @@ Jev's confidence computation or semantic quality. For ordinal scores, receipts
 bind the underlying chosen level and level probabilities; the returned mean
 score is derived from that distribution. Strict calibration is marginal under
 appropriate exchangeability assumptions, not a guarantee for each accepted
-answer. Strict prediction sets invert the calibrated cumulative-probability
-score; an empty set also requires review. See the
+answer. Newly taught examples-only skills use the standard LAC score
+`1 - probability(label)`. Legacy and schema-augmented skills retain APS cumulative
+probability scores. Both invert their saved score in strict mode; an empty set
+also requires review. See the
 [conformal prediction procedure](https://arxiv.org/html/2107.07511v6#S2.SS1).
+
+
+## Saved skills and corrections in 1.0
+
+New `.s1m` files use format v2 so older runtimes cannot silently interpret LAC
+scores as APS. System 1 1.0 reads v1 artifacts using their original APS semantics;
+0.2.x cannot read v2. Upgrade readers before distributing newly saved skills.
+Invalid versions, schema identity, shapes, and nonfinite weights or temperatures
+are rejected. Keep a copy of the original artifact when migrating.
+
+`engine.calibrate(...)` saves the resulting evidence into the compiled model.
+`learn_from_tier2(...)` invalidates the changed heads' calibration, including in
+saved files. Strict decisions request review until those heads are recalibrated
+on separate examples. Calibration, correction, inference, and serialization of a
+shared compiled model are synchronized. Retaining examples and recompiling is
+the simplest reproducible update workflow.
+
+The [release comparison](releases/1.0.md) separately measures three natural-language
+skills taught from actual recorded Jev responses. It does not claim all three
+automatically promoted from a live stream or that local confidence equals Jev's.

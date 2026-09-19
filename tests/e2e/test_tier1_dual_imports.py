@@ -2,7 +2,7 @@
 
 Authoritative Invariants:
 1. Complete namespace symmetry: import reflex and import system1 export identical public interfaces.
-2. Version alignment: reflex.__version__ == system1.__version__ == '0.2.2'.
+2. Version alignment: reflex.__version__ == system1.__version__.
 3. Object identity: exported classes, functions, and schemas are identical objects in memory.
 4. Drop-in interoperability: decision engines, guard hooks, ledgers, and SDK clients operate interchangeably.
 """
@@ -19,7 +19,7 @@ import system1
 
 def test_top_level_package_exports_parity():
     """Verify top-level symbols, __all__, and __version__ are completely symmetric."""
-    assert reflex.__version__ == system1.__version__ == "0.2.2"
+    assert reflex.__version__ == system1.__version__
     
     # Both packages should export the exact same set of public symbols
     reflex_all = set(reflex.__all__)

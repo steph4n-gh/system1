@@ -141,6 +141,26 @@ def _evidence_keys(item: Mapping[str, Any]) -> Set[str]:
     return keys
 
 
+def _binomial_lower_bound(successes: int, total: int, failure_probability: float) -> float:
+    """One-sided exact binomial lower bound, without a statistics dependency."""
+    if successes == 0 or total == 0:
+        return 0.0
+    if successes == total:
+        return failure_probability ** (1.0 / total)
+    coefficients = [math.lgamma(total + 1) - math.lgamma(k + 1) - math.lgamma(total - k + 1)
+                    for k in range(successes, total + 1)]
+    low, high = 0.0, 1.0
+    for _ in range(50):
+        p = (low + high) / 2
+        tail = sum(math.exp(c + k * math.log(p) + (total - k) * math.log1p(-p))
+                   for k, c in zip(range(successes, total + 1), coefficients))
+        if tail > failure_probability:
+            high = p
+        else:
+            low = p
+    return low
+
+
 def _evidence_groups(history: Sequence[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
     """Keep every connected request/lineage/prompt family in one evidence unit."""
     parent = list(range(len(history)))
@@ -253,8 +273,7 @@ class PromotionPolicy:
     })
     false_allow_ceiling: float = 0.0  # Exactly 0.0% tolerance: zero false-allows permitted
     require_statistical_bound: bool = True
-    # Explicit demo policies may opt out; the client's production policy requires 80%.
-    min_local_acceptance: float = 0.0
+    min_local_acceptance: float = 0.8
 
 
 @dataclass
@@ -278,6 +297,10 @@ class PromotionReport:
     accepted_requests: int = 0
     local_acceptance_rate: float = 0.0
     accepted_agreement_rate: Optional[float] = None
+    independent_validation_groups: int = 0
+    exact_lower_bound: float = 0.0
+    acceptance_lower_bound: float = 0.0
+    validation_attempt: Optional[int] = None
 
 
 def _is_critical_class(value: Any, critical_classes: Set[str]) -> bool:
@@ -305,6 +328,8 @@ def evaluate_promotion_eligibility(
     val_history: Sequence[Dict[str, Any]],
     schema: Any,
     policy: Optional[PromotionPolicy] = None,
+    *,
+    validation_attempt: Optional[int] = None,
 ) -> PromotionReport:
     """Evaluates cutover promotion eligibility strictly on held-out validation data.
 
@@ -331,25 +356,32 @@ def evaluate_promotion_eligibility(
     scored_units = 0
     sum_unit_rates = 0.0
     validation_requests = accepted_requests = accepted_checks = accepted_matches = 0
+    accepted_units = accepted_matching_units = 0
 
     for g_items in groups:
         unit_has_scored_evidence = False
         unit_matching = 0
         unit_total = 0
+        unit_accepted = True
 
         for item in g_items:
             state = item.get("state", "")
             answers = item.get("answers", {})
             if not answers:
+                rejection_reasons.append("Validation response is missing required answers")
+                unit_accepted = False
                 continue
 
             res = engine.decide(state, record_receipt=False)
             validation_requests += 1
             accepted = not getattr(res, "is_ambiguous", True)
             accepted_requests += int(accepted)
+            unit_accepted = unit_accepted and accepted
 
             for f_name, f_def in schema.fields.items():
                 if f_name not in answers or answers[f_name] is None:
+                    rejection_reasons.append(f"Validation response is missing field {f_name!r}")
+                    unit_accepted = False
                     continue
 
                 target_v = answers[f_name]
@@ -381,7 +413,7 @@ def evaluate_promotion_eligibility(
                 elif isinstance(f_def, MultiChoiceField):
                     s_pred = set(pred_v) if isinstance(pred_v, (list, tuple, set)) else ({pred_v} if pred_v else set())
                     s_target = set(target_v) if isinstance(target_v, (list, tuple, set)) else ({target_v} if target_v else set())
-                    if s_pred == s_target or (s_pred and s_target and len(s_pred & s_target) / len(s_pred | s_target) >= 0.5):
+                    if s_pred == s_target:
                         is_match = True
                 elif pred_v == target_v:
                     is_match = True
@@ -401,7 +433,13 @@ def evaluate_promotion_eligibility(
         if unit_has_scored_evidence:
             scored_units += 1
             if unit_total > 0:
-                sum_unit_rates += (unit_matching / unit_total)
+                # One independent family is one Bernoulli observation. Every
+                # field and every member must agree; extra easy fields or retries
+                # cannot dilute an incorrect decision.
+                matched = unit_matching == unit_total
+                sum_unit_rates += int(matched)
+                accepted_units += int(unit_accepted)
+                accepted_matching_units += int(unit_accepted and matched)
 
     if scored_units == 0:
         agreement_rate = 0.0
@@ -412,9 +450,18 @@ def evaluate_promotion_eligibility(
     effective_n = scored_units
     effective_matching = agreement_rate * effective_n
     wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
+    failure_probability = (1.0 - policy.statistical_confidence) / 2
+    if not 0 < failure_probability < 0.5:
+        raise ValueError("statistical_confidence must be between 0 and 1")
+    if validation_attempt is not None:
+        if validation_attempt < 1:
+            raise ValueError("validation_attempt must be positive")
+        failure_probability /= validation_attempt * (validation_attempt + 1)
+    exact_lower = _binomial_lower_bound(int(sum_unit_rates), effective_n, failure_probability)
+    acceptance_lower = _binomial_lower_bound(accepted_units, effective_n, failure_probability)
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
-    acceptance_rate = accepted_requests / validation_requests if validation_requests else 0.0
-    accepted_agreement = accepted_matches / accepted_checks if accepted_checks else None
+    acceptance_rate = accepted_units / effective_n if effective_n else 0.0
+    accepted_agreement = accepted_matching_units / accepted_units if accepted_units else None
 
     effective_thresh = policy.min_agreement_threshold
 
@@ -438,10 +485,15 @@ def evaluate_promotion_eligibility(
             f"Critical false-allow rate ({false_allow_rate:.4f}, count={false_allows}) exceeds strict ceiling ({policy.false_allow_ceiling:.4f})"
         )
 
+    if policy.require_statistical_bound and exact_lower < policy.min_agreement_threshold:
+        rejection_reasons.append(f"Exact statistical lower bound ({exact_lower:.4f}) below required threshold ({policy.min_agreement_threshold:.4f})")
+
     if acceptance_rate < policy.min_local_acceptance:
         rejection_reasons.append(
             f"Local acceptance rate ({acceptance_rate:.4f}) below required threshold ({policy.min_local_acceptance:.4f})"
         )
+    if policy.require_statistical_bound and acceptance_lower < policy.min_local_acceptance:
+        rejection_reasons.append(f"Local acceptance lower bound ({acceptance_lower:.4f}) below required threshold ({policy.min_local_acceptance:.4f})")
     if policy.min_local_acceptance > 0 and accepted_agreement is not None and accepted_agreement < policy.min_agreement_threshold:
         rejection_reasons.append("Agreement on accepted decisions below the required threshold")
 
@@ -463,6 +515,10 @@ def evaluate_promotion_eligibility(
         manifest={},
         validation_requests=validation_requests,
         accepted_requests=accepted_requests,
+        independent_validation_groups=effective_n,
+        exact_lower_bound=round(exact_lower, 4),
+        acceptance_lower_bound=round(acceptance_lower, 4),
+        validation_attempt=validation_attempt,
         local_acceptance_rate=round(acceptance_rate, 4),
         accepted_agreement_rate=round(accepted_agreement, 4) if accepted_agreement is not None else None,
     )
@@ -538,7 +594,10 @@ def _content_text(value: Any) -> str:
 
 def _teaching_target(field: DecisionField, value: Any) -> Any:
     if field.metadata.get("typesafe_score_levels"):
-        return str(max(0, min(len(field.options) - 1, int(math.floor(float(value) + 0.5)))))
+        number = float(value)
+        if not math.isfinite(number) or not 0 <= number <= len(field.options) - 1:
+            raise ValueError("Teacher ordinal score is outside the question's range")
+        return str(int(math.floor(number + 0.5)))
     return value
 
 
@@ -630,11 +689,12 @@ class TypeSafeResponse(DotDict):
                             v_dict["choice"] = v_dict["value"]
                         v_dict.setdefault("conformal_set", None)
                     elif ans_type == "noul":
+                        if "noul" in v_dict:
+                            p = float(v_dict["noul"])
+                            if not math.isfinite(p) or not 0 <= p <= 1:
+                                raise ValueError("Noul probability must be finite and between 0 and 1")
                         if "value" not in v_dict and "noul" in v_dict:
-                            try:
-                                v_dict["value"] = bool(float(v_dict["noul"]) >= 0.5)
-                            except (TypeError, ValueError):
-                                v_dict["value"] = False
+                            v_dict["value"] = p >= 0.5
                         if "noul" not in v_dict and "value" in v_dict:
                             v_dict["noul"] = 1.0 if v_dict["value"] else 0.0
                         if "confidence" not in v_dict and "noul" in v_dict:
@@ -1435,6 +1495,7 @@ class TypeSafeClient:
         self.fallback_baseline = bool(kwargs.get("fallback_baseline", fallback_baseline))
         self.promotion_policy = promotion_policy or kwargs.get("promotion_policy", None)
         self._drift_detector = drift_detector or kwargs.get("drift_detector", None) or DriftDetector()
+        self._drift_detectors: Dict[str, DriftDetector] = {}
         self._last_promotion_report: Optional[PromotionReport] = None
 
         self.signing_key = signing_key
@@ -1458,6 +1519,8 @@ class TypeSafeClient:
         self._call_count: Dict[str, int] = collections.defaultdict(int)
         self._teacher_sample_count: Dict[str, int] = collections.defaultdict(int)
         self._history: Dict[str, List[Dict[str, Any]]] = collections.defaultdict(list)
+        self._validation_seen_keys: Dict[str, Set[str]] = collections.defaultdict(set)
+        self._validation_attempts: Dict[str, int] = collections.defaultdict(int)
         self._has_cutover: bool = False
         self._has_cutover_schemas: Set[str] = set()
         self._compiled_models: Dict[str, Any] = {}
@@ -1538,8 +1601,21 @@ class TypeSafeClient:
 
     @property
     def drift_detector(self) -> DriftDetector:
-        """Sliding window drift and out-of-distribution detector."""
+        """Detector for the most recently evaluated schema (each schema is isolated)."""
         return self._drift_detector
+
+    def _record_drift(self, digest: str, ambiguous: bool, ood: bool, confidence: float) -> bool:
+        with self._engine_lock:
+            if digest not in self._drift_detectors:
+                template = self._drift_detector
+                self._drift_detectors[digest] = template if not self._drift_detectors else DriftDetector(
+                    window_size=template.window_size, ambiguity_threshold=template.ambiguity_threshold,
+                    ood_threshold=template.ood_threshold,
+                )
+            detector = self._drift_detectors[digest]
+            detector.record(is_ambiguous=ambiguous, is_ood=ood, confidence=confidence)
+            self._drift_detector = detector
+            return detector.is_drifted
 
     @property
     def last_promotion_report(self) -> Optional[PromotionReport]:
@@ -1700,9 +1776,14 @@ class TypeSafeClient:
         try:
             partition = partition_cutover_history(schema_history)
             partition.assert_disjoint()
+            validation_keys = set().union(*(_evidence_keys(row) for row in partition.val_history))
+            if validation_keys & self._validation_seen_keys[digest]:
+                # Wait for an entirely fresh validation block. Replaying the same
+                # holdout after every answer cannot establish promotion evidence.
+                return
             compiled_model = compiler.compile(
                 exemplars=examples_from(partition.train_history), augment=self.augment,
-                calibration_exemplars=examples_from(partition.calib_history), calibration_split=0,
+                calibration_exemplars=examples_from([group[0] for group in _evidence_groups(partition.calib_history)]), calibration_split=0,
             )
         except (ValueError, AssertionError) as exc:
             # Missing classes or disjoint evidence defer promotion, not the teacher's answer.
@@ -1731,7 +1812,10 @@ class TypeSafeClient:
             val_history=partition.val_history,
             schema=schema,
             policy=policy,
+            validation_attempt=self._validation_attempts[digest] + 1,
         )
+        self._validation_attempts[digest] += 1
+        self._validation_seen_keys[digest].update(validation_keys)
         self._last_promotion_report = report
 
         if report.is_eligible:
@@ -1926,6 +2010,15 @@ class TypeSafeClient:
                         zero_egress=False,
                     )
 
+                answers = {}
+                for name, definition in schema.fields.items():
+                    answer = cloud_resp.get("answers", {}).get(name)
+                    value = answer.get("value") if isinstance(answer, Mapping) else answer
+                    if value is None:
+                        raise ValueError(f"Teacher response is missing field {name!r}")
+                    validated = definition.validate_value(_teaching_target(definition, value))
+                    answers[name] = float(value) if definition.metadata.get("typesafe_score_levels") else validated
+
                 with self._engine_lock:
                     self._call_count[digest] += 1
                     self._teacher_sample_count[digest] += 1
@@ -1933,13 +2026,10 @@ class TypeSafeClient:
                     sample_record = {
                         "state": encoded_state,
                         "teacher": ("simulated_baseline" if cloud_resp.get("baseline_fallback") else
-                                    "callback" if self.baseline_handler is not None else model),
+                                    "callback" if self.baseline_handler is not None else cloud_resp.get("model", model)),
                         "questions": dict(questions),
                         **{k: kwargs[k] for k in ("group_id", "lineage_id", "request_id") if k in kwargs},
-                        "answers": {
-                            k: (v.get("value") if isinstance(v, dict) else v)
-                            for k, v in getattr(cloud_resp, "answers", {}).items()
-                        },
+                        "answers": answers,
                         "timestamp": time.time(),
                     }
                     self._history[digest].append(sample_record)
@@ -1990,9 +2080,9 @@ class TypeSafeClient:
                 if c is not None and isinstance(c, (int, float)):
                     min_conf = min(min_conf, float(c))
             is_ood = bool(min_conf < 0.20)
-            self._drift_detector.record(is_ambiguous=is_ambiguous, is_ood=is_ood, confidence=min_conf)
+            drifted = self._record_drift(digest, is_ambiguous, is_ood, min_conf)
 
-            if is_ambiguous or is_ood or self._drift_detector.is_drifted:
+            if is_ambiguous or is_ood or drifted:
                 if self.allow_cloud_fallback and not self.zero_egress:
                     fallback_resp, _, fallback_egress = self.call_real_api(
                         state=state,
@@ -2004,7 +2094,7 @@ class TypeSafeClient:
                     fallback_resp["auto_cutover_active"] = True
                     fallback_resp["is_cutover"] = True
                     fallback_resp["fallback_routed"] = True
-                    fallback_resp["drift_detected"] = self._drift_detector.is_drifted
+                    fallback_resp["drift_detected"] = drifted
                     fallback_resp["egress_bytes"] = fallback_egress
                     return fallback_resp
                 else:
@@ -2012,7 +2102,7 @@ class TypeSafeClient:
                     resp["abstain"] = True
                     resp["verdict"] = "REQUIRE_APPROVAL"
                     resp["status"] = "ABSTAINED_AMBIGUOUS" if is_ambiguous else "ABSTAINED_DRIFT"
-                    resp["drift_detected"] = self._drift_detector.is_drifted
+                    resp["drift_detected"] = drifted
                     resp["egress_bytes"] = 0
                     return resp
 
@@ -2039,9 +2129,9 @@ class TypeSafeClient:
             if c is not None and isinstance(c, (int, float)):
                 min_conf = min(min_conf, float(c))
         is_ood = bool(min_conf < 0.20)
-        self._drift_detector.record(is_ambiguous=is_ambiguous, is_ood=is_ood, confidence=min_conf)
+        drifted = self._record_drift(digest, is_ambiguous, is_ood, min_conf)
 
-        if self._drift_detector.is_drifted:
+        if drifted:
             if self.allow_cloud_fallback and not self.zero_egress:
                 fallback_resp, _, fallback_egress = self.call_real_api(
                     state=state,

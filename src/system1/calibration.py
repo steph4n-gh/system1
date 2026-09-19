@@ -230,6 +230,7 @@ class DecisionCalibrator:
     def __init__(self, temperature: float = 1.0) -> None:
         self.temperature: float = max(1e-3, float(temperature))
         self.metrics: Optional[CalibrationMetrics] = None
+        self.is_calibrated = False
         self.is_binary: bool = False
 
     def fit(
@@ -243,6 +244,8 @@ class DecisionCalibrator:
         """Finds optimal temperature T > 0 minimizing NLL on calibration logits."""
         logits = np.asarray(logits, dtype=np.float64)
         labels = np.asarray(labels, dtype=np.int64)
+        self.is_calibrated = False
+        self.is_binary = logits.ndim == 1
 
         if len(logits) == 0:
             self.temperature = 1.0
@@ -295,6 +298,7 @@ class DecisionCalibrator:
 
         best_temp = float((a + b) / 2.0)
         self.temperature = best_temp
+        self.is_calibrated = True
 
         calibrated_probs = self.calibrate_logits(logits)
         nll = compute_nll(calibrated_probs, labels)
@@ -344,15 +348,12 @@ class DecisionCalibrator:
 
 
 class ConformalPredictor:
-    """Split Conformal Prediction Engine with distribution-free coverage guarantees.
+    """Split conformal sets using LAC (1 - p(label)) or legacy APS scores.
 
-    Guarantees:
-      P(Y in C(X)) >= 1 - alpha
-
-    Enhanced with Margin-Based Conformal Gating (Lever 3):
-    Calibrates on margin of dominance M(x) = s_(1)(x) - s_(2)(x) in addition to set size |C(x)|.
-    When the top-ranked candidate dominates the runner-up by greater than the calibrated margin
-    threshold, false-positive ambiguity escalations are suppressed.
+    Strict sets have marginal coverage under exchangeable calibration/test
+    examples and an independently fitted scoring model. They do not guarantee
+    correctness conditional on acceptance. Non-strict margin heuristics may
+    suppress review and do not preserve the strict coverage interpretation.
     """
 
     def __init__(
@@ -363,7 +364,11 @@ class ConformalPredictor:
         *,
         relative_odds_ratio: Optional[float] = 1.5,
         confidence_floor_tau0: Optional[float] = 0.15,
+        score_method: str = "aps",
     ) -> None:
+        if score_method not in ("aps", "lac"):
+            raise ValueError(f"Unknown conformal score method: {score_method!r}")
+        self.score_method = score_method
         self.field_name = field_name
         self.options = tuple(options)
         self.option_to_idx = {opt: idx for idx, opt in enumerate(self.options)}
@@ -390,7 +395,7 @@ class ConformalPredictor:
         relative_odds_ratio: Optional[float] = None,
         confidence_floor_tau0: Optional[float] = None,
     ) -> None:
-        """Fits Adaptive Prediction Set (APS) non-conformity scores and margin threshold on calibration samples."""
+        """Fits the configured nonconformity score and optional margin threshold."""
         probs = np.asarray(calibrated_probs, dtype=np.float64)
         if len(probs) != len(ground_truth_labels):
             raise ValueError("Mismatched probabilities and labels length")
@@ -427,7 +432,7 @@ class ConformalPredictor:
                 if idx == true_idx:
                     score_val = cum_sum
                     break
-            scores.append(score_val)
+            scores.append(1.0 - float(row[true_idx]) if self.score_method == "lac" else score_val)
 
         self.calibration_scores = np.sort(np.asarray(scores, dtype=np.float64))
         self.is_calibrated = True
@@ -457,7 +462,7 @@ class ConformalPredictor:
         confidence_floor_tau0: Optional[float] = None,
         strict: bool = False,
     ) -> ConformalPredictionSet:
-        """Constructs conformal prediction set C(x) satisfying P(Y in C(x)) >= 1 - alpha via APS.
+        """Invert the configured score to construct a prediction set.
 
         Applies Cardinality-Scaled Margin Gate & Relative Odds Ratio Dominance:
         When raw_is_ambiguous (set size > 1), false-positive ambiguity escalation is suppressed
@@ -511,7 +516,13 @@ class ConformalPredictor:
             cum_mass = 0.0
             total_mass = float(np.sum(probs))
             # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
-            if strict:
+            if self.score_method == "lac":
+                if k > n:
+                    prediction_set = list(self.options)
+                elif np.all(np.isfinite(probs)) and np.all(probs >= 0) and np.isclose(total_mass, 1.0):
+                    prediction_set = [self.options[idx] for idx in sorted_indices
+                                      if 1.0 - float(probs[idx]) <= q_hat + 1e-12]
+            elif strict:
                 # Invert the calibrated score s(x,y) = cumulative mass through y.
                 # Including the next label after crossing q_hat inflates every set.
                 # Empty sets request review; insufficient evidence includes all labels.
@@ -539,7 +550,7 @@ class ConformalPredictor:
             cum_masses[idx] = running_mass
 
         for idx, opt in enumerate(self.options):
-            c_mass = cum_masses[idx]
+            c_mass = 1.0 - float(probs[idx]) if self.score_method == "lac" else cum_masses[idx]
             if n > 0:
                 rank = int(np.sum(self.calibration_scores >= c_mass))
                 p_val = float((1.0 + rank) / (n + 1))

@@ -12,16 +12,15 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-@pytest.mark.parametrize("example", [0, 1])
-def test_readme_quickstarts_run_outside_checkout(tmp_path, example):
+def test_readme_policy_quickstart_runs_outside_checkout(tmp_path):
     blocks = re.findall(r"```python\n(.*?)```", (ROOT / "README.md").read_text(), re.S)
     for _ in range(2):  # The persistent signing identity must also work on a second run.
         result = subprocess.run(
-            [sys.executable, "-c", blocks[example]], cwd=tmp_path,
+            [sys.executable, "-c", blocks[0]], cwd=tmp_path,
             capture_output=True, text=True, timeout=30,
         )
         assert result.returncode == 0, result.stderr
-        assert "system1-demo" in result.stdout if example == 1 else "Needs review:" in result.stdout
+        assert "system1-demo" in result.stdout
 
 
 def test_quality_benchmark_failure_sets_exit_status(tmp_path, monkeypatch):

@@ -58,8 +58,9 @@ def test_fintech_auto_cutover_showcase_run(tmp_path: Path):
     ledger = ActionLedger(db_file, read_only=True)
     assert ledger.verify_integrity() is True
     head_seq, _ = ledger.audit_head()
-    # At least 3 passthrough queries + 1 cutover event + 3 local receipts = 7 entries
-    assert head_seq >= 7
+    # Six examples do not validate the full multi-field skill. Every teacher
+    # decision is recorded, without a fabricated successful cutover event.
+    assert head_seq == 6
 
 
 def test_clinical_and_ecommerce_showcase_runs():
@@ -117,9 +118,8 @@ def test_showcase_non_cutover_edge_case(tmp_path: Path):
     assert head_seq == 3
 
 
-def test_showcase_with_model_export(tmp_path: Path):
-    """Verify model export option serializes valid .s1m binary loaded by CompiledSystemOneModel."""
-    from system1.compiler import CompiledSystemOneModel
+def test_showcase_does_not_export_unvalidated_candidate(tmp_path: Path, capsys):
+    """A requested export must not publish a candidate that failed promotion."""
 
     export_path = str(tmp_path / "exported_showcase_model.s1m")
 
@@ -134,11 +134,5 @@ def test_showcase_with_model_export(tmp_path: Path):
         export_model_path=export_path,
     )
 
-    assert Path(export_path).exists()
-    assert Path(export_path).stat().st_size > 0
-
-    # Load exported binary model directly
-    loaded_model = CompiledSystemOneModel.load(export_path)
-    res = loaded_model.forward_single("Payroll ACH domestic wire transfer $1,200.00")
-    assert "decision" in res.fields
-    assert res.fields["decision"].selected_value is not None
+    assert not Path(export_path).exists()
+    assert "Model export skipped" in capsys.readouterr().out

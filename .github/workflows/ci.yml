@@ -64,3 +64,5 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/system1-wheel/bin/system1" decide "Read project documentation" --schema triage --json
           "$RUNNER_TEMP/system1-wheel/bin/python" -c "import reflex, system1; assert reflex.System1Engine is system1.System1Engine; from importlib.resources import files; assert files('system1.proto').joinpath('system1.proto').is_file(); assert files('reflex.proto').joinpath('system1.proto').is_file()"
+      - name: Reproduce teaching quality and recorded Jev comparison
+        run: "$RUNNER_TEMP/system1-wheel/bin/python benchmarks/quality/evaluate_release.py"

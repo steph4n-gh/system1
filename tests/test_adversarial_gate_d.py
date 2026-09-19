@@ -445,8 +445,8 @@ class TestAttack4StatisticalLowerBoundEvasion:
 
         class MockEngine:
             def decide(self, state, record_receipt=False):
-                res = collections.namedtuple("Res", ["values"])
-                return res(values={"action": "allow"})
+                res = collections.namedtuple("Res", ["values", "is_ambiguous"])
+                return res(values={"action": "allow"}, is_ambiguous=False)
 
         mock_eng = MockEngine()
 

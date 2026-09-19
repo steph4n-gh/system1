@@ -449,7 +449,7 @@ class UncappedPyBoyTurboRunner:
         print("=" * 72)
         print(f"Runner Mode:    {'PyBoy Headless Turbo (Uncapped)' if self.pyboy else 'Zero-Dependency NumPy Engine'}")
         print(f"Speedrun Route: Red Any% Glitchless (Squirtle Carry)")
-        print(f"Target:         0% Wipe Rate Guaranteed via Conformal Safety Gate\n")
+        print("Target:         Avoid wipes using a scripted damage-risk heuristic; no measured guarantee.\n")
 
         for step_idx in range(limit):
             milestone, desc, lat = self.step_route_milestone()

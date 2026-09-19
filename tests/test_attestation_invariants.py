@@ -415,11 +415,11 @@ def test_execution_outcome_chaining_failure(tmp_path):
     assert ledger.verify_integrity() is True
 
 
-def test_mcp_handle_call_chains_outcome_to_ledger(tmp_path):
+def test_mcp_handle_call_chains_outcome_to_ledger(tmp_path, read_policy):
     """SystemOneMCPProxy.handle_call automatically logs post-execution outcome to ActionLedger."""
     db_path = str(tmp_path / "mcp_chain_ledger.db")
     ledger = ActionLedger(path=db_path)
-    hook = SystemOneGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.10, policy=read_policy)
     proxy = SystemOneMCPProxy(guard=hook)
 
     def mock_executor(name: str, args: dict):

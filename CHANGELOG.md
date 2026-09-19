@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0 — 2026-09-19
+
+- Stabilize the bounded-skill lifecycle: teach or observe, validate, run locally, save, reload, and correct with fresh calibration. No new runtime dependencies.
+- Use standard LAC uncertainty scores for examples-only teaching, preserving legacy APS behavior. Separate temperature and conformal evidence for categorical, Boolean and MultiChoice outputs; allow a validated empty MultiChoice assignment.
+- Persist recalibration, invalidate changed heads after corrections, serialize model operations coherently, and prevent approximate compiled-cache matches from changing distinct inputs. Bind cached-decision receipts to the current request and honor receipt opt-out.
+- Require complete decisions and independent evidence groups for promotion. Check agreement and useful local acceptance with exact binomial bounds, fresh validation blocks, and a finite error budget across repeated attempts. Keep drift state per schema and reject malformed teacher answers before recording evidence.
+- Write `.s1m` format v2 with explicit score semantics and validated metadata. Read v1 files with their original APS behavior; older readers must be upgraded for v2.
+- Expand the three primary teaching examples and publish reproducible quality, review rates, confidence intervals, and actual Jev comparisons. Add the offline comparison to existing CI. Preserve development history and remaining accepted errors.
+- Verify a live Jev automatic takeover after 357 observations, followed by 40/40 correct accepted local decisions and identical reloaded behavior. Verify live mixed Choice/Noul/ordinal Score responses.
+- Remove inflated default guard calibration and unsupported simulation performance claims. Keep tool permission under explicit policies; keep optional neural and gaming examples experimental.
+
+See [release evidence and migration](docs/releases/1.0.md).
+
 ## 0.2.2 — 2026-09-19
 
 - Preserve the complete validated skill through takeover and reload: projector settings, schema identity, calibration, distributions and review behavior. Gate normal promotion on useful local acceptance as well as teacher agreement.

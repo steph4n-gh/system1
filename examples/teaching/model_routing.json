@@ -277,6 +277,486 @@
       "group": "causal-diagnosis",
       "prompt": "Evaluate competing causal explanations for the regressions in these experimental results.",
       "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-8ab5d372f6c4252f",
+      "prompt": "Remove leading and trailing whitespace from each supplied string.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-5e68d004886e919d",
+      "prompt": "Calculate the sum of the numbers in this short list.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-eb9cb5e1c59b18c8",
+      "prompt": "Reorder the keys in this small JSON object alphabetically.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-da7407abe5aec711",
+      "prompt": "Return the number of characters in each supplied string.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ba473c977361afcd",
+      "prompt": "Change the decimal separator in these supplied prices.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-e230ed57fd95aeb2",
+      "prompt": "Convert the supplied JSON object into YAML.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-19e94213eb5852d6",
+      "prompt": "Replace repeated blank lines with a single blank line.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ea3748ec263ca0f7",
+      "prompt": "Group these supplied filenames by extension.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ce78e03ba5bf5be8",
+      "prompt": "List the unique domain names in these supplied URLs.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-01ede3d9d7e94e7b",
+      "prompt": "Replace the old prefix with the new prefix in these identifiers.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-db2f9a59978b6ac6",
+      "prompt": "Extract the numeric error codes from this log excerpt.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-58d2493d28c646d9",
+      "prompt": "Add sequential line numbers to the supplied text.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-6a511eef8459204b",
+      "prompt": "Change these pasted labels to snake case.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-42d395e391da2ddb",
+      "prompt": "Extract the timestamp from each supplied log record.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-97a61d73261d6bf1",
+      "prompt": "Split these full names into the supplied first-name and last-name columns.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-874ffb1b88fd7ca6",
+      "prompt": "Normalize the case of the supplied country codes.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-81e8820526421eda",
+      "prompt": "Convert this simple Markdown table into CSV.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-6cd0db4a391fbf5c",
+      "prompt": "Turn these supplied bullet items into a numbered list.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-3af526df60d44c1c",
+      "prompt": "Format this supplied SQL query with consistent indentation.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-20844215748dff95",
+      "prompt": "Extract the HTTP method and path from these request lines.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-79c983d5ea07fae9",
+      "prompt": "Count the distinct IDs in the supplied records.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-c84b1e4051f09ac0",
+      "prompt": "Remove punctuation from this supplied list of tokens.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-49eaa37ad0f65acb",
+      "prompt": "Mask the last four digits of each supplied account number.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-0a0238d4ccce2756",
+      "prompt": "Change these supplied dates from ISO format to day month year.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ed3cc2f8a3c4eaef",
+      "prompt": "Extract the headings from the supplied Markdown document.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-848de15c1be4d5b1",
+      "prompt": "Convert these supplied boolean strings to true or false values.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-d664be863b8b4ba9",
+      "prompt": "Sort these supplied records by their numeric priority field.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-f4f0d0f07f3860df",
+      "prompt": "Apply the supplied regular expression to this short text and list matches.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-09d92a6a050fb8ff",
+      "prompt": "Combine these two small lists and remove exact duplicates.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-9a2b3913e3523115",
+      "prompt": "Extract the email addresses from the supplied contact list.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-73a1130bc8e00a53",
+      "prompt": "Turn this list of names into a JSON array.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ed6a6853473582a1",
+      "prompt": "Convert the supplied XML attributes into JSON keys.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-1bfa1a94e1421e09",
+      "prompt": "Draft a polite reply declining the supplied invitation.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-2b3f2d792f91eb12",
+      "prompt": "Explain the purpose of a database index in everyday language.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-dbed8ccd7f9eeac4",
+      "prompt": "Summarize this provided article for a general audience.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-ae765f941892588a",
+      "prompt": "Summarize the supplied release notes for nontechnical customers.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-077d9735052b660f",
+      "prompt": "Explain the idea of recursion to a beginner.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-3ebcd47be1623f8a",
+      "prompt": "Translate the supplied announcement into Italian.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-a99ccd277a5b2b1d",
+      "prompt": "Summarize the supplied interview transcript.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-73e528684e312048",
+      "prompt": "Translate the supplied office sign into Korean.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-1ffbfc4ccd0bc382",
+      "prompt": "Translate this customer message from Spanish into English.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-454a595b5459cb33",
+      "prompt": "Rewrite this announcement to make it shorter and clearer.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-5d23e30e529b0a2a",
+      "prompt": "Suggest a few titles for a beginner gardening workshop.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-acb531eb5429c1a7",
+      "prompt": "Rewrite this paragraph for an audience of new employees.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-9121d5cfc1bdb87d",
+      "prompt": "Write a short description of our volunteer program.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-0baa818890eefafa",
+      "prompt": "Draft an apology for a delayed customer response.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-bc07afe7f475d453",
+      "prompt": "Write a simple FAQ answer based on this supplied policy.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-e51a3f98ca74533a",
+      "prompt": "Summarize the main points in the supplied school policy.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-d6654f0ce4c3bc26",
+      "prompt": "Write an outline for a short presentation about recycling.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-3a1deed0d06e3737",
+      "prompt": "Rewrite this paragraph in a neutral professional tone.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-7ed81070087ba156",
+      "prompt": "Translate the supplied paragraph into German.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-4ea72c15079bb933",
+      "prompt": "Translate this help-center paragraph into Dutch.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-6f2769b35f2f6f7e",
+      "prompt": "Write a short fictional dialogue between two friendly explorers.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-d589a107fcb05e93",
+      "prompt": "Explain the difference between memory and storage.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-a079173a28d36785",
+      "prompt": "Summarize this travel itinerary into a short briefing.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-3c7d8dc9a649a687",
+      "prompt": "Explain the difference between a browser and a search engine.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-e28967fc124ebbed",
+      "prompt": "Make the tone of this customer email warmer.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-541f1ceb96b6e5b2",
+      "prompt": "Write a short story about a robot learning to paint.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-02a4069dc88d1d96",
+      "prompt": "Explain what a network firewall does at a basic level.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-b4121481e8c19332",
+      "prompt": "Draft a reminder about tomorrow's planning meeting.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-95935ff15fdfe6f1",
+      "prompt": "Translate this event invitation into French.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-317a0ceac72c0ee0",
+      "prompt": "Write a friendly invitation to our neighborhood picnic.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-3923ec9d54128985",
+      "prompt": "Explain why software teams use version control.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-ad1d63dd97882615",
+      "prompt": "Rewrite this introduction in a more conversational style.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-69f54ad6296f72b0",
+      "prompt": "Find the minimal counterexample to this claimed invariant.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-7459615e96b09b03",
+      "prompt": "Prove the correctness of the supplied consensus algorithm under the specified assumptions.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-082d41930efba8c8",
+      "prompt": "Determine whether this concurrent data structure is linearizable.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-c98440b9bcda21d4",
+      "prompt": "Construct an induction proof for the supplied invariant.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-a9595ce291b12274",
+      "prompt": "Analyze all possible interleavings of the supplied concurrent algorithm.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-ce735547e9e462cf",
+      "prompt": "Design a scheduling algorithm satisfying all the supplied resource constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-843b9102508333d6",
+      "prompt": "Diagnose a rare timing-dependent data-loss bug in the supplied execution histories.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-c4493e967f202c11",
+      "prompt": "Analyze whether the proposed cryptographic protocol admits the described attack.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-55e12777ab3dc1c4",
+      "prompt": "Optimize this allocation problem subject to the coupled budget and capacity constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-39c459559b5bd590",
+      "prompt": "Find and explain a counterexample to the supplied distributed snapshot algorithm.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-86f434dfc733ccb1",
+      "prompt": "Prove that every execution of this state machine eventually terminates.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-19fe0ac9945b9b9f",
+      "prompt": "Design a migration strategy satisfying the supplied zero-loss and availability requirements.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-e4676ba490ce75e0",
+      "prompt": "Design an atomic update protocol across the supplied failure domains.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-204bf25e0a2e2891",
+      "prompt": "Prove that the proposed garbage collector cannot reclaim a reachable object.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-5af52b9c3083b070",
+      "prompt": "Prove that the stated recurrence has the claimed closed form.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-940d3038d7617d01",
+      "prompt": "Analyze whether the supplied cache-coherence algorithm permits stale reads.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-f460f7fe4a2ae8f3",
+      "prompt": "Diagnose the root cause of this intermittent kernel panic from multiple traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-f3c031d24e63f02b",
+      "prompt": "Prove that this transformation preserves the program's observable semantics.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-fc89aa6df79a8261",
+      "prompt": "Analyze the soundness of the supplied type-system extension.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-808d5b9952dab4b7",
+      "prompt": "Design an allocation strategy satisfying the interacting fairness and budget requirements.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-ec26e56a1e8bf051",
+      "prompt": "Construct a correctness argument for the supplied crash-recovery procedure.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-1492aab075c08300",
+      "prompt": "Diagnose a nondeterministic replication divergence from these event histories.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-26372075424cc78f",
+      "prompt": "Derive a solution to the supplied nonlinear constrained optimization problem.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-eb64305aa4b4a4b8",
+      "prompt": "Design a fault-tolerant transaction protocol for the supplied failure model.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-7467426ea61dc8bd",
+      "prompt": "Design a recovery algorithm that remains correct after arbitrary partial failures.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-70d050234f16a8d4",
+      "prompt": "Derive an optimal policy for the stated constrained stochastic process.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-09460dd5de73a513",
+      "prompt": "Prove a lower bound on communication for the supplied distributed task.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-c91de8fce7494f9e",
+      "prompt": "Find a subtle counterexample in this proposed proof of correctness.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-e1cfae39a3270c3e",
+      "prompt": "Analyze the correctness of this compiler optimization for all defined inputs.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-f8459cd01d785b1a",
+      "prompt": "Prove that the supplied distributed locking protocol guarantees mutual exclusion.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-ef8f6e90e01c0e35",
+      "prompt": "Diagnose a production race that occurs only during simultaneous failover and retry.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-627309686bd0b470",
+      "prompt": "Optimize placement across regions while respecting the specified recovery constraints.",
+      "label": "frontier_reasoning"
     }
   ],
   "calibration": [
@@ -519,128 +999,824 @@
       "group": "resource-allocation",
       "prompt": "Optimize resource allocation subject to these coupled scheduling and budget constraints.",
       "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-252f03002b86ea89",
+      "prompt": "Convert the supplied hexadecimal values to decimal integers.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-05d2e59e8158ab78",
+      "prompt": "Sort these filenames in alphabetical order.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-5c31ef315f881bbe",
+      "prompt": "Filter out the empty entries from this supplied array.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-ae2d0390f76bfb1d",
+      "prompt": "Return the invoice numbers appearing in these lines.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-2d0cc6c9f48e2087",
+      "prompt": "Convert the supplied list of pairs into a dictionary.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-96469d0da2ad46d4",
+      "prompt": "Count how often each word appears in the supplied paragraph.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-11692757d8c631d0",
+      "prompt": "Remove duplicate rows from this short table.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-73ec53e37befc803",
+      "prompt": "Select the rows whose status field equals completed.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-3e5ea7bc27248377",
+      "prompt": "Extract all the version numbers in the supplied release list.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-01c7bdddc50f81fc",
+      "prompt": "Return only the quoted strings from the supplied passage.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-0171ecb751e28407",
+      "prompt": "Count the nonempty lines in the pasted text.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-2feafc4e67d6b42d",
+      "prompt": "Convert the provided key-value lines into a JSON object.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-d43808255be439c9",
+      "prompt": "Replace every tab in this snippet with four spaces.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-e98a189c3128fdc9",
+      "prompt": "Find the largest and smallest values in this numeric list.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-981745a09cf441ba",
+      "prompt": "Convert these comma separated values into a Markdown table.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-6ad166e651130753",
+      "prompt": "Return the first sentence of each supplied paragraph.",
+      "label": "local_small"
+    },
+    {
+      "group": "stable-06e67fe985e873a6",
+      "prompt": "Suggest activities for a small team social event.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-d3f2e66afcc11b89",
+      "prompt": "Explain what a cache does to someone new to programming.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-2c88c8ef6f898b0d",
+      "prompt": "Suggest a name for a weekly software learning group.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-141c02c26c5ffbba",
+      "prompt": "Suggest names for a small community newsletter.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-4e05e71f8742c7d5",
+      "prompt": "Suggest a tagline for a local bakery.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-e40ae41521f821e2",
+      "prompt": "Rewrite this email to sound more courteous.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-1a3e14e2e0229e51",
+      "prompt": "Summarize the provided meeting notes in one paragraph.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-194c946550d92266",
+      "prompt": "Translate the supplied instructions into Japanese.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-1949ec02819f2e66",
+      "prompt": "Draft a message congratulating a coworker on a promotion.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-ab83c897437ae315",
+      "prompt": "Summarize the discussion in this pasted conversation.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-d3b0c9fd504366a6",
+      "prompt": "Draft a welcome message for new community members.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-9f2f4321ea0dfe0f",
+      "prompt": "Suggest three opening lines for a community fundraiser speech.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-59a0e83667d87246",
+      "prompt": "Write a short product description for a reusable water bottle.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-ed3bc9d17ba89e87",
+      "prompt": "Explain what an API is using a familiar example.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-3db8336c90033043",
+      "prompt": "Draft a thank-you message for a colleague who helped with a release.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-8ae0251469133dd1",
+      "prompt": "Rewrite the supplied response to remove unnecessary jargon.",
+      "label": "standard_chat"
+    },
+    {
+      "group": "stable-47ea17ea553641a9",
+      "prompt": "Construct a reduction establishing the computational hardness of this problem.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-16b80fe58b23ed54",
+      "prompt": "Diagnose a rare deadlock using these interacting thread traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-3924aa66c70eaec9",
+      "prompt": "Determine whether the proposed retry scheme can duplicate committed transactions.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-db24d781d08ab4f8",
+      "prompt": "Analyze the correctness of the supplied lock-free stack under memory reordering.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-da493631e9c1ae71",
+      "prompt": "Derive the stability conditions for this coupled control system.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-1784126a5938b2b6",
+      "prompt": "Prove the asymptotic complexity of this recursive algorithm.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-5338d0a26677c45b",
+      "prompt": "Find a counterexample to the stated concurrency invariant.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-fc85ed8c90b1d269",
+      "prompt": "Analyze a subtle security flaw requiring several interacting protocol states.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-e4b91c2bf318971a",
+      "prompt": "Design a formally justified rollback protocol for interrupted migrations.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-120460183f62318e",
+      "prompt": "Design a service architecture meeting all the stated resilience and latency constraints.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-591c5a8c134dc8f9",
+      "prompt": "Solve the supplied optimization problem and justify global optimality.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-28118d1bcd8802e3",
+      "prompt": "Design a consistency protocol satisfying the stated partition behavior.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-ac83275998f11872",
+      "prompt": "Construct a mathematical proof of the proposed graph property.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-5bc71513cd29facd",
+      "prompt": "Diagnose memory corruption using the supplied allocator traces and thread interleavings.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-f0981bec4ed4f657",
+      "prompt": "Determine the root cause of an intermittent crash from these conflicting traces.",
+      "label": "frontier_reasoning"
+    },
+    {
+      "group": "stable-c1a32c53c74d27d8",
+      "prompt": "Prove that the supplied scheduler cannot starve a runnable task.",
+      "label": "frontier_reasoning"
     }
   ],
   "evaluate": [
     {
       "group": "extract-order-ids",
       "prompt": "Extract the order identifiers from these supplied log entries.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "yaml-json",
       "prompt": "Convert this small supplied YAML mapping into equivalent JSON.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "sort-unique-codes",
       "prompt": "Deduplicate and alphabetically sort the following product codes.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "format-bullets",
       "prompt": "Turn these supplied lines into a Markdown bullet list.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "normalize-spacing",
       "prompt": "Collapse repeated spaces in this supplied paragraph to single spaces.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "column-extraction",
       "prompt": "Extract the second column from each of these tab separated rows.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "kebab-case",
       "prompt": "Convert these supplied names from snake_case to kebab-case.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "comma-json",
       "prompt": "Fix the missing comma between these two JSON properties.",
-      "label": "local_small"
+      "label": "local_small",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "congratulate-team",
       "prompt": "Draft a congratulatory message for the team that shipped our release.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "explain-load-balancer",
       "prompt": "Explain the purpose of a load balancer to a new developer.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "policy-summary",
       "prompt": "Summarize this supplied travel policy in plain language.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "translate-announcement",
       "prompt": "Translate the provided office announcement into Portuguese.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "event-promotion",
       "prompt": "Write a welcoming promotional paragraph for our science fair.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "rewrite-neutral",
       "prompt": "Rewrite this supplied customer response in a neutral tone.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "story-outline",
       "prompt": "Suggest a short adventure story outline set in a floating city.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "explain-transactions",
       "prompt": "Give a beginner-friendly explanation of a database transaction.",
-      "label": "standard_chat"
+      "label": "standard_chat",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "queue-aba",
       "prompt": "Analyze whether this concurrent queue is vulnerable to the ABA problem and prove the conclusion.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "partitioned-commit",
       "prompt": "Design an atomic commit protocol that handles coordinator failure during a network partition.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "proof-induction",
       "prompt": "Construct an induction proof for the stated recurrence relation.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "memory-corruption",
       "prompt": "Diagnose the cause of this intermittent memory corruption from the supplied execution traces.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "placement-constraints",
       "prompt": "Find an optimal service placement satisfying these interacting resource and resilience constraints.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "replication-invariant",
       "prompt": "Prove that the proposed replication algorithm cannot acknowledge a write that is later lost.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "schema-rollback",
       "prompt": "Analyze rollback correctness for this multi-phase database migration under partial failures.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
     },
     {
       "group": "availability-budget",
       "prompt": "Design a deployment architecture meeting the supplied recovery, latency, and cost requirements.",
-      "label": "frontier_reasoning"
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "0.2.2 reference"
+    },
+    {
+      "group": "acceptance-40eaefab94915aac",
+      "prompt": "From these pasted lines, give me the ticket numbers and nothing else.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-dd6aaf890eb0722d",
+      "prompt": "Please alphabetize the supplied list of city names.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-8d980db23674dcd3",
+      "prompt": "Turn this short JSON sample into equivalent TOML.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2dba0233a83fbda4",
+      "prompt": "How many entries in this provided list are exact duplicates?",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2a0cca69185d295e",
+      "prompt": "Strip the blank rows out of the supplied CSV.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-c31da5247a475950",
+      "prompt": "Give me the hostnames from these pasted web addresses.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-4d95ab692d205181",
+      "prompt": "Convert each supplied timestamp to the stated fixed date format.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-651456e8d2aca3bc",
+      "prompt": "Take the third item from every row of this small supplied table.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2521a5c0d6abdbfa",
+      "prompt": "Replace the literal string OLD in this snippet with NEW.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-4d676ef179c3ea83",
+      "prompt": "List the distinct file suffixes in these provided paths.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-d3476ee849a4eab9",
+      "prompt": "Join these supplied words with commas.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-b93e3bc2db23d0c9",
+      "prompt": "Indent the supplied JSON with two spaces.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-e7d9efaf1f68bba4",
+      "prompt": "Convert the supplied integer list into a JSON array of strings.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-4608d407d8a047fc",
+      "prompt": "Remove the Markdown formatting from these supplied headings.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-e3780df83feb64b8",
+      "prompt": "Count the values above ten in the provided numeric array.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-b865a2605f0da0ed",
+      "prompt": "Pull the postal codes out of these supplied addresses.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-c5b5616ba8ba7a51",
+      "prompt": "Sort these provided objects by their name key.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-f6b63ec4fdfa90c3",
+      "prompt": "Turn this simple supplied table into tab separated text.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-9129aada190a2e31",
+      "prompt": "Remove the exact duplicate email addresses from the pasted list.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-bf21c5f30346a682",
+      "prompt": "Return the supplied identifiers in lowercase.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-26cbdcfb9ca30375",
+      "prompt": "Split each pasted key=value line at the first equals sign.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-ea629b1bdc72a852",
+      "prompt": "Show the total of the supplied expense amounts.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-991819ecd34e6d9b",
+      "prompt": "Extract the text inside parentheses from these supplied sentences.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-931c2b5d9165ef14",
+      "prompt": "Number these supplied checklist entries consecutively.",
+      "label": "local_small",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-a2cfa8530e0995f8",
+      "prompt": "Could you write a warm note welcoming our new volunteer coordinator?",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-f5fd95a279c5686f",
+      "prompt": "Tell a beginner what a software dependency is.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-bb7a3c6e41485397",
+      "prompt": "Put the supplied announcement into natural Spanish.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-79b3c6617e7d3f27",
+      "prompt": "Give me a brief summary of the attached meeting transcript.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-037574a86de2e0cf",
+      "prompt": "Make this customer reply sound less defensive.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-e6500099f8b8fa6f",
+      "prompt": "Suggest a title for our weekend photography class.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-8f9abab72ccd1099",
+      "prompt": "Write a short fictional scene in a seaside bookshop.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-7231dbbfa581eb8a",
+      "prompt": "Explain DNS using an everyday analogy.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-effb60d46ec242c4",
+      "prompt": "Translate the supplied paragraph from French to English.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-efa77bd04800a969",
+      "prompt": "Summarize this provided onboarding document for a new colleague.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-635aa7a0539b353b",
+      "prompt": "Rewrite this invitation with a more relaxed tone.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-700509e06ad0609f",
+      "prompt": "Draft a reminder that the community meeting starts at seven.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-27412738efdef3e8",
+      "prompt": "Describe the difference between an operating system and an application simply.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-f6047d6e7b8f1782",
+      "prompt": "Suggest some friendly names for our reading club.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-58cae7a349a8963b",
+      "prompt": "Write a concise introduction for the supplied speaker biography.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-c0c7f0d17e3228ea",
+      "prompt": "Translate the supplied lunch menu into English.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-d1a3b9ae1e161e73",
+      "prompt": "Explain why people make backup copies of files.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-f30a00dc749d3e48",
+      "prompt": "Help me phrase a polite request to reschedule our appointment.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-ce83491faa222018",
+      "prompt": "Give me a short summary of the supplied customer feedback.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-c88ceb54295f59b3",
+      "prompt": "Write a cheerful caption for a community garden newsletter.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-da37407bfefa0a37",
+      "prompt": "Rewrite this supplied paragraph so a teenager can understand it.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-ae5eaac5061624b6",
+      "prompt": "Draft a thank-you note to the organizers of yesterday's workshop.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-b7e97550b23f79b1",
+      "prompt": "Explain what encryption means at an introductory level.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2f3fd3f94a30bb2b",
+      "prompt": "Suggest a simple outline for a talk about learning a musical instrument.",
+      "label": "standard_chat",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-18b56e93ddc3c88d",
+      "prompt": "Show whether the supplied two-phase recovery protocol can lose an acknowledged update.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-e35d915e251a5d3c",
+      "prompt": "Work out the cause of this rare heap corruption using the conflicting execution traces.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-882b91b93f00a41c",
+      "prompt": "Prove the stated termination property for every reachable program state.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2ca8842f7b107dba",
+      "prompt": "Design a deployment satisfying all the given failover, latency, and budget constraints.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-49a2700ba05ab4b8",
+      "prompt": "Find a counterexample to the proposed argument about concurrent reads.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-495dc5d399d334bf",
+      "prompt": "Determine whether the supplied queue implementation remains linearizable under weak memory.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-6f7b15e275eca6dd",
+      "prompt": "Derive a globally optimal solution to the constrained placement problem.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-58622e9daf24620c",
+      "prompt": "Prove the supplied algorithm has the claimed worst-case bound.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-4b3722cabf9ed716",
+      "prompt": "Diagnose why this race condition occurs only when a leader change overlaps a retry.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-aed2beacf71475a0",
+      "prompt": "Design a recovery procedure that preserves the stated invariants after a partial commit.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-8b60e2a9ce34fcda",
+      "prompt": "Analyze whether the supplied proof incorrectly assumes independence between these events.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-db09ca16f01970f1",
+      "prompt": "Construct a reduction from the given decision problem to the target problem.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-4911a7c7fd662b28",
+      "prompt": "Find the smallest execution trace that violates this consistency claim.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-0c7f2a3682099208",
+      "prompt": "Prove that the proposed compiler rewrite preserves all defined behavior.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-b38c075ecdbf921f",
+      "prompt": "Design a transaction scheme that meets these interacting durability and availability requirements.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-49f9255259ac80de",
+      "prompt": "Determine the root cause of the intermittent data loss across the supplied replica histories.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-c5d47949d981a2d1",
+      "prompt": "Derive the necessary stability condition for the coupled system of equations.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-a38ea1dd5223b504",
+      "prompt": "Prove or refute the stated graph-theoretic conjecture for the specified graph family.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-8be1ae398b9baba2",
+      "prompt": "Analyze whether the memory reclamation strategy can free a node still visible to a reader.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-598d65d58bafac4a",
+      "prompt": "Find an optimal schedule subject to the supplied precedence and resource constraints.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-2c9ca360203ff176",
+      "prompt": "Construct a formal correctness argument for the interrupted-upgrade recovery path.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-8447ff9ea523069a",
+      "prompt": "Diagnose the nondeterministic crash from the supplied stack traces and allocator state.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-7d9428a5d03add2a",
+      "prompt": "Design a partition recovery protocol with the specified consistency guarantees.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
+    },
+    {
+      "group": "acceptance-db602d9078b9f973",
+      "prompt": "Prove that the proposed synchronization scheme cannot starve a waiting writer.",
+      "label": "frontier_reasoning",
+      "evaluation_cohort": "stable held-out"
     }
   ]
 }

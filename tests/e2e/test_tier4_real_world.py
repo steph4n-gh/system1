@@ -35,10 +35,10 @@ from reflex import (
 )
 
 
-def test_scenario_autonomous_ai_tool_guard_pipeline(temp_ledger):
+def test_scenario_autonomous_ai_tool_guard_pipeline(temp_ledger, read_policy):
     """Scenario 1: Autonomous AI agent tool execution reference monitor."""
     guard = SystemOneGuardHook(
-        ledger=temp_ledger,
+        ledger=temp_ledger, policy=read_policy,
         auto_calibrate=True,
         min_confidence=0.50,
         alpha=0.10,

@@ -1,0 +1,154 @@
+{
+  "source": "Live Jev HTTPS responses; three authored contract checks, not a quality benchmark.",
+  "successful_calls": 3,
+  "failed_calls": 0,
+  "cases": [
+    {
+      "state": {
+        "topic": "invoice",
+        "priority": "ordinary"
+      },
+      "model": "jev-1.13.0",
+      "answers": {
+        "queue": {
+          "type": "choice",
+          "choice": "billing",
+          "confidence": 1.0,
+          "probabilities": {
+            "billing": 1.0,
+            "access": 0.0
+          },
+          "value": "billing",
+          "conformal_set": null
+        },
+        "urgent": {
+          "type": "noul",
+          "noul": 0.03,
+          "value": false,
+          "confidence": 0.97,
+          "conformal_set": null
+        },
+        "priority": {
+          "type": "score",
+          "score": 0.0,
+          "confidence": 1.0,
+          "legend": {
+            "0": "ordinary",
+            "1": "elevated",
+            "2": "urgent"
+          },
+          "probabilities": {
+            "0": 1.0,
+            "1": 0.0,
+            "2": 0.0
+          },
+          "value": 0.0,
+          "conformal_set": null
+        }
+      },
+      "usage": {
+        "input_tokens": 395,
+        "output_tokens": 61,
+        "total_tokens": 456
+      }
+    },
+    {
+      "state": {
+        "topic": "password",
+        "priority": "urgent"
+      },
+      "model": "jev-1.13.0",
+      "answers": {
+        "queue": {
+          "type": "choice",
+          "choice": "access",
+          "confidence": 1.0,
+          "probabilities": {
+            "access": 1.0,
+            "billing": 0.0
+          },
+          "value": "access",
+          "conformal_set": null
+        },
+        "urgent": {
+          "type": "noul",
+          "noul": 0.93,
+          "value": true,
+          "confidence": 0.93,
+          "conformal_set": null
+        },
+        "priority": {
+          "type": "score",
+          "score": 2.0,
+          "confidence": 0.99,
+          "legend": {
+            "0": "ordinary",
+            "1": "elevated",
+            "2": "urgent"
+          },
+          "probabilities": {
+            "0": 0.0,
+            "1": 0.0,
+            "2": 1.0
+          },
+          "value": 2.0,
+          "conformal_set": null
+        }
+      },
+      "usage": {
+        "input_tokens": 395,
+        "output_tokens": 61,
+        "total_tokens": 456
+      }
+    },
+    {
+      "state": {
+        "topic": "payment",
+        "priority": "elevated"
+      },
+      "model": "jev-1.13.0",
+      "answers": {
+        "queue": {
+          "type": "choice",
+          "choice": "billing",
+          "confidence": 1.0,
+          "probabilities": {
+            "billing": 1.0,
+            "access": 0.0
+          },
+          "value": "billing",
+          "conformal_set": null
+        },
+        "urgent": {
+          "type": "noul",
+          "noul": 0.1,
+          "value": false,
+          "confidence": 0.9,
+          "conformal_set": null
+        },
+        "priority": {
+          "type": "score",
+          "score": 1.0,
+          "confidence": 1.0,
+          "legend": {
+            "0": "ordinary",
+            "1": "elevated",
+            "2": "urgent"
+          },
+          "probabilities": {
+            "0": 0.0,
+            "1": 1.0,
+            "2": 0.0
+          },
+          "value": 1.0,
+          "conformal_set": null
+        }
+      },
+      "usage": {
+        "input_tokens": 397,
+        "output_tokens": 61,
+        "total_tokens": 458
+      }
+    }
+  ]
+}

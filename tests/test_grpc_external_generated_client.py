@@ -14,6 +14,7 @@ import tempfile
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 import grpc
 import pytest
+from system1 import __version__
 
 from system1.grpc_server import serve
 from system1.guard import DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
@@ -104,7 +105,7 @@ def test_grpc_external_generated_client_roundtrip():
                     health_req = ext_system1_pb2.HealthCheckRequest()
                     health_resp = stub.HealthCheck(health_req)
                     assert health_resp.status == ext_system1_pb2.HealthCheckResponse.SERVING
-                    assert health_resp.version == "0.2.2"
+                    assert health_resp.version == __version__
 
                     # RPC 2: Decide
                     decide_req = ext_system1_pb2.DecideRequest(

@@ -40,7 +40,7 @@ from system1.calibration import ConformalPredictor, DecisionCalibrator
 from system1.core.telemetry import TelemetryProjector
 from system1.cache import SemanticSystemOneCache
 
-MAGIC_HEADER = b"S1M\x01"
+MAGIC_HEADER = b"S1M\x02"
 
 
 def _projector_config(projector: Any) -> Dict[str, Any]:
@@ -80,6 +80,7 @@ class CompiledHeadWeights:
     confidence_floor_tau0: float = 0.15
     escalate_on_ambiguity: bool = True
     calibration_scores: Tuple[float, ...] = ()
+    score_method: str = "aps"
 
 
 class CompiledSystemOneModel:
@@ -198,7 +199,7 @@ class CompiledSystemOneModel:
                 embedding=emb,
                 telemetry=telemetry,
                 schema_digest=schema_dig,
-                model_version=cur_version,
+                model_version=cur_version, strict=True,
             )
             if hit is not None:
                 entry, sim = hit
@@ -229,7 +230,7 @@ class CompiledSystemOneModel:
                 embedding=emb,
                 telemetry=telemetry,
                 schema_digest=schema_dig,
-                model_version=cur_version,
+                model_version=cur_version, strict=True,
                 source="evaluation",
             )
 
@@ -316,6 +317,10 @@ class CompiledSystemOneModel:
                         self.heads[f_name].biases = head.biases
                         self.heads[f_name].P = head.covariance_inv
                         self.heads[f_name].B = head.cross_covariance
+                        # Old evidence describes the previous weights, including on disk.
+                        self.heads[f_name].calibration_scores = ()
+                        self.heads[f_name].conformal_quantile = 0.0
+                        self.heads[f_name].temperature = 1.0
                     updated_fields.append(f_name)
 
             rank1_ms = float(sum(update_durations_ms)) if update_durations_ms else 0.0
@@ -338,7 +343,7 @@ class CompiledSystemOneModel:
                     embedding=emb,
                     telemetry=telemetry,
                     schema_digest=self.schema.schema_digest(),
-                    model_version=self.model_version,
+                    model_version=self.model_version, strict=True,
                     source="tier2",
                 )
 
@@ -359,62 +364,64 @@ class CompiledSystemOneModel:
         By default, excludes covariance matrices to keep the binary ultra-compact (<20 KB).
         Covariance is automatically initialized on-demand if online learning is invoked.
         """
-        header_meta = {
-            "version": 1,
-            "projector": _projector_config(self.projector),
-            "schema_name": self.schema.schema_name,
-            "schema_dict": self.schema.to_dict(),
-            "schema_digest": self.schema.schema_digest(),
-            "dimension": self.dimension,
-            "created_at": getattr(self, "created_at", 0.0),
-            "metadata": {
-                **self.metadata,
-                "forgetting_factor": self.forgetting_factor,
-                "recency_weighted": self.recency_weighted,
-            },
-            "heads": {
-                name: {
-                    "field_type": ch.field_type,
-                    "temperature": float(ch.temperature),
-                    "conformal_quantile": float(ch.conformal_quantile),
-                    "margin_threshold": float(getattr(ch, "margin_threshold", 0.20)),
-                    "forgetting_factor": float(getattr(ch, "forgetting_factor", 0.995)),
-                    "relative_odds_ratio": float(getattr(ch, "relative_odds_ratio", 1.5)),
-                    "confidence_floor_tau0": float(getattr(ch, "confidence_floor_tau0", 0.15)),
-                    "escalate_on_ambiguity": bool(getattr(ch, "escalate_on_ambiguity", True)),
-                    "options": list(ch.options),
-                    "weights_shape": list(ch.weights.shape),
-                    "biases_shape": list(ch.biases.shape),
-                }
-                for name, ch in sorted(self.heads.items())
-            },
-        }
-        header_bytes = json.dumps(header_meta, sort_keys=True).encode("utf-8")
-        header_len = len(header_bytes)
+        with self._lock:
+            header_meta = {
+                "version": 2,
+                "projector": _projector_config(self.projector),
+                "schema_name": self.schema.schema_name,
+                "schema_dict": self.schema.to_dict(),
+                "schema_digest": self.schema.schema_digest(),
+                "dimension": self.dimension,
+                "created_at": getattr(self, "created_at", 0.0),
+                "metadata": {
+                    **self.metadata,
+                    "forgetting_factor": self.forgetting_factor,
+                    "recency_weighted": self.recency_weighted,
+                },
+                "heads": {
+                    name: {
+                        "field_type": ch.field_type,
+                        "temperature": float(ch.temperature),
+                        "conformal_quantile": float(ch.conformal_quantile),
+                        "score_method": ch.score_method,
+                        "margin_threshold": float(getattr(ch, "margin_threshold", 0.20)),
+                        "forgetting_factor": float(getattr(ch, "forgetting_factor", 0.995)),
+                        "relative_odds_ratio": float(getattr(ch, "relative_odds_ratio", 1.5)),
+                        "confidence_floor_tau0": float(getattr(ch, "confidence_floor_tau0", 0.15)),
+                        "escalate_on_ambiguity": bool(getattr(ch, "escalate_on_ambiguity", True)),
+                        "options": list(ch.options),
+                        "weights_shape": list(ch.weights.shape),
+                        "biases_shape": list(ch.biases.shape),
+                    }
+                    for name, ch in sorted(self.heads.items())
+                },
+            }
+            header_bytes = json.dumps(header_meta, sort_keys=True).encode("utf-8")
+            header_len = len(header_bytes)
 
-        # Pack numpy weights into compressed zip buffer
-        npz_buf = io.BytesIO()
-        arrays_to_save: Dict[str, np.ndarray] = {}
-        for name, ch in sorted(self.heads.items()):
-            arrays_to_save[f"{name}_w"] = ch.weights.astype(np.float32)
-            arrays_to_save[f"{name}_b"] = ch.biases.astype(np.float32)
-            if hasattr(ch, "calibration_scores") and len(ch.calibration_scores) > 0:
-                arrays_to_save[f"{name}_calib_scores"] = np.asarray(ch.calibration_scores, dtype=np.float64)
-            if include_covariance:
-                if ch.P is not None:
-                    arrays_to_save[f"{name}_P"] = ch.P.astype(np.float32)
-                if ch.B is not None:
-                    arrays_to_save[f"{name}_B"] = ch.B.astype(np.float32)
-        np.savez_compressed(npz_buf, **arrays_to_save)
-        npz_bytes = npz_buf.getvalue()
+            # Pack numpy weights into compressed zip buffer
+            npz_buf = io.BytesIO()
+            arrays_to_save: Dict[str, np.ndarray] = {}
+            for name, ch in sorted(self.heads.items()):
+                arrays_to_save[f"{name}_w"] = ch.weights.astype(np.float32)
+                arrays_to_save[f"{name}_b"] = ch.biases.astype(np.float32)
+                if hasattr(ch, "calibration_scores") and len(ch.calibration_scores) > 0:
+                    arrays_to_save[f"{name}_calib_scores"] = np.asarray(ch.calibration_scores, dtype=np.float64)
+                if include_covariance:
+                    if ch.P is not None:
+                        arrays_to_save[f"{name}_P"] = ch.P.astype(np.float32)
+                    if ch.B is not None:
+                        arrays_to_save[f"{name}_B"] = ch.B.astype(np.float32)
+            np.savez_compressed(npz_buf, **arrays_to_save)
+            npz_bytes = npz_buf.getvalue()
 
-        # Wire format: MAGIC (4 bytes) + uint32(header_len) + header_bytes + npz_bytes
-        out = bytearray()
-        out.extend(MAGIC_HEADER)
-        out.extend(struct.pack(">I", header_len))
-        out.extend(header_bytes)
-        out.extend(npz_bytes)
-        return bytes(out)
+            # Wire format: MAGIC (4 bytes) + uint32(header_len) + header_bytes + npz_bytes
+            out = bytearray()
+            out.extend(MAGIC_HEADER)
+            out.extend(struct.pack(">I", header_len))
+            out.extend(header_bytes)
+            out.extend(npz_bytes)
+            return bytes(out)
 
     def save(self, path: Union[str, Path], include_covariance: bool = False) -> None:
         """Saves compiled model to a .s1m binary file on disk."""
@@ -430,7 +437,7 @@ class CompiledSystemOneModel:
         backend: str = "numpy",
     ) -> CompiledSystemOneModel:
         """Deserializes a CompiledSystemOneModel from binary bytes."""
-        if len(data) < 8 or data[:4] != MAGIC_HEADER:
+        if len(data) < 8 or data[:4] not in (b"S1M\x01", MAGIC_HEADER):
             raise ValueError("Invalid System 1 Model binary: missing or invalid magic header")
 
         header_len = struct.unpack(">I", data[4:8])[0]
@@ -440,6 +447,8 @@ class CompiledSystemOneModel:
 
         header_json = data[8:header_end].decode("utf-8")
         meta = json.loads(header_json)
+        if meta.get("version") not in (1, 2) or meta["version"] != data[3]:
+            raise ValueError("Unsupported or inconsistent saved skill format version")
 
         # Unpack npz payload
         npz_bytes = data[header_end:]
@@ -447,7 +456,11 @@ class CompiledSystemOneModel:
 
         # Reconstruct schema
         schema = DecisionSchema.from_dict(meta["schema_dict"])
+        if meta.get("schema_digest") != schema.schema_digest():
+            raise ValueError("Saved skill schema digest does not match its definition")
         dimension = int(meta["dimension"])
+        if dimension <= 0:
+            raise ValueError("Saved skill dimension must be positive")
         projector_config = meta.get("projector")
         if projector_config is not None:
             if projector is not None:
@@ -467,12 +480,29 @@ class CompiledSystemOneModel:
         # Reconstruct head weights
         heads: Dict[str, CompiledHeadWeights] = {}
         for name, h_info in meta["heads"].items():
+            if name not in schema.fields or h_info["field_type"] != schema.fields[name].field_type:
+                raise ValueError(f"Saved head {name!r} does not match the schema")
+            definition = schema.fields[name]
             w = npz_file[f"{name}_w"]
             b = npz_file[f"{name}_b"]
+            widths = (1, 2) if isinstance(definition, BooleanField) else (len(definition.options),) if hasattr(definition, "options") else (1,)
+            if w.ndim != 2 or w.shape[0] not in widths or w.shape[1] != dimension or b.shape != (w.shape[0],):
+                raise ValueError(f"Saved head {name!r} has incompatible weight dimensions")
+            if not np.all(np.isfinite(w)) or not np.all(np.isfinite(b)):
+                raise ValueError(f"Saved head {name!r} contains non-finite weights")
+            temperature = float(h_info.get("temperature", 1.0))
+            if not math.isfinite(temperature) or temperature <= 0:
+                raise ValueError(f"Saved head {name!r} has an invalid temperature")
+            if h_info.get("score_method", "aps") not in ("aps", "lac"):
+                raise ValueError(f"Saved head {name!r} uses an unsupported conformal score")
+            if isinstance(definition, (ChoiceField, MultiChoiceField)) and tuple(h_info.get("options", ())) != definition.options:
+                raise ValueError(f"Saved head {name!r} options do not match the schema")
             p_mat = npz_file[f"{name}_P"] if f"{name}_P" in npz_file else None
             b_mat = npz_file[f"{name}_B"] if f"{name}_B" in npz_file else None
             calib_scores_arr = npz_file[f"{name}_calib_scores"] if f"{name}_calib_scores" in npz_file else None
             calib_scores = tuple(float(s) for s in calib_scores_arr) if calib_scores_arr is not None else ()
+            if any(not math.isfinite(score) or score < 0 for score in calib_scores):
+                raise ValueError(f"Saved head {name!r} contains invalid calibration scores")
             heads[name] = CompiledHeadWeights(
                 field_name=name,
                 field_type=h_info["field_type"],
@@ -480,6 +510,7 @@ class CompiledSystemOneModel:
                 biases=b,
                 temperature=float(h_info.get("temperature", 1.0)),
                 conformal_quantile=float(h_info.get("conformal_quantile", 0.0)),
+                score_method=h_info.get("score_method", "aps"),
                 options=tuple(h_info.get("options", [])),
                 P=p_mat,
                 B=b_mat,
@@ -1111,7 +1142,7 @@ class SystemOneCompiler:
                         if c_i == true_c:
                             score_val = cum_sum
                             break
-                    nonconf_scores.append(score_val)
+                    nonconf_scores.append(score_val if augment else 1.0 - float(p_row[true_c]))
 
                 m_thresh = float(np.clip(np.quantile(error_margins, 0.95) + 0.05, 0.15, 0.85)) if error_margins else 0.20
 
@@ -1127,6 +1158,7 @@ class SystemOneCompiler:
                     weights=weights,
                     biases=biases,
                     temperature=learned_temp,
+                    score_method="aps" if augment else "lac",
                     conformal_quantile=conformal_q,
                     options=f_def.options,
                     P=P_mat,
@@ -1181,7 +1213,7 @@ class SystemOneCompiler:
                         if c_i == true_idx:
                             score_val = cum_s
                             break
-                    nonconf_scores.append(score_val)
+                    nonconf_scores.append(score_val if augment else 1.0 - float(p_row[true_idx]))
 
                 m_thresh_bool = float(np.clip(np.quantile(error_margins_bool, 0.95) + 0.05, 0.15, 0.85)) if error_margins_bool else 0.20
 
@@ -1202,6 +1234,7 @@ class SystemOneCompiler:
                     P=P_mat,
                     B=B_mat,
                     margin_threshold=m_thresh_bool,
+                    score_method="aps" if augment else "lac",
                     forgetting_factor=self.forgetting_factor,
                     relative_odds_ratio=self.relative_odds_ratio,
                     confidence_floor_tau0=self.confidence_floor_tau0,

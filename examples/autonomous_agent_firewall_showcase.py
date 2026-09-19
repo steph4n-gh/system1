@@ -24,7 +24,7 @@ Comprehensive Enterprise Stress Showcase demonstrating:
    - Split Conformal Prediction set evaluation ((1 - α) coverage) and automated Human Escalation Gate.
 4. Multi-Threaded Concurrent Load Simulation:
    - 1,000+ concurrent requests across multiple worker threads with zero lock contention.
-   - Measured throughput exceeding 1,000 QPS with 100% SQLite ActionLedger SHA-256 hash chain integrity.
+   - Measured throughput and SQLite ActionLedger SHA-256 hash chain integrity.
 5. Drop-in Compatibility:
    - Standard TypeSafe SDK interface and zero-code monkey patching via `patch_typesafe()`.
 """
@@ -803,10 +803,10 @@ def render_cutover_banner(event: Dict[str, Any]) -> None:
     print(f"║  Cutover Event:          {event.get('event', 'trojan_horse_cutover'):<87}║")
     print(f"║  Timestamp:              {timestamp_str:<87}║")
     print(f"║  Exemplars Ingested:     {samples} multi-head query/decision tuples ingested into SystemOneCompiler{' ':>24}║")
-    print(f"║  Multi-Head Closed Form: Ridge Regression solved across Choice, MultiChoice, Noul, Score heads in 11.2ms{' ':>9}║")
+    print(f"║  Multi-Head Closed Form: Ridge Regression across Choice, MultiChoice, Noul, Score heads{' ':>9}║")
     print(f"║  Local Model Agreement:  {agreement:.1f}% (Required Verification Threshold: {threshold:.1f}%){' ':>43}║")
-    print(f"║  New Execution Mode:     100% LOCAL ON-DEVICE EXECUTION ACTIVE ($0 cost, sub-2ms latency){' ':>22}║")
-    print(f"║  Data Egress Status:     PERMANENT ZERO-EGRESS LOCK (No prompt or schema payload leaves host){' ':>17}║")
+    print(f"║  New Execution Mode:     LOCAL EXECUTION ACTIVE; SEE MEASURED LATENCY{' ':>22}║")
+    print(f"║  Data Egress Status:     Adapter local path active; application networking is separate{' ':>17}║")
     print("╚" + "═" * 114 + "╝\n")
 
 
@@ -893,7 +893,7 @@ def render_conformal_human_escalation_audit(results: List[Dict[str, Any]], alpha
 
     empirical_coverage = (covered_count / total_local) * 100.0 if total_local > 0 else 100.0
     print("-" * 116)
-    print(f"  Empirical Finite-Sample Coverage: {empirical_coverage:.1f}% (Guaranteed Mathematical Bound: ≥ {(1 - alpha) * 100:.1f}%)")
+    print(f"  Coverage on these demonstration cases: {empirical_coverage:.1f}% (configured target: {(1 - alpha) * 100:.1f}%; not a guarantee for this simulation)")
     print(f"  Conformal Ambiguity Rate:        {ambiguous_count}/{total_local} ({ambiguous_count / total_local * 100:.1f}%)")
     print(f"  Human-in-the-Loop Interventions: {escalated_count}/{total_local} ({escalated_count / total_local * 100:.1f}%) - Borderline actions safely held")
     print("=" * 116)
@@ -1005,7 +1005,7 @@ def run_multithreaded_stress_test(
     avg_inline = sum(inline_latencies) / len(inline_latencies)
 
     print(f"    Wall Clock Time:         {wall_inline:.3f} seconds")
-    print(f"    Concurrent Throughput:   {qps_inline:>8.1f} QPS  (SLA: >1,000 QPS)  {'PASSED ✓' if qps_inline >= 1000.0 else 'CHECK'}")
+    print(f"    Concurrent Throughput:   {qps_inline:>8.1f} QPS  (illustrative target: 1,000 QPS)  {'PASSED ✓' if qps_inline >= 1000.0 else 'CHECK'}")
     print(f"    Average Request Latency: {avg_inline:>8.3f} ms")
     print(f"    p50 Median Latency:      {p50_inline:>8.3f} ms")
     print(f"    p95 Tail Latency:        {p95_inline:>8.3f} ms")
@@ -1213,6 +1213,7 @@ def run_autonomous_firewall_showcase(
         min_agreement_threshold=0.75,
         false_allow_ceiling=0.0,
         require_statistical_bound=False,
+        min_local_acceptance=0.0,
     )
     projector = HybridProjector(dimension=384)
     client = TypeSafeClient(
@@ -1369,8 +1370,8 @@ def run_autonomous_firewall_showcase(
         demonstrate_monkey_patching(questions, queries[0]["prompt"], compiled_model=client.compiled_model)
 
     print("\n" + "=" * 116)
-    print("  AUTONOMOUS AI AGENT FIREWALL SHOWCASE SUCCESSFULLY COMPLETED!")
-    print("  All SLAs Met: >1,000 Concurrent QPS | Zero Egress | Sub-2ms Latency | Finite-Sample (1-α) Coverage")
+    print("  FIREWALL SIMULATION FINISHED")
+    print("  See measured outcomes above. This simulation does not establish production SLAs or security accuracy.")
     print("=" * 116 + "\n")
 
 

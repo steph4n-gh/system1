@@ -705,7 +705,7 @@ _DEFAULT_GUARD_CALIBRATION = [
     ("Update cache entry with 5 minute TTL", {"is_safe": True, "risk_category": "reversible_mutation"}),
     ("Transmit telemetry payload to external network partner", {"is_safe": True, "risk_category": "network_call"}),
     ("Send status ping to remote webhook endpoint", {"is_safe": True, "risk_category": "network_call"}),
-] * 4
+]
 
 
 class SystemOneGuardHook:
@@ -1124,5 +1124,4 @@ __all__ = [
     "ResultStatus",
     "RiskLevel",
 ]
-
 

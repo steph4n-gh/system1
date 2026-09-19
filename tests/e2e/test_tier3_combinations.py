@@ -149,9 +149,9 @@ def test_combo_compiler_sherman_morrison_and_l1_cache():
     assert update_res["update_latency_ms"] < 50.0  # Sub-500 microsecond core math tolerant of runner jitter
 
 
-def test_combo_guard_hook_interception_denial_and_ledger_audit(temp_ledger):
+def test_combo_guard_hook_interception_denial_and_ledger_audit(temp_ledger, read_policy):
     """Verify Reference Monitor intercepts unsafe actions and logs verifiable denials in the ledger."""
-    guard = SystemOneGuardHook(ledger=temp_ledger, auto_calibrate=True, min_confidence=0.50, alpha=0.10)
+    guard = SystemOneGuardHook(ledger=temp_ledger, auto_calibrate=True, min_confidence=0.50, alpha=0.10, policy=read_policy)
 
     # 1. Allowed safe proposal
     safe_prop = ActionProposal.create(

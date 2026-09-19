@@ -295,7 +295,7 @@ def test_system1_dynamic_submodule_getattr():
         assert sub in system1_dir, f"Submodule {sub} missing from dir(reflex)"
 
 
-def test_guard_interception_result_allowed_property():
+def test_guard_interception_result_allowed_property(read_policy):
     """Verify GuardInterceptionResult.allowed returns True for ALLOW and False for non-ALLOW outcomes."""
     from system1.guard import (
         ActionProposal,
@@ -315,7 +315,7 @@ def test_guard_interception_result_allowed_property():
     assert res_escalate.allowed is False
 
     # 2. End-to-end reference monitor hook evaluation
-    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10, policy=read_policy)
     proposal_allow = ActionProposal.create(
         tenant_id="tenant_001",
         principal_id="principal_001",

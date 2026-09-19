@@ -640,8 +640,8 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                 if not is_cutover:
                     print(f" ┌── APPRENTICE PHASE (STEP {step}/{threshold}) ───────────────────────────────────────")
                     print(f" │  • Engine:   TypeSafe AI Jev Cloud API (Proxy Mode)")
-                    print(f" │  • Metric:   Egress = ~2.1 KB | Latency = {elapsed_ms:.1f} ms | Gathering Exemplars")
-                    print(f" └── Progress: {step}/{threshold} steps before autonomous 100% local cutover")
+                    print(f" │  • Metric:   Egress = not measured here | Latency = {elapsed_ms:.1f} ms | Gathering Exemplars")
+                    print(f" └── Observed {step} steps; promotion requires validated evidence")
                 else:
                     print(f" ┌── 100% LOCAL METAL EXECUTION (STEP {step}) ────────────────────────────────────────")
                     print(f" │  • Engine:   System 1 System 1 on Apple Silicon Metal (Trojan Horse Cutover Active!)")
@@ -657,7 +657,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                 print(f" │  • Jev Cloud API:    Action = {cloud_chosen!r} ({cloud_conf:.1%})  | Latency = {cloud_ms:.1f} ms  | Egress = {cloud_egress} bytes")
                 print(f" │  • System 1 (Metal):   Action = {chosen_action!r} ({conf:.1%})  | Latency = {elapsed_ms:.1f} ms  | Egress = 0 bytes")
                 print(f" │  • On-Device Speedup:{speedup:.1f}x faster on local hardware")
-                print(f" └── Decision Agreement:{'YES (Exact match)' if cloud_chosen == chosen_action else 'Diverged (Both viable)'}")
+                print(f" └── Decision Agreement:{'YES (Exact match)' if cloud_chosen == chosen_action else 'Diverged (requires evaluation)'}")
 
             print(f" Action Result: {action_outcome}")
             time.sleep(0.3)
@@ -670,12 +670,12 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
         p50_cloud = sorted(latencies_cloud)[len(latencies_cloud) // 2]
         print(f"  • Jev Cloud P50 Latency:   {p50_cloud:.3f} ms")
         print(f"  • Empirical Speedup:       {p50_cloud / max(0.1, p50_local):.1f}x faster on local metal")
-        print(f"  • Cloud Data Egress:       {sum(latencies_cloud) * 10:.0f} bytes sent over WAN")
+        print("  • Cloud Data Egress:       See individual response measurements above")
     else:
-        print(f"  • Speedup Factor:          {220.0 / max(0.1, p50_local):.1f}x faster vs ~220ms cloud WAN")
+        print("  • Cloud speed comparison:  Not measured in this mode")
 
-    print(f"  • System 1 Data Egress:      0 bytes (100% On-Device)")
-    print(f"  • System 1 Token Cost:       $0.0000 (0 API tokens)")
+    print(f"  • Execution mode:           {mode}; cloud phases can send requests")
+    print("  • Local decisions use no API tokens; monetary costs are not measured")
     print(f"  • Run Artifact Logged To:  {run_file.name}")
 
     if response.receipt:
@@ -684,7 +684,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
         print(f"  • ActionLedger State:      {seq} verified receipts chained (Head: {head_hash[:12]}...)")
 
     print("\n" + "=" * 80)
-    print("  SHOWCASE COMPLETE: 100% OPERATIONAL")
+    print("  SIMULATION FINISHED; SEE OBSERVED RESULTS")
     print("=" * 80 + "\n")
 
 

@@ -1755,42 +1755,17 @@ def demonstrate_typesafe_dropin(prompt: str) -> None:
 # ============================================================================
 
 def generate_performance_scorecard(system1_latencies: List[float]) -> str:
-    """Generates side-by-side performance scorecard comparing System 1 vs Cloud LLM / Jev."""
+    """Report measured local latency without invented cloud or safety comparisons."""
     if not system1_latencies:
-        system1_latencies = [0.95, 1.05, 0.88, 1.12, 1.01]
-
-    mean_s1_ms = sum(system1_latencies) / len(system1_latencies)
-    s1_fps = 1000.0 / max(0.01, mean_s1_ms)
-    s1_budget_used = (mean_s1_ms / 16.666) * 100.0
-    s1_headroom = max(0.0, 16.666 - mean_s1_ms)
-
-    # Cloud LLM baseline parameters
-    cloud_lat_ms = 450.0
-    cloud_fps = 1000.0 / cloud_lat_ms  # ~2.2 FPS
-    cloud_budget_used = (cloud_lat_ms / 16.666) * 100.0  # 2700%
-    speedup = cloud_lat_ms / max(0.01, mean_s1_ms)
-
-    lines = [
-        "=" * 88,
-        "             POKÉMON BATTLE AGENT: SYSTEM 1 vs CLOUD LLM (JEV / GPT-4)",
-        "=" * 88,
-        f"{'Metric':<29} {'System 1 (Local System 1)':<25} {'Cloud LLM / Jev (SaaS)':<23} {'Advantage / Moat':<15}",
-        "-" * 88,
-        f"{'Forward Latency':<29} {mean_s1_ms:>6.2f} ms{' ' * 16} {cloud_lat_ms:>6.2f} ms{' ' * 14} {speedup:>6.1f}x FASTER",
-        f"{'Effective Game Framerate':<29} {min(60.0, s1_fps):>6.1f} FPS (Real-Time){' ' * 4} {cloud_fps:>6.1f} FPS (Severe Lag){' ' * 2} 60 FPS Emulation",
-        f"{'Frame Budget Consumption':<29} {s1_budget_used:>6.1f}% ({s1_headroom:.1f}ms left){' ' * 4} {cloud_budget_used:>6.1f}% (Deficit){' ' * 5} Zero Frame Drops",
-        f"{'Data Egress per Action':<29} {'0 bytes (Air-Gapped)':<25} {'~1,450 bytes / turn':<23} 100% Private (0 Leak)",
-        f"{'Marginal Cost per Action':<29} {'$0.000000':<25} {'$0.002000':<23} $0 Marginal Cost",
-        f"{'Cost per 100 Battles (2k ops)':<29} {'$0.00':<25} {'$4.00':<23} Infinite ROI",
-        f"{'Safety Guarantee':<29} {'Split Conformal (95%)':<25} {'Uncalibrated Point':<23} Finite-Sample Math",
-        f"{'Audit Trail':<29} {'Ed25519 RunWitnessReceipt':<25} {'Unsigned HTTP':<23} Cryptographically Bound",
-        f"{'Engine Footprint':<29} {'NumPy Only (<20KB .s1m)':<25} {'Cloud WAN + API Key':<23} Zero Dependencies",
-        "=" * 88,
-        " VERDICT: Cloud LLMs fail the 60 FPS Game Boy frame budget by 27x and cost real dollars.",
-        "          System 1 executes comfortably in ~1ms with $0 cost, zero egress, and safety!",
-        "=" * 88,
-    ]
-    return "\n".join(lines)
+        return "No local latency measurements were collected."
+    mean_ms = sum(system1_latencies) / len(system1_latencies)
+    return "\n".join([
+        "POKÉMON BATTLE SIMULATION: LOCAL DECISION TIMING",
+        f"Measured decisions: {len(system1_latencies)}; mean latency: {mean_ms:.3f} ms",
+        f"Mean decision time / 60 Hz frame budget: {mean_ms / (1000 / 60):.1%}",
+        "This excludes rendering and full emulator execution. No cloud workload was measured.",
+        "Scripted simulation results do not establish game quality, frame rate, or safety.",
+    ])
 
 
 # ============================================================================

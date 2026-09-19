@@ -713,23 +713,12 @@ def test_battle_simulation_with_compiled_model(tmp_path: Path):
 # ============================================================================
 
 def test_performance_scorecard():
-    """Verify scorecard text metrics, speedup ratio, and frame budget calculations."""
-    latencies = [1.02, 0.98, 1.15, 0.89, 1.05]
+    latencies = [0.95, 1.05, 0.88, 1.12, 1.09]
     scorecard = generate_performance_scorecard(latencies)
+    assert "Measured decisions: 5; mean latency: 1.018 ms" in scorecard
+    assert "No cloud workload was measured" in scorecard
+    assert generate_performance_scorecard([]) == "No local latency measurements were collected."
 
-    assert "SYSTEM 1 vs CLOUD LLM (JEV / GPT-4)" in scorecard
-    assert "Forward Latency" in scorecard
-    assert "Effective Game Framerate" in scorecard
-    assert "60.0 FPS" in scorecard
-    assert "450.00 ms" in scorecard
-    assert "$0.000000" in scorecard
-    assert "$0.002000" in scorecard
-    assert "Zero Frame Drops" in scorecard
-
-
-# ============================================================================
-# 13. All 6 Game Boy Pokémon Games & Gen 2 Memory Bridge Tests
-# ============================================================================
 
 def test_all_six_gameboy_rom_headers():
     """Verify ROM header parser accurately classifies all 6 Game Boy cartridges."""

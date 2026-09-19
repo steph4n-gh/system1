@@ -15,6 +15,7 @@ import secrets
 import statistics
 import threading
 import time
+from contextlib import nullcontext
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Type, Union
@@ -280,6 +281,7 @@ class SystemOneEngine:
                 if name in self.calibrators:
                     self.calibrators[name].temperature = getattr(ch, "temperature", 1.0)
                 if name in self.conformal_predictors:
+                    self.conformal_predictors[name].score_method = getattr(ch, "score_method", "aps")
                     calib_scores = getattr(ch, "calibration_scores", ())
                     if len(calib_scores) > 0:
                         self.conformal_predictors[name].calibration_scores = np.sort(
@@ -343,7 +345,7 @@ class SystemOneEngine:
             cp = self.conformal_predictors.get(fname)
             if cp is not None and getattr(cp, "is_calibrated", False):
                 scores = getattr(cp, "calibration_scores", np.array([]))
-                h.update(f"{fname}:cp_scores:{scores.tobytes()}".encode("utf-8"))
+                h.update(f"{fname}:{cp.score_method}:cp_scores:{scores.tobytes()}".encode("utf-8"))
             rcp = self.regression_conformal_predictors.get(fname)
             if rcp is not None and getattr(rcp, "is_calibrated", False):
                 res = getattr(rcp, "residuals", np.array([]))
@@ -380,177 +382,99 @@ class SystemOneEngine:
         *,
         n_bins: int = 10,
     ) -> Dict[str, CalibrationMetrics]:
-        """Fits temperature scaling and conformal prediction sets on calibration pairs (prompt, ground_truth_dict)."""
+        """Calibrate on held-out examples and preserve the evidence in compiled skills.
+
+        Repeated normalized prompts are one observation. Temperature fitting and
+        conformal calibration use disjoint prompts, including for multi-label and
+        continuous outputs. Callers must keep these examples out of teaching.
+        """
         if not dataset:
             raise ValueError("Calibration dataset must contain at least one example")
+        grouped = {}
+        for prompt, labels in dataset:
+            if not isinstance(prompt, str) or not prompt.strip():
+                raise ValueError("Calibration prompts must be non-empty strings")
+            key = " ".join(prompt.casefold().split())
+            validated = {}
+            for name, value in labels.items():
+                if name not in self.schema.fields:
+                    raise ValueError(f"Unknown calibration field: {name!r}")
+                validated[name] = self.schema.fields[name].validate_value(value)
+            if key in grouped and grouped[key][1] != validated:
+                raise ValueError("Conflicting labels for repeated calibration prompt")
+            grouped[key] = (prompt, validated)
 
-        # Group observations by prompt to prevent prompt leakage across calibration splits
-        prompt_groups: Dict[str, List[Tuple[str, Mapping[str, Any]]]] = {}
-        for item in dataset:
-            prompt_groups.setdefault(item[0], []).append(item)
+        with self._lock, getattr(self.model, "_lock", nullcontext()):
+            rows = list(grouped.values())
+            results = self.model.forward_batch([row[0] for row in rows])
+            metrics = {}
+            for name, definition in self.schema.fields.items():
+                indices = [i for i, row in enumerate(rows) if name in row[1]]
+                if not indices:
+                    continue
+                rng = np.random.RandomState(42)
+                rng.shuffle(indices)
+                count = len(indices) // 2
+                logits = np.asarray([results[i].fields[name].logits for i in indices], dtype=np.float64)
+                labels = [rows[i][1][name] for i in indices]
+                calibrator = DecisionCalibrator()
+                if isinstance(definition, ChoiceField):
+                    targets = np.asarray([definition.options.index(label) for label in labels])
+                elif isinstance(definition, BooleanField):
+                    targets = np.asarray(labels, dtype=np.int64)
+                elif isinstance(definition, MultiChoiceField):
+                    targets = np.asarray([[int(opt in label) for opt in definition.options] for label in labels])
+                else:
+                    midpoint = (definition.min_value + definition.max_value) / 2
+                    targets = np.asarray([int(label >= midpoint) for label in labels])
 
-        grouped_dataset: List[Tuple[str, Mapping[str, Any]]] = []
-        for p_key, items in prompt_groups.items():
-            grouped_dataset.extend(items)
+                temp_logits = logits[:count]
+                temp_targets = targets[:count]
+                if isinstance(definition, MultiChoiceField):
+                    temp_logits, temp_targets = temp_logits.flatten(), temp_targets.flatten()
+                elif isinstance(definition, ScoreField) or (isinstance(definition, BooleanField) and logits.shape[1] == 1):
+                    temp_logits = temp_logits.flatten()
+                metrics[name] = calibrator.fit(temp_logits, temp_targets, n_bins=n_bins)
+                # Runtime always passes one head's vector, rather than a batch of
+                # binary scalars. Temperature is the complete inference parameter.
+                calibrator.is_binary = False
+                self.calibrators[name] = calibrator
+                conf_logits = logits[count:]
+                conf_labels = labels[count:]
 
-        prompts = [item[0] for item in grouped_dataset]
-        labels_list = [item[1] for item in grouped_dataset]
+                if isinstance(definition, (ChoiceField, BooleanField)):
+                    if isinstance(definition, BooleanField) and conf_logits.shape[1] == 1:
+                        z = conf_logits.reshape(-1)
+                        conf_logits = np.column_stack([-z / 2, z / 2])
+                    probs = calibrator.calibrate_logits(conf_logits)
+                    predictor = self.conformal_predictors[name]
+                    predictor.calibrate(probs, [str(label) for label in conf_labels])
+                    scores = predictor.calibration_scores
+                elif isinstance(definition, MultiChoiceField):
+                    probs = _stable_sigmoid(conf_logits / calibrator.temperature, temperature=1.0)
+                    errors = np.where(targets[count:] == 1, 1.0 - probs, probs)
+                    predictor = self.conformal_predictors[name]
+                    predictor.calibration_scores = np.sort(np.max(errors, axis=1))
+                    predictor.is_calibrated = True
+                    scores = predictor.calibration_scores
+                else:
+                    probs = _stable_sigmoid(conf_logits.reshape(-1) / calibrator.temperature, temperature=1.0)
+                    predictions = definition.min_value + (definition.max_value - definition.min_value) * probs
+                    predictor = self.regression_conformal_predictors[name]
+                    predictor.calibrate(predictions, conf_labels)
+                    scores = predictor.residuals
 
-        # 1. Run forward pass across all calibration inputs
-        inference_results = self.model.forward_batch(prompts)
-
-        metrics_by_field: Dict[str, CalibrationMetrics] = {}
-
-        for field_name, f_def in self.schema.fields.items():
-            if isinstance(f_def, ChoiceField):
-                all_logits: List[np.ndarray] = []
-                all_targets: List[int] = []
-                all_str_targets: List[str] = []
-                opt_map = {opt: idx for idx, opt in enumerate(f_def.options)}
-
-                for i, res in enumerate(inference_results):
-                    target_val = labels_list[i].get(field_name)
-                    if target_val is not None:
-                        validated_choice = f_def.validate_value(target_val)
-                        all_logits.append(res.fields[field_name].logits)
-                        all_targets.append(opt_map[validated_choice])
-                        all_str_targets.append(str(validated_choice))
-
-                if all_logits:
-                    logits_arr = np.array(all_logits, dtype=np.float64)
-                    targets_arr = np.array(all_targets, dtype=np.int64)
-
-                    # Decouple temperature scaling fold and conformal prediction fold
-                    if len(all_logits) >= 2:
-                        n_samples = len(all_logits)
-                        n_half = max(1, n_samples // 2)
-                        rng = np.random.RandomState(42)
-                        idx = np.arange(n_samples)
-                        rng.shuffle(idx)
-                        f1, f2 = idx[:n_half], idx[n_half:]
-                        logits_temp = logits_arr[f1]
-                        targets_temp = targets_arr[f1]
-                        logits_conf = logits_arr[f2]
-                        str_targets_conf = [all_str_targets[i] for i in f2]
-                    else:
-                        logits_temp = logits_arr
-                        targets_temp = targets_arr
-                        logits_conf = logits_arr
-                        str_targets_conf = all_str_targets
-
-                    calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(logits_temp, targets_temp, n_bins=n_bins)
-                    metrics_by_field[field_name] = metric
-
-                    calibrated_probs = calibrator.calibrate_logits(logits_conf)
-                    conformal = self.conformal_predictors[field_name]
-                    conformal.calibrate(calibrated_probs, str_targets_conf)
-
-            elif isinstance(f_def, BooleanField):
-                all_logits: List[np.ndarray] = []
-                all_targets: List[int] = []
-                all_str_targets: List[str] = []
-
-                for i, res in enumerate(inference_results):
-                    target_val = labels_list[i].get(field_name)
-                    if target_val is not None:
-                        all_logits.append(res.fields[field_name].logits)
-                        b_val = bool(f_def.validate_value(target_val))
-                        all_targets.append(1 if b_val else 0)
-                        all_str_targets.append("True" if b_val else "False")
-
-                if all_logits:
-                    logits_arr = np.array(all_logits, dtype=np.float64)
-                    targets_arr = np.array(all_targets, dtype=np.int64)
-
-                    # Decouple temperature scaling fold and conformal prediction fold
-                    if len(all_logits) >= 2:
-                        n_samples = len(all_logits)
-                        n_half = max(1, n_samples // 2)
-                        rng = np.random.RandomState(42)
-                        idx = np.arange(n_samples)
-                        rng.shuffle(idx)
-                        f1, f2 = idx[:n_half], idx[n_half:]
-                        logits_temp = logits_arr[f1]
-                        targets_temp = targets_arr[f1]
-                        logits_conf = logits_arr[f2]
-                        str_targets_conf = [all_str_targets[i] for i in f2]
-                    else:
-                        logits_temp = logits_arr
-                        targets_temp = targets_arr
-                        logits_conf = logits_arr
-                        str_targets_conf = all_str_targets
-
-                    calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(logits_temp, targets_temp, n_bins=n_bins)
-                    metrics_by_field[field_name] = metric
-
-                    calibrated_probs = calibrator.calibrate_logits(logits_conf)
-                    conformal = self.conformal_predictors[field_name]
-                    conformal.calibrate(calibrated_probs, str_targets_conf)
-
-            elif isinstance(f_def, MultiChoiceField):
-                all_logits: List[np.ndarray] = []
-                all_binary_targets: List[List[int]] = []
-
-                for i, res in enumerate(inference_results):
-                    target_val = labels_list[i].get(field_name)
-                    if target_val is not None:
-                        all_logits.append(res.fields[field_name].logits)
-                        seq_val = set(f_def.validate_value(target_val))
-                        all_binary_targets.append([1 if opt in seq_val else 0 for opt in f_def.options])
-
-                if all_logits:
-                    logits_arr = np.array(all_logits, dtype=np.float64)
-                    targets_arr = np.array(all_binary_targets, dtype=np.int64)
-
-                    flat_logits = logits_arr.flatten()
-                    flat_targets = targets_arr.flatten()
-                    calibrator = self.calibrators[field_name]
-                    metric = calibrator.fit(flat_logits, flat_targets, n_bins=n_bins)
-                    metrics_by_field[field_name] = metric
-
-                    # Calibrate multilabel conformal predictor if available
-                    conformal = self.conformal_predictors.get(field_name)
-                    if conformal is not None and hasattr(conformal, "calibrate"):
-                        try:
-                            calibrated_probs = calibrator.calibrate_logits(logits_arr)
-                            conformal.calibrate(calibrated_probs, [list(seq) for seq in all_binary_targets])
-                        except Exception:
-                            pass
-
-            elif isinstance(f_def, ScoreField):
-                all_logits: List[np.ndarray] = []
-                all_targets: List[float] = []
-                raw_predictions: List[float] = []
-
-                for i, res in enumerate(inference_results):
-                    target_val = labels_list[i].get(field_name)
-                    if target_val is not None:
-                        all_logits.append(res.fields[field_name].logits[0])
-                        val = float(f_def.validate_value(target_val))
-                        norm_target = (val - f_def.min_value) / (f_def.max_value - f_def.min_value)
-                        all_targets.append(norm_target)
-                        raw_predictions.append(float(res.fields[field_name].selected_value))
-
-                if all_logits:
-                    logits_arr = np.array(all_logits, dtype=np.float64)
-                    targets_arr = np.array(all_targets, dtype=np.float64)
-                    binary_targets = (targets_arr >= 0.5).astype(np.int64)
-                    calibrator = self.calibrators[field_name]
-                    if len(np.unique(binary_targets)) >= 2:
-                        metric = calibrator.fit(logits_arr, binary_targets, n_bins=n_bins)
-                        metrics_by_field[field_name] = metric
-
-                    reg_conformal = self.regression_conformal_predictors.get(field_name)
-                    if reg_conformal is not None:
-                        actual_targets = [
-                            f_def.min_value + (f_def.max_value - f_def.min_value) * nt
-                            for nt in all_targets
-                        ]
-                        reg_conformal.calibrate(raw_predictions, actual_targets)
-
-        return metrics_by_field
+                compiled = getattr(self.model, "heads", {}).get(name)
+                if compiled is not None and hasattr(compiled, "calibration_scores"):
+                    compiled.temperature = calibrator.temperature
+                    compiled.calibration_scores = tuple(float(score) for score in scores)
+                    compiled.score_method = getattr(predictor, "score_method", "aps")
+                    k = int(math.ceil((len(scores) + 1) * 0.95))
+                    upper = definition.max_value - definition.min_value if isinstance(definition, ScoreField) else 1.0
+                    compiled.conformal_quantile = float(scores[k - 1]) if k <= len(scores) else upper
+            if self.cache is not None:
+                self.cache.clear()
+            return metrics
 
     def decide(
         self,
@@ -570,84 +494,75 @@ class SystemOneEngine:
         policy_scope: Optional[str] = None,
     ) -> DecisionResult:
         """Evaluates prompt against schema in a single non-autoregressive pass."""
-        if not isinstance(prompt, str):
-            raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
-        if not (0.0 < alpha < 1.0) or math.isnan(alpha) or math.isinf(alpha):
-            raise ValueError(f"alpha must be in (0, 1), got {alpha}")
-        if margin_threshold is not None and (margin_threshold < 0.0 or math.isnan(margin_threshold) or math.isinf(margin_threshold)):
-            raise ValueError(f"margin_threshold must be non-negative, got {margin_threshold}")
-        if relative_odds_ratio is not None and (relative_odds_ratio <= 0.0 or math.isnan(relative_odds_ratio) or math.isinf(relative_odds_ratio)):
-            raise ValueError(f"relative_odds_ratio must be strictly positive, got {relative_odds_ratio}")
-        if confidence_floor_tau0 is not None and (confidence_floor_tau0 < 0.0 or math.isnan(confidence_floor_tau0) or math.isinf(confidence_floor_tau0)):
-            raise ValueError(f"confidence_floor_tau0 must be non-negative, got {confidence_floor_tau0}")
-        if embedding is not None:
-            if not isinstance(embedding, (np.ndarray, list, tuple)):
-                raise TypeError(f"embedding must be array-like, got {type(embedding).__name__}")
-            arr_emb = np.asarray(embedding, dtype=np.float32).flatten()
-            if not np.all(np.isfinite(arr_emb)):
-                raise ValueError("embedding must contain only finite numbers (no NaN or Inf)")
-            if arr_emb.shape[0] != self.dimension:
-                raise ValueError(f"embedding dimension mismatch: expected {self.dimension}, got {arr_emb.shape[0]}")
-            query_emb = arr_emb
-        else:
-            query_emb = None
-        if telemetry is not None:
-            if not isinstance(telemetry, (dict, list, tuple, np.ndarray, float, int)):
-                raise TypeError(f"telemetry must be a dict, sequence, ndarray, or numeric, got {type(telemetry).__name__}")
+        # A decision, its uncertainty, and its receipt use one model snapshot.
+        with self._lock, getattr(self.model, "_lock", nullcontext()):
+            version = getattr(self.model, "model_version", self.model_version)
+            if version != self.model_version:
+                self.model_version = version
+                for name in self.schema.fields:
+                    head = getattr(self.model, "heads", {}).get(name)
+                    if not getattr(head, "calibration_scores", ()):
+                        self.calibrators[name] = DecisionCalibrator()
+                        if name in self.conformal_predictors:
+                            self.conformal_predictors[name].is_calibrated = False
+                        if name in self.regression_conformal_predictors:
+                            self.regression_conformal_predictors[name].is_calibrated = False
+            if not isinstance(prompt, str):
+                raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
+            if not (0.0 < alpha < 1.0) or math.isnan(alpha) or math.isinf(alpha):
+                raise ValueError(f"alpha must be in (0, 1), got {alpha}")
+            if margin_threshold is not None and (margin_threshold < 0.0 or math.isnan(margin_threshold) or math.isinf(margin_threshold)):
+                raise ValueError(f"margin_threshold must be non-negative, got {margin_threshold}")
+            if relative_odds_ratio is not None and (relative_odds_ratio <= 0.0 or math.isnan(relative_odds_ratio) or math.isinf(relative_odds_ratio)):
+                raise ValueError(f"relative_odds_ratio must be strictly positive, got {relative_odds_ratio}")
+            if confidence_floor_tau0 is not None and (confidence_floor_tau0 < 0.0 or math.isnan(confidence_floor_tau0) or math.isinf(confidence_floor_tau0)):
+                raise ValueError(f"confidence_floor_tau0 must be non-negative, got {confidence_floor_tau0}")
+            if embedding is not None:
+                if not isinstance(embedding, (np.ndarray, list, tuple)):
+                    raise TypeError(f"embedding must be array-like, got {type(embedding).__name__}")
+                arr_emb = np.asarray(embedding, dtype=np.float32).flatten()
+                if not np.all(np.isfinite(arr_emb)):
+                    raise ValueError("embedding must contain only finite numbers (no NaN or Inf)")
+                if arr_emb.shape[0] != self.dimension:
+                    raise ValueError(f"embedding dimension mismatch: expected {self.dimension}, got {arr_emb.shape[0]}")
+                query_emb = arr_emb
+            else:
+                query_emb = None
+            if telemetry is not None:
+                if not isinstance(telemetry, (dict, list, tuple, np.ndarray, float, int)):
+                    raise TypeError(f"telemetry must be a dict, sequence, ndarray, or numeric, got {type(telemetry).__name__}")
 
-        t_start = time.perf_counter()
+            t_start = time.perf_counter()
 
-        is_fail_closed = self.fail_closed_ledger if fail_closed_ledger is None else bool(fail_closed_ledger)
-        is_strict = self.strict_mode if strict is None else bool(strict)
-        eff_scope = self.policy_scope if policy_scope is None else str(policy_scope)
-        eff_m_thresh = margin_threshold if margin_threshold is not None else self.margin_threshold
-        eff_gamma = relative_odds_ratio if relative_odds_ratio is not None else self.relative_odds_ratio
-        eff_tau0 = confidence_floor_tau0 if confidence_floor_tau0 is not None else self.confidence_floor_tau0
+            is_fail_closed = self.fail_closed_ledger if fail_closed_ledger is None else bool(fail_closed_ledger)
+            is_strict = self.strict_mode if strict is None else bool(strict)
+            eff_scope = self.policy_scope if policy_scope is None else str(policy_scope)
+            eff_m_thresh = margin_threshold if margin_threshold is not None else self.margin_threshold
+            eff_gamma = relative_odds_ratio if relative_odds_ratio is not None else self.relative_odds_ratio
+            eff_tau0 = confidence_floor_tau0 if confidence_floor_tau0 is not None else self.confidence_floor_tau0
 
-        active_ledger = ledger or self.ledger
-        truth_ledger_head = ""
-        ledger_record_id: Optional[str] = None
+            active_ledger = ledger or self.ledger
+            truth_ledger_head = ""
+            ledger_record_id: Optional[str] = None
 
-        if active_ledger is not None:
-            try:
-                truth_ledger_head = active_ledger.head_hash()
-            except Exception as ex:
-                if is_fail_closed:
-                    raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
-                truth_ledger_head = ""
+            if active_ledger is not None:
+                try:
+                    truth_ledger_head = active_ledger.head_hash()
+                except Exception as ex:
+                    if is_fail_closed:
+                        raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
+                    truth_ledger_head = ""
 
-        # Precompute snapshot digests for context binding
-        m_dig = self._model_digest()
-        p_dig = self._projector_digest()
-        c_dig = self._calibration_digest()
+            # Precompute snapshot digests for context binding
+            m_dig = self._model_digest()
+            p_dig = self._projector_digest()
+            c_dig = self._calibration_digest()
 
-        # 1. Tier 0 Semantic System 1 Cache fast-path (<0.05ms)
-        if self.use_cache:
-            cached = self.cache.get(
-                prompt,
-                embedding=embedding,
-                telemetry=telemetry,
-                schema_digest=self.schema.schema_digest(),
-                model_version=self.model_version,
-                policy_scope=eff_scope,
-                alpha=alpha,
-                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
-                strict=is_strict,
-                relative_odds_ratio=eff_gamma,
-                confidence_floor_tau0=eff_tau0,
-                recency_weighted=recency_weighted,
-                model_digest=m_dig,
-                projector_digest=p_dig,
-                calibration_digest=c_dig,
-                policy_epoch=self.policy_epoch,
-                enforce_durability=is_fail_closed,
-            )
-            if cached is None:
-                if query_emb is None:
-                    query_emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
+            # 1. Tier 0 Semantic System 1 Cache fast-path (<0.05ms)
+            if self.use_cache:
                 cached = self.cache.get(
                     prompt,
-                    embedding=query_emb,
+                    embedding=embedding,
                     telemetry=telemetry,
                     schema_digest=self.schema.schema_digest(),
                     model_version=self.model_version,
@@ -664,18 +579,80 @@ class SystemOneEngine:
                     policy_epoch=self.policy_epoch,
                     enforce_durability=is_fail_closed,
                 )
+                if cached is None:
+                    if query_emb is None:
+                        query_emb = self.encode(prompt, telemetry=telemetry, recency_weighted=recency_weighted)
+                    cached = self.cache.get(
+                        prompt,
+                        embedding=query_emb,
+                        telemetry=telemetry,
+                        schema_digest=self.schema.schema_digest(),
+                        model_version=self.model_version,
+                        policy_scope=eff_scope,
+                        alpha=alpha,
+                        margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                        strict=is_strict,
+                        relative_odds_ratio=eff_gamma,
+                        confidence_floor_tau0=eff_tau0,
+                        recency_weighted=recency_weighted,
+                        model_digest=m_dig,
+                        projector_digest=p_dig,
+                        calibration_digest=c_dig,
+                        policy_epoch=self.policy_epoch,
+                        enforce_durability=is_fail_closed,
+                    )
 
-            if cached is not None:
-                entry, sim = cached
-                if isinstance(entry.result, DecisionResult):
-                    elapsed_ms = (time.perf_counter() - t_start) * 1000.0
-                    hit_is_ambiguous = bool(getattr(entry.result, "is_ambiguous", False))
-                    hit_ambiguous_fields = copy.deepcopy(getattr(entry.result, "ambiguous_fields", []))
-                    hit_escalated_fields = copy.deepcopy(getattr(entry.result, "escalated_fields", []))
+                if cached is not None:
+                    entry, sim = cached
+                    if isinstance(entry.result, DecisionResult):
+                        elapsed_ms = (time.perf_counter() - t_start) * 1000.0
+                        hit_is_ambiguous = bool(getattr(entry.result, "is_ambiguous", False))
+                        hit_ambiguous_fields = copy.deepcopy(getattr(entry.result, "ambiguous_fields", []))
+                        hit_escalated_fields = copy.deepcopy(getattr(entry.result, "escalated_fields", []))
 
-                    hit_receipt = entry.result.receipt
-                    if active_ledger is not None and record_receipt:
-                        hit_receipt = create_decision_receipt(
+                        hit_receipt = None
+                        if record_receipt:
+                            hit_receipt = create_decision_receipt(
+                                schema_name=self.schema.schema_name,
+                                schema_digest=self.schema.schema_digest(),
+                                prompt=prompt,
+                                values=copy.deepcopy(entry.result.values),
+                                confidences=copy.deepcopy(entry.result.confidences),
+                                conformal_sets=copy.deepcopy(entry.result.conformal_sets),
+                                probabilities=copy.deepcopy(entry.result.probabilities),
+                                latency_ms=elapsed_ms,
+                                is_ambiguous=hit_is_ambiguous,
+                                truth_ledger_head=truth_ledger_head,
+                                ledger_record_id=None,
+                                signing_key=self.signing_key,
+                            )
+                            if active_ledger is not None:
+                                try:
+                                    ledger_record_id = active_ledger.record_decision_receipt(hit_receipt)
+                                    hit_receipt = DecisionWitnessReceipt(
+                                        decision_id=hit_receipt.decision_id,
+                                        schema_name=hit_receipt.schema_name,
+                                        schema_digest=hit_receipt.schema_digest,
+                                        prompt=hit_receipt.prompt,
+                                        prompt_digest=hit_receipt.prompt_digest,
+                                        values=hit_receipt.values,
+                                        confidences=hit_receipt.confidences,
+                                        conformal_sets=hit_receipt.conformal_sets,
+                                        probabilities=hit_receipt.probabilities,
+                                        latency_ms=hit_receipt.latency_ms,
+                                        is_ambiguous=hit_receipt.is_ambiguous,
+                                        timestamp=hit_receipt.timestamp,
+                                        truth_ledger_head=hit_receipt.truth_ledger_head,
+                                        ledger_record_id=ledger_record_id,
+                                        signer_public_key=hit_receipt.signer_public_key,
+                                        envelope=hit_receipt.envelope,
+                                    )
+                                except Exception as ex:
+                                    if is_fail_closed:
+                                        raise LedgerWriteError(f"Fail-closed ledger recording failed on cache hit: {ex}") from ex
+                                    pass
+
+                        return DecisionResult(
                             schema_name=self.schema.schema_name,
                             schema_digest=self.schema.schema_digest(),
                             prompt=prompt,
@@ -683,380 +660,356 @@ class SystemOneEngine:
                             confidences=copy.deepcopy(entry.result.confidences),
                             conformal_sets=copy.deepcopy(entry.result.conformal_sets),
                             probabilities=copy.deepcopy(entry.result.probabilities),
-                            latency_ms=elapsed_ms,
                             is_ambiguous=hit_is_ambiguous,
-                            truth_ledger_head=truth_ledger_head,
-                            ledger_record_id=None,
-                            signing_key=self.signing_key,
+                            latency_ms=elapsed_ms,
+                            alpha=alpha,
+                            receipt=hit_receipt,
+                            margins=copy.deepcopy(entry.result.margins),
+                            margin_thresholds=copy.deepcopy(entry.result.margin_thresholds),
+                            margin_gate_active=copy.deepcopy(entry.result.margin_gate_active),
+                            odds_ratios=copy.deepcopy(getattr(entry.result, "odds_ratios", {})),
+                            relative_odds_ratio_thresholds=copy.deepcopy(getattr(entry.result, "relative_odds_ratio_thresholds", {})),
+                            confidence_floors=copy.deepcopy(getattr(entry.result, "confidence_floors", {})),
+                            ambiguous_fields=hit_ambiguous_fields,
+                            escalated_fields=hit_escalated_fields,
+                            telemetry=copy.deepcopy(telemetry) if telemetry is not None else None,
+                            is_cache_hit=True,
+                            embedding=entry.embedding if entry.embedding is not None else query_emb,
                         )
-                        try:
-                            ledger_record_id = active_ledger.record_decision_receipt(hit_receipt)
-                            hit_receipt = DecisionWitnessReceipt(
-                                decision_id=hit_receipt.decision_id,
-                                schema_name=hit_receipt.schema_name,
-                                schema_digest=hit_receipt.schema_digest,
-                                prompt=hit_receipt.prompt,
-                                prompt_digest=hit_receipt.prompt_digest,
-                                values=hit_receipt.values,
-                                confidences=hit_receipt.confidences,
-                                conformal_sets=hit_receipt.conformal_sets,
-                                probabilities=hit_receipt.probabilities,
-                                latency_ms=hit_receipt.latency_ms,
-                                is_ambiguous=hit_receipt.is_ambiguous,
-                                timestamp=hit_receipt.timestamp,
-                                truth_ledger_head=hit_receipt.truth_ledger_head,
-                                ledger_record_id=ledger_record_id,
-                                signer_public_key=hit_receipt.signer_public_key,
-                                envelope=hit_receipt.envelope,
-                            )
-                        except Exception as ex:
-                            if is_fail_closed:
-                                raise LedgerWriteError(f"Fail-closed ledger recording failed on cache hit: {ex}") from ex
-                            pass
 
-                    return DecisionResult(
-                        schema_name=self.schema.schema_name,
-                        schema_digest=self.schema.schema_digest(),
-                        prompt=prompt,
-                        values=copy.deepcopy(entry.result.values),
-                        confidences=copy.deepcopy(entry.result.confidences),
-                        conformal_sets=copy.deepcopy(entry.result.conformal_sets),
-                        probabilities=copy.deepcopy(entry.result.probabilities),
-                        is_ambiguous=hit_is_ambiguous,
-                        latency_ms=elapsed_ms,
-                        alpha=alpha,
-                        receipt=hit_receipt,
-                        margins=copy.deepcopy(entry.result.margins),
-                        margin_thresholds=copy.deepcopy(entry.result.margin_thresholds),
-                        margin_gate_active=copy.deepcopy(entry.result.margin_gate_active),
-                        odds_ratios=copy.deepcopy(getattr(entry.result, "odds_ratios", {})),
-                        relative_odds_ratio_thresholds=copy.deepcopy(getattr(entry.result, "relative_odds_ratio_thresholds", {})),
-                        confidence_floors=copy.deepcopy(getattr(entry.result, "confidence_floors", {})),
-                        ambiguous_fields=hit_ambiguous_fields,
-                        escalated_fields=hit_escalated_fields,
-                        telemetry=copy.deepcopy(telemetry) if telemetry is not None else None,
-                        is_cache_hit=True,
-                        embedding=entry.embedding if entry.embedding is not None else query_emb,
+            with self._lock:
+                try:
+                    raw_result = self.model.forward_single(
+                        prompt,
+                        telemetry=telemetry,
+                        embedding=query_emb,
+                        recency_weighted=recency_weighted,
+                    )
+                except TypeError:
+                    raw_result = self.model.forward_single(
+                        prompt,
+                        telemetry=telemetry,
+                        embedding=query_emb,
                     )
 
-        with self._lock:
-            try:
-                raw_result = self.model.forward_single(
-                    prompt,
-                    telemetry=telemetry,
-                    embedding=query_emb,
-                    recency_weighted=recency_weighted,
-                )
-            except TypeError:
-                raw_result = self.model.forward_single(
-                    prompt,
-                    telemetry=telemetry,
-                    embedding=query_emb,
-                )
+            values: Dict[str, Any] = {}
+            confidences: Dict[str, float] = {}
+            conformal_sets: Dict[str, List[str]] = {}
+            probabilities: Dict[str, Dict[str, float]] = {}
+            margins: Dict[str, float] = {}
+            margin_thresholds: Dict[str, float] = {}
+            margin_gate_active: Dict[str, bool] = {}
+            odds_ratios: Dict[str, float] = {}
+            relative_odds_ratio_thresholds: Dict[str, float] = {}
+            confidence_floors: Dict[str, float] = {}
+            ambiguous_fields: List[str] = []
+            escalated_fields: List[str] = []
+            is_ambiguous = False
 
-        values: Dict[str, Any] = {}
-        confidences: Dict[str, float] = {}
-        conformal_sets: Dict[str, List[str]] = {}
-        probabilities: Dict[str, Dict[str, float]] = {}
-        margins: Dict[str, float] = {}
-        margin_thresholds: Dict[str, float] = {}
-        margin_gate_active: Dict[str, bool] = {}
-        odds_ratios: Dict[str, float] = {}
-        relative_odds_ratio_thresholds: Dict[str, float] = {}
-        confidence_floors: Dict[str, float] = {}
-        ambiguous_fields: List[str] = []
-        escalated_fields: List[str] = []
-        is_ambiguous = False
+            for name, f_def in self.schema.fields.items():
+                raw_eval = raw_result.fields[name]
+                calibrator = self.calibrators[name]
 
-        for name, f_def in self.schema.fields.items():
-            raw_eval = raw_result.fields[name]
-            calibrator = self.calibrators[name]
+                if isinstance(f_def, ChoiceField):
+                    calibrated_p = calibrator.calibrate_logits(raw_eval.logits)
+                    best_idx = int(np.argmax(calibrated_p))
+                    selected_choice = f_def.options[best_idx]
+                    conf = float(calibrated_p[best_idx])
 
-            if isinstance(f_def, ChoiceField):
-                calibrated_p = calibrator.calibrate_logits(raw_eval.logits)
-                best_idx = int(np.argmax(calibrated_p))
-                selected_choice = f_def.options[best_idx]
-                conf = float(calibrated_p[best_idx])
+                    prob_dict = {opt: float(calibrated_p[i]) for i, opt in enumerate(f_def.options)}
+                    values[name] = selected_choice
+                    confidences[name] = conf
+                    probabilities[name] = prob_dict
 
-                prob_dict = {opt: float(calibrated_p[i]) for i, opt in enumerate(f_def.options)}
-                values[name] = selected_choice
-                confidences[name] = conf
-                probabilities[name] = prob_dict
+                    conformal = self.conformal_predictors.get(name)
+                    if conformal is not None:
+                        try:
+                            cset = conformal.predict_set(
+                                calibrated_p,
+                                alpha=alpha,
+                                margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
+                                relative_odds_ratio=eff_gamma if not is_strict else None,
+                                confidence_floor_tau0=eff_tau0 if not is_strict else None,
+                                strict=is_strict,
+                            )
+                        except TypeError:
+                            cset = conformal.predict_set(calibrated_p, alpha=alpha)
+                        conformal_sets[name] = list(cset.prediction_set)
+                        margins[name] = getattr(cset, "margin", 1.0)
+                        margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
+                        margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
+                        odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
+                        relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
+                        confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
 
-                conformal = self.conformal_predictors.get(name)
-                if conformal is not None:
-                    try:
-                        cset = conformal.predict_set(
-                            calibrated_p,
-                            alpha=alpha,
-                            margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
-                            relative_odds_ratio=eff_gamma if not is_strict else None,
-                            confidence_floor_tau0=eff_tau0 if not is_strict else None,
-                            strict=is_strict,
-                        )
-                    except TypeError:
-                        cset = conformal.predict_set(calibrated_p, alpha=alpha)
-                    conformal_sets[name] = list(cset.prediction_set)
-                    margins[name] = getattr(cset, "margin", 1.0)
-                    margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
-                    margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
-                    odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
-                    relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
-                    confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
+                        is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
+                        cardinality = len(cset.prediction_set)
+                        if is_strict:
+                            field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                        else:
+                            field_ambiguous = is_empty_set or cset.is_ambiguous
 
-                    is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
-                    cardinality = len(cset.prediction_set)
-                    if is_strict:
-                        field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                        if field_ambiguous:
+                            ambiguous_fields.append(name)
+                            if getattr(f_def, "escalate_on_ambiguity", True):
+                                is_ambiguous = True
+                                escalated_fields.append(name)
                     else:
-                        field_ambiguous = is_empty_set or cset.is_ambiguous
+                        conformal_sets[name] = [selected_choice]
+                        margins[name] = 1.0
 
-                    if field_ambiguous:
+                elif isinstance(f_def, BooleanField):
+                    calibrated_p = calibrator.calibrate_logits(raw_eval.logits)
+                    prob_true = float(calibrated_p[1])
+                    val = bool(prob_true >= f_def.threshold)
+                    conf = prob_true if val else (1.0 - prob_true)
+
+                    values[name] = val
+                    confidences[name] = conf
+                    probabilities[name] = {"False": float(calibrated_p[0]), "True": prob_true}
+
+                    conformal = self.conformal_predictors.get(name)
+                    if conformal is not None:
+                        try:
+                            cset = conformal.predict_set(
+                                calibrated_p,
+                                alpha=alpha,
+                                margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
+                                relative_odds_ratio=eff_gamma if not is_strict else None,
+                                confidence_floor_tau0=eff_tau0 if not is_strict else None,
+                                strict=is_strict,
+                            )
+                        except TypeError:
+                            cset = conformal.predict_set(calibrated_p, alpha=alpha)
+                        conformal_sets[name] = list(cset.prediction_set)
+                        margins[name] = getattr(cset, "margin", 1.0)
+                        margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
+                        margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
+                        odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
+                        relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
+                        confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
+
+                        is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
+                        cardinality = len(cset.prediction_set)
+                        if is_strict:
+                            field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                        else:
+                            field_ambiguous = is_empty_set or cset.is_ambiguous
+
+                        if field_ambiguous:
+                            ambiguous_fields.append(name)
+                            if getattr(f_def, "escalate_on_ambiguity", True):
+                                is_ambiguous = True
+                                escalated_fields.append(name)
+                    else:
+                        conformal_sets[name] = ["True" if val else "False"]
+                        margins[name] = 1.0
+
+                elif isinstance(f_def, MultiChoiceField):
+                    calibrated_temp = calibrator.temperature
+                    scaled_logits = raw_eval.logits / max(1e-4, calibrated_temp)
+                    probs = _stable_sigmoid(scaled_logits, temperature=1.0)
+                    selected = tuple(
+                        f_def.options[i] for i, p in enumerate(probs) if p >= f_def.threshold
+                    )
+                    conf = float(np.mean([max(p, 1.0 - p) for p in probs])) if len(probs) > 0 else 1.0
+                    values[name] = selected
+                    confidences[name] = conf
+                    probabilities[name] = {opt: float(probs[i]) for i, opt in enumerate(f_def.options)}
+                    conformal_sets[name] = list(selected)
+
+                    eff_boundary_margin = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.05
+                    is_boundary_uncertain = any(
+                        abs(p - f_def.threshold) < eff_boundary_margin
+                        for p in probs
+                    )
+                    mc_ambiguous = False
+                    if is_strict:
+                        conformal = self.conformal_predictors[name]
+                        scores = conformal.calibration_scores
+                        k = int(math.ceil((len(scores) + 1) * (1.0 - alpha)))
+                        if not conformal.is_calibrated or k > len(scores):
+                            conformal_sets[name] = list(f_def.options)
+                            mc_ambiguous = True
+                        else:
+                            # Compiler scores bound the largest error over all labels.
+                            # Each label has a set of possible binary assignments. Only
+                            # a unique complete assignment can be accepted, including {}.
+                            q = float(scores[k - 1])
+                            can_include = (1.0 - probs) <= q + 1e-12
+                            can_exclude = probs <= q + 1e-12
+                            conformal_sets[name] = [opt for opt, possible in zip(f_def.options, can_include) if possible]
+                            unique = np.logical_xor(can_include, can_exclude)
+                            consistent = can_include == np.array([opt in selected for opt in f_def.options])
+                            mc_ambiguous = not bool(np.all(unique & consistent))
+
+                    if mc_ambiguous:
                         ambiguous_fields.append(name)
                         if getattr(f_def, "escalate_on_ambiguity", True):
                             is_ambiguous = True
                             escalated_fields.append(name)
-                else:
-                    conformal_sets[name] = [selected_choice]
-                    margins[name] = 1.0
 
-            elif isinstance(f_def, BooleanField):
-                calibrated_p = calibrator.calibrate_logits(raw_eval.logits)
-                prob_true = float(calibrated_p[1])
-                val = bool(prob_true >= f_def.threshold)
-                conf = prob_true if val else (1.0 - prob_true)
-
-                values[name] = val
-                confidences[name] = conf
-                probabilities[name] = {"False": float(calibrated_p[0]), "True": prob_true}
-
-                conformal = self.conformal_predictors.get(name)
-                if conformal is not None:
-                    try:
-                        cset = conformal.predict_set(
-                            calibrated_p,
-                            alpha=alpha,
-                            margin_threshold=eff_m_thresh if (self.enable_margin_gating and not is_strict) else 0.0,
-                            relative_odds_ratio=eff_gamma if not is_strict else None,
-                            confidence_floor_tau0=eff_tau0 if not is_strict else None,
-                            strict=is_strict,
-                        )
-                    except TypeError:
-                        cset = conformal.predict_set(calibrated_p, alpha=alpha)
-                    conformal_sets[name] = list(cset.prediction_set)
-                    margins[name] = getattr(cset, "margin", 1.0)
-                    margin_thresholds[name] = getattr(cset, "margin_threshold", 0.0)
-                    margin_gate_active[name] = getattr(cset, "margin_gate_active", False)
-                    odds_ratios[name] = getattr(cset, "odds_ratio", 1.0)
-                    relative_odds_ratio_thresholds[name] = getattr(cset, "relative_odds_ratio_threshold", 0.0)
-                    confidence_floors[name] = getattr(cset, "confidence_floor", 0.0)
-
-                    is_empty_set = getattr(cset, "is_empty", len(cset.prediction_set) == 0)
-                    cardinality = len(cset.prediction_set)
-                    if is_strict:
-                        field_ambiguous = (cardinality != 1) or cset.is_ambiguous or is_empty_set
+                elif isinstance(f_def, ScoreField):
+                    calibrator = self.calibrators.get(name)
+                    calibrated_temp = calibrator.temperature if calibrator is not None else 1.0
+                    scaled_logit = float(raw_eval.logits[0] / max(1e-4, calibrated_temp))
+                    prob = float(_stable_sigmoid(np.array([scaled_logit]), temperature=1.0)[0])
+                    val = f_def.min_value + (f_def.max_value - f_def.min_value) * prob
+                    conf = float(getattr(raw_eval, "confidence", max(prob, 1.0 - prob)))
+                    values[name] = val
+                    confidences[name] = conf
+                    probabilities[name] = {"score_ratio": prob}
+                    reg_conformal = self.regression_conformal_predictors.get(name)
+                    is_uncalibrated = reg_conformal is None or not reg_conformal.is_calibrated
+                    if not is_uncalibrated:
+                        interval = reg_conformal.predict_interval(val, alpha=alpha, strict=is_strict)
+                        conformal_sets[name] = [interval.to_interval_string()]
+                        interval_margin = interval.margin
                     else:
-                        field_ambiguous = is_empty_set or cset.is_ambiguous
+                        if is_strict:
+                            interval_margin = f_def.max_value - f_def.min_value
+                            low_b = f_def.min_value
+                            high_b = f_def.max_value
+                        else:
+                            interval_margin = (f_def.max_value - f_def.min_value) * ((1.0 - alpha) / 2.0)
+                            low_b = max(f_def.min_value, val - interval_margin)
+                            high_b = min(f_def.max_value, val + interval_margin)
+                        conformal_sets[name] = [f"[{low_b:.4f}, {high_b:.4f}]"]
 
-                    if field_ambiguous:
+                    score_range = max(1e-6, f_def.max_value - f_def.min_value)
+                    normalized_margin = interval_margin / score_range
+                    score_ambiguous = False
+                    if is_strict:
+                        eff_score_thresh = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.5
+                        score_ambiguous = is_uncalibrated or (normalized_margin > eff_score_thresh)
+
+                    if score_ambiguous:
                         ambiguous_fields.append(name)
                         if getattr(f_def, "escalate_on_ambiguity", True):
                             is_ambiguous = True
                             escalated_fields.append(name)
-                else:
-                    conformal_sets[name] = ["True" if val else "False"]
-                    margins[name] = 1.0
 
-            elif isinstance(f_def, MultiChoiceField):
-                calibrated_temp = calibrator.temperature
-                scaled_logits = raw_eval.logits / max(1e-4, calibrated_temp)
-                probs = _stable_sigmoid(scaled_logits, temperature=1.0)
-                selected = tuple(
-                    f_def.options[i] for i, p in enumerate(probs) if p >= f_def.threshold
-                )
-                conf = float(np.mean([max(p, 1.0 - p) for p in probs])) if len(probs) > 0 else 1.0
-                values[name] = selected
-                confidences[name] = conf
-                probabilities[name] = {opt: float(probs[i]) for i, opt in enumerate(f_def.options)}
-                conformal_sets[name] = list(selected) if selected else [f_def.options[int(np.argmax(probs))]]
+            validated_values = self.schema.validate_decision(values)
+            total_latency_ms = (time.perf_counter() - t_start) * 1000.0
 
-                eff_boundary_margin = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.05
-                is_boundary_uncertain = any(
-                    abs(p - f_def.threshold) < eff_boundary_margin
-                    for p in probs
-                )
-                mc_ambiguous = False
-                if is_strict:
-                    is_uncalibrated = (calibrator.metrics is None) if hasattr(calibrator, "metrics") else not getattr(calibrator, "is_calibrated", True)
-                    mc_ambiguous = (len(selected) == 0) or is_boundary_uncertain or is_uncalibrated
+            safe_values = copy.deepcopy(validated_values)
+            safe_confidences = copy.deepcopy(confidences)
+            safe_conformal_sets = copy.deepcopy(conformal_sets)
+            safe_probabilities = copy.deepcopy(probabilities)
+            safe_margins = copy.deepcopy(margins)
+            safe_margin_thresholds = copy.deepcopy(margin_thresholds)
+            safe_margin_gate_active = copy.deepcopy(margin_gate_active)
+            safe_odds_ratios = copy.deepcopy(odds_ratios)
+            safe_relative_odds_ratio_thresholds = copy.deepcopy(relative_odds_ratio_thresholds)
+            safe_confidence_floors = copy.deepcopy(confidence_floors)
+            safe_ambiguous_fields = copy.deepcopy(ambiguous_fields)
+            safe_escalated_fields = copy.deepcopy(escalated_fields)
 
-                if mc_ambiguous:
-                    ambiguous_fields.append(name)
-                    if getattr(f_def, "escalate_on_ambiguity", True):
-                        is_ambiguous = True
-                        escalated_fields.append(name)
+            # ActionLedger integration
+            active_ledger = ledger or self.ledger
+            truth_ledger_head = ""
+            ledger_record_id: Optional[str] = None
 
-            elif isinstance(f_def, ScoreField):
-                calibrator = self.calibrators.get(name)
-                calibrated_temp = calibrator.temperature if calibrator is not None else 1.0
-                scaled_logit = float(raw_eval.logits[0] / max(1e-4, calibrated_temp))
-                prob = float(_stable_sigmoid(np.array([scaled_logit]), temperature=1.0)[0])
-                val = f_def.min_value + (f_def.max_value - f_def.min_value) * prob
-                conf = float(getattr(raw_eval, "confidence", max(prob, 1.0 - prob)))
-                values[name] = val
-                confidences[name] = conf
-                probabilities[name] = {"score_ratio": prob}
-                reg_conformal = self.regression_conformal_predictors.get(name)
-                is_uncalibrated = reg_conformal is None or not reg_conformal.is_calibrated
-                if not is_uncalibrated:
-                    interval = reg_conformal.predict_interval(val, alpha=alpha, strict=is_strict)
-                    conformal_sets[name] = [interval.to_interval_string()]
-                    interval_margin = interval.margin
-                else:
-                    if is_strict:
-                        interval_margin = f_def.max_value - f_def.min_value
-                        low_b = f_def.min_value
-                        high_b = f_def.max_value
-                    else:
-                        interval_margin = (f_def.max_value - f_def.min_value) * ((1.0 - alpha) / 2.0)
-                        low_b = max(f_def.min_value, val - interval_margin)
-                        high_b = min(f_def.max_value, val + interval_margin)
-                    conformal_sets[name] = [f"[{low_b:.4f}, {high_b:.4f}]"]
+            if active_ledger is not None:
+                try:
+                    truth_ledger_head = active_ledger.head_hash()
+                except Exception as ex:
+                    if is_fail_closed:
+                        raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
+                    truth_ledger_head = ""
 
-                score_range = max(1e-6, f_def.max_value - f_def.min_value)
-                normalized_margin = interval_margin / score_range
-                score_ambiguous = False
-                if is_strict:
-                    eff_score_thresh = eff_m_thresh if (self.enable_margin_gating and eff_m_thresh is not None) else 0.5
-                    score_ambiguous = is_uncalibrated or (normalized_margin > eff_score_thresh)
-
-                if score_ambiguous:
-                    ambiguous_fields.append(name)
-                    if getattr(f_def, "escalate_on_ambiguity", True):
-                        is_ambiguous = True
-                        escalated_fields.append(name)
-
-        validated_values = self.schema.validate_decision(values)
-        total_latency_ms = (time.perf_counter() - t_start) * 1000.0
-
-        safe_values = copy.deepcopy(validated_values)
-        safe_confidences = copy.deepcopy(confidences)
-        safe_conformal_sets = copy.deepcopy(conformal_sets)
-        safe_probabilities = copy.deepcopy(probabilities)
-        safe_margins = copy.deepcopy(margins)
-        safe_margin_thresholds = copy.deepcopy(margin_thresholds)
-        safe_margin_gate_active = copy.deepcopy(margin_gate_active)
-        safe_odds_ratios = copy.deepcopy(odds_ratios)
-        safe_relative_odds_ratio_thresholds = copy.deepcopy(relative_odds_ratio_thresholds)
-        safe_confidence_floors = copy.deepcopy(confidence_floors)
-        safe_ambiguous_fields = copy.deepcopy(ambiguous_fields)
-        safe_escalated_fields = copy.deepcopy(escalated_fields)
-
-        # ActionLedger integration
-        active_ledger = ledger or self.ledger
-        truth_ledger_head = ""
-        ledger_record_id: Optional[str] = None
-
-        if active_ledger is not None:
-            try:
-                truth_ledger_head = active_ledger.head_hash()
-            except Exception as ex:
-                if is_fail_closed:
-                    raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
-                truth_ledger_head = ""
-
-        # Emit proof-carrying cryptographic receipt
-        receipt = create_decision_receipt(
-            schema_name=self.schema.schema_name,
-            schema_digest=self.schema.schema_digest(),
-            prompt=prompt,
-            values=safe_values,
-            confidences=safe_confidences,
-            conformal_sets=safe_conformal_sets,
-            probabilities=safe_probabilities,
-            latency_ms=total_latency_ms,
-            is_ambiguous=is_ambiguous,
-            truth_ledger_head=truth_ledger_head,
-            ledger_record_id=None,
-            signing_key=self.signing_key,
-        )
-
-        # Commit receipt into ActionLedger audit log
-        if active_ledger is not None and record_receipt:
-            try:
-                ledger_record_id = active_ledger.record_decision_receipt(receipt)
-                receipt = DecisionWitnessReceipt(
-                    decision_id=receipt.decision_id,
-                    schema_name=receipt.schema_name,
-                    schema_digest=receipt.schema_digest,
-                    prompt=receipt.prompt,
-                    prompt_digest=receipt.prompt_digest,
-                    values=receipt.values,
-                    confidences=receipt.confidences,
-                    conformal_sets=receipt.conformal_sets,
-                    probabilities=receipt.probabilities,
-                    latency_ms=receipt.latency_ms,
-                    is_ambiguous=receipt.is_ambiguous,
-                    timestamp=receipt.timestamp,
-                    truth_ledger_head=receipt.truth_ledger_head,
-                    ledger_record_id=ledger_record_id,
-                    signer_public_key=receipt.signer_public_key,
-                    envelope=receipt.envelope,
-                )
-            except Exception as ex:
-                if is_fail_closed:
-                    raise LedgerWriteError(f"Fail-closed ledger recording failed: {ex}") from ex
-                pass
-
-        result = DecisionResult(
-            schema_name=self.schema.schema_name,
-            schema_digest=self.schema.schema_digest(),
-            prompt=prompt,
-            values=safe_values,
-            confidences=safe_confidences,
-            conformal_sets=safe_conformal_sets,
-            probabilities=safe_probabilities,
-            is_ambiguous=is_ambiguous,
-            latency_ms=total_latency_ms,
-            alpha=alpha,
-            receipt=receipt,
-            margins=safe_margins,
-            margin_thresholds=safe_margin_thresholds,
-            margin_gate_active=safe_margin_gate_active,
-            odds_ratios=safe_odds_ratios,
-            relative_odds_ratio_thresholds=safe_relative_odds_ratio_thresholds,
-            confidence_floors=safe_confidence_floors,
-            ambiguous_fields=safe_ambiguous_fields,
-            escalated_fields=safe_escalated_fields,
-            telemetry=telemetry,
-            is_cache_hit=False,
-            embedding=raw_result.embedding,
-        )
-
-        if self.use_cache and not is_ambiguous:
-            self.cache.put(
-                prompt,
-                result,
-                embedding=raw_result.embedding,
-                telemetry=telemetry,
+            # Emit proof-carrying cryptographic receipt
+            receipt = create_decision_receipt(
+                schema_name=self.schema.schema_name,
                 schema_digest=self.schema.schema_digest(),
-                model_version=self.model_version,
-                policy_scope=eff_scope,
-                alpha=alpha,
-                margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
-                strict=is_strict,
-                relative_odds_ratio=eff_gamma,
-                confidence_floor_tau0=eff_tau0,
-                recency_weighted=recency_weighted,
-                model_digest=m_dig,
-                projector_digest=p_dig,
-                calibration_digest=c_dig,
-                policy_epoch=self.policy_epoch,
-                explicit_embedding=(embedding is not None),
-                source="evaluation",
+                prompt=prompt,
+                values=safe_values,
+                confidences=safe_confidences,
+                conformal_sets=safe_conformal_sets,
+                probabilities=safe_probabilities,
+                latency_ms=total_latency_ms,
+                is_ambiguous=is_ambiguous,
+                truth_ledger_head=truth_ledger_head,
+                ledger_record_id=None,
+                signing_key=self.signing_key,
             )
 
-        return result
+            # Commit receipt into ActionLedger audit log
+            if active_ledger is not None and record_receipt:
+                try:
+                    ledger_record_id = active_ledger.record_decision_receipt(receipt)
+                    receipt = DecisionWitnessReceipt(
+                        decision_id=receipt.decision_id,
+                        schema_name=receipt.schema_name,
+                        schema_digest=receipt.schema_digest,
+                        prompt=receipt.prompt,
+                        prompt_digest=receipt.prompt_digest,
+                        values=receipt.values,
+                        confidences=receipt.confidences,
+                        conformal_sets=receipt.conformal_sets,
+                        probabilities=receipt.probabilities,
+                        latency_ms=receipt.latency_ms,
+                        is_ambiguous=receipt.is_ambiguous,
+                        timestamp=receipt.timestamp,
+                        truth_ledger_head=receipt.truth_ledger_head,
+                        ledger_record_id=ledger_record_id,
+                        signer_public_key=receipt.signer_public_key,
+                        envelope=receipt.envelope,
+                    )
+                except Exception as ex:
+                    if is_fail_closed:
+                        raise LedgerWriteError(f"Fail-closed ledger recording failed: {ex}") from ex
+                    pass
+
+            result = DecisionResult(
+                schema_name=self.schema.schema_name,
+                schema_digest=self.schema.schema_digest(),
+                prompt=prompt,
+                values=safe_values,
+                confidences=safe_confidences,
+                conformal_sets=safe_conformal_sets,
+                probabilities=safe_probabilities,
+                is_ambiguous=is_ambiguous,
+                latency_ms=total_latency_ms,
+                alpha=alpha,
+                receipt=receipt,
+                margins=safe_margins,
+                margin_thresholds=safe_margin_thresholds,
+                margin_gate_active=safe_margin_gate_active,
+                odds_ratios=safe_odds_ratios,
+                relative_odds_ratio_thresholds=safe_relative_odds_ratio_thresholds,
+                confidence_floors=safe_confidence_floors,
+                ambiguous_fields=safe_ambiguous_fields,
+                escalated_fields=safe_escalated_fields,
+                telemetry=telemetry,
+                is_cache_hit=False,
+                embedding=raw_result.embedding,
+            )
+
+            if self.use_cache and not is_ambiguous:
+                self.cache.put(
+                    prompt,
+                    result,
+                    embedding=raw_result.embedding,
+                    telemetry=telemetry,
+                    schema_digest=self.schema.schema_digest(),
+                    model_version=self.model_version,
+                    policy_scope=eff_scope,
+                    alpha=alpha,
+                    margin_threshold=eff_m_thresh if self.enable_margin_gating else 0.0,
+                    strict=is_strict,
+                    relative_odds_ratio=eff_gamma,
+                    confidence_floor_tau0=eff_tau0,
+                    recency_weighted=recency_weighted,
+                    model_digest=m_dig,
+                    projector_digest=p_dig,
+                    calibration_digest=c_dig,
+                    policy_epoch=self.policy_epoch,
+                    explicit_embedding=(embedding is not None),
+                    source="evaluation",
+                )
+
+            return result
 
     def evaluate(
         self,
@@ -1104,7 +1057,7 @@ class SystemOneEngine:
         Adapts the decision hyperplanes of SystemOneEngine for resolved Tier 2 edge cases,
         and certifies the resolution in the Tier 0 Semantic System 1 Cache.
         """
-        with self._lock:
+        with self._lock, getattr(self.model, "_lock", nullcontext()):
             eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
             t0 = time.perf_counter()
 
@@ -1167,7 +1120,7 @@ class SystemOneEngine:
 
             for f_name in updated_fields:
                 if f_name in self.calibrators:
-                    self.calibrators[f_name].is_calibrated = False
+                    self.calibrators[f_name] = DecisionCalibrator()
                 if f_name in self.conformal_predictors:
                     self.conformal_predictors[f_name].is_calibrated = False
                 if f_name in self.regression_conformal_predictors:

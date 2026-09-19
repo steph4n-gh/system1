@@ -39,7 +39,7 @@ def tickets(seed: int, count: int):
                'ticket': rng.randrange(1_000_000_000)}
 
 
-def run(output_dir: Path, teacher: str = 'offline', max_observations: int = 250):
+def run(output_dir: Path, teacher: str = 'offline', max_observations: int = 500):
     teacher_calls = 0
 
     def offline_teacher(state, questions):
@@ -120,7 +120,7 @@ def run(output_dir: Path, teacher: str = 'offline', max_observations: int = 250)
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--teacher', choices=['offline', 'jev'], default='offline')
-    parser.add_argument('--max-observations', type=int, default=250)
+    parser.add_argument('--max-observations', type=int, default=500)
     parser.add_argument('--output-dir', type=Path, default=Path('.system1/observe-routing'))
     args = parser.parse_args(argv)
     report = run(args.output_dir, args.teacher, args.max_observations)
