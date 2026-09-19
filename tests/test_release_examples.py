@@ -48,3 +48,23 @@ def test_teaching_example_saves_and_reuses_a_skill(tmp_path):
     assert "Suggested team: billing" in result.stdout
     assert "Needs review: True" in result.stdout
     assert (tmp_path / ".system1" / "support-route.s1m").is_file()
+
+
+def test_proto_assets_do_not_require_optional_grpc_dependencies(tmp_path):
+    script = '''
+import importlib.abc
+import sys
+class BlockOptional(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == 'grpc' or fullname == 'google' or fullname.startswith('google.'):
+            raise ModuleNotFoundError(fullname)
+sys.meta_path.insert(0, BlockOptional())
+from importlib.resources import files
+import reflex.proto, system1.proto
+assert files('system1.proto').joinpath('system1.proto').is_file()
+assert files('reflex.proto').joinpath('system1.proto').is_file()
+assert reflex.proto.system1_proto_path is system1.proto.system1_proto_path
+'''
+    result = subprocess.run([sys.executable, '-c', script], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stderr

@@ -94,3 +94,10 @@ checks remain skipped. The release procedure pushes this source to `main`, waits
 for its GitHub CI matrix and package job to pass, and only then creates `v0.2.2`
 to trigger trusted publishing. Remote CI and publishing runs are the authoritative
 record of those later steps.
+
+The first remote CI run passed all five Python/OS test jobs and exposed an
+optional-dependency import in the minimal-wheel package check. The legacy
+`reflex.proto` package now loads generated stubs only when requested. A new
+subprocess regression and a fresh Python 3.11 wheel environment verified both
+proto assets with neither gRPC nor protobuf installed. The corrected commit
+must pass the complete CI workflow before tagging.

@@ -15,6 +15,7 @@
 - Handle non-object JSON, malformed multipart text, disconnects, and one-time body replay in the ASGI gateway; respect structured escalation signals.
 - Return actual receipt digests in gateway headers and MCP errors.
 - Add real LangChain dispatch regression tests, built-distribution checks, Python 3.14 CI coverage, and release-tag validation.
+- Keep legacy proto assets accessible without optional gRPC/protobuf dependencies in minimal wheel installs.
 - Update package build requirements and the lockfile; include examples and test support files in source distributions.
 - Replace unsupported launch claims with reproducible benchmark results, executable quickstarts, and explicit deployment boundaries.
 
