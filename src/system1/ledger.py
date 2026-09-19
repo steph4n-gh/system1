@@ -180,11 +180,16 @@ class ActionLedger:
 
     def _verify_integrity_locked(self, connection: sqlite3.Connection, trusted_public_key: Optional[Any] = None) -> bool:
         """Internal helper to verify full cryptographic chain integrity under a coherent transaction/snapshot."""
+        if not hasattr(self, "_last_verified_sequence"):
+            self._last_verified_sequence = 0
+            self._last_verified_hash = _ZERO_HASH
+
         entries = connection.execute(
-            "SELECT * FROM audit_entries ORDER BY sequence ASC"
+            "SELECT * FROM audit_entries WHERE sequence > ? ORDER BY sequence ASC",
+            (self._last_verified_sequence,)
         ).fetchall()
-        previous = _ZERO_HASH
-        last_sequence = 0
+        previous = self._last_verified_hash
+        last_sequence = self._last_verified_sequence
 
         for row in entries:
             if row["previous_hash"] != previous:
@@ -239,6 +244,9 @@ class ActionLedger:
             return False
         if int(meta.get("audit_head_sequence", "-1")) != last_sequence:
             return False
+
+        self._last_verified_sequence = last_sequence
+        self._last_verified_hash = previous
 
         return True
 
@@ -374,7 +382,7 @@ class ActionLedger:
                 raise LedgerWriteError(f"Invalid execution outcome status: {status}")
 
             prior = connection.execute(
-                "SELECT * FROM audit_entries WHERE (action_id = ? OR json_extract(payload_json, '$.decision_id') = ?) AND event_type IN ('reflex_decision', 'decision_receipt', 'action') ORDER BY sequence DESC LIMIT 1",
+                "SELECT * FROM audit_entries WHERE (action_id = ? OR json_extract(payload_json, '$.decision_id') = ?) AND event_type IN ('reflex_decision', 'decision_receipt') ORDER BY sequence DESC LIMIT 1",
                 (action_id, action_id)
             ).fetchone()
 
@@ -386,6 +394,9 @@ class ActionLedger:
                 found_digest = prior_p.get("receipt_digest") or prior_p.get("receipt", {}).get("receipt_digest")
             except Exception:
                 found_digest = None
+
+            if not found_digest:
+                raise LedgerWriteError(f"Explicit permission requires a mandatory exact nonempty digest")
 
             if found_digest and found_digest != receipt_digest:
                 raise LedgerWriteError(f"Wrong action association: outcome receipt_digest {receipt_digest} does not match prior {found_digest}")

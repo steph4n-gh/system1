@@ -656,10 +656,9 @@ class TestAttack4DocumentationRigorAndPackagingParity:
         # Project name and script entry points
         assert 'name = "system1"' in content, "PyPI package name must be 'system1'"
         assert 'system1 = "system1.cli:main"' in content, "system1 CLI script must be defined"
-        assert 'reflex = "reflex.cli:main"' in content, "reflex CLI script must be defined"
 
-        # Packages include both system1 and reflex
-        assert 'include = ["reflex*", "system1*"]' in content
+        # Packages include system1
+        assert 'include = ["system1*"]' in content
 
     def test_readme_installation_instructions_use_system1(self):
         """Ensure README.md instructs users to 'pip install system1' and clarifies namespace duality."""

@@ -350,16 +350,44 @@ def evaluate_promotion_eligibility(
         "total": 0, "matching": 0, "false_allows": 0, "critical_targets": 0
     })
 
+    # Build connected components for independent units
+    parent = {i: i for i in range(len(val_history))}
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    def union(i, j):
+        root_i, root_j = find(i), find(j)
+        if root_i != root_j:
+            parent[root_i] = root_j
+
+    key_to_idx = {}
+    for i, item in enumerate(val_history):
+        keys = []
+        for k in ("group_id", "lineage_id", "request_id", "id", "nonce"):
+            v = item.get(k)
+            if v is not None:
+                keys.append(f"{k}:{v}")
+        s = item.get("state", "")
+        if s:
+            keys.append(f"state:{hash(s)}")
+        for k in keys:
+            if k in key_to_idx:
+                union(i, key_to_idx[k])
+            key_to_idx[k] = i
+
     groups = collections.defaultdict(list)
-    for item in val_history:
-        g_key = item.get("group_id") or item.get("lineage_id") or item.get("request_id") or item.get("id") or item.get("nonce") or hash(item.get("state", ""))
-        groups[str(g_key)].append(item)
+    for i, item in enumerate(val_history):
+        groups[find(i)].append(item)
 
     scored_units = 0
-    unit_matches = 0
+    sum_unit_rates = 0.0
 
     for g_key, g_items in groups.items():
         unit_has_scored_evidence = False
+        unit_matching = 0
+        unit_total = 0
 
         for item in g_items:
             state = item.get("state", "")
@@ -377,6 +405,7 @@ def evaluate_promotion_eligibility(
                 pred_v = res.values.get(f_name)
 
                 total_checks += 1
+                unit_total += 1
                 per_field_stats[f_name]["total"] += 1
                 unit_has_scored_evidence = True
 
@@ -406,6 +435,7 @@ def evaluate_promotion_eligibility(
 
                 if is_match:
                     matching += 1
+                    unit_matching += 1
                     per_field_stats[f_name]["matching"] += 1
                 else:
                     if is_target_critical and _is_allow_class(pred_v):
@@ -414,13 +444,15 @@ def evaluate_promotion_eligibility(
 
         if unit_has_scored_evidence:
             scored_units += 1
+            if unit_total > 0:
+                sum_unit_rates += (unit_matching / unit_total)
 
-    if total_checks == 0:
+    if scored_units == 0:
         agreement_rate = 0.0
         rejection_reasons.append("Zero scored validation checks; cannot evaluate promotion")
     else:
-        agreement_rate = matching / total_checks
-        
+        agreement_rate = sum_unit_rates / scored_units
+
     effective_n = scored_units
     effective_matching = agreement_rate * effective_n
     wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
@@ -428,9 +460,9 @@ def evaluate_promotion_eligibility(
 
     effective_thresh = policy.min_agreement_threshold
 
-    if len(val_history) < policy.min_validation_samples:
+    if scored_units < policy.min_validation_samples:
         rejection_reasons.append(
-            f"Validation sample count ({len(val_history)}) below minimum threshold ({policy.min_validation_samples})"
+            f"Validation sample count ({scored_units}) below minimum threshold ({policy.min_validation_samples})"
         )
 
     if agreement_rate < effective_thresh:
@@ -1452,20 +1484,6 @@ class TypeSafeClient:
         if cm is None:
             return False
             
-        digest = cm.schema.schema_digest()
-        with self._engine_lock:
-            engine = self._engine_cache.get(digest)
-            if engine is not None:
-                for f_name, ch in cm.heads.items():
-                    if f_name in engine.calibrators:
-                        ch.temperature = engine.calibrators[f_name].temperature
-                    if f_name in engine.conformal_predictors:
-                        cp = engine.conformal_predictors[f_name]
-                        ch.calibration_scores = tuple(cp.calibration_scores) if getattr(cp, "calibration_scores", None) is not None else ()
-                    elif f_name in engine.regression_conformal_predictors:
-                        rcp = engine.regression_conformal_predictors[f_name]
-                        ch.calibration_scores = tuple(rcp.residuals) if getattr(rcp, "residuals", None) is not None else ()
-                        
         cm.save(path)
         return True
 
@@ -1666,6 +1684,15 @@ class TypeSafeClient:
         if calib_dataset:
             try:
                 engine.calibrate(calib_dataset, n_bins=min(5, max(2, len(calib_dataset))))
+                for f_name, ch in compiled_model.heads.items():
+                    if f_name in engine.calibrators:
+                        ch.temperature = engine.calibrators[f_name].temperature
+                    if f_name in engine.conformal_predictors:
+                        cp = engine.conformal_predictors[f_name]
+                        ch.calibration_scores = tuple(cp.calibration_scores) if getattr(cp, "calibration_scores", None) is not None else ()
+                    elif f_name in engine.regression_conformal_predictors:
+                        rcp = engine.regression_conformal_predictors[f_name]
+                        ch.calibration_scores = tuple(rcp.residuals) if getattr(rcp, "residuals", None) is not None else ()
             except Exception:
                 pass
 

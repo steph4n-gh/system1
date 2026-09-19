@@ -1161,12 +1161,13 @@ class ReflexEngine:
             if hasattr(self.model, "model_version"):
                 self.model.model_version = self.model_version
 
-            if self.strict_mode:
-                for f_name in updated_fields:
-                    if f_name in self.calibrators:
-                        self.calibrators[f_name].is_calibrated = False
-                    if f_name in self.conformal_predictors:
-                        self.conformal_predictors[f_name].is_calibrated = False
+            for f_name in updated_fields:
+                if f_name in self.calibrators:
+                    self.calibrators[f_name].is_calibrated = False
+                if f_name in self.conformal_predictors:
+                    self.conformal_predictors[f_name].is_calibrated = False
+                if f_name in self.regression_conformal_predictors:
+                    self.regression_conformal_predictors[f_name].is_calibrated = False
 
             if self.use_cache and self.cache is not None:
                 self.cache.evict_prompt(prompt)

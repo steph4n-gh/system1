@@ -31,7 +31,9 @@ def test_exported_candidate_preserves_validated_runtime_calibration():
     from system1.compiler import CompiledHeadWeights
     cm.heads["label"] = CompiledHeadWeights(
         field_name="label", field_type="Choice", 
-        weights=np.ones((2, 384)), biases=np.zeros(2)
+        weights=np.ones((2, 384)), biases=np.zeros(2),
+        temperature=2.5,
+        calibration_scores=(0.1, 0.2, 0.3)
     )
     client._compiled_model = cm
     

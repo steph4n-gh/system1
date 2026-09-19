@@ -388,7 +388,7 @@ class CompiledSystemOneModel:
             arrays_to_save[f"{name}_w"] = ch.weights.astype(np.float32)
             arrays_to_save[f"{name}_b"] = ch.biases.astype(np.float32)
             if hasattr(ch, "calibration_scores") and len(ch.calibration_scores) > 0:
-                arrays_to_save[f"{name}_calib_scores"] = np.asarray(ch.calibration_scores, dtype=np.float32)
+                arrays_to_save[f"{name}_calib_scores"] = np.asarray(ch.calibration_scores, dtype=np.float64)
             if include_covariance:
                 if ch.P is not None:
                     arrays_to_save[f"{name}_P"] = ch.P.astype(np.float32)
