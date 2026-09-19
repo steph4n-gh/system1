@@ -416,7 +416,7 @@ def evaluate_system1_performance(
     agent: System1BattleAgent,
     num_decisions: int = 100,
 ) -> SystemOnePerformance:
-    """Evaluates System 1 System 1 inference latency (microseconds), QPS, and Conformal safety."""
+    """Measure latency and raw model uncertainty, separately from game-rule choices."""
     # Warm up
     for _ in range(5):
         agent.evaluate(battle_state)
@@ -462,10 +462,11 @@ def evaluate_system1_performance(
             forward_times_us.append(e2e_us)
 
 
-        # 3. Conformal set metrics
-        c_set = telemetry.get("conformal_set", [])
+        # 3. Raw model uncertainty; game-rule overrides have no conformal set.
+        suggestion = telemetry.get("model_suggestion", telemetry)
+        c_set = suggestion.get("conformal_sets", {}).get("chosen_move", telemetry.get("conformal_set", []))
         conformal_sizes.append(len(c_set))
-        if len(c_set) > 1 or telemetry.get("is_ambiguous", False):
+        if len(c_set) > 1 or suggestion.get("is_ambiguous", False):
             ambiguous_count += 1
         if should_escalate:
             escalation_count += 1
@@ -603,7 +604,7 @@ def format_ansi_comparison_table(results: List[SingleGameBenchmarkResult]) -> st
 
         fwd_display = f"{rp.neural_forward.mean_us:>7.1f} µs"
         qps_display = f"{rp.neural_forward.throughput_qps:>9.0f} QPS"
-        conf_display = f"{rp.conformal_avg_set_size:.2f} sets"
+        conf_display = f"{rp.conformal_avg_set_size:.2f} model set"
 
         total_fps += r.headless_fps
         total_fwd_us += rp.neural_forward.mean_us

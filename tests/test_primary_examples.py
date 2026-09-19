@@ -69,3 +69,15 @@ def test_case_loader_rejects_leakage_across_splits(tmp_path, monkeypatch, overla
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="disjoint"):
         load_cases(path)
+
+
+def test_contrast_lessons_improve_without_reusing_evaluation_or_contacting_a_teacher(tmp_path, capsys):
+    runner = runpy.run_path(str(ROOT / "benchmarks/quality/evaluate_contrasts.py"))
+    report = runner["evaluate"](tmp_path)
+    assert report["passed"]
+    assert report["network_calls"] == report["teacher_calls"] == 0
+    for workload in report["workloads"].values():
+        assert workload["calibration_unchanged"]
+        for variant in workload["variants"].values():
+            assert variant["reload_identical"]
+    capsys.readouterr()

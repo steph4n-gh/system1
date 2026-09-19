@@ -1,0 +1,1404 @@
+{
+  "protocol": "Frozen before implementation. Authored first-decision scenarios; no teaching, calibration, cache learning, or teacher calls. Pokemon labels reflect a stated immediate-damage/healing policy in the simplified simulator, not optimal game strategy. Paperclips labels reflect affordability and resource relationships. Routing is an unchanged raw-scorer control.",
+  "pokemon": [
+    {
+      "id": "Water-Flying-rotation-0",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Water-Flying-rotation-1",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Water-Flying-rotation-2",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Water-Flying-rotation-3",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Rock-Ground-rotation-0",
+      "player_hp": 100,
+      "opponent_types": [
+        "Rock",
+        "Ground"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Surf"
+    },
+    {
+      "id": "Rock-Ground-rotation-1",
+      "player_hp": 100,
+      "opponent_types": [
+        "Rock",
+        "Ground"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Surf"
+    },
+    {
+      "id": "Rock-Ground-rotation-2",
+      "player_hp": 100,
+      "opponent_types": [
+        "Rock",
+        "Ground"
+      ],
+      "moves": [
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Surf"
+    },
+    {
+      "id": "Rock-Ground-rotation-3",
+      "player_hp": 100,
+      "opponent_types": [
+        "Rock",
+        "Ground"
+      ],
+      "moves": [
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Surf"
+    },
+    {
+      "id": "Grass-Flying-rotation-0",
+      "player_hp": 100,
+      "opponent_types": [
+        "Grass",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "Grass-Flying-rotation-1",
+      "player_hp": 100,
+      "opponent_types": [
+        "Grass",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "Grass-Flying-rotation-2",
+      "player_hp": 100,
+      "opponent_types": [
+        "Grass",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "Grass-Flying-rotation-3",
+      "player_hp": 100,
+      "opponent_types": [
+        "Grass",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "Ghost-rotation-0",
+      "player_hp": 100,
+      "opponent_types": [
+        "Ghost"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Ghost-rotation-1",
+      "player_hp": 100,
+      "opponent_types": [
+        "Ghost"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Ghost-rotation-2",
+      "player_hp": 100,
+      "opponent_types": [
+        "Ghost"
+      ],
+      "moves": [
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "Ghost-rotation-3",
+      "player_hp": 100,
+      "opponent_types": [
+        "Ghost"
+      ],
+      "moves": [
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "best-move-empty-0",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "best-move-empty-1",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "best-move-empty-2",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "best-move-empty-3",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    },
+    {
+      "id": "low-hp-has-potion",
+      "player_hp": 20,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {
+        "Potion": 1
+      },
+      "expected_action": "use_item",
+      "expected_move": null
+    },
+    {
+      "id": "low-hp-no-potion",
+      "player_hp": 20,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Thunderbolt"
+    },
+    {
+      "id": "all-pp-empty",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Thunderbolt",
+          "move_type": "Electric",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_1"
+        },
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 0,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 0,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Struggle"
+    },
+    {
+      "id": "empty-first-slot",
+      "player_hp": 100,
+      "opponent_types": [
+        "Water",
+        "Flying"
+      ],
+      "moves": [
+        {
+          "name": "Surf",
+          "move_type": "Water",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_2"
+        },
+        {
+          "name": "Ice Beam",
+          "move_type": "Ice",
+          "power": 95,
+          "accuracy": 100,
+          "pp": 10,
+          "max_pp": 10,
+          "slot": "move_slot_3"
+        },
+        {
+          "name": "Tackle",
+          "move_type": "Normal",
+          "power": 35,
+          "accuracy": 95,
+          "pp": 10,
+          "max_pp": 10,
+          "category": "physical",
+          "slot": "move_slot_4"
+        }
+      ],
+      "inventory": {},
+      "expected_action": "fight",
+      "expected_move": "Ice Beam"
+    }
+  ],
+  "paperclips": [
+    {
+      "id": "wire-needed-affordable",
+      "observation": {
+        "wire": 0,
+        "funds": 30,
+        "wire_cost": 20
+      },
+      "expected_action": "buy_wire",
+      "expected_payload": null
+    },
+    {
+      "id": "wire-needed-unaffordable",
+      "observation": {
+        "wire": 0,
+        "funds": 0,
+        "wire_cost": 20
+      },
+      "expected_action": "wait",
+      "expected_payload": null
+    },
+    {
+      "id": "manual-work",
+      "observation": {
+        "wire": 1000,
+        "funds": 0,
+        "clips": 0
+      },
+      "expected_action": "make_paperclip",
+      "expected_payload": null
+    },
+    {
+      "id": "unallocated-trust",
+      "observation": {
+        "trust": 3,
+        "processors": 1,
+        "memory": 1
+      },
+      "expected_action": "buy_processor",
+      "expected_payload": null
+    },
+    {
+      "id": "surplus-stock",
+      "observation": {
+        "clips": 100,
+        "unsold_clips": 500,
+        "demand": 5,
+        "margin": 0.25
+      },
+      "expected_action": "lower_price",
+      "expected_payload": null
+    },
+    {
+      "id": "demand-exceeds-stock",
+      "observation": {
+        "clips": 100,
+        "unsold_clips": 1,
+        "demand": 50,
+        "margin": 0.1
+      },
+      "expected_action": "raise_price",
+      "expected_payload": null
+    },
+    {
+      "id": "cost-of-real-spool",
+      "observation": {
+        "clips": 0,
+        "wire": 5000,
+        "wire_cost": 30,
+        "wire_supply": 100,
+        "margin": 0.25
+      },
+      "expected_action": "raise_price",
+      "expected_payload": null
+    },
+    {
+      "id": "cheap-large-spool",
+      "observation": {
+        "clips": 0,
+        "wire": 5000,
+        "wire_cost": 30,
+        "wire_supply": 5000,
+        "margin": 0.02
+      },
+      "expected_action": "make_paperclip",
+      "expected_payload": null
+    },
+    {
+      "id": "drone-affordable",
+      "observation": {
+        "phase": 2,
+        "available_matter": 100000,
+        "power_production": 1000,
+        "power_consumption": 100,
+        "harvester_drones": 5,
+        "wire_drones": 10,
+        "harvester_cost": 100,
+        "wire_drone_cost": 120,
+        "factory_cost": 1000,
+        "unused_clips": 200
+      },
+      "expected_action": "phase2_drone",
+      "expected_payload": {
+        "type": "harvester"
+      }
+    },
+    {
+      "id": "drone-unaffordable",
+      "observation": {
+        "phase": 2,
+        "available_matter": 100000,
+        "power_production": 1000,
+        "power_consumption": 100,
+        "harvester_drones": 5,
+        "wire_drones": 10,
+        "harvester_cost": 100,
+        "wire_drone_cost": 120,
+        "factory_cost": 1000,
+        "unused_clips": 10
+      },
+      "expected_action": "wait",
+      "expected_payload": null
+    },
+    {
+      "id": "factory-affordable",
+      "observation": {
+        "phase": 2,
+        "available_matter": 100000,
+        "power_production": 1000,
+        "power_consumption": 100,
+        "harvester_drones": 10,
+        "wire_drones": 10,
+        "harvester_cost": 100,
+        "wire_drone_cost": 120,
+        "factory_cost": 1000,
+        "nano_wire": 20000,
+        "unused_clips": 2000
+      },
+      "expected_action": "phase2_factory",
+      "expected_payload": null
+    },
+    {
+      "id": "factory-unaffordable",
+      "observation": {
+        "phase": 2,
+        "available_matter": 100000,
+        "power_production": 1000,
+        "power_consumption": 100,
+        "harvester_drones": 10,
+        "wire_drones": 10,
+        "harvester_cost": 100,
+        "wire_drone_cost": 120,
+        "factory_cost": 1000,
+        "nano_wire": 20000,
+        "unused_clips": 10
+      },
+      "expected_action": "wait",
+      "expected_payload": null
+    }
+  ],
+  "routing": [
+    {
+      "prompt": "Send me the payment receipt",
+      "label": "billing"
+    },
+    {
+      "prompt": "I was charged twice for my subscription",
+      "label": "billing"
+    },
+    {
+      "prompt": "Please correct the invoice address",
+      "label": "billing"
+    },
+    {
+      "prompt": "Refund my cancelled purchase",
+      "label": "billing"
+    },
+    {
+      "prompt": "The application crashes on startup",
+      "label": "support"
+    },
+    {
+      "prompt": "Help debug this API error",
+      "label": "support"
+    },
+    {
+      "prompt": "Software installation fails",
+      "label": "support"
+    },
+    {
+      "prompt": "The dashboard is very slow",
+      "label": "support"
+    },
+    {
+      "prompt": "Prepare an enterprise price quote",
+      "label": "sales"
+    },
+    {
+      "prompt": "Book a product demonstration",
+      "label": "sales"
+    },
+    {
+      "prompt": "Discuss a commercial contract",
+      "label": "sales"
+    },
+    {
+      "prompt": "We want to purchase team licenses",
+      "label": "sales"
+    }
+  ]
+}

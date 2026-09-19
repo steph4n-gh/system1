@@ -6,8 +6,9 @@
 python benchmarks/quality/evaluate_release.py
 ```
 
-Reproduces three manually taught skills and the same skills taught from recorded
-live Jev answers. No API key is needed. Local evaluation blocks network access and
+Checks the three current manually taught skills alongside the original 1.0 skills
+taught from recorded live Jev answers. New locally authored contrast lessons are
+excluded from the recorded teacher baseline. No API key is needed. Local evaluation blocks network access and
 checks saved/reloaded behavior. The command exits unsuccessfully if any skill
 misses 95% accepted correctness or 80% acceptance on these authored cases.
 
@@ -16,6 +17,28 @@ See the [1.0 evidence and limitations](../../docs/releases/1.0.md),
 [data and development history](../../examples/teaching/README.md).
 These point-estimate targets do not certify population accuracy. The seed and
 five-fold results below are retained as historical 0.2.2 comparisons.
+
+## Teaching close distinctions
+
+```bash
+python benchmarks/quality/evaluate_contrasts.py
+```
+
+Compares the original teaching with 34 additional lessons, checks saved/reloaded
+behavior offline, and reports diagnostic and fresh confirmation cases separately.
+See the [results and remaining errors](contrast_round.md).
+
+## First-use game decisions
+
+```bash
+python benchmarks/quality/evaluate_zero_shot.py --projectors
+```
+
+Checks frozen Pokémon and Paperclips decisions with teaching and network access
+blocked, plus an unchanged raw routing control. The optional projector comparison
+measures the existing hybrid text projector. See the
+[results and limitations](zero_shot/README.md): game-policy improvements are
+reported separately from raw classifier quality.
 
 ## Overview
 

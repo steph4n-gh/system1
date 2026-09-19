@@ -32,8 +32,13 @@ def quality_metrics(rows):
             "meets_routing_targets": accuracy is not None and accuracy >= .95 and acceptance >= .8}
 
 
-def load_cases(path):
+def load_cases(path, *, include_quality_round=True):
     data = json.loads(path.read_text())
+    # Keep the recorded 1.0 Jev comparison reproducible. New, locally authored
+    # lessons are used by the primary examples, never presented as Jev answers.
+    if not include_quality_round:
+        for split in ("teach", "calibration", "evaluate"):
+            data[split] = [row for row in data[split] if not row.get("quality_round")]
     seen_groups, seen_prompts = set(), set()
     for split in ("teach", "calibration", "evaluate"):
         if not data[split]:

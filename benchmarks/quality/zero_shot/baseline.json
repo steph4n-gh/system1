@@ -1,0 +1,491 @@
+{
+  "protocol": "Frozen before implementation. Authored first-decision scenarios; no teaching, calibration, cache learning, or teacher calls. Pokemon labels reflect a stated immediate-damage/healing policy in the simplified simulator, not optimal game strategy. Paperclips labels reflect affordability and resource relationships. Routing is an unchanged raw-scorer control.",
+  "cases_sha256": "3fc27d78d71476f487dcf962452e2fdc0124f0fb01f19e5ef216b1c4c008b651",
+  "teaching_calls": 0,
+  "network_calls": 0,
+  "workloads": {
+    "pokemon": {
+      "cases": 24,
+      "correct": 6,
+      "latency_median_ms": 2.291520999278873,
+      "predictions": [
+        {
+          "id": "Water-Flying-rotation-0",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 3.7184160319156945
+        },
+        {
+          "id": "Water-Flying-rotation-1",
+          "action": "fight",
+          "move": "Surf",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.476041961926967
+        },
+        {
+          "id": "Water-Flying-rotation-2",
+          "action": "fight",
+          "move": "Ice Beam",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.313332981429994
+        },
+        {
+          "id": "Water-Flying-rotation-3",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.508833014871925
+        },
+        {
+          "id": "Rock-Ground-rotation-0",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.5013749836944044
+        },
+        {
+          "id": "Rock-Ground-rotation-1",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.26154102711007
+        },
+        {
+          "id": "Rock-Ground-rotation-2",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2662089904770255
+        },
+        {
+          "id": "Rock-Ground-rotation-3",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2362080053426325
+        },
+        {
+          "id": "Grass-Flying-rotation-0",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2540829959325492
+        },
+        {
+          "id": "Grass-Flying-rotation-1",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.4596250150352716
+        },
+        {
+          "id": "Grass-Flying-rotation-2",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.3408749839290977
+        },
+        {
+          "id": "Grass-Flying-rotation-3",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2682500421069562
+        },
+        {
+          "id": "Ghost-rotation-0",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.21220898674801
+        },
+        {
+          "id": "Ghost-rotation-1",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.482415991835296
+        },
+        {
+          "id": "Ghost-rotation-2",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.239749999716878
+        },
+        {
+          "id": "Ghost-rotation-3",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.604624954983592
+        },
+        {
+          "id": "best-move-empty-0",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": false,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2697090171277523
+        },
+        {
+          "id": "best-move-empty-1",
+          "action": "fight",
+          "move": "Surf",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.401334000751376
+        },
+        {
+          "id": "best-move-empty-2",
+          "action": "fight",
+          "move": "Ice Beam",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.4290839792229235
+        },
+        {
+          "id": "best-move-empty-3",
+          "action": "fight",
+          "move": "Tackle",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.1914169774390757
+        },
+        {
+          "id": "low-hp-has-potion",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.2510840208269656
+        },
+        {
+          "id": "low-hp-no-potion",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.248500008136034
+        },
+        {
+          "id": "all-pp-empty",
+          "action": "fight",
+          "move": "Thunderbolt",
+          "legal": false,
+          "correct": false,
+          "raw_model_correct": false,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 2.3996669915504754
+        },
+        {
+          "id": "empty-first-slot",
+          "action": "fight",
+          "move": "Ice Beam",
+          "legal": true,
+          "correct": true,
+          "raw_model_correct": true,
+          "needs_review": true,
+          "decision_source": "model",
+          "latency_ms": 1.998750027269125
+        }
+      ],
+      "legal": 22,
+      "raw_model_correct": 6
+    },
+    "paperclips": {
+      "cases": 12,
+      "correct": 8,
+      "latency_median_ms": 0.0013120006769895554,
+      "predictions": [
+        {
+          "id": "wire-needed-affordable",
+          "action": "buy_wire",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.002459040842950344
+        },
+        {
+          "id": "wire-needed-unaffordable",
+          "action": "wait",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0033329706639051437
+        },
+        {
+          "id": "manual-work",
+          "action": "make_paperclip",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0023329630494117737
+        },
+        {
+          "id": "unallocated-trust",
+          "action": "buy_processor",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0006249756552278996
+        },
+        {
+          "id": "surplus-stock",
+          "action": "lower_price",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0014589750207960606
+        },
+        {
+          "id": "demand-exceeds-stock",
+          "action": "raise_price",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0009170034900307655
+        },
+        {
+          "id": "cost-of-real-spool",
+          "action": "make_paperclip",
+          "payload": null,
+          "correct": false,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.001333013642579317
+        },
+        {
+          "id": "cheap-large-spool",
+          "action": "raise_price",
+          "payload": null,
+          "correct": false,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0005830079317092896
+        },
+        {
+          "id": "drone-affordable",
+          "action": "phase2_drone",
+          "payload": {
+            "type": "harvester"
+          },
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0017910497263073921
+        },
+        {
+          "id": "drone-unaffordable",
+          "action": "phase2_drone",
+          "payload": {
+            "type": "harvester"
+          },
+          "correct": false,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0010409858077764511
+        },
+        {
+          "id": "factory-affordable",
+          "action": "phase2_factory",
+          "payload": null,
+          "correct": true,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0012909877113997936
+        },
+        {
+          "id": "factory-unaffordable",
+          "action": "phase2_factory",
+          "payload": null,
+          "correct": false,
+          "decision_source": "handwritten_game_policy",
+          "latency_ms": 0.0010840012691915035
+        }
+      ]
+    },
+    "raw_routing_control": {
+      "cases": 12,
+      "correct": 8,
+      "latency_median_ms": 0.19737501861527562,
+      "predictions": [
+        {
+          "prompt": "Send me the payment receipt",
+          "label": "billing",
+          "prediction": "support",
+          "correct": false,
+          "needs_review": true,
+          "latency_ms": 0.17900002421811223
+        },
+        {
+          "prompt": "I was charged twice for my subscription",
+          "label": "billing",
+          "prediction": "billing",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.2411670284345746
+        },
+        {
+          "prompt": "Please correct the invoice address",
+          "label": "billing",
+          "prediction": "support",
+          "correct": false,
+          "needs_review": true,
+          "latency_ms": 0.22333301603794098
+        },
+        {
+          "prompt": "Refund my cancelled purchase",
+          "label": "billing",
+          "prediction": "support",
+          "correct": false,
+          "needs_review": true,
+          "latency_ms": 0.19154197070747614
+        },
+        {
+          "prompt": "The application crashes on startup",
+          "label": "support",
+          "prediction": "support",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.22129202261567116
+        },
+        {
+          "prompt": "Help debug this API error",
+          "label": "support",
+          "prediction": "billing",
+          "correct": false,
+          "needs_review": true,
+          "latency_ms": 0.1545000122860074
+        },
+        {
+          "prompt": "Software installation fails",
+          "label": "support",
+          "prediction": "support",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.19208301091566682
+        },
+        {
+          "prompt": "The dashboard is very slow",
+          "label": "support",
+          "prediction": "support",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.17258402658626437
+        },
+        {
+          "prompt": "Prepare an enterprise price quote",
+          "label": "sales",
+          "prediction": "sales",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.21191599080339074
+        },
+        {
+          "prompt": "Book a product demonstration",
+          "label": "sales",
+          "prediction": "sales",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.19587500719353557
+        },
+        {
+          "prompt": "Discuss a commercial contract",
+          "label": "sales",
+          "prediction": "sales",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.19887503003701568
+        },
+        {
+          "prompt": "We want to purchase team licenses",
+          "label": "sales",
+          "prediction": "sales",
+          "correct": true,
+          "needs_review": true,
+          "latency_ms": 0.20237499848008156
+        }
+      ]
+    }
+  }
+}

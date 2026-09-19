@@ -201,11 +201,13 @@ class PaperclipsObservation:
     acquired_matter: float = 0.0
     nano_wire: float = 0.0
     harvester_drones: int = 0
-    harvester_cost: float = 0.0
+    harvester_cost: Optional[float] = None
     wire_drones: int = 0
-    wire_drone_cost: float = 0.0
+    wire_drone_cost: Optional[float] = None
     factories: int = 0
-    factory_cost: float = 0.0
+    factory_cost: Optional[float] = None
+    solar_farm_cost: Optional[float] = None
+    battery_tower_cost: Optional[float] = None
     solar_farms: int = 0
     battery_towers: int = 0
     power_production: float = 0.0
@@ -229,6 +231,26 @@ class PaperclipsObservation:
     drifters_killed: float = 0.0
     honor: float = 0.0
     universe_percent: float = 0.0
+
+    def purchase_cost(self, action: str, payload: Optional[Dict[str, Any]] = None) -> Optional[float]:
+        """Return the observed cost of a phase-two purchase, or None if unknown.
+
+        Missing prices are unavailable. The deliberately simplified offline
+        simulator supplies explicit zero costs for its accelerated purchases.
+        """
+        kind = (payload or {}).get("type")
+        costs = {
+            "phase2_factory": self.factory_cost,
+            "phase2_drone": self.harvester_cost if kind == "harvester" else self.wire_drone_cost if kind == "wire_drone" else None,
+            "phase2_power": self.solar_farm_cost if kind == "solar_farm" else self.battery_tower_cost if kind == "battery_tower" else None,
+        }
+        return costs.get(action)
+
+    def can_purchase(self, action: str, payload: Optional[Dict[str, Any]] = None) -> bool:
+        cost = self.purchase_cost(action, payload)
+        budget = self.unused_clips
+        return (self.phase == 2 and cost is not None and math.isfinite(cost)
+                and cost >= 0 and math.isfinite(budget) and budget >= cost)
 
     def to_summary_dict(self) -> Dict[str, Any]:
         """Returns clean serialization for telemetry logging."""
@@ -311,7 +333,7 @@ class PaperclipsSpeedrunSystemOne(DecisionSchema):
 # ============================================================================
 
 class Paperclips3PhasePolicy:
-    """Mathematical optimal control policy for World Record speedrun progression."""
+    """Handwritten three-phase policy with observed resource and cost checks."""
 
     def __init__(self, conformal_alpha: float = 0.05) -> None:
         self.conformal_alpha = conformal_alpha
@@ -344,7 +366,7 @@ class Paperclips3PhasePolicy:
         ]
 
     def evaluate(self, obs: PaperclipsObservation) -> Tuple[str, Optional[Dict[str, Any]], float]:
-        """Evaluates game observation and returns (action_name, action_payload, risk_score)."""
+        """Return (action, payload, heuristic_risk); risk is not a calibrated probability."""
         # --------------------------------------------------------------------
         # Phase 3: Space Probes
         # --------------------------------------------------------------------
@@ -406,13 +428,14 @@ class Paperclips3PhasePolicy:
             return "buy_wire", None, 0.01
 
         # 5. Price Elasticity Tuning (Dynamic PID)
-        # Prevent bankruptcy: if current margin * 1000 is less than or equal to wire cost, we are losing money!
-        if obs.margin * 1000 <= obs.wire_cost:
+        # Compare price with the cost per unit of the actual observed spool.
+        unit_wire_cost = obs.wire_cost / obs.wire_supply if obs.wire_supply > 0 else float("inf")
+        if obs.margin <= unit_wire_cost:
             return "raise_price", None, 0.10
 
         # Optimal revenue/demand equilibrium: keep unsold clips near 50-200
         if obs.clips > 50:
-            if obs.unsold_clips > obs.demand * 1.8 and obs.margin > 0.02 and (obs.margin - 0.01) * 1000 > obs.wire_cost:
+            if obs.unsold_clips > obs.demand * 1.8 and obs.margin > 0.02 and obs.margin - 0.01 > unit_wire_cost:
                 return "lower_price", None, 0.10
             elif obs.unsold_clips < obs.demand * 0.3 and obs.margin < 0.50:
                 return "raise_price", None, 0.10
@@ -452,23 +475,26 @@ class Paperclips3PhasePolicy:
 
         # 3. Power Grid Uptime
         # Must maintain Power Production >= Power Consumption and battery storage charged
-        if obs.power_production <= obs.power_consumption + 5:
+        if obs.power_production <= obs.power_consumption + 5 and obs.can_purchase("phase2_power", {"type": "solar_farm"}):
             return "phase2_power", {"type": "solar_farm"}, 0.02
-        if obs.stored_power < obs.max_stored_power * 0.5 and obs.battery_towers < 50:
+        if obs.stored_power < obs.max_stored_power * 0.5 and obs.battery_towers < 50 and obs.can_purchase("phase2_power", {"type": "battery_tower"}):
             return "phase2_power", {"type": "battery_tower"}, 0.05
 
         # 4. Balanced Drones (Harvester : Wire Drone ~ 1:1)
-        if obs.harvester_drones < obs.wire_drones:
+        if obs.harvester_drones < obs.wire_drones and obs.can_purchase("phase2_drone", {"type": "harvester"}):
             return "phase2_drone", {"type": "harvester"}, 0.05
-        elif obs.wire_drones < obs.harvester_drones:
+        elif obs.wire_drones < obs.harvester_drones and obs.can_purchase("phase2_drone", {"type": "wire_drone"}):
             return "phase2_drone", {"type": "wire_drone"}, 0.05
 
         # 5. Clip Factories
-        if obs.nano_wire > 10000 and obs.factories < max(10, obs.harvester_drones // 2):
+        if obs.nano_wire > 10000 and obs.factories < max(10, obs.harvester_drones // 2) and obs.can_purchase("phase2_factory"):
             return "phase2_factory", None, 0.05
 
         # 6. Default drone expansion
-        return "phase2_drone", {"type": "harvester"}, 0.05
+        for kind in ("harvester", "wire_drone"):
+            if obs.can_purchase("phase2_drone", {"type": kind}):
+                return "phase2_drone", {"type": kind}, 0.05
+        return "wait", None, 0.20
 
     def _evaluate_phase_3(self, obs: PaperclipsObservation) -> Tuple[str, Optional[Dict[str, Any]], float]:
         # 1. Initial Launch
@@ -522,7 +548,10 @@ class MockPaperclipsBrowserController:
     """
 
     def __init__(self) -> None:
-        self.obs = PaperclipsObservation()
+        self.obs = PaperclipsObservation(
+            harvester_cost=0.0, wire_drone_cost=0.0, factory_cost=0.0,
+            solar_farm_cost=0.0, battery_tower_cost=0.0,
+        )
         self.step_count = 0
         self.t_start = time.perf_counter()
         self._init_projects()
@@ -654,6 +683,11 @@ class MockPaperclipsBrowserController:
                 obs.clips += obs.probes * 10
 
         # Action execution
+        if action in ("phase2_drone", "phase2_factory", "phase2_power"):
+            if not obs.can_purchase(action, payload):
+                return "Purchase unavailable: insufficient clips or unknown cost"
+            obs.unused_clips -= obs.purchase_cost(action, payload)
+
         if action == "make_paperclip":
             if obs.wire > 0:
                 obs.clips += 1
@@ -822,9 +856,9 @@ class PlaywrightPaperclipsController:
             return False
 
     async def get_observation(self) -> PaperclipsObservation:
-        """Extracts complete game state in a single sub-millisecond page.evaluate call."""
+        """Read the game state; a failed observation must not become a fake state."""
         if not self.is_connected or not self.page:
-            return PaperclipsObservation()
+            raise RuntimeError("Paperclips browser is not connected")
 
         js_extractor = """
         () => {
@@ -870,6 +904,7 @@ class PlaywrightPaperclipsController:
                 margin: (typeof window.margin === 'number') ? window.margin : getVal('margin', 0.25),
                 wire: (typeof window.wire === 'number') ? window.wire : getVal('wire', 1000),
                 wire_cost: (typeof window.wireCost === 'number') ? window.wireCost : getVal('wireCost', 20),
+                wire_supply: (typeof window.wireSupply === 'number') ? window.wireSupply : 0,
                 demand: (typeof window.demand === 'number') ? window.demand : getVal('demand', 5),
                 marketing_level: (typeof window.marketingLvl === 'number') ? window.marketingLvl : getVal('marketingLvl', 1),
                 autoclippers: (typeof window.clipmakerLevel === 'number') ? window.clipmakerLevel : getVal('clipmakerLevel2', 0),
@@ -889,10 +924,15 @@ class PlaywrightPaperclipsController:
                 acquired_matter: (typeof window.acquiredMatter === 'number') ? window.acquiredMatter : 0,
                 nano_wire: (typeof window.nanoWire === 'number') ? window.nanoWire : 0,
                 harvester_drones: (typeof window.harvesterLevel === 'number') ? window.harvesterLevel : 0,
+                harvester_cost: (typeof window.harvesterCost === 'number') ? window.harvesterCost : null,
                 wire_drones: (typeof window.wireDroneLevel === 'number') ? window.wireDroneLevel : 0,
+                wire_drone_cost: (typeof window.wireDroneCost === 'number') ? window.wireDroneCost : null,
                 factories: (typeof window.factoryLevel === 'number') ? window.factoryLevel : 0,
+                factory_cost: (typeof window.factoryCost === 'number') ? window.factoryCost : null,
                 solar_farms: (typeof window.farmLevel === 'number') ? window.farmLevel : 0,
+                solar_farm_cost: (typeof window.farmCost === 'number') ? window.farmCost : null,
                 battery_towers: (typeof window.batteryLevel === 'number') ? window.batteryLevel : 0,
+                battery_tower_cost: (typeof window.batteryCost === 'number') ? window.batteryCost : null,
                 power_production: (typeof window.powerProduction === 'number') ? window.powerProduction : 0,
                 power_consumption: (typeof window.powerConsumption === 'number') ? window.powerConsumption : 0,
                 stored_power: (typeof window.storedPower === 'number') ? window.storedPower : 0,
@@ -918,8 +958,8 @@ class PlaywrightPaperclipsController:
             obs = PaperclipsObservation(**data)
             obs.elapsed_seconds = time.perf_counter() - self.t_start
             return obs
-        except Exception:
-            return PaperclipsObservation()
+        except Exception as exc:
+            raise RuntimeError("Could not read the Paperclips game state") from exc
 
     async def execute_action(self, action: str, payload: Optional[Dict[str, Any]] = None) -> str:
         """Dispatches action to live browser DOM / JavaScript engine."""

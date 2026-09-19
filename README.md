@@ -187,7 +187,7 @@ Install `system1[observability]` for Prometheus or `system1[otel]` for OpenTelem
 
 ## Benchmarks
 
-Reproduce the release teaching and recorded Jev comparison from the repository root:
+Check current manual teaching and the recorded 1.0 Jev baseline from the repository root:
 
 ```bash
 python benchmarks/quality/evaluate_release.py
@@ -218,9 +218,9 @@ Conformal coverage applies to prediction sets under exchangeability and appropri
 
 ## Examples and research
 
-- [Support triage](examples/support_triage.py), [model routing](examples/model_routing.py), and [agent guard](examples/agent_guard.py) teach and check one skill each. Their [datasets and measured results](examples/teaching/README.md) are included.
+- [Support triage](examples/support_triage.py), [model routing](examples/model_routing.py), and [agent guard](examples/agent_guard.py) teach and check one skill each. Their [datasets and measured results](examples/teaching/README.md) are included, along with a [comparison of teaching close distinctions](benchmarks/quality/contrast_round.md).
 - [Teach one skill](examples/teach_skill.py), [advanced expert examples](examples/train_expert.py), and [observed teaching and takeover](examples/observe_routing.py). Cloud modes require explicit configuration.
-- [Gaming examples](examples/gaming/) explore simulated environments and optional local emulation; they are not independently verified world records. ROMs are not included.
+- [Gaming examples](examples/gaming/) explore simulated environments and optional local emulation; they are not independently verified world records. ROMs are not included. The [first-use evaluation](benchmarks/quality/zero_shot/README.md) measures game rules and legal actions separately from raw classifier quality.
 - [Research manuscripts](docs/paper/) describe the design and earlier experiments. Their historical timing and quality claims are not release acceptance criteria; use the reproducible measurements above.
 
 Both `import system1` and the legacy `import reflex` expose the same API. The `reflex` namespace can conflict with the separate Reflex web-framework package, so use separate environments when needed. The [TypeSafe adapter](docs/typesafe.md) supports the basic sync/async decision API, structured state, typed response accessors, and ordinal score distributions. Its documented contract does not include the entire SDK transport/Pydantic surface.

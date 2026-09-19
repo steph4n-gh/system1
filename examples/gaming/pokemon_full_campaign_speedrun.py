@@ -104,6 +104,7 @@ from pokemon_battle_system1 import (
     _format_box_line,
     _render_hp_bar,
     calculate_damage,
+    battle_choices,
     find_default_pokemon_rom,
     get_type_effectiveness,
     get_typesafe_pokemon_questions,
@@ -2065,6 +2066,9 @@ class CampaignSpeedrunEngine:
 
                 # System 1 Action Selection: fight, use_item, switch_pokemon
                 act = telemetry.get("action", "fight")
+                legal_actions, _ = battle_choices(battle)
+                if act not in legal_actions:
+                    act = "fight"
 
                 # 1. Action: use_item
                 if act == "use_item" or (lead.hp_ratio < 0.25 and (self.state.inventory.get("Super Potion", 0) > 0 or self.state.inventory.get("Potion", 0) > 0)):

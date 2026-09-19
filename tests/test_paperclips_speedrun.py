@@ -166,6 +166,8 @@ def test_policy_phase2_earth_manufacturing():
     # Power deficit -> construct Solar Farm
     obs_power = PaperclipsObservation(
         phase=2,
+        unused_clips=100,
+        solar_farm_cost=100,
         power_production=10,
         power_consumption=10,
         stored_power=100,
@@ -180,6 +182,8 @@ def test_policy_phase2_earth_manufacturing():
     # Drone imbalance (Harvester < Wire) -> construct Harvester
     obs_drone = PaperclipsObservation(
         phase=2,
+        unused_clips=100,
+        harvester_cost=100,
         power_production=1000,
         power_consumption=100,
         harvester_drones=5,
@@ -277,8 +281,8 @@ async def test_playwright_controller_graceful_handling():
     success = await ctrl.connect("http://127.0.0.1:54321/nonexistent.html")
     assert success is False
     assert ctrl.is_connected is False
-    obs = await ctrl.get_observation()
-    assert obs.phase == 1
+    with pytest.raises(RuntimeError, match="not connected"):
+        await ctrl.get_observation()
     await ctrl.close()
 
 

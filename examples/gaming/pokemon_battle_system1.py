@@ -1,47 +1,13 @@
 #!/usr/bin/env python3
-"""Pokémon Battle System 1: Real-Time 60 FPS Autonomous Game Agent & Tactical Advisor.
+"""Local Pokémon battle demonstration with typed model suggestions and game facts.
 
-A killer demonstration of System 1 + System 2 Dual-Process Cognitive Architecture:
-Playing Pokémon (Red/Blue running on a Game Boy emulator like PyBoy or our high-fidelity
-built-in engine) requires sub-millisecond controller decisions that cloud LLMs
-fundamentally cannot deliver.
+The default agent ranks current, usable moves by a deterministic damage heuristic
+and uses observed HP/items for immediate choices. The original model suggestion
+and uncertainty remain visible; game-rule overrides are not calibrated predictions.
+A supplied engine or taught skill chooses strategy subject to legal-action checks.
 
-Key Architecture Pillars:
-1. The 60 FPS Reality:
-   - Game Boy emulators run at 60 FPS (16.66 ms frame budget).
-   - Cloud LLMs (GPT-4, Jev) take 300 ms - 1,500 ms per step ($0.002/turn), stalling
-     the game, dropping 20+ frames per input, and burning token budgets.
-   - System 1 evaluates in ~0.5 - 1.2 ms on the metal ($0 cost, 0 egress), allowing up
-     to 16 forward decisions within a single video frame!
-2. Typed Decision Schema (`PokemonBattleSystemOne`):
-   - Fast action selection: fight, use_item, switch_pokemon, run_away
-   - Move selection based on Gen-1 type matchup matrix (Thunderbolt, Surf, Ice Beam, Thunder Wave)
-   - Real-time threat scoring (0.0 to 10.0) and critical survival threshold
-3. The Dual-Process Gameplay Loop:
-   - System 1 (The Local Fast System 1):
-     Runs at 60 FPS on-device, executing combat actions, super-effective strikes,
-     and micro-navigation in ~1.0 ms.
-   - Conformal Safety & The Anti-Faint Panic Button:
-     Split Conformal Prediction detects high ambiguity (multiple plausible moves/actions)
-     or critical danger against high-threat Gym Leaders, halting the 60 FPS loop.
-   - System 2 (The Slow Strategic Planner):
-     Synthesizes deep tactical plans (e.g. infusing Thunder Wave paralysis on Misty's Starmie),
-     injects directives into the battle prompt, and un-halts System 1.
-4. Tactical Game Advisor Mode (`--advisor`):
-   - Live 60 FPS tactical HUD analyzing elemental type matchups, super-effective multipliers,
-     lethal threat warnings, and item/escape recommendations in real time.
-5. Real Game Boy ROM & PyBoy Memory Bridge (`--rom`):
-   - Reads real Game Boy ROM headers (Pokémon Red/Blue/Yellow).
-   - Extracts live memory state from RAM addresses (Player HP 0xD015, Enemy HP 0xCFE6, etc.).
-   - Seamless zero-dependency pure NumPy fallback if PyBoy is not installed.
-6. Zero-Dependency Distillation via System 1 Compiler (`SystemOneCompiler`):
-   - Compiles battle heuristics into a static <20KB `.s1m` binary model.
-   - Executes purely in NumPy without torch, network calls, or cloud dependencies.
-7. TypeSafe AI SDK Drop-In Compatibility:
-   - Fully compatible with `TypeSafeClient` and `patch_typesafe()`.
-8. Visual ASCII Game Boy Screen & Performance Scorecard:
-   - Real-time ASCII Game Boy battle screen with HP bars, battle dialogues, and frame telemetry.
-   - Side-by-side performance scorecard comparing System 1 vs Cloud LLM / Jev.
+Includes a simplified simulator, optional PyBoy adapter, and a scripted strategic
+advisor. Simulator results do not establish full-game performance or a speed record.
 """
 
 from __future__ import annotations
@@ -388,32 +354,60 @@ class ExplorationState:
         return " ".join(parts)
 
 
-def calculate_damage(attacker: Pokemon, defender: Pokemon, move: PokemonMove) -> Tuple[int, float, bool]:
-    """Calculates Gen-1 combat damage, type effectiveness, and critical hit."""
+def _base_damage(attacker: Pokemon, defender: Pokemon, move: PokemonMove) -> Tuple[float, float]:
+    """Shared damage estimate for this simplified simulator, before random rolls."""
     if move.category == "status" or move.power == 0:
-        return 0, 1.0, False
-
-    # Effectiveness
+        return 0.0, 1.0
     type_mult = get_type_effectiveness(move.move_type, defender.types)
     if type_mult == 0.0:
-        return 0, 0.0, False
-
-    # Same Type Attack Bonus (STAB)
+        return 0.0, 0.0
     stab = 1.5 if move.move_type in attacker.types else 1.0
-
-    # Critical hit chance based on attacker base speed
-    is_crit = random.random() < min(0.25, attacker.speed / 512.0)
-    crit_mult = 2.0 if is_crit else 1.0
-
-    # Gen 1 damage formula
     a_stat = attacker.special if move.category == "special" else attacker.attack
     d_stat = defender.special if move.category == "special" else defender.defense
     level_factor = (2.0 * attacker.level / 5.0) + 2.0
     base_dmg = (((level_factor * move.power * (a_stat / max(1.0, float(d_stat)))) / 50.0) + 2.0)
-    rand_variance = random.uniform(0.85, 1.00)
+    return base_dmg * stab * type_mult, type_mult
 
-    total_dmg = int(base_dmg * crit_mult * stab * type_mult * rand_variance)
+
+def estimate_move_damage(attacker: Pokemon, defender: Pokemon, move: PokemonMove) -> float:
+    """Deterministic move-ranking heuristic; no random draws or teaching.
+
+    Includes nominal accuracy and average non-critical variance. This estimates
+    immediate damage, not long-term strategy or a probability of winning.
+    """
+    damage, _ = _base_damage(attacker, defender, move)
+    return damage * 0.925 * max(0, min(100, move.accuracy)) / 100
+
+
+def calculate_damage(attacker: Pokemon, defender: Pokemon, move: PokemonMove) -> Tuple[int, float, bool]:
+    """Roll damage using the simplified simulator's existing combat rules."""
+    base_dmg, type_mult = _base_damage(attacker, defender, move)
+    if base_dmg == 0:
+        return 0, type_mult, False
+    is_crit = random.random() < min(0.25, attacker.speed / 512.0)
+    crit_mult = 2.0 if is_crit else 1.0
+    rand_variance = random.uniform(0.85, 1.00)
+    total_dmg = int(base_dmg * crit_mult * rand_variance)
     return max(1, total_dmg), type_mult, is_crit
+
+
+def battle_choices(state: BattleState) -> Tuple[List[str], List[PokemonMove]]:
+    """Legal actions and usable moves, ranked by immediate damage in this state."""
+    player = state.player_pokemon
+    moves = sorted(
+        (move for move in player.moves if move.is_usable()),
+        key=lambda move: (-estimate_move_damage(player, state.opponent_pokemon, move),
+                          move.name, move.move_type, move.slot),
+    )
+    # Fight remains available through Struggle when no move has PP.
+    actions = ["fight"]
+    if player.hp_ratio < 1 and any(state.inventory.get(item, 0) > 0 for item in ("Potion", "Super Potion")):
+        actions.append("use_item")
+    if any(mon is not player and not mon.is_fainted for mon in state.party):
+        actions.append("switch_pokemon")
+    if state.can_run and state.battle_type == BattleType.WILD:
+        actions.append("run_away")
+    return actions, moves
 
 
 # ============================================================================
@@ -1396,7 +1390,8 @@ def render_gameboy_screen(
         act = str(telemetry.get("action", "N/A")).upper()
         move = str(telemetry.get("chosen_move", "N/A"))
         move_name = telemetry.get("move_name", move)
-        conf = float(telemetry.get("confidence", 0.0))
+        conf = telemetry.get("confidence")
+        confidence_text = "game rules" if conf is None else f"{conf:.1%} model score"
         lat = float(telemetry.get("latency_ms", 1.0))
         cset = telemetry.get("conformal_set", [])
         cset_str = "{" + ", ".join(cset) + "}" if cset else "None"
@@ -1407,8 +1402,8 @@ def render_gameboy_screen(
         budget_bar = _render_hp_bar(budget_pct / 100.0, 16)
         fps_capability = 1000.0 / max(0.01, lat)
 
-        lines.append(_format_box_line(f"  • Action Decision:   {act:<8} -> {move_name.upper()} ({conf:.1%} conf)", width))
-        lines.append(_format_box_line(f"  • Conformal Set:     {cset_str:<24} [Coverage 95%]", width))
+        lines.append(_format_box_line(f"  • Action Decision:   {act:<8} -> {move_name.upper()} ({confidence_text})", width))
+        lines.append(_format_box_line(f"  • Conformal Set:     {cset_str:<24}", width))
         lines.append(_format_box_line(f"  • Threat Score:      {threat:>4.1f}/10.0   | Critical Danger: {str(danger):<5}", width))
         lines.append(_format_box_line(f"  • Frame Latency:     {lat:>5.2f} ms / 16.66 ms ({fps_capability:>6.0f} FPS capable)", width))
         lines.append(_format_box_line(f"  • Frame Budget Bar:  [{budget_bar}] {budget_pct:>4.1f}% used", width))
@@ -1528,6 +1523,7 @@ class System1BattleAgent:
         alpha: float = 0.05,
     ) -> None:
         self.alpha = alpha
+        self._use_state_defaults = engine is None and compiled_model is None
         if engine is not None:
             self.engine = engine
             self.compiled_model = None
@@ -1557,27 +1553,57 @@ class System1BattleAgent:
         danger_val = bool(res.critical_danger)
         threat_val = float(res.threat_level)
 
+        model_suggestion = {
+            "action": action_val, "chosen_move": move_val,
+            "confidence": min(action_conf, move_conf), "is_ambiguous": res.is_ambiguous,
+            "conformal_sets": res.conformal_sets,
+        }
+        actions, usable_moves = battle_choices(state)
+        if self._use_state_defaults:
+            # Built-in game facts provide first-use behavior without assuming a
+            # species or a fixed move slot. This is explicit application policy.
+            danger_val = state.player_pokemon.hp_ratio < 0.25
+            action_val = "use_item" if danger_val and "use_item" in actions else "fight"
+            move_val = usable_moves[0].slot if usable_moves else "struggle"
+        else:
+            # A taught model still chooses strategy, but cannot select an absent
+            # item, a fainted bench, a prohibited escape, or an exhausted move.
+            if action_val not in actions:
+                action_val = "fight"
+            if not any(move.slot == move_val for move in usable_moves):
+                move_val = usable_moves[0].slot if usable_moves else "struggle"
+
+        adjusted = action_val != res.action or move_val != res.chosen_move
+
         action_set = res.conformal_sets.get("action", [action_val])
         move_set = res.conformal_sets.get("chosen_move", [move_val])
-        is_ambiguous = res.is_ambiguous or (len(action_set) > 1) or (len(move_set) > 1)
+        is_ambiguous = res.is_ambiguous or adjusted or (len(action_set) > 1) or (len(move_set) > 1)
+        uses_rules = self._use_state_defaults or adjusted
+        if uses_rules:
+            # A policy override has no fitted confidence or conformal guarantee.
+            # Preserve the original model evidence separately for inspection.
+            move_set = []
 
         self.total_decisions += 1
-        self.total_latency_ms += lat
 
         # Map slot to move name
         move_obj = state.player_pokemon.get_move_by_slot(move_val)
-        move_name = move_obj.name if move_obj else move_val
+        move_name = move_obj.name if move_obj else ("Struggle" if move_val == "struggle" else move_val)
 
         telemetry = {
             "action": action_val,
             "chosen_move": move_val,
             "move_name": move_name,
-            "confidence": min(action_conf, move_conf),
+            "confidence": None if uses_rules else min(action_conf, move_conf),
             "conformal_set": move_set,
             "threat_level": threat_val,
             "critical_danger": danger_val,
             "latency_ms": lat,
             "is_ambiguous": is_ambiguous,
+            "decision_source": "game_state_rules" if uses_rules else "model",
+            "model_suggestion": model_suggestion,
+            "available_actions": actions,
+            "move_damage_estimates": {move.slot: estimate_move_damage(state.player_pokemon, state.opponent_pokemon, move) for move in usable_moves},
         }
 
         # Dual-Process Escalation Conditions:
@@ -1591,7 +1617,7 @@ class System1BattleAgent:
         if state.strategic_directive is None:
             if is_ambiguous:
                 should_escalate = True
-                escalation_reason = f"Conformal Ambiguity: move set contains {move_set}"
+                escalation_reason = "Game rule override or ambiguous model suggestion" if uses_rules else f"Conformal Ambiguity: move set contains {move_set}"
             elif danger_val and (threat_val >= 6.0 or state.battle_type == BattleType.GYM_LEADER):
                 should_escalate = True
                 escalation_reason = f"Critical Danger: HP at {state.player_pokemon.hp_ratio:.1%} in high-threat boss encounter"
@@ -1602,6 +1628,8 @@ class System1BattleAgent:
         if should_escalate:
             self.escalations += 1
 
+        telemetry["latency_ms"] = (time.perf_counter() - t0) * 1000.0
+        self.total_latency_ms += telemetry["latency_ms"]
         return telemetry, should_escalate, escalation_reason
 
 
@@ -1817,6 +1845,10 @@ def run_battle_simulation(
         # 3. Apply Player Action
         act = telemetry["action"]
         chosen_move_slot = telemetry["chosen_move"]
+        allowed_actions, _ = battle_choices(state)
+        if act not in allowed_actions:
+            state.battle_log.append(f"Unavailable action {act!r}; using the legal fight fallback.")
+            act = "fight"
 
         if act == "run_away":
             if state.can_run:
@@ -1843,9 +1875,10 @@ def run_battle_simulation(
             # Switch to first conscious benched Pokémon with type advantage
             swapped = False
             for bench_pkmn in state.party:
-                if not bench_pkmn.is_fainted:
+                if bench_pkmn is not p and not bench_pkmn.is_fainted:
                     state.party.remove(bench_pkmn)
-                    state.party.append(p)
+                    if not any(mon is p for mon in state.party):
+                        state.party.append(p)
                     state.player_pokemon = bench_pkmn
                     p = bench_pkmn
                     state.battle_log.append(f"Swapped out to {p.name} Lv{p.level}!")

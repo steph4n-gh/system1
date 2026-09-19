@@ -27,8 +27,15 @@ system1 decide "Inspect the local source files" --model .system1/examples/agent_
 | Example | Decision | Teaching cases | Calibration cases | Evaluation cases |
 |---|---|---:|---:|---:|
 | [Support triage](../support_triage.py) | Billing, product support, account security, or sales | 192 | 112 | 104 |
-| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 150 | 96 | 96 |
-| [Agent guard](../agent_guard.py) | Inspect, change, or restricted operation | 306 | 125 | 132 |
+| [Model routing](../model_routing.py) | Mechanical transform, ordinary chat, or deeper reasoning | 156 | 96 | 96 |
+| [Agent guard](../agent_guard.py) | Inspect, change, or restricted operation | 334 | 125 | 132 |
+
+The current files include six additional routing lessons and 28 operation lessons
+for close distinctions. They are marked `quality_round` and are locally authored.
+The [contrast comparison](../../benchmarks/quality/contrast_round.md) keeps their
+fresh evaluation separate from teaching and records the remaining errors. Support
+teaching and all three calibration sets are unchanged. No new APIs or settings are
+needed to use these lessons.
 
 The agent example additionally demonstrates an explicit permission rule: a local
 configuration lookup is allowed, a private-key lookup is denied, and the signed
@@ -97,8 +104,11 @@ lookup and denies a private-key lookup; classifier labels grant no permission.
 python benchmarks/quality/evaluate_release.py
 ```
 
-The command replays [1,313 actual Jev responses](../../benchmarks/quality/results/jev_observations.json),
-teaches each skill from Jev's labels, calibrates on separate responses, saves and
+The command separately checks current manual teaching and replays
+[1,313 actual Jev responses](../../benchmarks/quality/results/jev_observations.json)
+for the original 1.0 baseline. The Jev comparison excludes the new locally authored
+`quality_round` lessons. It
+teaches each baseline skill from Jev's labels, calibrates on separate responses, saves and
 reloads, then blocks socket connections while evaluating locally. It checks
 identical answers, probabilities, prediction sets, and review behavior after
 reload. Each of the three skills reaches the same accepted counts and correctness

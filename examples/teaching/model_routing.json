@@ -1,6 +1,6 @@
 {
   "name": "model_routing",
-  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark.",
+  "provenance": "AI-authored demonstration cases, written for this example; not customer data or an independent benchmark. The 2026-09 contrast round adds locally AI-authored teaching lessons; these have no recorded Jev labels.",
   "policy": {
     "local_small": "Mechanical formatting, extraction, sorting, or syntax conversion with the needed input supplied.",
     "standard_chat": "Ordinary drafting, summarization, translation, or explanation; no formal proof or complex design investigation.",
@@ -757,6 +757,42 @@
       "group": "stable-627309686bd0b470",
       "prompt": "Optimize placement across regions while respecting the specified recovery constraints.",
       "label": "frontier_reasoning"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "standard_chat",
+      "prompt": "Retell the provided proof in simpler words. Its correctness is not being checked.",
+      "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "standard_chat",
+      "prompt": "Write a short summary of the supplied mathematical proof, taking the argument as given.",
+      "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "standard_chat",
+      "prompt": "Translate this already-written proof into Italian without assessing it.",
+      "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "standard_chat",
+      "prompt": "Explain the conclusion of the supplied proof in everyday language rather than deriving it again.",
+      "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "frontier_reasoning",
+      "prompt": "Audit the supplied proof for logical gaps and determine whether its conclusion is valid.",
+      "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-contrast-proof-summary",
+      "label": "frontier_reasoning",
+      "prompt": "Prove or disprove the proposition; a summary of the claimed proof is insufficient.",
+      "quality_round": "2026-09-contrast"
     }
   ],
   "calibration": [

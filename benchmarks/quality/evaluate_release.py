@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce the three taught skills and their measured Jev comparison.
+"""Check current manual skills alongside the recorded 1.0 Jev baseline.
 
 Uses the recorded Jev responses by default. --refresh-teacher makes paid HTTP
 requests for missing responses using TYPESAFE_API_KEY. No key enters the report.
@@ -65,7 +65,7 @@ def refresh_teacher(cache_path, records, missing):
 
 
 def evaluate(output_dir, cache_path, refresh=False):
-    datasets = {name: load_cases(ROOT / "examples" / "teaching" / f"{name}.json") for name in SCHEMAS}
+    datasets = {name: load_cases(ROOT / "examples" / "teaching" / f"{name}.json", include_quality_round=False) for name in SCHEMAS}
     records = json.loads(cache_path.read_text())["records"] if cache_path.exists() else {}
     missing = []
     for name, schema in SCHEMAS.items():
@@ -81,8 +81,9 @@ def evaluate(output_dir, cache_path, refresh=False):
         refresh_teacher(cache_path, records, missing)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    report = {"data": "Authored demonstration cases, including a separate operation-triage confirmation cohort; not customer data or an independent benchmark.",
-              "teacher_source": "Recorded successful live Jev HTTP responses; predictions were collected separately from local teaching.",
+    report = {"data": "Authored demonstration cases; current manual teaching is checked alongside the recorded 1.0 Jev baseline. Not customer data or an independent benchmark.",
+              "manual_teaching_source": "Current example JSON files, including locally authored quality-round lessons. Their results need not match the recorded Jev baseline.",
+              "teacher_source": "Recorded successful live Jev HTTP responses for the 1.0 baseline. New quality-round lessons are locally authored and excluded from this teacher comparison.",
               "targets": {"accepted_accuracy": .95, "local_acceptance": .8},
               "workloads": {}, "teacher_cache_sha256": hashlib.sha256(cache_path.read_bytes()).hexdigest()}
     for name, schema in SCHEMAS.items():
@@ -142,7 +143,9 @@ def evaluate(output_dir, cache_path, refresh=False):
                                            for cohort in sorted({row["evaluation_cohort"] for row in rows})},
                     "predictions": rows}
         report["workloads"][name] = workload
-        print(f"{name}: accepted {metrics['accepted']}/{metrics['cases']}; correctness {metrics['accepted_accuracy']:.1%}; Jev agreement {teacher_agreement['accepted_accuracy']:.1%}")
+        manual_metrics = manual["quality"]
+        print(f"{name} current manual: accepted {manual_metrics['accepted']}/{manual_metrics['cases']}; correctness {manual_metrics['accepted_accuracy']:.1%}")
+        print(f"{name} recorded Jev 1.0: accepted {metrics['accepted']}/{metrics['cases']}; correctness {metrics['accepted_accuracy']:.1%}; Jev agreement {teacher_agreement['accepted_accuracy']:.1%}")
     report["passed"] = all(w["manual_teaching"]["meets_routing_targets"] and w["observed_teaching"]["meets_routing_targets"]
                            and w["local_agreement_with_jev"]["meets_routing_targets"] for w in report["workloads"].values())
     (output_dir / "report.json").write_text(json.dumps(report, indent=2) + "\n")
