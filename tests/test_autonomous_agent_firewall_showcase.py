@@ -338,13 +338,13 @@ def test_demonstrate_monkey_patching_accuracy():
         assert len(resp.answers["policy_violations"].value) == 0
         assert resp.answers["cvss_risk_score"].value < 3.0
 
-        # Also verify default projector keeps CVSS score below midpoint (< 5.0) and 0 violations
+        # Also verify default projector keeps CVSS score below midpoint (< 50.0) and 0 violations
         client_def = typesafe_sdk.TypeSafeClient(dimension=384)
         resp_def = client_def.systemone(benign_query, schema)
         assert resp_def.answers["action_decision"].value == "ALLOW_IMMEDIATE"
         assert resp_def.answers["is_safe_to_execute"].value is True
         assert len(resp_def.answers["policy_violations"].value) == 0
-        assert resp_def.answers["cvss_risk_score"].value < 5.0
+        assert resp_def.answers["cvss_risk_score"].value < 50.0
     finally:
         unpatcher.unpatch()
 

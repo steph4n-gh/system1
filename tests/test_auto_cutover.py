@@ -111,7 +111,7 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
 
 def test_auto_cutover_respects_min_agreement_threshold():
     """Verify that auto_cutover defers local cutover if local agreement is below min_agreement_threshold."""
-    # Set an impossibly high min_agreement_threshold (e.g. 1.01 or 0.999 when agreement < 5.0)
+    # Set an impossibly high min_agreement_threshold (e.g. 1.01 or 0.999 when agreement < 50.0)
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=3,

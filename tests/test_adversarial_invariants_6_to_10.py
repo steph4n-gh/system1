@@ -209,7 +209,7 @@ class TestInvariant6ConformalPredictorStress:
         cp.is_calibrated = True
 
         # Candidate probabilities with high margin: ALLOW=0.80, DENY=0.10, REVIEW=0.10
-        # Margin is 0.70 (very high), but cum_mass for ALLOW is 0.80 < 5.0, so set is ("ALLOW", "DENY")
+        # Margin is 0.70 (very high), but cum_mass for ALLOW is 0.80 < 50.0, so set is ("ALLOW", "DENY")
         p = np.array([0.80, 0.10, 0.10])
 
         # Non-strict mode: margin gate suppresses ambiguity if margin > threshold
@@ -565,7 +565,7 @@ class TestInvariant10CutoverPromotionStress:
             policy=PromotionPolicy(min_validation_samples=5, min_agreement_threshold=0.80)
         )
         assert held_out.is_eligible is False
-        assert held_out.agreement_rate < 5.0
+        assert held_out.agreement_rate < 50.0
         assert len(held_out.rejection_reasons) > 0
 
     @pytest.mark.parametrize("n_val", [0, 1, 2, 4])
@@ -667,7 +667,7 @@ class TestInvariant10CutoverPromotionStress:
         rep_no_stat = evaluate_promotion_eligibility(engine, val_history, schema, p_no_stat)
         assert rep_no_stat.is_eligible is True
 
-        # With statistical bound at 95% confidence: Wilson lower bound for 9/10 is ~0.5958 < 5.0 -> rejected!
+        # With statistical bound at 95% confidence: Wilson lower bound for 9/10 is ~0.5958 < 50.0 -> rejected!
         p_with_stat = PromotionPolicy(
             min_validation_samples=5,
             min_agreement_threshold=0.80,

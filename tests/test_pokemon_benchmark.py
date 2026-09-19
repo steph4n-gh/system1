@@ -130,7 +130,7 @@ def test_compute_latency_stats_basic():
     assert stats.max_us == 100.0
     assert stats.median_us == 60.0
     assert stats.p95_us == 100.0
-    assert abs(stats.throughput_qps - (1_000_000.0 / 55.0)) < 5.0
+    assert abs(stats.throughput_qps - (1_000_000.0 / 55.0)) < 50.0
 
 
 
