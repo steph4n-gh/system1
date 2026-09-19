@@ -15,13 +15,16 @@
   <a href="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/tests-506%20passed-brightgreen.svg" alt="506 Tests Passed" /></a>
-  <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-~1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/tests-982%20passed-brightgreen.svg" alt="982 Tests Passed" /></a>
+  <a href="examples/"><img src="https://img.shields.io/badge/P50_latency-%3C1.0ms-success.svg" alt="Sub-1ms Latency" /></a>
   <a href="#-privacy--zero-data-egress"><img src="https://img.shields.io/badge/network_egress-0_bytes-success.svg" alt="Zero Network Egress" /></a>
+  <a href="#-why-system-1"><img src="https://img.shields.io/badge/cloud_tokens-0-ff69b4.svg" alt="Zero Cloud Tokens" /></a>
+  <a href="#-why-system-1"><img src="https://img.shields.io/badge/cloud_bills-%240.00-brightgreen.svg" alt="Zero Cloud Bills" /></a>
+  <a href="#-how-it-works"><img src="https://img.shields.io/badge/vibe_checks-disallowed-purple.svg" alt="Vibe Checks Disallowed" /></a>
 </p>
 
 <p align="center">
-  <a href="#-why-reflex">Why System 1</a> •
+  <a href="#-why-system-1">Why System 1</a> •
   <a href="#-5-minute-quickstart">Quickstart</a> •
   <a href="#-how-it-works">How It Works</a> •
   <a href="#-integrations">Integrations</a> •
@@ -53,7 +56,7 @@ Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency*
 
 System 1 retains **95% – 99%** of routine decisions locally under calibrated empirical workloads and conformal prediction bounds (at user-selected significance $\alpha$). Actual local retention is workload- and distribution-dependent. The remaining 1% – 5% genuine edge cases or ambiguous distributions are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok)—or fail-closed via offline abstention—with full cryptographic audit trails.
 
-The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import system1` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
+The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import reflex` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
 
 ---
 
