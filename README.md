@@ -1,9 +1,8 @@
+<br>
 <p align="center">
-  <img src="assets/system1-hero.jpg" alt="System 1: On-Metal Decision Firewall for AI Agents" width="100%" />
-</p>
-
-<p align="center">
-  <a href="https://github.com/steph4n-gh/system1"><img src="assets/system1-logo.jpg" alt="System 1 Logo" width="110" /></a>
+  <a href="https://github.com/steph4n-gh/system1">
+    <img src="assets/system1-logo.jpg" alt="System 1 Logo" width="128" />
+  </a>
 </p>
 
 <h1 align="center">System 1: On-Metal Decision Firewall for AI Agents</h1>
