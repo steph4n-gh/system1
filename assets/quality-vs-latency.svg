@@ -74,26 +74,26 @@
 
   <!-- DATA POINTS -->
 
-  <!-- 1. Reflex Tier 0 (L1 Exact Cache) -->
+  <!-- 1. System 1 Tier 0 (L1 Exact Cache) -->
   <g transform="translate(160, 155)">
     <circle cx="0" cy="0" r="9" fill="#10B981" filter="url(#glow-cyan)" />
     <circle cx="0" cy="0" r="4" fill="#FFFFFF" />
-    <text x="15" y="-5" class="point-label" fill="#34D399">Reflex L1 Cache</text>
+    <text x="15" y="-5" class="point-label" fill="#34D399">System 1 L1 Cache</text>
     <text x="15" y="10" class="point-sub">0.0098 ms • 0.96 F1</text>
   </g>
 
-  <!-- 2. Reflex System 1 (Compiled Expert on Metal) -->
+  <!-- 2. System 1 (Compiled Expert on Metal) -->
   <g transform="translate(436, 175)">
     <circle cx="0" cy="0" r="10" fill="#06B6D4" filter="url(#glow-cyan)" />
     <circle cx="0" cy="0" r="5" fill="#FFFFFF" />
-    <text x="15" y="-6" class="point-label" fill="#38BDF8">★ Reflex (Compiled Expert)</text>
+    <text x="15" y="-6" class="point-label" fill="#38BDF8">★ System 1 (Compiled Expert)</text>
     <text x="15" y="9" class="point-sub">0.98 ms • 0.94 F1 • 0 Bytes</text>
   </g>
 
-  <!-- 3. Reflex Zero-Shot Seed -->
+  <!-- 3. System 1 Zero-Shot Seed -->
   <g transform="translate(436, 275)">
     <circle cx="0" cy="0" r="7" fill="#0284C7" />
-    <text x="15" y="-4" class="point-label" fill="#93C5FD">Reflex (Zero-Shot)</text>
+    <text x="15" y="-4" class="point-label" fill="#93C5FD">System 1 (Zero-Shot)</text>
     <text x="15" y="10" class="point-sub">0.98 ms • 0.85 F1</text>
   </g>
 

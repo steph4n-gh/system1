@@ -56,7 +56,7 @@
 
   <!-- Title Section -->
   <text x="580" y="44" text-anchor="middle" class="title" font-size="22" letter-spacing="1">ZERO DATA EGRESS &amp; AIR-GAPPED PRIVACY</text>
-  <text x="580" y="66" text-anchor="middle" class="subtitle">Architectural Comparison: SaaS Cloud LLM Gateway vs. Machine-Native Reflex Runtime</text>
+  <text x="580" y="66" text-anchor="middle" class="subtitle">Architectural Comparison: SaaS Cloud LLM Gateway vs. Machine-Native System 1 Runtime</text>
 
   <!-- LEFT COLUMN: Cloud SaaS API -->
   <rect x="50" y="95" width="460" height="430" rx="12" fill="url(#card-cloud)" stroke="#EF4444" stroke-width="1.8" />
@@ -119,7 +119,7 @@
   <rect x="650" y="95" width="460" height="430" rx="12" fill="url(#card-reflex)" stroke="#10B981" stroke-width="2" />
   
   <rect x="670" y="112" width="165" height="22" rx="6" fill="#064E3B" stroke="#10B981" stroke-width="1"/>
-  <text x="752" y="127" text-anchor="middle" class="badge" fill="#6EE7B7">REFLEX SYSTEM 1</text>
+  <text x="752" y="127" text-anchor="middle" class="badge" fill="#6EE7B7">SYSTEM 1</text>
   
   <text x="670" y="158" class="col-header" fill="#6EE7B7">Machine-Native Local Runtime</text>
   <text x="670" y="176" class="item-desc" fill="#34D399">100% on-device in-process memory (Apple Metal / NumPy BLAS)</text>

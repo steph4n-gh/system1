@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "system1"
-version = "0.1.1"
+version = "0.1.2"
 description = "System 1: Machine-Native Reflex Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
 license = "Apache-2.0"
@@ -84,10 +84,11 @@ system1 = "system1.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["system1*"]
+include = ["system1*", "reflex*"]
 
 [tool.setuptools.package-data]
 "system1" = ["proto/*.proto", "proto/*.py"]
+"reflex" = ["proto/*.proto", "proto/*.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -682,7 +682,7 @@ def serve(
     ledger: Optional[Any] = None,
     policy_engine: Optional[Any] = None,
 ) -> Any:
-    """Start the Reflex gRPC server.
+    """Start the System 1 gRPC server.
 
     Parameters
     ----------

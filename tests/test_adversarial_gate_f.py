@@ -504,7 +504,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
                 assert h_resp.status == adv_pb2.HealthCheckResponse.SERVING
-                assert h_resp.version == "0.1.1"
+                assert h_resp.version == "0.1.2"
 
                 # 2. Decide with numeric telemetry features
                 d_req = adv_pb2.DecideRequest(
@@ -657,8 +657,8 @@ class TestAttack4DocumentationRigorAndPackagingParity:
         assert 'name = "system1"' in content, "PyPI package name must be 'system1'"
         assert 'system1 = "system1.cli:main"' in content, "system1 CLI script must be defined"
 
-        # Packages include system1
-        assert 'include = ["system1*"]' in content
+        # Packages include both system1 and reflex
+        assert 'include = ["system1*", "reflex*"]' in content or 'include = ["reflex*", "system1*"]' in content
 
     def test_readme_installation_instructions_use_system1(self):
         """Ensure README.md instructs users to 'pip install system1' and clarifies namespace duality."""

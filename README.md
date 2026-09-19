@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="assets/reflex-hero.jpg" alt="Reflex: On-Metal Decision Firewall for AI Agents" width="100%" />
+  <img src="assets/system1-hero.jpg" alt="System 1: On-Metal Decision Firewall for AI Agents" width="100%" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/steph4n-gh/reflex"><img src="assets/reflex-logo.jpg" alt="Reflex Logo" width="110" /></a>
+  <a href="https://github.com/steph4n-gh/reflex"><img src="assets/system1-logo.jpg" alt="System 1 Logo" width="110" /></a>
 </p>
 
-<h1 align="center">Reflex: On-Metal Decision Firewall for AI Agents</h1>
+<h1 align="center">System 1: On-Metal Decision Firewall for AI Agents</h1>
 
 <p align="center">
   <strong>Sub-millisecond ALLOW / DENY / ESCALATE decisions on local hardware.<br>Zero egress. Zero tokens. Cryptographic audit receipts.</strong>
@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <a href="#-why-reflex">Why Reflex</a> •
+  <a href="#-why-reflex">Why System 1</a> •
   <a href="#-5-minute-quickstart">Quickstart</a> •
   <a href="#-how-it-works">How It Works</a> •
   <a href="#-integrations">Integrations</a> •
@@ -36,15 +36,15 @@
 
 ---
 
-## 💡 Why Reflex
+## 💡 Why System 1
 
 Every AI agent framework — LangChain, CrewAI, OpenHands, AutoGen — lets agents call tools. None of them can tell you whether a tool call is safe **before** it executes.
 
 Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency**, costs real API dollars, and sends your proprietary context over the public internet. For routine decisions — routing, classification, safety gating — this is wasteful and dangerous.
 
-**Reflex is the on-metal decision firewall that sits between your agent and its tools.** It evaluates every action in under a millisecond on your hardware, with zero cloud dependencies, zero data egress, and mathematically rigorous safety guarantees.
+**System 1 is the on-metal decision firewall that sits between your agent and its tools.** It evaluates every action in under a millisecond on your hardware, with zero cloud dependencies, zero data egress, and mathematically rigorous safety guarantees.
 
-| Dimension | Without Reflex | With Reflex |
+| Dimension | Without System 1 | With System 1 |
 |---|---|---|
 | **Decision Latency** | 300 ms – 2,000+ ms (cloud roundtrip) | **< 1.0 ms P50** (local metal) |
 | **Cost** | $5.00 – $30.00 per million tokens | **$0.00 per decision** |
@@ -52,9 +52,9 @@ Every tool call routed through a cloud LLM incurs **300 ms to 2,000+ ms latency*
 | **Failure Mode** | Uncalibrated confidence; silent errors | **Conformal safety gate with fail-closed escalation** |
 | **Audit Trail** | Provider API logs (opaque) | **Ed25519 signed, SHA-256 hash-chained receipts** |
 
-Reflex retains **95% – 99%** of routine decisions locally under calibrated empirical workloads and conformal prediction bounds (at user-selected significance $\alpha$). Actual local retention is workload- and distribution-dependent. The remaining 1% – 5% genuine edge cases or ambiguous distributions are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok)—or fail-closed via offline abstention—with full cryptographic audit trails.
+System 1 retains **95% – 99%** of routine decisions locally under calibrated empirical workloads and conformal prediction bounds (at user-selected significance $\alpha$). Actual local retention is workload- and distribution-dependent. The remaining 1% – 5% genuine edge cases or ambiguous distributions are escalated to your frontier reasoning model (GPT-6, Claude Opus 5, Gemini 3.1 Pro, Grok)—or fail-closed via offline abstention—with full cryptographic audit trails.
 
-The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import reflex` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
+The project is packaged on PyPI as `system1` (install via `pip install system1` or `pip install -e .`), providing 1:1 twin namespace imports `import system1` and `import system1` for Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*). Both namespaces share identical exports.
 
 ---
 
@@ -74,8 +74,8 @@ Configure a deterministic permission policy, Ed25519 signer, and persistent SQLi
 
 ```python
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from reflex import ActionLedger, PolicyEngine, PolicyRule, ReflexGuard, ActionProposal
-from reflex.guard import DecisionOutcome
+from system1 import ActionLedger, PolicyEngine, PolicyRule, SystemOneGuard, ActionProposal
+from system1.guard import DecisionOutcome
 
 # 1. Establish persistent tamper-evident audit storage and trust anchor
 ledger = ActionLedger("audit_ledger.sqlite", require_durable=True)
@@ -92,7 +92,7 @@ policy = PolicyEngine(
 )
 
 # 3. Instantiate fail-closed Guard reference monitor
-guard = ReflexGuard(
+guard = SystemOneGuard(
     policy=policy,
     ledger=ledger,
     signing_key=signing_key,
@@ -131,13 +131,13 @@ else:
 ```
 
 > **Architecture Separation**:
-> - **Deterministic Policy Enforcement (`ReflexGuard` / `PolicyEngine`)**: Fail-closed rule evaluation, principal/argument constraints, Ed25519 signed receipts, and durable hash-chained outcome recording.
-> - **Statistical Decision Classification (`ReflexEngine` / `DecisionSchema`)**: Non-autoregressive linear projection, split-conformal uncertainty prediction, and online covariance updates. Current strict permission grants follow the deterministic rule path to guarantee zero false allows.
+> - **Deterministic Policy Enforcement (`SystemOneGuard` / `PolicyEngine`)**: Fail-closed rule evaluation, principal/argument constraints, Ed25519 signed receipts, and durable hash-chained outcome recording.
+> - **Statistical Decision Classification (`System1Engine` / `DecisionSchema`)**: Non-autoregressive linear projection, split-conformal uncertainty prediction, and online covariance updates. Current strict permission grants follow the deterministic rule path to guarantee zero false allows.
 
 ### Define a Custom Decision Schema (Statistical Classification)
 
 ```python
-from reflex import DecisionSchema, ChoiceField, BooleanField, ScoreField, ReflexEngine
+from system1 import DecisionSchema, ChoiceField, BooleanField, ScoreField, System1Engine
 
 class SecurityTriage(DecisionSchema):
     action = ChoiceField(
@@ -159,7 +159,7 @@ class SecurityTriage(DecisionSchema):
         high_description="Critical active exploit",
     )
 
-engine = ReflexEngine(SecurityTriage)
+engine = System1Engine(SecurityTriage)
 decision = engine.decide("Suspicious outbound SSH traffic to unknown IP range")
 
 print(f"Action:  {decision.values['action']}")       # BLOCK
@@ -172,10 +172,10 @@ print(f"Latency: {decision.latency_ms:.2f} ms")      # 0.94 ms
 
 ## 🧠 How It Works
 
-Reflex implements a non-autoregressive decision engine inspired by Daniel Kahneman's dual-process cognitive framework:
+System 1 implements a non-autoregressive decision engine inspired by Daniel Kahneman's dual-process cognitive framework:
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="Reflex Architecture" width="100%" />
+  <img src="assets/architecture.svg" alt="System 1 Architecture" width="100%" />
 </p>
 
 ### The Decision Pipeline
@@ -184,13 +184,13 @@ Reflex implements a non-autoregressive decision engine inspired by Daniel Kahnem
 
 2. **Non-Autoregressive Forward Pass (< 1 ms):** Hybrid sparse-dense vector projection maps the input to a high-dimensional semantic space. A single matrix multiplication across multi-head linear hyperplanes produces calibrated probability vectors — no token-by-token generation.
 
-3. **Conformal Safety Gate:** Split Conformal Prediction provides mathematically guaranteed error coverage. If the prediction set contains a single confident answer, Reflex executes locally. If the input is genuinely ambiguous, Reflex **halts fail-closed** and escalates to your frontier reasoning model.
+3. **Conformal Safety Gate:** Split Conformal Prediction provides mathematically guaranteed error coverage. If the prediction set contains a single confident answer, System 1 executes locally. If the input is genuinely ambiguous, System 1 **halts fail-closed** and escalates to your frontier reasoning model.
 
 4. **Online Learning (< 50 µs):** When a frontier model provides a resolution, a Sherman-Morrison rank-1 covariance update instantly rotates the decision boundary. Future occurrences resolve locally — no GPU backpropagation, no retraining pipelines.
 
 ### Conformal Gating: Why It Matters
 
-Most classification systems return uncalibrated softmax probabilities. A model reporting "92% confident" may be wrong 30% of the time under distribution shift. Reflex replaces this with **distribution-free finite-sample guarantees**: the conformal prediction set provably contains the correct answer with high probability, regardless of the underlying data distribution.
+Most classification systems return uncalibrated softmax probabilities. A model reporting "92% confident" may be wrong 30% of the time under distribution shift. System 1 replaces this with **distribution-free finite-sample guarantees**: the conformal prediction set provably contains the correct answer with high probability, regardless of the underlying data distribution.
 
 When the conformal set size is 1 and the margin of dominance exceeds the threshold, the decision is safe. When the set is larger, the input is genuinely ambiguous and escalation is warranted. This eliminates both false confidence and unnecessary escalation.
 
@@ -198,16 +198,16 @@ When the conformal set size is 1 and the margin of dominance exceeds the thresho
 
 ## 🔌 Integrations
 
-Reflex ships with native adapters for modern agent and API stacks.
+System 1 ships with native adapters for modern agent and API stacks.
 
 ### 1. MCP Safety Proxy
 
 Intercept Model Context Protocol tool calls with fail-closed safety:
 
 ```python
-from reflex.integrations import ReflexMCPProxy
+from system1.integrations import System1MCPProxy
 
-proxy = ReflexMCPProxy(tenant_id="prod_cluster")
+proxy = System1MCPProxy(tenant_id="prod_cluster")
 allowed, err_resp, result = proxy.intercept_jsonrpc(mcp_request_json)
 
 if not allowed:
@@ -220,8 +220,8 @@ Route confident classifications locally and escalate edge cases to frontier mode
 
 ```python
 from fastapi import FastAPI
-from reflex.integrations import add_reflex_gateway
-from reflex import DecisionSchema, ChoiceField
+from system1.integrations import add_reflex_gateway
+from system1 import DecisionSchema, ChoiceField
 
 app = FastAPI()
 
@@ -243,9 +243,9 @@ add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
 Block destructive tool calls before invocation:
 
 ```python
-from reflex.integrations import ReflexGuardCallbackHandler, wrap_langchain_tool
+from system1.integrations import SystemOneGuardCallbackHandler, wrap_langchain_tool
 
-guard_handler = ReflexGuardCallbackHandler()
+guard_handler = SystemOneGuardCallbackHandler()
 agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
 
 # Or guard specific tools directly
@@ -257,11 +257,11 @@ guarded_tool = wrap_langchain_tool(bash_tool, tool_name="system_terminal")
 Monitor decision counts, latency histograms, escalation rates, and cache hit ratios:
 
 ```python
-from reflex import ReflexEngine
-from reflex.integrations import ReflexMetricsExporter
+from system1 import System1Engine
+from system1.integrations import System1MetricsExporter
 
-engine = ReflexEngine(SecurityTriage)
-metrics = ReflexMetricsExporter()
+engine = System1Engine(SecurityTriage)
+metrics = System1MetricsExporter()
 metrics.instrument(engine)        # Automatically instruments decide()
 metrics.start_server(port=9090)   # Serves standard /metrics HTTP endpoint
 ```
@@ -270,11 +270,11 @@ metrics.start_server(port=9090)   # Serves standard /metrics HTTP endpoint
 
 ### 5. Polyglot gRPC Sidecar & Kubernetes Deployment
 
-Deploy Reflex alongside agents written in Go, Rust, or TypeScript via standard protobuf contracts:
+Deploy System 1 alongside agents written in Go, Rust, or TypeScript via standard protobuf contracts:
 
 ```bash
 # Launch gRPC server on port 50051
-reflex serve --grpc --port 50051
+system1 serve --grpc --port 50051
 
 # Or deploy via Docker & Kubernetes sidecar
 docker run -p 50051:50051 reflex:latest
@@ -286,17 +286,17 @@ docker run -p 50051:50051 reflex:latest
 
 ## 🎯 Decision Quality & Benchmark Metrics
 
-Latency without decision accuracy is meaningless. Reflex includes a standalone Quality Benchmark Suite evaluating decision correctness across high-stakes security, routing, and scoring tasks:
+Latency without decision accuracy is meaningless. System 1 includes a standalone Quality Benchmark Suite evaluating decision correctness across high-stakes security, routing, and scoring tasks:
 
 <p align="center">
-  <img src="assets/quality-vs-latency.svg" alt="Reflex Decision Quality vs Latency Landscape" width="100%" />
+  <img src="assets/quality-vs-latency.svg" alt="System 1 Decision Quality vs Latency Landscape" width="100%" />
 </p>
 
 ```bash
 python3 benchmarks/quality/run_quality_benchmarks.py
 ```
 
-| Benchmark Task | Primary Metric | Reflex Score | Latency (P50) | Latency (P99) | Description |
+| Benchmark Task | Primary Metric | System 1 Score | Latency (P50) | Latency (P99) | Description |
 |---|---|---|---|---|---|
 | **Security Triage** | Macro-F1 / Precision | **0.76 Block Precision** | **0.56 ms** | **1.25 ms** | 100 labeled agent tool actions (ALLOW / QUARANTINE / BLOCK) |
 | **Intent Routing** | Accuracy / Macro-F1 | **0.65 Billing F1** | **0.70 ms** | **1.77 ms** | 100 enterprise queries (Tech Support / Billing / Sales / Escalate) |
@@ -311,13 +311,13 @@ python3 benchmarks/quality/run_quality_benchmarks.py
 Benchmarked on Apple M3 Max (14-core CPU, 36 GB Unified Memory) across 10,000 independent trials:
 
 <p align="center">
-  <img src="assets/benchmark-chart.svg" alt="Reflex Latency Benchmark" width="100%" />
+  <img src="assets/benchmark-chart.svg" alt="System 1 Latency Benchmark" width="100%" />
 </p>
 
 | Runtime | Hardware | Execution Model | P50 Latency | P99 Latency | Network Egress |
 |---|---|---|---|---|---|
-| **Reflex (L1 Cache Hit)** | Host Memory | In-Process Hash Lookup | **9.8 µs** | **14 µs** | **0 Bytes** |
-| **Reflex (Cold Forward Pass)** | Host Metal / BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **0 Bytes** |
+| **System 1 (L1 Cache Hit)** | Host Memory | In-Process Hash Lookup | **9.8 µs** | **14 µs** | **0 Bytes** |
+| **System 1 (Cold Forward Pass)** | Host Metal / BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **0 Bytes** |
 | Local 8B LLM (vLLM / Ollama) | Local GPU | Autoregressive (KV Cache) | 180 ms | 245 ms | 0 Bytes |
 | Cloud Fast API (Groq / Cerebras) | US-East WAN | Autoregressive Specialized ASIC | 220 ms | 410 ms | Full Payload |
 | Frontier Reasoning Model | Cloud WAN | Autoregressive Deliberation | 850 ms | 1,480 ms | Full Payload |
@@ -326,29 +326,29 @@ Benchmarked on Apple M3 Max (14-core CPU, 36 GB Unified Memory) across 10,000 in
 ### Throughput
 
 - **Concurrent workers:** Sustained over **2,200 QPS** across 8 threads with zero SQLite lock contention (WAL journal mode).
-- **Real-time control:** In a 60 FPS Game Boy emulator testbed, Reflex evaluated memory-mapped combat states in **38 µs** per frame — consuming 5.9% of the 16.6 ms frame budget.
+- **Real-time control:** In a 60 FPS Game Boy emulator testbed, System 1 evaluated memory-mapped combat states in **38 µs** per frame — consuming 5.9% of the 16.6 ms frame budget.
 
 ---
 
 ## 🔒 Privacy & Zero Data Egress
 
 <p align="center">
-  <img src="assets/privacy-zero-egress.svg" alt="Reflex Zero Data Egress" width="100%" />
+  <img src="assets/privacy-zero-egress.svg" alt="System 1 Zero Data Egress" width="100%" />
 </p>
 
 - **100% On-Device Execution:** All inference, calibration, and cryptographic receipt generation run in-process. Zero web sockets, zero telemetry pings, zero cloud dependencies.
-- **Privacy & Governance Controls:** Reflex provides architectural controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures:
+- **Privacy & Governance Controls:** System 1 provides architectural controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures:
   - **HIPAA Compliance Support:** Protected Health Information (PHI) stays strictly on-host without unauthorized network transmission.
   - **GDPR Compliance Support:** PII is evaluated on-premise without unconsented cross-border or third-party data transfers.
   - **SOC 2 Type II Controls:** Tamper-evident `DecisionWitnessReceipt` signed in software by on-device Ed25519 keys (RFC 8032) with SHA-256 SQLite Merkle hash chaining. Hardware enclave / HSM root-of-trust is supported as an architectural integration option.
 
-> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When Reflex escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic depending on distribution and conformal significance $\alpha$), those escalated queries traverse the network only if fallback routing is explicitly configured. In privacy-restricted zero-egress environments (`zero_egress=True`), Reflex executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
+> **Note on Egress & Offline Abstention:** Local System 1 decisions operate with 100% zero network egress. When System 1 escalates ambiguous decisions to a frontier model (System 2, typically 1% – 5% of traffic depending on distribution and conformal significance $\alpha$), those escalated queries traverse the network only if fallback routing is explicitly configured. In privacy-restricted zero-egress environments (`zero_egress=True`), System 1 executes offline abstention (`ABSTAIN` / `REQUIRE_APPROVAL`) with zero external network packets.
 
 ---
 
 ## 🚀 Production Demos
 
-Reflex includes **18 runnable demonstrations** across enterprise security, migration, and real-time control:
+System 1 includes **18 runnable demonstrations** across enterprise security, migration, and real-time control:
 
 ### Enterprise Security & Agent Safety
 
@@ -384,7 +384,7 @@ Reflex includes **18 runnable demonstrations** across enterprise security, migra
 | # | Demo | Script | Highlights |
 |:---:|---|---|---|
 | 15 | **Multi-Cartridge Pokémon Benchmark** | `examples/gaming/pokemon_all_games_benchmark.py` | 10,000+ FPS, 38µs neural forward pass |
-| 16 | **60 FPS Battle Reflex Agent** | `examples/gaming/pokemon_battle_reflex.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
+| 16 | **60 FPS Battle System 1 Agent** | `examples/gaming/pokemon_battle_reflex.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
 | 17 | **10-Chapter Campaign Speedrun** | `examples/gaming/pokemon_full_campaign_speedrun.py` | Pallet Town to Indigo Plateau |
 | 18 | **Live Game Boy Spectator GUI** | `examples/gaming/pokemon_gameboy_gui.py` | Live desktop window, turbo intro skip |
 
@@ -392,7 +392,7 @@ Reflex includes **18 runnable demonstrations** across enterprise security, migra
 
 ## 🎓 Training & Distilling Domain Experts
 
-Reflex supports 4 training pathways to create compact, portable `.s1m` decision models (< 20 KB):
+System 1 supports 4 training pathways to create compact, portable `.s1m` decision models (< 20 KB):
 
 1. **Zero-Shot Seed Expert:** Instant deployment from schema definitions without training data.
 2. **Synthetic Teacher Distillation:** Closed-form Ridge Regression via frontier reasoning models.
@@ -411,10 +411,10 @@ python3 examples/train_expert.py
 
 ### TypeSafe AI / Jev SDK
 
-Reflex ships with a drop-in compatibility layer for TypeSafe AI's Jev SDK. Existing codebases using `typesafe` or `typesafe_sdk` can redirect to local on-metal execution:
+System 1 ships with a drop-in compatibility layer for TypeSafe AI's Jev SDK. Existing codebases using `typesafe` or `typesafe_sdk` can redirect to local on-metal execution:
 
 ```python
-from reflex.compat.typesafe import patch_typesafe
+from system1.compat.typesafe import patch_typesafe
 patch_typesafe()
 
 # Existing TypeSafe code now runs locally in < 1ms with $0 cost
@@ -425,7 +425,7 @@ client = typesafe.Client()
 For gradual migration, the autonomous cutover mode transparently proxies initial calls to the cloud API, records exemplars, and cuts over to local execution once confidence is established:
 
 ```python
-from reflex.compat.typesafe import TypeSafeClient
+from system1.compat.typesafe import TypeSafeClient
 
 client = TypeSafeClient(
     mode="auto_cutover",
@@ -436,13 +436,13 @@ client = TypeSafeClient(
 
 ### Twin Namespace
 
-`import reflex` and `import system1` are fully symmetric — identical exports, identical behavior:
+`import system1` and `import system1` are fully symmetric — identical exports, identical behavior:
 
 ```python
-import reflex
+import system1
 import system1
 assert reflex.__version__ == system1.__version__
-assert reflex.ReflexEngine is system1.ReflexEngine
+assert reflex.System1Engine is system1.System1Engine
 ```
 
 ---
@@ -451,19 +451,19 @@ assert reflex.ReflexEngine is system1.ReflexEngine
 
 ```bash
 # Evaluate a structured decision
-reflex decide "How do I reset my password?" --schema triage --json
+system1 decide "How do I reset my password?" --schema triage --json
 
 # Run a latency benchmark
-reflex bench --schema triage --iterations 200 --target 20.0
+system1 bench --schema triage --iterations 200 --target 20.0
 
 # Verify an Ed25519 decision witness receipt offline
-reflex verify-receipt path/to/receipt.json
+system1 verify-receipt path/to/receipt.json
 
 # Calibrate conformal prediction bounds
-reflex calibrate --dataset data.json --schema triage --bins 10
+system1 calibrate --dataset data.json --schema triage --bins 10
 
 # Compile a portable < 20KB binary model
-reflex compile --schema triage --output triage.s1m --json
+system1 compile --schema triage --output triage.s1m --json
 ```
 
 ---
@@ -492,4 +492,4 @@ python3 -m pytest tests/ -v
 
 ## 📄 License
 
-Reflex is open source software licensed under the [Apache License, Version 2.0](LICENSE).
+System 1 is open source software licensed under the [Apache License, Version 2.0](LICENSE).

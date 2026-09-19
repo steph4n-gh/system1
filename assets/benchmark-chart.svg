@@ -47,9 +47,9 @@
   <text x="40" y="44" class="title">EMPIRICAL LATENCY BENCHMARK</text>
   <text x="40" y="66" class="sub">Logarithmic scale comparison: Decision SLA across architectures (Mac M-series / Linux Metal / WAN)</text>
 
-  <!-- Row 1: Reflex L1 Cache -->
+  <!-- Row 1: System 1 L1 Cache -->
   <g transform="translate(40, 100)">
-    <text x="0" y="16" class="label">Reflex Tier 0 (L1 Cache Hit)</text>
+    <text x="0" y="16" class="label">System 1 Tier 0 (L1 Cache Hit)</text>
     <text x="0" y="32" class="meta">Zero egress • 100% on-device • $0.00</text>
     <rect x="360" y="6" width="30" height="24" rx="4" fill="url(#bar-green)" />
     <text x="405" y="23" class="val" fill="#34D399">0.01 ms (9.8 µs)</text>
@@ -58,7 +58,7 @@
 
   <!-- Row 2: Reflex Metal BLAS Forward Pass -->
   <g transform="translate(40, 160)">
-    <text x="0" y="16" class="label">Reflex System 1 Forward Pass</text>
+    <text x="0" y="16" class="label">System 1 Forward Pass</text>
     <text x="0" y="32" class="meta">Single-pass BLAS/Metal • 0 token cost</text>
     <rect x="360" y="6" width="65" height="24" rx="4" fill="url(#bar-cyan)" />
     <text x="440" y="23" class="val" fill="#38BDF8">0.98 ms P50</text>

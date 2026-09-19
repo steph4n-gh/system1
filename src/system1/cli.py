@@ -582,7 +582,7 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.set_defaults(func=handle_compile_command)
 
     # Command: serve
-    serve_parser = subparsers.add_parser("serve", help="Start the Reflex gRPC sidecar server")
+    serve_parser = subparsers.add_parser("serve", help="Start the System 1 gRPC sidecar server")
     serve_parser.add_argument("--grpc", action="store_true", default=True, help="Use gRPC transport (default)")
     serve_parser.add_argument("--host", type=str, default="127.0.0.1", help="Host address to bind to (default: 127.0.0.1)")
     serve_parser.add_argument("--port", type=int, default=50051, help="Port to listen on (default: 50051)")

@@ -59,8 +59,8 @@
     <line x1="0" y1="520" x2="1260" y2="520" />
   </g>
 
-  <text x="600" y="44" text-anchor="middle" class="title" font-size="22" letter-spacing="1">REFLEX DUAL-PROCESS ARCHITECTURE</text>
-  <text x="600" y="66" text-anchor="middle" class="subtitle">System 1 Fast Reflex Engine • Conformal Ambiguity Gating • System 2 Deliberation &amp; Online Distillation</text>
+  <text x="600" y="44" text-anchor="middle" class="title" font-size="22" letter-spacing="1">SYSTEM 1 DUAL-PROCESS ARCHITECTURE</text>
+  <text x="600" y="66" text-anchor="middle" class="subtitle">System 1 Fast Decision Engine • Conformal Ambiguity Gating • System 2 Deliberation &amp; Online Distillation</text>
 
   <!-- 1. Input Node -->
   <rect x="440" y="90" width="320" height="52" rx="8" fill="#1E293B" stroke="#475569" stroke-width="1.5" />
@@ -70,12 +70,12 @@
   <!-- Flow 1 -> 2 -->
   <line x1="600" y1="142" x2="600" y2="175" stroke="#06B6D4" stroke-width="2" marker-end="url(#arrow-cyan)" />
 
-  <!-- 2. System 1 Reflex Engine -->
+  <!-- 2. System 1 Decision Engine -->
   <rect x="320" y="178" width="560" height="118" rx="10" fill="url(#card-cyan)" stroke="#06B6D4" stroke-width="2" />
   <rect x="336" y="190" width="165" height="20" rx="10" fill="#0E7490" opacity="0.4"/>
   <text x="418" y="204" text-anchor="middle" class="badge" fill="#38BDF8">SYSTEM 1 (MACHINE-NATIVE)</text>
   
-  <text x="336" y="232" class="node-title" fill="#E0F2FE">On-Device Reflex Engine (Non-Autoregressive)</text>
+  <text x="336" y="232" class="node-title" fill="#E0F2FE">On-Device System 1 Engine (Non-Autoregressive)</text>
   <text x="336" y="254" class="node-desc">• Matrix Forward Pass: Multi-head linear hyperplanes &amp; MLX Metal / BLAS</text>
   <text x="336" y="271" class="node-desc">• Latency SLA: &lt; 1.0 ms P50 (Sub-10 µs Tier 0 L1 exact cache hit)</text>
   <text x="336" y="287" class="node-desc">• Zero Token Cost: $0.00 / query • 100% on-device • Air-gapped isolation</text>
