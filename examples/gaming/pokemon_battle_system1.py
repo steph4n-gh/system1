@@ -1324,7 +1324,7 @@ def render_gameboy_screen(
 
     lines: List[str] = []
     lines.append("╔" + "═" * (width - 2) + "╗")
-    lines.append(_format_box_line("GAME BOY™ COLOR                [ 60 FPS REAL-TIME REFLEX ]", width))
+    lines.append(_format_box_line("GAME BOY™ COLOR                [ 60 FPS REAL-TIME SYSTEM1 ]", width))
     lines.append("╠" + "═" * (width - 2) + "╣")
 
     # Opponent Box
@@ -2123,7 +2123,7 @@ def main() -> None:
     args = parser.parse_args()
 
     print("\n" + "=" * 80)
-    print("  POKÉMON BATTLE REFLEX: REAL-TIME 60 FPS MACHINE-NATIVE AGENT & ADVISOR")
+    print("  POKÉMON BATTLE SYSTEM1: REAL-TIME 60 FPS MACHINE-NATIVE AGENT & ADVISOR")
     print("=" * 80)
 
     # 1. ROM Inspection / PyBoy Adapter Connection

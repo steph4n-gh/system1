@@ -40,7 +40,7 @@ def test_cli_decide_human_output(capsys):
     assert code == 0
 
     captured = capsys.readouterr()
-    assert "[REFLEX DECISION]" in captured.out
+    assert "[SYSTEM1 DECISION]" in captured.out
     assert "Calibrated Confidence:" in captured.out
     assert "Receipt Digest:" in captured.out
 
@@ -139,7 +139,7 @@ def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     pos_human_args = parser.parse_args(["verify-receipt", str(receipt_file)])
     assert pos_human_args.func(pos_human_args) == 0
     human_out = capsys.readouterr().out
-    assert "[REFLEX RECEIPT VERIFICATION] SUCCESS" in human_out
+    assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_out
     assert "VALID (Cryptographically Authentic & Tamper-Evident)" in human_out
 
     # 3. Positional argument with tampered receipt fails with exit code 1
@@ -157,7 +157,7 @@ def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     missing_args = parser.parse_args(["verify-receipt", str(tmp_path / "nonexistent.json")])
     assert missing_args.func(missing_args) == 1
     missing_err = capsys.readouterr().err
-    assert "[REFLEX ERROR] Receipt file not found" in missing_err
+    assert "[SYSTEM1 ERROR] Receipt file not found" in missing_err
 
 
 def test_cli_verify_receipt_entrypoints_system1_and_reflex(tmp_path, capsys):
@@ -185,7 +185,7 @@ def test_cli_verify_receipt_entrypoints_system1_and_reflex(tmp_path, capsys):
         # Positional syntax human readable: <cli> verify-receipt <file>
         assert entrypoint(["verify-receipt", str(receipt_file)]) == 0
         human_out = capsys.readouterr().out
-        assert "[REFLEX RECEIPT VERIFICATION] SUCCESS" in human_out
+        assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_out
 
         # Flag syntax: <cli> verify-receipt --receipt <file> --json
         assert entrypoint(["verify-receipt", "--receipt", str(receipt_file), "--json"]) == 0
@@ -195,7 +195,7 @@ def test_cli_verify_receipt_entrypoints_system1_and_reflex(tmp_path, capsys):
         # Flag syntax human readable: <cli> verify-receipt --receipt <file>
         assert entrypoint(["verify-receipt", "--receipt", str(receipt_file)]) == 0
         human_flag_out = capsys.readouterr().out
-        assert "[REFLEX RECEIPT VERIFICATION] SUCCESS" in human_flag_out
+        assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_flag_out
 
 
 def test_cli_main_entrypoint(capsys):

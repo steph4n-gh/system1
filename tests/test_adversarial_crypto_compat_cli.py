@@ -491,13 +491,13 @@ def test_adversarial_cli_verify_receipt_dual_syntax_and_tamper(tmp_path, capsys)
     code_missing = main(["verify-receipt", str(tmp_path / "missing.json")])
     assert code_missing == 1
     missing_err = capsys.readouterr().err
-    assert "[REFLEX ERROR] Receipt file not found" in missing_err
+    assert "[SYSTEM1 ERROR] Receipt file not found" in missing_err
 
     # 6. Nonexistent public key file must exit 1 and report error
     code_missing_key = main(["verify-receipt", str(receipt_file), "--public-key", str(tmp_path / "missing_key.pub")])
     assert code_missing_key == 1
     missing_key_err = capsys.readouterr().err
-    assert "[REFLEX ERROR] Failed to load trusted public key from" in missing_key_err
+    assert "[SYSTEM1 ERROR] Failed to load trusted public key from" in missing_key_err
 
     # 7. Corrupted public key file must exit 1 and report error
     corrupt_key_file = tmp_path / "corrupt.pub"
@@ -505,7 +505,7 @@ def test_adversarial_cli_verify_receipt_dual_syntax_and_tamper(tmp_path, capsys)
     code_corrupt_key = main(["verify-receipt", str(receipt_file), "--public-key", str(corrupt_key_file)])
     assert code_corrupt_key == 1
     corrupt_key_err = capsys.readouterr().err
-    assert "[REFLEX ERROR] Failed to load trusted public key from" in corrupt_key_err
+    assert "[SYSTEM1 ERROR] Failed to load trusted public key from" in corrupt_key_err
 
 
 def test_adversarial_cli_invalid_commands_and_subprocesses():

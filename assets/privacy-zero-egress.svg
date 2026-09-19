@@ -11,7 +11,7 @@
       <stop offset="100%" stop-color="#180B0D" />
     </linearGradient>
 
-    <linearGradient id="card-reflex" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="card-system1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0A241C" />
       <stop offset="100%" stop-color="#071712" />
     </linearGradient>
@@ -116,7 +116,7 @@
   <text x="580" y="327" text-anchor="middle" class="badge-sub" fill="#FCA5A5">0 Bytes WAN</text>
 
   <!-- RIGHT COLUMN: System 1 On-Metal Runtime -->
-  <rect x="650" y="95" width="460" height="430" rx="12" fill="url(#card-reflex)" stroke="#10B981" stroke-width="2" />
+  <rect x="650" y="95" width="460" height="430" rx="12" fill="url(#card-system1)" stroke="#10B981" stroke-width="2" />
   
   <rect x="670" y="112" width="165" height="22" rx="6" fill="#064E3B" stroke="#10B981" stroke-width="1"/>
   <text x="752" y="127" text-anchor="middle" class="badge" fill="#6EE7B7">SYSTEM 1</text>

@@ -119,7 +119,7 @@ def handle_decide_command(args: argparse.Namespace) -> int:
     if not prompt and not sys.stdin.isatty():
         prompt = sys.stdin.read().strip()
     if not prompt:
-        print("[REFLEX ERROR] No prompt provided. Use system1 decide '...' or --prompt '...'", file=sys.stderr)
+        print("[SYSTEM1 ERROR] No prompt provided. Use system1 decide '...' or --prompt '...'", file=sys.stderr)
         return 1
 
     schema = _load_schema(getattr(args, "schema", None))
@@ -186,7 +186,7 @@ def handle_decide_command(args: argparse.Namespace) -> int:
         print(result.to_json(indent=2))
         return 0
 
-    print(f"\n[REFLEX DECISION] Evaluated in {result.latency_ms:.2f}ms (Local Non-Autoregressive)")
+    print(f"\n[SYSTEM1 DECISION] Evaluated in {result.latency_ms:.2f}ms (Local Non-Autoregressive)")
     print("=" * 70)
     print(f"Prompt: {result.prompt}")
     print(f"Schema: {result.schema_name} (digest: {result.schema_digest[:12]}...)")
@@ -272,14 +272,14 @@ def handle_calibrate_command(args: argparse.Namespace) -> int:
     """CLI handler for 'system1 calibrate'."""
     dataset_path = getattr(args, "dataset", None)
     if not dataset_path or not Path(dataset_path).is_file():
-        print("[REFLEX ERROR] A valid calibration --dataset JSON file must be supplied.", file=sys.stderr)
+        print("[SYSTEM1 ERROR] A valid calibration --dataset JSON file must be supplied.", file=sys.stderr)
         return 1
 
     with open(dataset_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     if not isinstance(data, list) or not data:
-        print("[REFLEX ERROR] Dataset must be a non-empty list of [prompt, labels_dict] items.", file=sys.stderr)
+        print("[SYSTEM1 ERROR] Dataset must be a non-empty list of [prompt, labels_dict] items.", file=sys.stderr)
         return 1
 
     formatted_dataset = []
@@ -300,7 +300,7 @@ def handle_calibrate_command(args: argparse.Namespace) -> int:
         print(json.dumps(output, indent=2))
         return 0
 
-    print("\n[REFLEX CALIBRATION SUMMARY]")
+    print("\n[SYSTEM1 CALIBRATION SUMMARY]")
     print("=" * 70)
     for field_name, m in metrics.items():
         print(f"Field: {field_name!r}")
@@ -325,22 +325,22 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
     if receipt_file:
         p = Path(receipt_file)
         if not p.is_file():
-            print(f"[REFLEX ERROR] Receipt file not found: {receipt_file}", file=sys.stderr)
+            print(f"[SYSTEM1 ERROR] Receipt file not found: {receipt_file}", file=sys.stderr)
             return 1
         try:
             with open(p, "r", encoding="utf-8") as f:
                 receipt_data = json.load(f)
         except Exception as exc:
-            print(f"[REFLEX ERROR] Failed to parse receipt JSON from {receipt_file}: {exc}", file=sys.stderr)
+            print(f"[SYSTEM1 ERROR] Failed to parse receipt JSON from {receipt_file}: {exc}", file=sys.stderr)
             return 1
     elif not sys.stdin.isatty():
         try:
             receipt_data = json.load(sys.stdin)
         except Exception as exc:
-            print(f"[REFLEX ERROR] Failed to parse receipt JSON from stdin: {exc}", file=sys.stderr)
+            print(f"[SYSTEM1 ERROR] Failed to parse receipt JSON from stdin: {exc}", file=sys.stderr)
             return 1
     else:
-        print("[REFLEX ERROR] Provide receipt file path (positional or --receipt) or pipe JSON via stdin.", file=sys.stderr)
+        print("[SYSTEM1 ERROR] Provide receipt file path (positional or --receipt) or pipe JSON via stdin.", file=sys.stderr)
         return 1
 
     pub_key = None
@@ -373,7 +373,7 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
                     pass
 
         if pub_key is None:
-            err_msg = f"[REFLEX ERROR] Failed to load trusted public key from: {pub_key_path}"
+            err_msg = f"[SYSTEM1 ERROR] Failed to load trusted public key from: {pub_key_path}"
             if getattr(args, "json", False):
                 print(json.dumps({"verified": False, "error": err_msg}, indent=2))
             print(err_msg, file=sys.stderr)
@@ -385,7 +385,7 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
         if getattr(args, "json", False):
             print(json.dumps({"verified": False, "error": str(exc)}, indent=2))
         else:
-            print(f"[REFLEX VERIFICATION FAILED] {exc}", file=sys.stderr)
+            print(f"[SYSTEM1 VERIFICATION FAILED] {exc}", file=sys.stderr)
         return 1
 
     if getattr(args, "json", False):
@@ -398,14 +398,14 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
         return 0 if valid else 1
 
     if valid:
-        print("\n[REFLEX RECEIPT VERIFICATION] SUCCESS")
+        print("\n[SYSTEM1 RECEIPT VERIFICATION] SUCCESS")
         print(f"Decision ID:    {receipt_data.get('decision_id')}")
         print(f"Receipt Digest: {receipt_data.get('receipt_digest')}")
         print(f"Schema Digest:  {receipt_data.get('schema_digest')}")
         print("Verdict:        VALID (Cryptographically Authentic & Tamper-Evident)\n")
         return 0
     else:
-        print("\n[REFLEX RECEIPT VERIFICATION] FAILED: Integrity or signature check invalid.\n", file=sys.stderr)
+        print("\n[SYSTEM1 RECEIPT VERIFICATION] FAILED: Integrity or signature check invalid.\n", file=sys.stderr)
         return 1
 
 
@@ -489,7 +489,7 @@ def handle_serve_command(args: argparse.Namespace) -> int:
         from system1.grpc_server import serve as grpc_serve, grpc_available
     except ImportError:
         print(
-            "[REFLEX ERROR] grpcio is required for the serve command.  "
+            "[SYSTEM1 ERROR] grpcio is required for the serve command.  "
             "Install with: pip install 'system1[grpc]'",
             file=sys.stderr,
         )
@@ -497,7 +497,7 @@ def handle_serve_command(args: argparse.Namespace) -> int:
 
     if not grpc_available():
         print(
-            "[REFLEX ERROR] grpcio is not installed.  "
+            "[SYSTEM1 ERROR] grpcio is not installed.  "
             "Install with: pip install 'system1[grpc]'",
             file=sys.stderr,
         )
@@ -519,7 +519,7 @@ def handle_serve_command(args: argparse.Namespace) -> int:
             schema = _load_schema(spec)
             schemas[spec] = schema
 
-    print(f"[REFLEX] Starting gRPC server on {host}:{port}...")
+    print(f"[SYSTEM1] Starting gRPC server on {host}:{port}...")
     grpc_serve(host=host, port=port, schemas=schemas if schemas else None, block=True)
     return 0
 

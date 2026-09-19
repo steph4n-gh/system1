@@ -273,7 +273,7 @@ def test_gameboy_ascii_rendering():
     # Standard battle HUD
     output = render_gameboy_screen(state, telemetry=telemetry, system2_halt=False, advisor_mode=False)
     assert "GAME BOY™ COLOR" in output
-    assert "60 FPS REAL-TIME REFLEX" in output
+    assert "60 FPS REAL-TIME SYSTEM1" in output
     assert "GYM LEADER MISTY: STARMIE" in output
     assert "PIKACHU" in output
     assert "THUNDERBOLT" in output
