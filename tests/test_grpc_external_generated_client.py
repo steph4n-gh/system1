@@ -1,6 +1,6 @@
 """Integration tests exercising SystemOneService gRPC server with an externally generated client.
 
-This test compiles `src/system1/proto/reflex.proto` into python stubs at runtime using
+This test compiles `src/system1/proto/system1.proto` into python stubs at runtime using
 `grpc_tools.protoc`, dynamically loads the stubs, connects to a live in-process gRPC server
 on loopback, and validates Decide, Guard, VerifyReceipt, and HealthCheck RPCs with true
 cryptographic receipt and signature verifications.
@@ -34,7 +34,7 @@ def test_grpc_external_generated_client_roundtrip():
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
 
-        # 1. Compile reflex.proto into temp_dir
+        # 1. Compile system1.proto into temp_dir
         args = [
             "grpc_tools.protoc",
             f"-I{proto_dir}",

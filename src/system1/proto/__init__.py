@@ -9,7 +9,7 @@ __all__ = ["system1_proto_path"]
 
 
 def system1_proto_path() -> str:
-    """Return the filesystem path to reflex.proto."""
+    """Return the filesystem path to system1.proto."""
     from pathlib import Path
 
-    return str(Path(__file__).parent / "reflex.proto")
+    return str(Path(__file__).parent / "system1.proto")

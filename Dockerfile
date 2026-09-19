@@ -1,11 +1,11 @@
-# Reflex Decision Engine — gRPC Sidecar Container
-# Build:  docker build -t reflex-grpc .
-# Run:    docker run -p 50051:50051 reflex-grpc
+# System 1 Decision Engine — gRPC Sidecar Container
+# Build:  docker build -t system1-grpc .
+# Run:    docker run -p 50051:50051 system1-grpc
 
 FROM python:3.12-slim AS base
 
-LABEL maintainer="Reflex / System 1 Authors"
-LABEL description="Reflex Decision Engine gRPC sidecar server"
+LABEL maintainer="System 1 Authors"
+LABEL description="System 1 Decision Engine gRPC sidecar server"
 
 # Prevent Python from writing .pyc files and enable unbuffered output.
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -32,4 +32,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import socket; s=socket.socket(); s.settimeout(2); s.connect(('localhost',50051)); s.close()" || exit 1
 
 # Default command: start the gRPC sidecar server.
-CMD ["reflex", "serve", "--grpc", "--port", "50051"]
+CMD ["system1", "serve", "--grpc", "--port", "50051"]

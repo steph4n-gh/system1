@@ -14,7 +14,7 @@ Tests 4 specific adversarial attack dimensions:
    - Tamper detection across all receipt fields (outcome, signature, confidences, digests).
    - Immutable audit trail in ActionLedger with unbroken SHA-256 Merkle chain.
 3. Protobuf & External Polyglot Interoperability Attack:
-   - Dynamic external compilation of reflex.proto into Python stubs in an isolated sandbox.
+   - Dynamic external compilation of system1.proto into Python stubs in an isolated sandbox.
    - End-to-end execution of Decide, Guard, VerifyReceipt, and HealthCheck via external stubs.
    - Serialization fidelity for complex telemetry, conformal prediction sets, and byte arrays.
    - Resiliency against corrupted, malformed, non-JSON, or truncated VerifyReceipt payloads.
@@ -420,14 +420,14 @@ class TestAttack3ProtobufPolyglotInteroperability:
 
     @pytest.fixture(scope="class")
     def generated_grpc_stubs(self):
-        """Compile reflex.proto into a dedicated temporary directory and dynamically import stubs."""
+        """Compile system1.proto into a dedicated temporary directory and dynamically import stubs."""
         from grpc_tools import protoc
 
         repo_root = Path(__file__).resolve().parent.parent
         proto_dir = repo_root / "src" / "system1" / "proto"
         proto_file = proto_dir / "system1.proto"
 
-        assert proto_file.exists(), f"reflex.proto not found at {proto_file}"
+        assert proto_file.exists(), f"system1.proto not found at {proto_file}"
 
         temp_dir = tempfile.TemporaryDirectory()
         temp_path = Path(temp_dir.name)
