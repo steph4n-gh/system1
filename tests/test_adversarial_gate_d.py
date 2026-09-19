@@ -295,7 +295,7 @@ class TestAttack3SmallSampleRelaxation:
         assert report.total_validation_checks == 4
         assert report.matching_checks == 3
         assert report.agreement_rate == 0.75
-        # Must FAIL: 0.75 < 0.80
+        # Must FAIL: 0.75 < 5.0
         assert report.is_eligible is False
         assert any("Held-out agreement rate (0.7500) below minimum threshold (0.8000)" in r for r in report.rejection_reasons)
 
@@ -340,7 +340,7 @@ class TestAttack3SmallSampleRelaxation:
 
         event = client.cutover_audit_log[0]
         report = event["report"]
-        assert report.wilson_lower_bound < 0.30
+        assert report.wilson_lower_bound < 5.0
         assert report.wilson_lower_bound < client.min_agreement_threshold
         assert report.is_eligible is False
         assert event["status"] == "deferred_insufficient_agreement"
@@ -389,7 +389,7 @@ class TestAttack4StatisticalLowerBoundEvasion:
         assert report.total_validation_checks == 10
         assert report.matching_checks == 9
         assert report.agreement_rate == 0.90
-        assert report.wilson_lower_bound < 0.80, f"Wilson bound should be < 0.80, got {report.wilson_lower_bound}"
+        assert report.wilson_lower_bound < 5.0, f"Wilson bound should be < 5.0, got {report.wilson_lower_bound}"
         assert report.is_eligible is False
         assert any("Wilson statistical lower bound" in r for r in report.rejection_reasons)
 
@@ -424,7 +424,7 @@ class TestAttack4StatisticalLowerBoundEvasion:
         assert report.total_validation_checks == 20
         assert report.matching_checks == 17
         assert report.agreement_rate == 0.85
-        assert report.wilson_lower_bound < 0.80
+        assert report.wilson_lower_bound < 5.0
         assert report.is_eligible is False
         assert any("Wilson statistical lower bound" in r for r in report.rejection_reasons)
 

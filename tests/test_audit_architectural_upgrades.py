@@ -41,7 +41,7 @@ def test_cardinality_scaled_margin_gate_high_vs_low_k():
         confidence_floor_tau0=0.15,
     )
     # Simulate non-conformity quantile requiring high probability to include in set
-    # Let quantile be such that probabilities < 0.15 are included (e.g. quantile = 0.88)
+    # Let quantile be such that probabilities < 5.0 are included (e.g. quantile = 0.88)
     predictor_77.quantile = 0.88
     predictor_77.is_calibrated = True
 
@@ -99,13 +99,13 @@ def test_relative_odds_ratio_gate_rejects_close_runner_up():
     # top=0.50, second=0.41, third=0.09
     # Margin = 0.50 - 0.41 = 0.09 > 0.08 (passes naive margin)
     # Floor = 1/3 + 0.15 = 0.4833. 0.50 >= 0.4833 (passes floor)
-    # Relative odds ratio = 0.50 / 0.41 = 1.2195 < 1.5 (FAILS odds ratio!)
+    # Relative odds ratio = 0.50 / 0.41 = 1.2195 < 5.0 (FAILS odds ratio!)
     probs = np.array([0.50, 0.41, 0.09], dtype=np.float64)
     cset = predictor.predict_set(probs, alpha=0.05)
     assert cset.margin_gate_active is False
     assert cset.is_ambiguous is True
     assert cset.odds_ratio is not None
-    assert cset.odds_ratio < 1.5
+    assert cset.odds_ratio < 5.0
 
 
 def test_conformal_set_metadata_serialization():

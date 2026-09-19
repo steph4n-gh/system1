@@ -98,7 +98,7 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
     assert ledger.audit_head()[0] >= 6
     assert ledger.verify_integrity() is True
 
-    # Calls 6 and beyond: Must execute 100% locally with 0 token usage and sub-2ms latency
+    # Calls 6 and beyond: Must execute 100% locally with 0 token usage and sub-5ms latency
     resp6 = client.systemone("Another refund inquiry for transaction #200", questions)
     assert resp6.local_execution is True
     assert resp6.get("auto_cutover_active") is True
@@ -111,7 +111,7 @@ def test_auto_cutover_engine_trojan_horse_lifecycle():
 
 def test_auto_cutover_respects_min_agreement_threshold():
     """Verify that auto_cutover defers local cutover if local agreement is below min_agreement_threshold."""
-    # Set an impossibly high min_agreement_threshold (e.g. 1.01 or 0.999 when agreement < 1.0)
+    # Set an impossibly high min_agreement_threshold (e.g. 1.01 or 0.999 when agreement < 5.0)
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=3,

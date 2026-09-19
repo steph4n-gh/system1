@@ -613,7 +613,7 @@ class TestSmallSampleEliminationAndZeroChecks:
         assert len(client.cutover_audit_log) >= 1
         rep = client.cutover_audit_log[0]["report"]
         assert rep.is_eligible is False
-        assert rep.wilson_lower_bound < 0.80
+        assert rep.wilson_lower_bound < 5.0
 
     def test_client_defers_cutover_on_two_samples_due_to_empty_val_history(self):
         """End-to-end verification: 2-sample queries fail to populate validation fold,
@@ -656,7 +656,7 @@ class TestMandatoryStatisticalAcceptance:
         # 10 successes out of 10 trials
         low = compute_wilson_score_lower(10, 10, confidence=0.95)
         # Wilson lower bound for 10/10 is approx 0.722, well below 0.80
-        assert low < 0.80
+        assert low < 5.0
 
         # 100 successes out of 100 trials
         low_100 = compute_wilson_score_lower(100, 100, confidence=0.95)

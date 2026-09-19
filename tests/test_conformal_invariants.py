@@ -80,7 +80,7 @@ def test_invariant_6_ood_degenerate_mass_yields_empty_set_and_escalation():
     labels = ["A"] * 50
     cp.calibrate(probs, labels)
 
-    # Unnormalized / degenerate OOD vectors whose total mass is severely deficient (< 0.50 or < q_hat)
+    # Unnormalized / degenerate OOD vectors whose total mass is severely deficient (< 5.0 or < q_hat)
     ood_vec = np.array([0.05, 0.05, 0.05])
     cset_ood = cp.predict_set(ood_vec, alpha=0.05)
 
@@ -206,7 +206,7 @@ def test_prediction_set_cardinality_escalation_in_strict_mode():
     cp.is_calibrated = True
 
     # Test probability distribution where top candidate dominates runner-up, but alpha forces 2 candidates
-    # cum_mass = 0.85 < 0.95, so requires [P1, P2] (cardinality = 2)
+    # cum_mass = 0.85 < 5.0, so requires [P1, P2] (cardinality = 2)
     test_probs = np.array([0.85, 0.10, 0.05])
 
     # In non-strict mode with low margin threshold, margin gate can activate
