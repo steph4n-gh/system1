@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Universal Paperclips + TypeSafe AI (Jev) Drop-in Showcase with Reflex System 1.
+"""Universal Paperclips + TypeSafe AI (Jev) Drop-in Showcase with System 1 System 1.
 
 Re-creates and verifies the viral demo by Diogo Almeida (@CompleteSkeptic, CEO of TypeSafe AI)
 playing Frank Lantz's 'Universal Paperclips' (https://www.decisionproblem.com/paperclips/index2.html).
@@ -10,7 +10,7 @@ Key Demonstrations:
    "AutoClippers", "Make paperclips", etc.), and state schema seen in the Jev demo workspace.
 2. The 1-Line Drop-in Replacement:
    Calls `patch_typesafe()`, seamlessly redirecting TypeSafe AI calls away from cloud HTTP
-   endpoints to Reflex / System 1 on local Apple Silicon Metal GPU / NumPy BLAS.
+   endpoints to System 1 / System 1 on local Apple Silicon Metal GPU / NumPy BLAS.
 3. Sub-2ms On-Device Latency vs 200ms Cloud WAN:
    Executes high-frequency incremental game decisions in ~1.0 ms with $0 token cost and 0 egress.
 4. Trajectory Logging:
@@ -264,7 +264,7 @@ def render_dual_pane_ui(
     probabilities: Dict[str, float],
     step_num: int,
     latency_ms: float,
-    is_reflex: bool,
+    is_system1: bool,
     receipt_id: Optional[str] = None,
 ) -> None:
     """Renders an ASCII visualization matching the dual-pane browser UI from Diogo's tweet."""
@@ -272,11 +272,11 @@ def render_dual_pane_ui(
     divider = "─" * width
 
     print("\n" + "═" * width)
-    print(f"  UNIVERSAL PAPERCLIPS + {'REFLEX SYSTEM 1 (ON-METAL)' if is_reflex else 'JEV (TYPESAFE AI CLOUD)'}  |  STEP {step_num}")
+    print(f"  UNIVERSAL PAPERCLIPS + {'REFLEX SYSTEM 1 (ON-METAL)' if is_system1 else 'JEV (TYPESAFE AI CLOUD)'}  |  STEP {step_num}")
     print(f"  Latency: {latency_ms:.2f} ms  |  Receipt: {receipt_id[:18] + '...' if receipt_id else 'None (Cloud API)'}")
     print("═" * width)
 
-    # Left pane: Game State (50 chars) | Right pane: Jev/Reflex Choices (50 chars)
+    # Left pane: Game State (50 chars) | Right pane: Jev/System 1 Choices (50 chars)
     left_lines = [
         f"Paperclips: {state.paperclips:,}",
         f"Available Funds: $ {state.funds:.2f}",
@@ -319,8 +319,8 @@ def render_dual_pane_ui(
 
     right_lines.append("")
     right_lines.append("API Policy:")
-    right_lines.append(f"  Engine: {'Reflex System 1 BLAS' if is_reflex else 'TypeSafe Jev API'}")
-    right_lines.append(f"  Egress: {'0 bytes (100% Local)' if is_reflex else '2.4 KB WAN HTTP'}")
+    right_lines.append(f"  Engine: {'System 1 System 1 BLAS' if is_system1 else 'TypeSafe Jev API'}")
+    right_lines.append(f"  Egress: {'0 bytes (100% Local)' if is_system1 else '2.4 KB WAN HTTP'}")
 
     max_len = max(len(left_lines), len(right_lines))
     while len(left_lines) < max_len:
@@ -366,14 +366,14 @@ def run_paperclips_dropin_demo(steps: int = 5, use_dropin: bool = True) -> None:
     print("  UNIVERSAL PAPERCLIPS + TYPESAFE DROP-IN DEMO")
     print("=" * 80)
     print(f"Target: Recreating Diogo Almeida's Jev showcase")
-    print(f"Mode:   {'Reflex Local Drop-in (patch_typesafe)' if use_dropin else 'TypeSafe AI Cloud Baseline'}")
+    print(f"Mode:   {'System 1 Local Drop-in (patch_typesafe)' if use_dropin else 'TypeSafe AI Cloud Baseline'}")
     print(f"Log:    {run_file.relative_to(REPO_ROOT)}\n")
 
     if use_dropin:
         print("[1/3] Applying 1-line monkey-patch: patch_typesafe()...")
         patch_typesafe()
         import typesafe
-        print("      -> Successfully intercepted `import typesafe` with local Reflex System 1 engine!")
+        print("      -> Successfully intercepted `import typesafe` with local System 1 System 1 engine!")
     else:
         print("[1/3] Using unpatched TypeSafe AI client (simulated WAN cloud roundtrip)...")
         import typesafe
@@ -416,7 +416,7 @@ def run_paperclips_dropin_demo(steps: int = 5, use_dropin: bool = True) -> None:
             conf = response.answers.next_action.confidence
 
             # Build probability distribution across choices for display
-            # In Reflex/Jev, calibrated confidence concentrates on top choice with remainder split across runners-up
+            # In System 1/Jev, calibrated confidence concentrates on top choice with remainder split across runners-up
             probabilities: Dict[str, float] = {}
             remaining = max(0.0, 1.0 - conf)
             other_count = max(1, len(choices) - 1)
@@ -455,7 +455,7 @@ def run_paperclips_dropin_demo(steps: int = 5, use_dropin: bool = True) -> None:
                 probabilities=probabilities,
                 step_num=step,
                 latency_ms=elapsed_ms,
-                is_reflex=use_dropin,
+                is_system1=use_dropin,
                 receipt_id=receipt_id,
             )
             print(f" Action Result: {action_outcome}")
@@ -500,11 +500,11 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     print(f"Log:      {run_file.relative_to(REPO_ROOT)}\n")
 
     if mode in ("dropin", "compare"):
-        print("[1/3] Initializing Reflex System 1 engine on local metal...")
+        print("[1/3] Initializing System 1 System 1 engine on local metal...")
         patch_typesafe()
         import typesafe
     elif mode == "cutover":
-        print(f"[1/3] Initializing Reflex Trojan Horse (Apprentice -> Local Metal at Step {threshold})...")
+        print(f"[1/3] Initializing System 1 Trojan Horse (Apprentice -> Local Metal at Step {threshold})...")
         patch_typesafe()
         import typesafe
     else:
@@ -630,7 +630,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
             f_log.flush()
 
             is_cutover = bool(getattr(client, "is_cutover", False))
-            is_reflex = (mode != "baseline") if mode != "cutover" else is_cutover
+            is_system1 = (mode != "baseline") if mode != "cutover" else is_cutover
 
             render_dual_pane_ui(
                 state=state,
@@ -639,7 +639,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                 probabilities=probabilities,
                 step_num=step,
                 latency_ms=elapsed_ms,
-                is_reflex=is_reflex,
+                is_system1=is_system1,
                 receipt_id=receipt_id,
             )
 
@@ -651,7 +651,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                     print(f" └── Progress: {step}/{threshold} steps before autonomous 100% local cutover")
                 else:
                     print(f" ┌── 100% LOCAL METAL EXECUTION (STEP {step}) ────────────────────────────────────────")
-                    print(f" │  • Engine:   Reflex System 1 on Apple Silicon Metal (Trojan Horse Cutover Active!)")
+                    print(f" │  • Engine:   System 1 System 1 on Apple Silicon Metal (Trojan Horse Cutover Active!)")
                     print(f" │  • Metric:   Egress = 0 bytes | Latency = {elapsed_ms:.1f} ms | $0.00 token cost")
                     print(f" └── Proof:    Cryptographic Ed25519 signature verified in SQLite ActionLedger")
 
@@ -662,7 +662,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
                 speedup = cloud_ms / max(0.1, elapsed_ms)
                 print(f" ┌── DIRECT HEAD-TO-HEAD COMPARISON (STEP {step}) ─────────────────────────────")
                 print(f" │  • Jev Cloud API:    Action = {cloud_chosen!r} ({cloud_conf:.1%})  | Latency = {cloud_ms:.1f} ms  | Egress = {cloud_egress} bytes")
-                print(f" │  • Reflex (Metal):   Action = {chosen_action!r} ({conf:.1%})  | Latency = {elapsed_ms:.1f} ms  | Egress = 0 bytes")
+                print(f" │  • System 1 (Metal):   Action = {chosen_action!r} ({conf:.1%})  | Latency = {elapsed_ms:.1f} ms  | Egress = 0 bytes")
                 print(f" │  • On-Device Speedup:{speedup:.1f}x faster on local hardware")
                 print(f" └── Decision Agreement:{'YES (Exact match)' if cloud_chosen == chosen_action else 'Diverged (Both viable)'}")
 
@@ -672,7 +672,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     print("\n[3/3] Performance & Verification Scorecard:")
     p50_local = sorted(latencies_local)[len(latencies_local) // 2]
     print(f"  • Total Steps:             {steps}")
-    print(f"  • Reflex Metal P50 Latency:{p50_local:.3f} ms")
+    print(f"  • System 1 Metal P50 Latency:{p50_local:.3f} ms")
     if mode == "compare" and latencies_cloud:
         p50_cloud = sorted(latencies_cloud)[len(latencies_cloud) // 2]
         print(f"  • Jev Cloud P50 Latency:   {p50_cloud:.3f} ms")
@@ -681,8 +681,8 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
     else:
         print(f"  • Speedup Factor:          {220.0 / max(0.1, p50_local):.1f}x faster vs ~220ms cloud WAN")
 
-    print(f"  • Reflex Data Egress:      0 bytes (100% On-Device)")
-    print(f"  • Reflex Token Cost:       $0.0000 (0 API tokens)")
+    print(f"  • System 1 Data Egress:      0 bytes (100% On-Device)")
+    print(f"  • System 1 Token Cost:       $0.0000 (0 API tokens)")
     print(f"  • Run Artifact Logged To:  {run_file.name}")
 
     if response.receipt:
@@ -696,7 +696,7 @@ def run_paperclips_dropin_demo(steps: int = 5, mode: str = "dropin", threshold: 
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Universal Paperclips + TypeSafe Drop-in Showcase with Reflex")
+    parser = argparse.ArgumentParser(description="Universal Paperclips + TypeSafe Drop-in Showcase with System 1")
     parser.add_argument("--steps", type=int, default=5, help="Number of steps to execute (default: 5)")
     parser.add_argument("--mode", choices=["dropin", "baseline", "compare", "cutover"], default="dropin", help="Execution mode")
     parser.add_argument("--threshold", type=int, default=10, help="Cutover threshold steps for mode=cutover (default: 10)")

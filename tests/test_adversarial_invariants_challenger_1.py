@@ -30,13 +30,13 @@ from reflex import (
     LedgerWriteError,
     PolicyEngine,
     PolicyRule,
-    ReflexEngine,
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexGuardHook,
-    ReflexMCPBlockedError,
-    ReflexMCPProxy,
-    ReflexToolInterceptor,
+    SystemOneEngine,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneGuardHook,
+    SystemOneMCPBlockedError,
+    SystemOneMCPProxy,
+    SystemOneToolInterceptor,
     create_decision_receipt,
     verify_decision_witness_receipt,
     wrap_mcp_tool,
@@ -94,7 +94,7 @@ class SentinelExecutor:
 )
 def test_invariant_1_weird_methods_never_invoke_executor(method_name):
     """Attempting tool invocation via non-canonical or malformed JSON-RPC methods must result in 0 executor calls."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -114,7 +114,7 @@ def test_invariant_1_weird_methods_never_invoke_executor(method_name):
 
 def test_invariant_1_ping_with_malicious_command_injection():
     """Method 'ping' carrying malicious tool execution parameters returns standard pong with 0 executions."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -136,7 +136,7 @@ def test_invariant_1_ping_with_malicious_command_injection():
 
 def test_invariant_1_initialize_with_tool_arguments():
     """Method 'initialize' carrying tool execution parameters returns protocol handshake with 0 executions."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -163,7 +163,7 @@ def test_invariant_1_initialize_with_tool_arguments():
 
 def test_invariant_2_massive_payload_no_truncation_in_arguments():
     """Verify arguments >10,000 characters are fully preserved without truncation."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     captured_proposals = []
 
     def mock_eval(proposal, context_prompt=None):
@@ -182,7 +182,7 @@ def test_invariant_2_massive_payload_no_truncation_in_arguments():
     def file_writer(path: str, content: str):
         return f"wrote {len(content)} bytes"
 
-    interceptor = ReflexToolInterceptor(tool=file_writer, guard=hook, tool_name="file_writer")
+    interceptor = SystemOneToolInterceptor(tool=file_writer, guard=hook, tool_name="file_writer")
     res = interceptor("/tmp/output.log", content=massive_content)
 
     assert len(captured_proposals) == 1
@@ -194,7 +194,7 @@ def test_invariant_2_massive_payload_no_truncation_in_arguments():
 
 def test_invariant_2_deeply_nested_structures_preserved():
     """Verify deeply nested structures (dict-in-dict-in-list) are fully preserved in proposal arguments."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     captured_proposals = []
 
     def mock_eval(proposal, context_prompt=None):
@@ -222,7 +222,7 @@ def test_invariant_2_deeply_nested_structures_preserved():
     def process_config(config: dict):
         return "configured"
 
-    interceptor = ReflexToolInterceptor(tool=process_config, guard=hook, tool_name="process_config")
+    interceptor = SystemOneToolInterceptor(tool=process_config, guard=hook, tool_name="process_config")
     res = interceptor(nested_dict)
 
     from reflex.receipt import thaw
@@ -237,7 +237,7 @@ def test_invariant_2_deeply_nested_structures_preserved():
 
 def test_invariant_2_complex_signatures_with_positional_and_kwargs():
     """Verify complex signatures (positional, keyword-only, defaults, varargs) bind cleanly."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     captured_proposals = []
 
     def mock_eval(proposal, context_prompt=None):
@@ -254,7 +254,7 @@ def test_invariant_2_complex_signatures_with_positional_and_kwargs():
     def complex_target(a, b="default_b", *extra_args, c=100, **extra_kwargs):
         return (a, b, extra_args, c, extra_kwargs)
 
-    interceptor = ReflexToolInterceptor(tool=complex_target, guard=hook, tool_name="complex_target")
+    interceptor = SystemOneToolInterceptor(tool=complex_target, guard=hook, tool_name="complex_target")
     res = interceptor("val_a", "custom_b", "pos3", "pos4", c=999, secret_flag=True)
 
     assert len(captured_proposals) == 1
@@ -476,16 +476,16 @@ def test_invariant_5_readonly_sqlite_database_fails_closed(tmp_path):
 
     # Open read-only ledger
     ro_ledger = ActionLedger(path=db_path, read_only=True)
-    engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=ro_ledger, fail_closed_ledger=True)
+    engine = SystemOneEngine(DefaultGuardDecisionSchema, ledger=ro_ledger, fail_closed_ledger=True)
 
     # 1. Engine raises LedgerWriteError
     with pytest.raises(LedgerWriteError):
         engine.decide("Perform safe action", fail_closed_ledger=True)
 
-    # 2. ReflexGuardHook returns DENY and Sentinel executes 0 times
-    hook = ReflexGuardHook(engine=engine, ledger=ro_ledger, fail_closed_ledger=True)
+    # 2. SystemOneGuardHook returns DENY and Sentinel executes 0 times
+    hook = SystemOneGuardHook(engine=engine, ledger=ro_ledger, fail_closed_ledger=True)
     sentinel = SentinelExecutor()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     req = {
         "jsonrpc": "2.0",
@@ -503,7 +503,7 @@ def test_invariant_5_locked_database_fails_closed(tmp_path):
     """Locked SQLite database causes fail-closed denial with 0 tool executions."""
     db_path = str(tmp_path / "locked_audit.db")
     ledger = ActionLedger(path=db_path)
-    engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
+    engine = SystemOneEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
 
     # Simulate locked database on append
     def locked_append(*args, **kwargs):
@@ -511,9 +511,9 @@ def test_invariant_5_locked_database_fails_closed(tmp_path):
 
     ledger.append = locked_append
 
-    hook = ReflexGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
     sentinel = SentinelExecutor()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     req = {
         "jsonrpc": "2.0",
@@ -531,7 +531,7 @@ def test_invariant_5_disk_full_fails_closed(tmp_path):
     """Disk full operational error causes fail-closed denial with 0 tool executions."""
     db_path = str(tmp_path / "full_audit.db")
     ledger = ActionLedger(path=db_path)
-    engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
+    engine = SystemOneEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
 
     # Simulate disk full
     def full_append(*args, **kwargs):
@@ -539,9 +539,9 @@ def test_invariant_5_disk_full_fails_closed(tmp_path):
 
     ledger.append = full_append
 
-    hook = ReflexGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
     sentinel = SentinelExecutor()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     req = {
         "jsonrpc": "2.0",
@@ -566,10 +566,10 @@ def test_invariant_5_corrupt_head_hash_fails_closed(tmp_path):
     conn.commit()
     conn.close()
 
-    engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
-    hook = ReflexGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
+    engine = SystemOneEngine(DefaultGuardDecisionSchema, ledger=ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(engine=engine, ledger=ledger, fail_closed_ledger=True)
     sentinel = SentinelExecutor()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     req = {
         "jsonrpc": "2.0",
@@ -596,9 +596,9 @@ def test_invariant_5_unrecorded_receipt_fails_closed():
     mock_engine.decide.return_value = mock_decision
 
     fake_ledger = MagicMock()
-    hook = ReflexGuardHook(engine=mock_engine, ledger=fake_ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(engine=mock_engine, ledger=fake_ledger, fail_closed_ledger=True)
     sentinel = SentinelExecutor()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     req = {
         "jsonrpc": "2.0",
@@ -621,7 +621,7 @@ def test_invariant_2_langchain_callback_exceeding_4096_chars_handled_gracefully(
     """
     import hashlib
 
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     captured = []
 
     def mock_eval(proposal, context_prompt=None):
@@ -635,7 +635,7 @@ def test_invariant_2_langchain_callback_exceeding_4096_chars_handled_gracefully(
 
     hook.evaluate_proposal = mock_eval
 
-    handler = ReflexGuardCallbackHandler(guard=hook)
+    handler = SystemOneGuardCallbackHandler(guard=hook)
     serialized = {"name": "large_tool", "description": "Inspect file"}
 
     huge_payload = "W" * 10005
@@ -655,7 +655,7 @@ def test_invariant_1_mcp_malformed_arguments_type_zero_executions():
 
     without unhandled exception and does not execute sentinel.
     """
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {

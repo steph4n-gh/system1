@@ -629,10 +629,10 @@ def test_adversarial_verify_receipt_invalid_explicit_public_key_raises():
             verify_decision_witness_receipt(rec_dict, public_key=bad_key)
 
 
-def test_adversarial_reflex_cli_module_execution_parity():
+def test_adversarial_system1_cli_module_execution_parity():
     """Verify python3 -m reflex.cli execution matches python3 -m system1.cli."""
     # 1. --help output parity
-    res_reflex_help = subprocess.run(
+    res_system1_help = subprocess.run(
         [sys.executable, "-m", "reflex.cli", "--help"],
         capture_output=True,
         text=True,
@@ -642,9 +642,9 @@ def test_adversarial_reflex_cli_module_execution_parity():
         capture_output=True,
         text=True,
     )
-    assert res_reflex_help.returncode == 0
     assert res_system1_help.returncode == 0
-    assert res_reflex_help.stdout == res_system1_help.stdout
+    assert res_system1_help.returncode == 0
+    assert res_system1_help.stdout == res_system1_help.stdout
 
     # 2. decide command execution via reflex.cli
     res_decide = subprocess.run(
@@ -659,7 +659,7 @@ def test_adversarial_reflex_cli_module_execution_parity():
     assert "receipt" in payload
 
 
-def test_adversarial_reflex_compat_typesafe_identity():
+def test_adversarial_system1_compat_typesafe_identity():
     """Verify reflex.compat.typesafe maintains object identity with system1.compat.typesafe."""
     import reflex.compat.typesafe as r_ts
     import system1.compat.typesafe as s1_ts

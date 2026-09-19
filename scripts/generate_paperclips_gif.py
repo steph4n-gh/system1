@@ -39,7 +39,7 @@ def main() -> None:
     # 40 animated steps covering:
     # Steps 0-14: Cloud LLM Baseline (~220ms, accumulating API costs)
     # Steps 15-18: Auto-Cutover Trigger & Ridge Regression Distillation
-    # Steps 19-38: Reflex On-Metal (< 1ms, 0 Bytes Egress, $0 Cost)
+    # Steps 19-38: System 1 On-Metal (< 1ms, 0 Bytes Egress, $0 Cost)
     # Step 39: Hold frame
 
     paperclips = 7120
@@ -53,10 +53,10 @@ def main() -> None:
         draw = ImageDraw.Draw(canvas)
 
         is_cutover_trigger = (15 <= step <= 18)
-        is_reflex = (step > 18)
+        is_system1 = (step > 18)
 
         # Simulation updates
-        if not is_reflex:
+        if not is_system1:
             # Cloud: slower production
             paperclips += 18
             funds += 0.85
@@ -68,7 +68,7 @@ def main() -> None:
             accent_color = "#f59e0b"  # Amber
             header_bg = "#1e1b13"
         else:
-            # Reflex: hyper-speed on metal
+            # System 1: hyper-speed on metal
             paperclips += 140
             funds += 6.50
             wire = max(200, wire - 140)
@@ -91,7 +91,7 @@ def main() -> None:
 
         # Right-aligned header metric
         lat_text = f"LATENCY: {lat:6.2f} ms"
-        lat_color = "#ef4444" if not is_reflex else "#4ade80"
+        lat_color = "#ef4444" if not is_system1 else "#4ade80"
         draw.text((width - 230, 14), lat_text, fill=lat_color, font=font_bold)
         draw.text((width - 230, 40), f"COST: {cost}", fill="#94a3b8", font=font_code)
 
@@ -116,7 +116,7 @@ def main() -> None:
         left_rows = [
             ("Paperclips:", f"{paperclips:,}"),
             ("Available Funds:", f"${funds:.2f}"),
-            ("Clips / Second:", "1,240/s" if is_reflex else "18/s"),
+            ("Clips / Second:", "1,240/s" if is_system1 else "18/s"),
             ("Wire Supply:", f"{wire:,} in"),
             ("Public Demand:", "142%"),
             ("Price per Clip:", "$0.07"),
@@ -172,18 +172,18 @@ def main() -> None:
         draw.line([(mid_x + 18, r_y), (width - 28, r_y)], fill="#1e293b", width=1)
         r_y += 10
         draw.text((mid_x + 18, r_y), "EGRESS:", fill="#94a3b8", font=font_small)
-        draw.text((mid_x + 100, r_y), egress, fill="#4ade80" if is_reflex else "#f59e0b", font=font_code)
+        draw.text((mid_x + 100, r_y), egress, fill="#4ade80" if is_system1 else "#f59e0b", font=font_code)
         r_y += 18
         draw.text((mid_x + 18, r_y), "RECEIPT:", fill="#94a3b8", font=font_small)
-        draw.text((mid_x + 100, r_y), "Ed25519 SHA256-Witness" if is_reflex else "None (Cloud API)", fill="#94a3b8", font=font_code)
+        draw.text((mid_x + 100, r_y), "Ed25519 SHA256-Witness" if is_system1 else "None (Cloud API)", fill="#94a3b8", font=font_code)
 
         # Footer Status
         draw.rectangle([(0, height - 58), (width, height)], fill="#0f172a")
         draw.line([(0, height - 58), (width, height - 58)], fill="#1e293b", width=1)
 
-        cliff_text = "⬇️ LATENCY CLIFF: 220ms → 0.98ms (224x Acceleration)  •  100% On-Device Metal" if is_reflex else "⚠️ CLOUD WAN BOTTLENECK: 220ms API Roundtrip  •  Accumulating Token Costs"
-        draw.text((20, height - 42), cliff_text, fill="#34d399" if is_reflex else "#f59e0b", font=font_bold)
-        draw.text((20, height - 22), "Kahneman System 1 Fast Reflex Runtime  •  Daniel Kahneman Dual-Process Paradigm", fill="#64748b", font=font_small)
+        cliff_text = "⬇️ LATENCY CLIFF: 220ms → 0.98ms (224x Acceleration)  •  100% On-Device Metal" if is_system1 else "⚠️ CLOUD WAN BOTTLENECK: 220ms API Roundtrip  •  Accumulating Token Costs"
+        draw.text((20, height - 42), cliff_text, fill="#34d399" if is_system1 else "#f59e0b", font=font_bold)
+        draw.text((20, height - 22), "Kahneman System 1 Fast System 1 Runtime  •  Daniel Kahneman Dual-Process Paradigm", fill="#64748b", font=font_small)
 
         # Multiple holds on key frames
         num_dupes = 8 if (step == 0 or step == 17 or step == 39) else 1

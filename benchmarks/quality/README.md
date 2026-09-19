@@ -1,8 +1,8 @@
-# Reflex Decision Engine — Quality Benchmark Suite
+# System 1 Decision Engine — Quality Benchmark Suite
 
 ## Overview
 
-This benchmark suite measures the **decision quality** (accuracy, precision, recall, F1, MAE, RMSE, correlation) of the Reflex non-autoregressive decision engine. It complements the existing latency benchmarks by providing the first published accuracy/quality metrics.
+This benchmark suite measures the **decision quality** (accuracy, precision, recall, F1, MAE, RMSE, correlation) of the System 1 non-autoregressive decision engine. It complements the existing latency benchmarks by providing the first published accuracy/quality metrics.
 
 ## Benchmarks
 

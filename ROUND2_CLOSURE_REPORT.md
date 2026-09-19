@@ -1,7 +1,7 @@
-# Reflex / System 1 Round 2 Hardening — Master Closure Report
+# System 1 / System 1 Round 2 Hardening — Master Closure Report
 
 **Document Version**: 2.0.0-master  
-**Release Target**: Reflex / System 1 Production Release (v0.1.0)  
+**Release Target**: System 1 / System 1 Production Release (v0.1.0)  
 **Date**: 2026-09-18T21:00:00Z  
 **Author**: Integration & Quality Assurance Subagent (`teamwork_preview_worker_m4`)  
 **Repository**: `/Volumes/Storage/reflex`  
@@ -13,7 +13,7 @@
 ## 1. Executive Summary
 
 ### 1.1 Mandate and Background
-The Reflex / System 1 dual-process cognitive runtime is engineered to unite non-autoregressive, sub-2ms local decision execution on bare metal (System 1 fast reflex) with strategic deliberative planning (System 2 deliberate governor). Reflex guarantees absolute zero external network egress in local modes, full cryptographic auditability via Ed25519 receipts (RFC 8032), and drop-in TypeSafe AI API compatibility across twin symmetrical namespaces (`reflex` and `system1`).
+The System 1 / System 1 dual-process cognitive runtime is engineered to unite non-autoregressive, sub-2ms local decision execution on bare metal (System 1 fast reflex) with strategic deliberative planning (System 2 deliberate governor). System 1 guarantees absolute zero external network egress in local modes, full cryptographic auditability via Ed25519 receipts (RFC 8032), and drop-in TypeSafe AI API compatibility across twin symmetrical namespaces (`reflex` and `system1`).
 
 Following the initial Round 1 stabilization pass, the Round 2 Hardening Mandate (`ORIGINAL_REQUEST.md:208`) was commissioned to eradicate structural enforcement vulnerabilities, cryptographic receipt blindspots, cache lifecycle leaks, uncalibrated set prediction hazards, cutover promotion shortcuts, and wire serialization discrepancies. The primary directive of Round 2 was to deliver **one unified, unbypassable execution path**:
 
@@ -26,7 +26,7 @@ This release formally certifies the following three core Release Invariants:
 
 | Invariant | Title | Description | Enforcement Mechanism | Verification Status |
 |---|---|---|---|---|
-| **Invariant 1** | **No Execution Bypass** | No execution branch, client wrapper, or authorization decision may bypass mandatory policy evaluation, cryptographic signing, or durable ledger recording. | `ReflexGuardHook.evaluate_proposal()` mandates receipt issuance and ledger persistence before granting `allowed=True`. Denials fail closed. | **VERIFIED (100%)** |
+| **Invariant 1** | **No Execution Bypass** | No execution branch, client wrapper, or authorization decision may bypass mandatory policy evaluation, cryptographic signing, or durable ledger recording. | `SystemOneGuardHook.evaluate_proposal()` mandates receipt issuance and ledger persistence before granting `allowed=True`. Denials fail closed. | **VERIFIED (100%)** |
 | **Invariant 2** | **Semantic Fidelity** | System optimizations, cache lookups, and fast paths must strictly preserve the decision and uncertainty semantics of the current model, calibration, policy, and input snapshot. | Full 64-hex SHA-256 context hashing, atomic model versioning under `threading.RLock()`, and strict-mode suppression of approximate search. | **VERIFIED (100%)** |
 | **Invariant 3** | **Artifact Promotion Integrity** | The deployed model artifact must be byte-for-byte identical to the exact artifact whose promotion evidence was statistically validated on held-out data. | Direct deployment of frozen candidate model (`_compiled_model`), deterministic array/header sorting, dynamic timestamp elimination, and zero post-validation retraining. | **VERIFIED (100%)** |
 
@@ -128,7 +128,7 @@ The centerpiece of Round 2 is the realization of a deterministic, tamper-evident
 |           v                                                                                                 |
 |  6. Cryptographic Outcome Chaining                                                                          |
 |     * Execution result chained via SHA-256 to prior authorization receipt in ActionLedger                   |
-|     * Two-phase commit: post-execution ledger failure raises ReflexIndeterminateExecutionError              |
+|     * Two-phase commit: post-execution ledger failure raises SystemOneIndeterminateExecutionError              |
 |       with reconciliation evidence (action_id, receipt_digest, raw_result)                                  |
 +-------------------------------------------------------------------------------------------------------------+
 ```
@@ -175,7 +175,7 @@ The tool executor (local Python callable, LangChain BaseTool, or MCP server hand
 ### 2.6 Stage 6: Cryptographically Linked Recorded Outcome and Indeterminate Error Recovery
 Following execution, the outcome is recorded to maintain audit trail continuity:
 - **Two-Phase Commit**: `record_execution_outcome()` appends an outcome record (`SUCCEEDED`, `FAILED`, or `INDETERMINATE`) cryptographically chained via SHA-256 to the preceding authorization receipt digest.
-- **Structured Error Reporting**: If tool execution succeeds (inducing real-world side effects) but ledger outcome recording fails, the runtime raises `ReflexIndeterminateExecutionError` (or returns JSON-RPC error code `-32001`). This structured error provides full forensic reconciliation evidence (`action_id`, `receipt_digest`, `raw_result`), preventing unmonitored silent execution.
+- **Structured Error Reporting**: If tool execution succeeds (inducing real-world side effects) but ledger outcome recording fails, the runtime raises `SystemOneIndeterminateExecutionError` (or returns JSON-RPC error code `-32001`). This structured error provides full forensic reconciliation evidence (`action_id`, `receipt_digest`, `raw_result`), preventing unmonitored silent execution.
 
 ---
 
@@ -236,7 +236,7 @@ Prior to Round 2, `PolicyEngine` applied first-match rule evaluation. If an `ALL
           return False, f"Argument {arg_name}={val} exceeds limit {limit.max_value}"
   ```
 
-**File: `src/system1/guard.py` (`ReflexGuardHook.evaluate_proposal`)**
+**File: `src/system1/guard.py` (`SystemOneGuardHook.evaluate_proposal`)**
 - *Release Invariant 1 Enforcement (No Execution Bypass)*:
   ```python
   if deterministic_outcome == DecisionOutcome.ALLOW:
@@ -323,7 +323,7 @@ Prior to Round 2, receipts emitted by `verify_decision_witness_receipt()` could 
   try:
       self._record_outcome(action_id, receipt_digest, Outcome.SUCCEEDED, result=raw_result)
   except Exception as ledger_err:
-      raise ReflexIndeterminateExecutionError(
+      raise SystemOneIndeterminateExecutionError(
           message="Tool executed but durable outcome logging failed",
           action_id=action_id,
           receipt_digest=receipt_digest,
@@ -509,7 +509,7 @@ In privacy-restricted air-gapped environments, the runtime must guarantee that n
 ### 3.6 Gate F: Packaging, Protobuf Alignment & Documentation Truth (P1)
 
 #### 3.6.1 Mandate & Core Vulnerability
-Prior to Round 2, `pyproject.toml` lacked modern lower bounds for `protobuf` and `grpcio`, risking wire desynchronization with compiled stubs. The gRPC server bound to `[::]` (all interfaces) by default, and `ReflexServiceServicer.Guard()` lacked full policy engine integration. Documentation made uncalibrated 95-99% retention claims, claimed guaranteed 0% game wipes, and conflated software Ed25519 signatures with hardware enclaves.
+Prior to Round 2, `pyproject.toml` lacked modern lower bounds for `protobuf` and `grpcio`, risking wire desynchronization with compiled stubs. The gRPC server bound to `[::]` (all interfaces) by default, and `SystemOneServiceServicer.Guard()` lacked full policy engine integration. Documentation made uncalibrated 95-99% retention claims, claimed guaranteed 0% game wipes, and conflated software Ed25519 signatures with hardware enclaves.
 
 #### 3.6.2 Before vs After Code Lineage
 
@@ -525,7 +525,7 @@ Prior to Round 2, `pyproject.toml` lacked modern lower bounds for `protobuf` and
 - *Loopback Binding & Dynamic Port Inspection*:
   `serve(host="127.0.0.1", port=50051)` binds strictly to `127.0.0.1` by default. Dynamic ports (`port=0`) assign `server.port = bound_port` for programmatic caller discovery. CLI provides `--host` with default `"127.0.0.1"`.
 - *Authentic Guard Policy Reference Monitor*:
-  `ReflexServiceServicer.Guard()` constructs an `ActionProposal`, evaluates it against `PolicyEngine`, commits audit entries to `ActionLedger`, signs receipts with Ed25519, and returns protobuf `GuardResponse`.
+  `SystemOneServiceServicer.Guard()` constructs an `ActionProposal`, evaluates it against `PolicyEngine`, commits audit entries to `ActionLedger`, signs receipts with Ed25519, and returns protobuf `GuardResponse`.
 
 **File: `tests/test_grpc_external_generated_client.py`**
 - Standalone integration test compiles `src/system1/proto/reflex.proto` into isolated client stubs, starts a loopback server, and validates `Decide`, `Guard` (ALLOW/DENY), `VerifyReceipt`, and `HealthCheck` RPCs.
@@ -533,7 +533,7 @@ Prior to Round 2, `pyproject.toml` lacked modern lower bounds for `protobuf` and
 **Documentation Truth Reconciliations**
 - `README.md`: Updated installation instructions to `pip install system1`, qualified retention claims (95%–99%) to empirical calibrated workloads, and qualified software Ed25519 signatures.
 - `docs/SPEEDRUN_SHOWDOWN_WORLD_RECORDS.md` & `examples/gaming/pokemon_kaizo_speedrun.py`: Qualified "0% wipe rate" to empirical benchmark runs and formal verification.
-- `docs/architecture/technical_specification.md` & `docs/paper/reflex_whitepaper.md`: Reconciled software signatures with optional HSM integration.
+- `docs/architecture/technical_specification.md` & `docs/paper/system1_whitepaper.md`: Reconciled software signatures with optional HSM integration.
 
 #### 3.6.3 Verification & Attestation Records
 - **Reviewer 2 (Gate F)**: APPROVED. Confirmed loopback binding, protobuf serialization, and doc accuracy.
@@ -579,7 +579,7 @@ $ python3 -m pytest tests/ -v
 
 ## 5. Twin-Namespace Parity Attestation
 
-Reflex enforces complete functional, structural, and export symmetry between its primary package namespace (`src/system1/`) and its backward-compatibility facade (`src/reflex/`).
+System 1 enforces complete functional, structural, and export symmetry between its primary package namespace (`src/system1/`) and its backward-compatibility facade (`src/reflex/`).
 
 ### 5.1 Submodule Parity
 All 16 submodules and integration packages exist and export identical symbol tables across both namespaces:
@@ -604,7 +604,7 @@ All 16 submodules and integration packages exist and export identical symbol tab
 | 16 | `integrations.mcp` & `langchain` | 12 exports | 12 exports | `set()` |
 
 ### 5.2 Object Identity and CLI Symmetry
-- **Object Identity**: Key classes (`ZeroEgressViolationError`, `PolicyEngine`, `ActionProposal`, `DecisionWitnessReceipt`, `ActionLedger`, `ReflexEngine`) share identical Python object IDs across namespaces (`reflex.guard.PolicyEngine is system1.guard.PolicyEngine`).
+- **Object Identity**: Key classes (`ZeroEgressViolationError`, `PolicyEngine`, `ActionProposal`, `DecisionWitnessReceipt`, `ActionLedger`, `SystemOneEngine`) share identical Python object IDs across namespaces (`reflex.guard.PolicyEngine is system1.guard.PolicyEngine`).
 - **Subprocess Parity**: Isolated subprocess resolution tests (`tests/test_system1_exports.py::test_twin_namespaces_isolated_subprocess_parity`) prove that both packages resolve identical attributes in fresh Python processes.
 - **CLI Entrypoints**:
   ```bash
@@ -671,7 +671,7 @@ python3 -m pytest tests/
 
 ## 7. Conclusion & Release Readiness
 
-With the closure of Milestone 4, the Reflex / System 1 Round 2 Hardening process is **COMPLETE**.
+With the closure of Milestone 4, the System 1 / System 1 Round 2 Hardening process is **COMPLETE**.
 
 All six gates (Gates A through F) have achieved full consensus approval across Workers, Reviewers, Challengers, and Forensic Auditors:
 1. **Gate A (Compositional Authorization)**: Strict hierarchical rule composition (`DENY` > `REQUIRE_APPROVAL` > `ALLOW`), decoupled constraint evaluation, fail-closed argument limits, and 0 harmless sentinel executions.
@@ -681,4 +681,4 @@ All six gates (Gates A through F) have achieved full consensus approval across W
 5. **Gate E (True Zero-Egress Enforcement)**: Centralized transport gatekeeper raising `ZeroEgressViolationError` prior to socket/DNS initialization, physical verification via network traps (0 packets leaked), elimination of silent synthetic teacher fallback, and fail-closed client construction.
 6. **Gate F (Packaging, Protobuf Alignment & Documentation Truth)**: Modern protobuf/gRPC lower bounds (`protobuf>=5.26.1`, `grpcio>=1.62.0`), loopback server defaults (`127.0.0.1`), authentic gRPC `Guard` policy monitor integration, external client verification, and verified documentation truth.
 
-**Final Certification**: The Reflex / System 1 runtime satisfies all architectural, security, mathematical, and cryptographic invariants. The repository is certified **READY FOR PRODUCTION DISTRIBUTION**.
+**Final Certification**: The System 1 / System 1 runtime satisfies all architectural, security, mathematical, and cryptographic invariants. The repository is certified **READY FOR PRODUCTION DISTRIBUTION**.

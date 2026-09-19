@@ -1,7 +1,7 @@
-# Reflex / System 1 Runtime Hardening — Release Verification Report
+# System 1 / System 1 Runtime Hardening — Release Verification Report
 
 **Document Version**: 1.0.0-final  
-**Release Target**: Reflex / System 1 Hardening (v0.1.0)  
+**Release Target**: System 1 / System 1 Hardening (v0.1.0)  
 **Date**: 2026-09-18T16:15:00Z  
 **Author**: Integrator Worker (`teamwork_preview_worker_integrator`)  
 **Repository**: `/Volumes/Storage/reflex`  
@@ -19,7 +19,7 @@
 
 ## 1. Executive Summary
 
-Reflex / System 1 is an ultra-low-latency dual-process cognitive runtime designed to bridge fast non-autoregressive decision execution on local metal (System 1 fast reflex) with strategic deliberative governance (System 2 deliberate planner). Operating strictly within a sub-2ms local latency budget and guaranteeing zero external network egress, Reflex provides drop-in compatibility across twin namespaces (`reflex` and `system1`) alongside seamless TypeSafe AI client integration.
+System 1 / System 1 is an ultra-low-latency dual-process cognitive runtime designed to bridge fast non-autoregressive decision execution on local metal (System 1 fast reflex) with strategic deliberative governance (System 2 deliberate planner). Operating strictly within a sub-2ms local latency budget and guaranteeing zero external network egress, System 1 provides drop-in compatibility across twin namespaces (`reflex` and `system1`) alongside seamless TypeSafe AI client integration.
 
 Prior to this hardening release, comprehensive architectural auditing revealed ten critical regression failure invariants spanning authorization gating, cryptographic attestation, conformal calibration bounds, cache invalidation, cutover generalization, and polyglot wire serialization. Under certain adversarial conditions, these flaws could permit unauthenticated tool execution, blind policy reference monitors through argument truncation, accept tampered receipts, serve stale pre-update decisions from Tier 0 cache, or promote overfitted models based on memorized training exemplars.
 
@@ -30,12 +30,12 @@ This release successfully resolves all 10 regression failure invariants and impl
 ## 2. Comprehensive Breakdown of Requirement Areas (R1–R6)
 
 ### R1. Authorization & Tool Execution Gating (P0)
-- **JSON-RPC Protocol Gating (`ReflexMCPProxy`)**:
-  `ReflexMCPProxy.handle_call()` enforces strict protocol segregation. Only JSON-RPC messages with `method == "tools/call"` can enter the tool dispatch pipeline. Non-tool methods (`ping`, `initialize`, `tools/list`) are intercepted prior to any execution logic and serviced with protocol-compliant JSON-RPC response structures, guaranteeing exactly 0 invocations of the underlying tool executor.
+- **JSON-RPC Protocol Gating (`SystemOneMCPProxy`)**:
+  `SystemOneMCPProxy.handle_call()` enforces strict protocol segregation. Only JSON-RPC messages with `method == "tools/call"` can enter the tool dispatch pipeline. Non-tool methods (`ping`, `initialize`, `tools/list`) are intercepted prior to any execution logic and serviced with protocol-compliant JSON-RPC response structures, guaranteeing exactly 0 invocations of the underlying tool executor.
 - **Untruncated Argument Binding & Parameter Inspection**:
-  The legacy 256-character string truncation (`[:256]`) in LangChain integrations was eliminated. The runtime inspects target functions via `inspect.signature()` in both `wrap_mcp_tool` and `ReflexToolInterceptor`, binding positional `*args` and default values into formal parameter names. Unbound positional arguments are preserved under `_args`. Payloads exceeding 4096 characters are safely hashed (`sha256:{digest}`) for bounded target naming while preserving the complete, untruncated payload in `proposal.arguments["input"]` and the policy context prompt.
+  The legacy 256-character string truncation (`[:256]`) in LangChain integrations was eliminated. The runtime inspects target functions via `inspect.signature()` in both `wrap_mcp_tool` and `SystemOneToolInterceptor`, binding positional `*args` and default values into formal parameter names. Unbound positional arguments are preserved under `_args`. Payloads exceeding 4096 characters are safely hashed (`sha256:{digest}`) for bounded target naming while preserving the complete, untruncated payload in `proposal.arguments["input"]` and the policy context prompt.
 - **Deterministic Pre-Inference Policy Engine Reference Monitor**:
-  `PolicyEngine` and `PolicyRule` were introduced in `src/system1/guard.py` to enforce deterministic security controls (scoping by tenant, principal, action pattern, target regex, denied target lists, and argument limits). `ReflexGuardHook.evaluate_proposal()` evaluates deterministic policy rules *before* model inference and cache retrieval. Any policy denial or approval requirement exerts immediate, absolute veto authority that cannot be bypassed by high model confidence, margin dominance heuristics, or teacher feedback.
+  `PolicyEngine` and `PolicyRule` were introduced in `src/system1/guard.py` to enforce deterministic security controls (scoping by tenant, principal, action pattern, target regex, denied target lists, and argument limits). `SystemOneGuardHook.evaluate_proposal()` evaluates deterministic policy rules *before* model inference and cache retrieval. Any policy denial or approval requirement exerts immediate, absolute veto authority that cannot be bypassed by high model confidence, margin dominance heuristics, or teacher feedback.
 - **Harmless Sentinel Execution**:
   Sentinel tools verify 0 invocations across all test suites for all `DENY`, `REQUIRE_APPROVAL`, malformed requests, or ledger errors.
 
@@ -45,7 +45,7 @@ This release successfully resolves all 10 regression failure invariants and impl
 - **Canonical Probabilities Binding & Tamper Detection**:
   Canonical normalized probabilities (`_canonical_probabilities`) are bound into `unsigned_payload()`, the SHA-256 receipt digest, and `RunWitnessEnvelope.guard_receipt`. Canonical precision is normalized to 12 decimal places (`round(float(p), 12)`). Cross-field validation checks canonical probabilities between receipt and envelope. Any perturbation down to $10^{-12}$ breaks the digest and envelope verification, forcing `verify_decision_witness_receipt()` to return `False`.
 - **Fail-Closed Audit Ledger (`LedgerWriteError`)**:
-  In fail-closed mode (`fail_closed_ledger=True`), write failures caused by read-only databases, disk exhaustion, or SQLite lock contention immediately raise `LedgerWriteError`. `ReflexGuardHook` verifies that `decision.receipt.ledger_record_id is not None`. If unrecorded, it forces `DecisionOutcome.DENY`, eliminating silent exception swallowing and preventing tool execution without durable audit trails.
+  In fail-closed mode (`fail_closed_ledger=True`), write failures caused by read-only databases, disk exhaustion, or SQLite lock contention immediately raise `LedgerWriteError`. `SystemOneGuardHook` verifies that `decision.receipt.ledger_record_id is not None`. If unrecorded, it forces `DecisionOutcome.DENY`, eliminating silent exception swallowing and preventing tool execution without durable audit trails.
 - **Two-Phase Execution Outcome Chaining**:
   `ActionLedger.record_execution_outcome()` logs post-execution statuses (`SUCCEEDED`, `FAILED`, `INDETERMINATE`) cryptographically chained via SHA-256 to the preceding authorization receipt digest. If tool execution completes but outcome recording fails, MCP proxy returns error code `-32001` with status `INDETERMINATE`.
 
@@ -61,13 +61,13 @@ This release successfully resolves all 10 regression failure invariants and impl
 
 ### R4. Cache Lifecycle & Online Learning Semantic Invalidation (P0)
 - **Online Learning Cache Invalidation**:
-  Upon online weight updates via recursive least-squares (Sherman-Morrison rank-1 update in `ReflexEngine.learn_from_tier2()`), `self.model_version` increments, `cache.evict_prompt(prompt)` purges matching prompt keys, and `cache.invalidate_prior_versions(self.model_version)` invalidates all cached entries from previous versions. Repeat queries immediately reflect the newly learned target without requiring manual cache flushes.
+  Upon online weight updates via recursive least-squares (Sherman-Morrison rank-1 update in `SystemOneEngine.learn_from_tier2()`), `self.model_version` increments, `cache.evict_prompt(prompt)` purges matching prompt keys, and `cache.invalidate_prior_versions(self.model_version)` invalidates all cached entries from previous versions. Repeat queries immediately reflect the newly learned target without requiring manual cache flushes.
 - **Comprehensive Cache Key Context Binding**:
   Cache keys strictly encode full parameter context:
   `s:{schema_digest}|v:{model_version}|sc:{policy_scope}|a:{alpha:.6f}|m:{margin_threshold:.6f}|st:{strict}`.
   Altering risk parameters ($\alpha$, margin threshold, strict mode) or security scopes produces immediate cache misses, preventing cross-parameter cache bleeding.
 - **Deep Defensive Copying**:
-  `SemanticReflexCache` and `ReflexEngine` enforce `copy.deepcopy()` across all cached and returned decision dictionaries (`values`, `confidences`, `conformal_sets`, `probabilities`, `margins`). Callers cannot mutate internal cache memory.
+  `SemanticSystemOneCache` and `SystemOneEngine` enforce `copy.deepcopy()` across all cached and returned decision dictionaries (`values`, `confidences`, `conformal_sets`, `probabilities`, `margins`). Callers cannot mutate internal cache memory.
 
 ### R5. Rigorous Cutover Promotion & Generalization Validation (P1)
 - **Decoupled 3-Way Disjoint Partitioning**:
@@ -81,11 +81,11 @@ This release successfully resolves all 10 regression failure invariants and impl
 - **Benchmark Provenance Labeling**:
   In `benchmarks/run_triple_crown_benchmark.py`, simulated cloud WAN latencies and token estimates are explicitly labeled as `SYNTHETIC_SIMULATED` across scorecards, tables, and JSON metadata. Genuine local execution is labeled `MEASURED_LIVE`.
 - **Genuine Compiled Protobuf & gRPC Wire Stubs**:
-  Cleaned `src/system1/proto/reflex.proto` and compiled official stubs `reflex_pb2.py` and `reflex_pb2_grpc.py`. `ReflexServiceServicer` serializes genuine binary Protobuf messages over the gRPC wire, verified with in-process stub roundtrips.
+  Cleaned `src/system1/proto/reflex.proto` and compiled official stubs `system1_pb2.py` and `system1_pb2_grpc.py`. `SystemOneServiceServicer` serializes genuine binary Protobuf messages over the gRPC wire, verified with in-process stub roundtrips.
 - **Twin-Namespace Packaging Symmetry**:
   Mirror modules `observability.py` and `otel.py` were added to `src/reflex/integrations/`. Package data in `pyproject.toml` packages all `.proto` files and compiled stubs in both `system1` and `reflex` namespaces. Clean wheel (`.whl`) and source distributions (`.tar.gz`) build and install cleanly.
 - **Documentation & Whitepaper Alignment**:
-  `README.md`, `docs/architecture/technical_specification.md`, and `docs/paper/reflex_whitepaper.md` were reconciled, clearly distinguishing software Ed25519 receipts from hardware enclaves, specifying local vs fallback egress paths, and providing exact mathematical proofs.
+  `README.md`, `docs/architecture/technical_specification.md`, and `docs/paper/system1_whitepaper.md` were reconciled, clearly distinguishing software Ed25519 receipts from hardware enclaves, specifying local vs fallback egress paths, and providing exact mathematical proofs.
 
 ---
 
@@ -93,7 +93,7 @@ This release successfully resolves all 10 regression failure invariants and impl
 
 ### Invariant 1: MCP Proxy Dispatch of Non-Tool Calls
 - **Root Cause**:
-  `ReflexMCPProxy.handle_call()` did not verify that incoming JSON-RPC requests had `method == "tools/call"`. Requests with `method="ping"` or `method="initialize"` that supplied tool arguments fell through to tool evaluation or failed unpredictably. Additionally, non-dict arguments (e.g. `"rm -rf /"` or `12345`) caused unhandled `AttributeError: 'str' object has no attribute 'get'`.
+  `SystemOneMCPProxy.handle_call()` did not verify that incoming JSON-RPC requests had `method == "tools/call"`. Requests with `method="ping"` or `method="initialize"` that supplied tool arguments fell through to tool evaluation or failed unpredictably. Additionally, non-dict arguments (e.g. `"rm -rf /"` or `12345`) caused unhandled `AttributeError: 'str' object has no attribute 'get'`.
 - **Line-Level Patch Locations**:
   - `src/system1/integrations/mcp.py:177-186`: In `intercept_jsonrpc()`, validate `isinstance(arguments, dict)`. Return code `-32602` if invalid.
   - `src/system1/integrations/mcp.py:217-235`: In `handle_call()`, intercept `method != "tools/call"`, returning protocol responses for `ping`, `initialize`, and `tools/list`.
@@ -113,7 +113,7 @@ This release successfully resolves all 10 regression failure invariants and impl
   - When raw input strings exceeding 4096 characters were passed to `canonical_target`, `ActionProposal.create()` raised an unhandled `ValueError` via `_required_target()`.
 - **Line-Level Patch Locations**:
   - `src/system1/integrations/langchain.py:88-101`: Removed `[:256]` slice; implemented SHA-256 target hashing for strings $>4096$ chars; preserved full payload in `proposal.arguments["input"]` and `context_prompt`.
-  - `src/system1/integrations/langchain.py:134-147, 155-168, 246-258`: Added `inspect.signature` parameter binding and target hashing to `ReflexToolInterceptor`.
+  - `src/system1/integrations/langchain.py:134-147, 155-168, 246-258`: Added `inspect.signature` parameter binding and target hashing to `SystemOneToolInterceptor`.
   - `src/system1/integrations/mcp.py:109-113, 343-356`: Added signature binding to `wrap_mcp_tool` and target hashing to `evaluate_mcp_call`.
 - **Before Evidence**:
   - Input `"safe_prefix " + "malicious_command" * 50` was truncated at 256 characters, dropping the malicious command from policy inspection.
@@ -154,7 +154,7 @@ This release successfully resolves all 10 regression failure invariants and impl
 
 ### Invariant 5: Read-Only / Corrupt Ledger Executes Tool Without Durable Recording
 - **Root Cause**:
-  In `ReflexEngine.decide()` and `ReflexGuardHook.evaluate_proposal()`, SQLite ledger write errors (e.g., read-only database, disk full) were swallowed in `try/except` blocks, allowing actions to execute without audit logging.
+  In `SystemOneEngine.decide()` and `SystemOneGuardHook.evaluate_proposal()`, SQLite ledger write errors (e.g., read-only database, disk full) were swallowed in `try/except` blocks, allowing actions to execute without audit logging.
 - **Line-Level Patch Locations**:
   - `src/system1/ledger.py:30`: Defined `LedgerWriteError`.
   - `src/system1/engine.py:487-488, 560-561, 773-774, 816-817`: Added `fail_closed_ledger: bool = False`; raised `LedgerWriteError` on ledger failure.
@@ -164,7 +164,7 @@ This release successfully resolves all 10 regression failure invariants and impl
   - When SQLite database was marked read-only (`chmod 444`), `decide()` logged an exception to stderr and returned an approval. The tool executor ran with zero ledger records.
 - **After Evidence**:
   - When ledger write fails, `engine.decide()` raises `LedgerWriteError` in fail-closed mode.
-  - `ReflexGuardHook` catches write errors, detects missing `ledger_record_id`, and immediately returns `DENY`. Sentinel executor call count remains 0.
+  - `SystemOneGuardHook` catches write errors, detects missing `ledger_record_id`, and immediately returns `DENY`. Sentinel executor call count remains 0.
   - Post-execution outcomes (`SUCCEEDED`, `FAILED`, `INDETERMINATE`) are cryptographically linked to the authorization receipt digest.
   - Verified in `tests/test_attestation_invariants.py:test_invariant_5_*`.
 
@@ -352,8 +352,8 @@ assert reflex.LedgerWriteError is system1.LedgerWriteError
 assert reflex.PolicyRule is system1.PolicyRule
 assert reflex.PolicyEngine is system1.PolicyEngine
 assert reflex.ConformalPredictor is system1.ConformalPredictor
-assert reflex.ReflexMCPProxy is system1.ReflexMCPProxy
-assert reflex.ReflexGuardCallbackHandler is system1.ReflexGuardCallbackHandler
+assert reflex.SystemOneMCPProxy is system1.SystemOneMCPProxy
+assert reflex.SystemOneGuardCallbackHandler is system1.SystemOneGuardCallbackHandler
 assert reflex.verify_decision_witness_receipt == system1.verify_decision_witness_receipt
 print('Twin-namespace symmetry verified successfully!')
 "
@@ -367,7 +367,7 @@ import zipfile
 z = zipfile.ZipFile('dist/system1-0.1.0-py3-none-any.whl')
 names = z.namelist()
 assert any('reflex/proto/reflex.proto' in n for n in names)
-assert any('system1/proto/reflex_pb2.py' in n for n in names)
+assert any('system1/proto/system1_pb2.py' in n for n in names)
 assert any('reflex/integrations/observability.py' in n for n in names)
 assert any('system1/compat/typesafe.py' in n for n in names)
 print('Wheel packaging verified: all proto and mirror modules included!')
@@ -378,4 +378,4 @@ print('Wheel packaging verified: all proto and mirror modules included!')
 
 ## 7. Conclusion & Release Sign-Off
 
-The Reflex / System 1 Runtime Hardening release (v0.1.0) satisfies all functional, architectural, cryptographic, and mathematical requirements set forth in `ORIGINAL_REQUEST.md` and `PROJECT.md`. All 10 regression failure invariants are closed with line-level evidence and verified by independent peer reviewers and adversarial challengers. The runtime is certified for production deployment.
+The System 1 / System 1 Runtime Hardening release (v0.1.0) satisfies all functional, architectural, cryptographic, and mathematical requirements set forth in `ORIGINAL_REQUEST.md` and `PROJECT.md`. All 10 regression failure invariants are closed with line-level evidence and verified by independent peer reviewers and adversarial challengers. The runtime is certified for production deployment.

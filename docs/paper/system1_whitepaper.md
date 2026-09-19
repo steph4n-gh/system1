@@ -1,12 +1,12 @@
-# Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts
+# System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts
 
 **steph4n** (`@steph4n` on X)  
-*Reflex Core Research Team*  
-Repository: [`https://github.com/steph4n-gh/reflex`](https://github.com/steph4n-gh/reflex)  
+*System 1 Core Research Team*  
+Repository: [`https://github.com/steph4n-gh/system1`](https://github.com/steph4n-gh/system1)  
 March 2026
 
 > **Suggested Citation:**  
-> steph4n (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. Reflex Core Research Team. Available at: `https://github.com/steph4n-gh/reflex`.
+> steph4n (2026). *System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. System 1 Core Research Team. Available at: `https://github.com/steph4n-gh/system1`.
 
 ---
 
@@ -14,9 +14,9 @@ March 2026
 
 Modern autonomous agent architectures rely almost universally on autoregressive Large Language Models (LLMs) to execute low-level discrete decisions—such as tool selection, action routing, parameter classification, and state triage. This paradigm introduces prohibitive latency (300 ms to 1,500 ms per round-trip), unbounded economic expenditure ($0.03 to $0.15 per thousand tokens), non-deterministic execution jitter, and severe data sovereignty vulnerabilities via external Wide Area Network (WAN) egress.
 
-Inspired by Kahneman’s dual-process cognitive framework, we introduce **Reflex**, an open-source, machine-native **System 1 decision runtime** engineered for sub-millisecond execution directly on host silicon. Reflex implements non-autoregressive decision classification through high-dimensional hybrid sparse-dense vector projection and closed-form multi-head Ridge Regression. To guarantee operational safety without human intervention, Reflex integrates **Split Conformal Prediction**, bounding decision error with finite-sample coverage guarantees ($\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$) and escalating ambiguous prompts to an external deliberative System 2 governor (such as OpenAI Astra & GPT-6 series [Sol, Terra, Luna], Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok). Every execution is sealed into an append-only, SHA-256 hash-chained SQLite ledger signed with local Ed25519 cryptographic keys, providing non-repudiable audit receipts with zero network sockets opened.
+Inspired by Kahneman’s dual-process cognitive framework, we introduce **System 1**, an open-source, machine-native **System 1 decision runtime** engineered for sub-millisecond execution directly on host silicon. System 1 implements non-autoregressive decision classification through high-dimensional hybrid sparse-dense vector projection and closed-form multi-head Ridge Regression. To guarantee operational safety without human intervention, System 1 integrates **Split Conformal Prediction**, bounding decision error with finite-sample coverage guarantees ($\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$) and escalating ambiguous prompts to an external deliberative System 2 governor (such as OpenAI Astra & GPT-6 series [Sol, Terra, Luna], Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok). Every execution is sealed into an append-only, SHA-256 hash-chained SQLite ledger signed with local Ed25519 cryptographic keys, providing non-repudiable audit receipts with zero network sockets opened.
 
-In empirical benchmarks, Reflex achieves a **9.8 µs L1 exact-cache hit latency**, a **0.98 ms P50 cold forward-pass latency**, and sustains over **1,000 queries per second (QPS)** across concurrent worker threads on Apple Silicon Metal and Linux BLAS. In a real-world Game Boy emulator testbed running Pokémon Red/Blue at 60 FPS (16.6 ms frame budget), Reflex evaluates memory-mapped combat states and issues policy-prescribed controller actions in 0.98 ms—consuming only 5.9% of the frame budget and permitting up to 16 state evaluations per hardware frame with zero marginal cloud API token expenditure. Furthermore, via an autonomous apprentice-to-metal distillation engine, Reflex demonstrates zero-downtime cutover from SaaS endpoints (such as TypeSafe AI) into local metal, reducing cloud API egress by 98.4% across production traffic (factoring in the 1.6% System 2 edge escalation rate) and by 100% for all localized decisions.
+In empirical benchmarks, System 1 achieves a **9.8 µs L1 exact-cache hit latency**, a **0.98 ms P50 cold forward-pass latency**, and sustains over **1,000 queries per second (QPS)** across concurrent worker threads on Apple Silicon Metal and Linux BLAS. In a real-world Game Boy emulator testbed running Pokémon Red/Blue at 60 FPS (16.6 ms frame budget), System 1 evaluates memory-mapped combat states and issues policy-prescribed controller actions in 0.98 ms—consuming only 5.9% of the frame budget and permitting up to 16 state evaluations per hardware frame with zero marginal cloud API token expenditure. Furthermore, via an autonomous apprentice-to-metal distillation engine, System 1 demonstrates zero-downtime cutover from SaaS endpoints (such as TypeSafe AI) into local metal, reducing cloud API egress by 98.4% across production traffic (factoring in the 1.6% System 2 edge escalation rate) and by 100% for all localized decisions.
 
 ---
 
@@ -36,10 +36,10 @@ While acceptable for asynchronous conversational interfaces, this latency profil
 
 ### 1.2 The Dual-Process Cognitive Architecture
 Cognitive science has long established that biological intelligence does not invoke slow, deliberative reasoning for recurring, pattern-matched stimuli. In Daniel Kahneman’s dual-process model (*Thinking, Fast and Slow*):
-* **System 1 (Reflex)**: Operates automatically, fast, and instinctively with near-zero energy consumption and no sense of voluntary control.
+* **System 1 (System 1)**: Operates automatically, fast, and instinctively with near-zero energy consumption and no sense of voluntary control.
 * **System 2 (Deliberation)**: Allocates attention to effortful mental operations, including complex computations, novel problem solving, and formal logic.
 
-Reflex implements the **machine-native System 1 layer**. Under calibrated empirical enterprise workloads, it resolves 95% to 99% of high-frequency agent actions in $<1$ ms on local silicon (exact retention is workload- and distribution-dependent), halting and escalating to a frontier System 2 deliberative governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—**strictly when the conformal prediction set indicates statistical ambiguity ($|\mathcal{C}_{1-\alpha}| \ne 1$) or margin deficiency ($M(\mathbf{x}) < \tau$)**.
+System 1 implements the **machine-native System 1 layer**. Under calibrated empirical enterprise workloads, it resolves 95% to 99% of high-frequency agent actions in $<1$ ms on local silicon (exact retention is workload- and distribution-dependent), halting and escalating to a frontier System 2 deliberative governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—**strictly when the conformal prediction set indicates statistical ambiguity ($|\mathcal{C}_{1-\alpha}| \ne 1$) or margin deficiency ($M(\mathbf{x}) < \tau$)**.
 
 ```
                            ┌───────────────────────────────┐
@@ -48,7 +48,7 @@ Reflex implements the **machine-native System 1 layer**. Under calibrated empiri
                                            │
                                            ▼
                            ┌───────────────────────────────┐
-                           │   Reflex System 1 Engine      │ ◄─── In-Memory BLAS / Metal
+                           │   System 1 System 1 Engine      │ ◄─── In-Memory BLAS / Metal
                            │   • Latency: < 1.0 ms P50     │      (Zero Token Overhead)
                            │   • Sub-10µs L1 Exact Hit     │
                            └───────────────┬───────────────┘
@@ -84,7 +84,7 @@ Reflex implements the **machine-native System 1 layer**. Under calibrated empiri
 ### 2.1 Hybrid Sparse-Dense Semantic Projection
 Pure lexical n-gram representations (sparse bag-of-words or hashing trick) suffer from semantic rigidity: synonyms and paraphrases that share no subwords fail to project onto proximate coordinates. Conversely, dense contextual embeddings (e.g., standard 4096-dimensional transformer representations) require deep multi-layer matrix multiplication, violating the sub-millisecond execution budget.
 
-Reflex resolves this trade-off via **Hybrid Sparse-Dense Subword Projection**. Let an input string $s$ be decomposed into token unigrams, character $n$-grams ($n \in \{3, 4, 5\}$), and normalized word stems.
+System 1 resolves this trade-off via **Hybrid Sparse-Dense Subword Projection**. Let an input string $s$ be decomposed into token unigrams, character $n$-grams ($n \in \{3, 4, 5\}$), and normalized word stems.
 
 #### Sparse Component
 We apply the MurmurHash3 feature hashing trick into a compact sparse subspace $\mathbb{R}^{D_{\text{sparse}}}$ (default $D_{\text{sparse}} = 4096$):
@@ -121,7 +121,7 @@ When background intensity dominates distinctive features ($\|\mathbf{b}\|_2 = B 
 
 $$\cos \theta_{jk} = \frac{\langle \mathbf{w}_j, \mathbf{w}_k \rangle}{\|\mathbf{w}_j\|_2 \|\mathbf{w}_k\|_2} \approx \frac{B^2}{B^2 + c^2} = 1 - \frac{c^2}{B^2 + c^2} \longrightarrow 1 \quad \text{as } B/c \to \infty$$
 
-This severe angular compression degrades linear classifier margins and causes numerical instability in softmax discrimination. Reflex applies **Contrastive Centering & Whitening**:
+This severe angular compression degrades linear classifier margins and causes numerical instability in softmax discrimination. System 1 applies **Contrastive Centering & Whitening**:
 1. Compute the empirical background centroid across all candidate choices:
    $$\boldsymbol{\mu} = \frac{1}{K} \sum_{k=1}^K \mathbf{w}_k$$
 2. Subtract the shared centroid to isolate class-discriminative feature directions:
@@ -215,7 +215,7 @@ Because $B/c$ typically ranges from $10$ to $50$ in natural language representat
 ## 3. Closed-Form Distillation & Fast Online Adaptation
 
 ### 3.1 Multi-Head Closed-Form Ridge Regression
-When synthesizing a new schema or compiling synthetic exemplars, Reflex does not employ stochastic gradient descent (SGD) or backpropagation. Instead, it solves for the global empirical risk minimizer in closed form in pure NumPy.
+When synthesizing a new schema or compiling synthetic exemplars, System 1 does not employ stochastic gradient descent (SGD) or backpropagation. Instead, it solves for the global empirical risk minimizer in closed form in pure NumPy.
 
 Let the training dataset consist of $N$ exemplar embeddings arranged in design matrix $\mathbf{X} \in \mathbb{R}^{N \times D}$ and multi-head target labels $\mathbf{Y} \in \mathbb{R}^{N \times K}$. We formulate the multi-head Ridge Regression objective:
 
@@ -239,7 +239,7 @@ $$\nabla^2_{\mathbf{W}} \mathcal{L}(\mathbf{W}) = \mathbf{I}_K \otimes (\mathbf{
 Since $\mathbf{X}^T \mathbf{X} \succeq 0$ and $\lambda > 0$, all eigenvalues of $(\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D)$ satisfy $\lambda_i \ge \lambda > 0$. The Hessian is strictly positive definite ($\nabla^2_{\mathbf{W}} \mathcal{L} \succ 0$), guaranteeing that $\mathbf{W}^*$ is the unique global minimizer.
 
 #### Cholesky Factorization
-Rather than computing the explicit matrix inverse $(\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D)^{-1}$, Reflex computes the Cholesky factorization:
+Rather than computing the explicit matrix inverse $(\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D)^{-1}$, System 1 computes the Cholesky factorization:
 $$\mathbf{A} = \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D = \mathbf{L} \mathbf{L}^T$$
 where $\mathbf{L} \in \mathbb{R}^{D \times D}$ is lower-triangular with strictly positive diagonal entries. The system is solved via forward substitution $\mathbf{L} \mathbf{Z} = \mathbf{X}^T \mathbf{Y}$ followed by back substitution $\mathbf{L}^T \mathbf{W}^* = \mathbf{Z}$ in under 12 ms, avoiding numerical inversion instability.
 
@@ -314,7 +314,7 @@ This is identically the recursive update $\mathbf{W}_{t+1}$. No approximations a
 
 ## 4. Conformal Ambiguity Gating & Provable Safety
 
-A fundamental failure mode of small classifiers is **uncalibrated overconfidence on out-of-distribution (OOD) inputs**. Reflex replaces heuristic softmax thresholds with **Split Conformal Prediction** (Vovk et al., 2005; Angelopoulos & Bates, 2021).
+A fundamental failure mode of small classifiers is **uncalibrated overconfidence on out-of-distribution (OOD) inputs**. System 1 replaces heuristic softmax thresholds with **Split Conformal Prediction** (Vovk et al., 2005; Angelopoulos & Bates, 2021).
 
 ### 4.1 Calibration Protocol
 Let $\mathcal{Z} = \mathcal{X} \times \mathcal{Y}$ denote the sample space, where $\mathcal{X} \subseteq \mathbb{R}^D$ and $\mathcal{Y} = \{1, \dots, K\}$. We hold out an independent calibration dataset $\mathcal{D}_{\text{cal}} = \{(\mathbf{x}_i, y_i)\}_{i=1}^n$ disjoint from the training fold.
@@ -333,7 +333,7 @@ If $k > n$, $\hat{q}_{1-\alpha}$ is set to $1.0$, guaranteeing conservative cove
 
 ### 4.2 Prediction Set Construction & Finite-Sample Coverage
 
-For an unseen query $\mathbf{x}_{n+1}$, Reflex constructs the conformal prediction set:
+For an unseen query $\mathbf{x}_{n+1}$, System 1 constructs the conformal prediction set:
 $$\mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1}) = \left\{ y \in \mathcal{Y} : 1 - \hat{P}(Y = y \mid \mathbf{x}_{n+1}) \le \hat{q}_{1-\alpha} \right\}$$
 
 **Theorem 2 (Finite-Sample Conformal Coverage Guarantee)**.  
@@ -371,7 +371,7 @@ Let $S_i = s(\mathbf{x}_i, y_i)$ for $i \in \{1, \dots, n\}$ and $S_{n+1} = s(\m
 ---
 
 ### 4.3 Fail-Closed Operational Escalation Policy
-Reflex enforces a deterministic, fail-closed operational policy:
+System 1 enforces a deterministic, fail-closed operational policy:
 1. **Pass Condition (Fast-Path Local Execution)**:  
    Execution proceeds locally on host silicon ($<1.0$ ms) if and only if:
    * **Singleton Prediction Set**: $|\mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})| = 1$ (exactly one candidate class satisfies the coverage bound).
@@ -387,7 +387,7 @@ Reflex enforces a deterministic, fail-closed operational policy:
 ## 5. Cryptographic Receipts & Zero-Egress Invariants
 
 ### 5.1 Append-Only SQLite ActionLedger
-Every decision evaluated by Reflex is recorded in an append-only, local SQLite database (`audit_trail.db`) operating in Write-Ahead Logging (`WAL`) mode with `PRAGMA synchronous = NORMAL`.
+Every decision evaluated by System 1 is recorded in an append-only, local SQLite database (`audit_trail.db`) operating in Write-Ahead Logging (`WAL`) mode with `PRAGMA synchronous = NORMAL`.
 
 To guarantee tamper-evidence against post-hoc manipulation, records are chained via cryptographic SHA-256 rolling Merkle digests:
 
@@ -396,7 +396,7 @@ $$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; t \;\|\; \text{canonical\_json}(\tex
 Where $h_0 = 0^{64}$ is the fixed genesis digest and $\text{canonical\_json}$ enforces RFC 8785 deterministic key ordering and zero whitespace. The entry payload incorporates the decision identifier, schema hash, prompt hash, prediction set cardinality, and timestamp. If an adversary modifies, inserts, or deletes a historical row $j < t$, the recurrence relation fails for all subsequent rows $k > j$, rendering any unauthorized tampering mathematically detectable.
 
 ### 5.2 Ed25519 Cryptographic Witness Receipts
-Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair generated and stored in `~/.system1/identity/`. Reflex executes pure software Ed25519 digital signatures via RFC 8032 standard primitives (using Python's `cryptography` library). Unlike specialized hardware enclave architectures (e.g. Intel SGX or AMD SEV) that require virtualization overhead, Reflex establishes non-repudiation and cryptographic chronological ordering at the application runtime layer. Hardware enclave or HSM root-of-trust key management is supported as an optional architectural integration rather than a mandatory hardware requirement. For every evaluated decision, Reflex produces a signed `RunWitnessEnvelope` containing:
+Each System 1 deployment maintains an on-device Ed25519 asymmetric keypair generated and stored in `~/.system1/identity/`. System 1 executes pure software Ed25519 digital signatures via RFC 8032 standard primitives (using Python's `cryptography` library). Unlike specialized hardware enclave architectures (e.g. Intel SGX or AMD SEV) that require virtualization overhead, System 1 establishes non-repudiation and cryptographic chronological ordering at the application runtime layer. Hardware enclave or HSM root-of-trust key management is supported as an optional architectural integration rather than a mandatory hardware requirement. For every evaluated decision, System 1 produces a signed `RunWitnessEnvelope` containing:
 * Canonical decision telemetry (action, parameters, calibrated probabilities, latency)
 * Conformal gating status ($|\mathcal{C}_{1-\alpha}|$, empirical threshold $\hat{q}_{1-\alpha}$, margin $M(\mathbf{x})$)
 * Rolling ledger head hash $h_t$
@@ -407,7 +407,7 @@ $$\sigma_t = \text{Ed25519\_Sign}\left( \text{private\_key}, \; h_t \;\|\; \text
 External auditors can independently verify the provenance, non-repudiation, and chronological ordering of agent actions using the public key `identity.pub` without access to runtime model memory or application secrets.
 
 ### 5.3 Architectural & In-Process Zero-Network-Egress Invariant
-Reflex is engineered under a zero-external-dependency constraint. The core runtime imports exclusively from Python’s standard library and `numpy`. Crucially:
+System 1 is engineered under a zero-external-dependency constraint. The core runtime imports exclusively from Python’s standard library and `numpy`. Crucially:
 * No HTTP clients (`requests`, `httpx`, `urllib.request`, `aiohttp`) are packaged or imported within the System 1 execution path.
 * No low-level networking sockets (`import socket`) or IPC telemetry daemons are instantiated during local inference.
 * All matrix computations, conformal evaluations, and SQLite ledger writes execute strictly within host process memory and local disk.
@@ -418,10 +418,10 @@ Reflex is engineered under a zero-external-dependency constraint. The core runti
 
 ## 6. Boundary Conditions, Cardinality Limits, and Operational Failure Modes
 
-While Reflex demonstrates sub-millisecond execution and distribution-free coverage under nominal operational envelopes, machine-native System 1 runtimes are subject to fundamental mathematical and spectral boundary conditions. In this section, we formalize the operational failure modes identified during adversarial stress audits—including hash capacity limits, high-cardinality margin collapse, recursive covariance asphyxiation, and composite schema poisoning—and prove the correctness of the architectural upgrades introduced to resolve them.
+While System 1 demonstrates sub-millisecond execution and distribution-free coverage under nominal operational envelopes, machine-native System 1 runtimes are subject to fundamental mathematical and spectral boundary conditions. In this section, we formalize the operational failure modes identified during adversarial stress audits—including hash capacity limits, high-cardinality margin collapse, recursive covariance asphyxiation, and composite schema poisoning—and prove the correctness of the architectural upgrades introduced to resolve them.
 
 ### 6.1 Zero-Shot Hash Projection Capacity & Dimensional Bounds
-Reflex projects unstructured input strings $s$ into a compact embedding space $\mathbb{R}^D$ ($D = 384$ default, $D = 4,160$ in hybrid configurations) via MurmurHash3 feature hashing and deterministic character n-gram projections.
+System 1 projects unstructured input strings $s$ into a compact embedding space $\mathbb{R}^D$ ($D = 384$ default, $D = 4,160$ in hybrid configurations) via MurmurHash3 feature hashing and deterministic character n-gram projections.
 
 By the **Johnson-Lindenstrauss Lemma**, given $N$ discrete token representations and distortion tolerance $\epsilon \in (0, 1)$, pairwise Euclidean distances are preserved within $(1 \pm \epsilon)$ if the projection dimension satisfies:
 $$D \ge \frac{8 \ln N}{\epsilon^2}$$
@@ -446,7 +446,7 @@ $$p_{(1)} \approx \frac{e^{z_{(1)}/T}}{\sum_k e^{z_k/T}} \approx 0.12, \quad p_{
 Under a fixed threshold $\tau_m = 0.08$, the condition $\Delta = 0.09 \ge 0.08$ is satisfied, triggering the margin gate override. The engine accepts $p_{(1)} = 0.12$ as a decisive prediction, despite the fact that $1 - p_{(1)} = 0.88$ (88% of total probability mass) is uncommitted entropy. The conformal ambiguity halt is falsely bypassed, yielding silent misclassification. $\blacksquare$
 
 **Architectural Solution (Dual Cardinality-Scaled Dominance Gate)**:  
-To eliminate high-cardinality margin collapse, Reflex upgrades Lever 3 by establishing two mandatory invariant bounds that must hold simultaneously:
+To eliminate high-cardinality margin collapse, System 1 upgrades Lever 3 by establishing two mandatory invariant bounds that must hold simultaneously:
 1. **Cardinality-Scaled Confidence Floor**: The winning probability must exceed the uniform baseline by an absolute offset $\tau_0$:
    $$p_{(1)} \ge \frac{1}{K} + \tau_0, \quad \text{with } \tau_0 = 0.15$$
    For $K = 77$, the required floor is $p_{(1)} \ge \frac{1}{77} + 0.15 \approx 0.163$. The dispersed pseudo-margin with $p_{(1)} = 0.12 < 0.163$ is rejected, preserving the conformal ambiguity halt.
@@ -455,7 +455,7 @@ To eliminate high-cardinality margin collapse, Reflex upgrades Lever 3 by establ
    This guarantees that even if $p_{(1)}$ is elevated, it cannot override ambiguity if the runner-up is nearly tied ($p_{(1)} \approx p_{(2)}$).
 
 ### 6.3 Covariance Asphyxiation in Online Sherman-Morrison Updates
-Under Lever 2, Reflex performs recursive least-squares (RLS) online adaptation via the Sherman-Morrison rank-1 formula:
+Under Lever 2, System 1 performs recursive least-squares (RLS) online adaptation via the Sherman-Morrison rank-1 formula:
 $$\mathbf{P}_{t+1} = \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{1 + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}}$$
 where $\mathbf{P}_t = \mathbf{A}_t^{-1} \in \mathbb{R}^{(D+1) \times (D+1)}$.
 
@@ -471,13 +471,13 @@ $$\|\Delta \mathbf{W}_{t+1}\|_F \le \|\mathbf{P}_{t+1}\|_2 \|\mathbf{x}_{t+1}\|_
 For $t = 500$ and $\|\mathbf{x}\|_2 \approx 1$, $\|\mathbf{P}_t\|_2 < 2 \times 10^{-3}$. When the environment experiences non-stationary distribution shift or new System 2 exemplar corrections arrive, the parameter update step size is suffocated by $\mathbf{P}_t \to \mathbf{0}$. $\blacksquare$
 
 **Architectural Solution (Exponential Forgetting Factor RLS)**:  
-Reflex introduces a calibrated forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
+System 1 introduces a calibrated forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
 $$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left[ \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}} \right], \quad \mathbf{B}_{t+1} = \lambda_f \mathbf{B}_t + \mathbf{x}_{t+1} \mathbf{y}_{t+1}^T$$
 Under $\lambda_f = 0.995$, the effective observation horizon is geometrically bounded by:
 $$N_{\text{eff}} = \sum_{k=0}^\infty \lambda_f^k = \frac{1}{1 - \lambda_f} = \frac{1}{1 - 0.995} = 200 \text{ steps}$$
 As $t \to \infty$, the inverse covariance converges to a non-zero steady-state limit:
 $$\mathbf{P}_\infty = (1 - \lambda_f) \boldsymbol{\Sigma}_{\mathbf{x}}^{-1} \succ \mathbf{0}$$
-The condition number $\kappa(\mathbf{P})$ remains strictly bounded under persistent excitation, preserving active learning sensitivity across millions of online decisions. To prevent asymmetric floating-point rounding divergence and eliminate covariance windup along unexcited subspace dimensions ($\lambda_{\max}(\mathbf{P}) \to \infty$), Reflex explicitly enforces three invariant safeguards:
+The condition number $\kappa(\mathbf{P})$ remains strictly bounded under persistent excitation, preserving active learning sensitivity across millions of online decisions. To prevent asymmetric floating-point rounding divergence and eliminate covariance windup along unexcited subspace dimensions ($\lambda_{\max}(\mathbf{P}) \to \infty$), System 1 explicitly enforces three invariant safeguards:
 1. **Hermitian Symmetrization**: $\mathbf{P}_{t+1} \leftarrow \frac{1}{2}\left(\mathbf{P}_{t+1} + \mathbf{P}_{t+1}^T\right)$.
 2. **Regularized Covariance Bounding**: If $\max_i P_{ii} > \frac{50.0}{\lambda_{\text{reg}}}$, the runtime rescales $\mathbf{P}_{t+1} \leftarrow s \mathbf{P}_{t+1}$ and $\mathbf{B}_{t+1} \leftarrow s^{-1} \mathbf{B}_{t+1}$ where $s = \frac{50.0 / \lambda_{\text{reg}}}{\max_i P_{ii}}$, exactly preserving weight invariance $\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$ while bounding spectral condition $\kappa(\mathbf{P}) < 10^5$.
 3. **Strict Positive-Definiteness**: $P_{ii} \leftarrow \max(P_{ii}, 10^{-6})$ preventing indefinite floating-point cancellation.
@@ -485,7 +485,7 @@ The condition number $\kappa(\mathbf{P})$ remains strictly bounded under persist
 ### 6.4 Recency Decay Inversion for Multi-Turn Agent Traces
 Autonomous agent interaction logs consist of ordered token sequences $S = (w_0, w_1, \dots, w_{N-1})$. In standard bag-of-words or uniform token projection, all tokens contribute equally to the document vector $\mathbf{x} = \frac{1}{N} \sum_i \mathbf{v}(w_i)$.  
 In multi-turn execution traces, earlier turns (system preamble, historical tool outputs) dominate the token count, diluting the directive in the latest user or tool message $w_{N-1}$.  
-Reflex introduces **Recency-Aware Context Weighting**:
+System 1 introduces **Recency-Aware Context Weighting**:
 $$\text{weight}(i) = \frac{\log(1 + \text{len}(w_i))}{\sqrt{1.0 + 0.05 \cdot (N - 1 - i)}}$$
 where $N - 1 - i$ is the backward distance from the trailing token.  
 - For the final token ($i = N - 1$), the decay denominator is $\sqrt{1.0 + 0} = 1.0$ (full weight).
@@ -497,7 +497,7 @@ $$|\mathcal{C}_{1-\alpha}^{(m)}| > 1 \implies \text{field } m \text{ is ambiguou
 In earlier implementations, any single ambiguous field triggered a global decision halt ($I_{\text{ambiguous}} = \bigvee_{m=1}^M I_{\text{ambiguous}}^{(m)}$).  
 However, advisory or non-critical fields (such as auxiliary sentiment tags or optional reason codes) frequently experience natural semantic fuzziness without impacting the determinism of the primary control action (e.g., `ActionRoute = "TRANSFER"`). Forcing a full System 2 frontier escalation for an ambiguous advisory field introduces unnecessary latency and token expense—a failure mode termed **Advisory Field Poisoning**.
 
-Reflex resolves this via field-level escalation granularity (`escalate_on_ambiguity: bool = True`):
+System 1 resolves this via field-level escalation granularity (`escalate_on_ambiguity: bool = True`):
 $$I_{\text{ambiguous}}^{\text{global}} = \bigvee_{m=1}^M \left( I_{\text{ambiguous}}^{(m)} \land \text{field}_m.\texttt{escalate\_on\_ambiguity} \right)$$
 Fields configured with `escalate_on_ambiguity=False` continue to emit calibrated prediction sets $\mathcal{C}_{1-\alpha}$ and log uncertainty into `DecisionResult.ambiguous_fields`, but do not trip $I_{\text{ambiguous}}^{\text{global}}$, isolating high-frequency control pathways from non-critical ambiguity.
 
@@ -506,32 +506,32 @@ Fields configured with `escalate_on_ambiguity=False` continue to emit calibrated
 ## 7. Empirical Evaluation & Benchmarks
 
 ### 7.1 Latency Comparison Across Architectures
-We benchmarked Reflex on an Apple M3 Max (14-core CPU, 36 GB Unified Memory) running macOS 15 and Linux Ubuntu 24.04 LTS against leading alternative decision paradigms across 10,000 independent trials.
+We benchmarked System 1 on an Apple M3 Max (14-core CPU, 36 GB Unified Memory) running macOS 15 and Linux Ubuntu 24.04 LTS against leading alternative decision paradigms across 10,000 independent trials.
 
 | Runtime Architecture | Hardware Location | Execution Paradigm | P50 Latency | P99 Latency | Relative Speedup | WAN Egress |
 |---|---|---|---|---|---|---|
-| **Reflex Tier 0 (L1 Cache)** | Host Memory | In-Process Exact Hash | **0.0098 ms (9.8 µs)** | **0.014 ms** | **86,700×** | **0 Bytes** |
-| **Reflex System 1 (Metal)** | Host Metal/BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **867×** | **0 Bytes** |
+| **System 1 Tier 0 (L1 Cache)** | Host Memory | In-Process Exact Hash | **0.0098 ms (9.8 µs)** | **0.014 ms** | **86,700×** | **0 Bytes** |
+| **System 1 System 1 (Metal)** | Host Metal/BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **867×** | **0 Bytes** |
 | Local 8B LLM (vLLM / Ollama) | Local GPU (RTX 4090) | Autoregressive (KV Cache) | 180.00 ms | 245.00 ms | 4.7× | 0 Bytes |
 | Cloud Fast API (Groq / Cerebras) | US-East WAN | Autoregressive Specialized ASIC | 220.00 ms | 410.00 ms | 3.9× | Full Payload |
 | Frontier Deliberative Governor (OpenAI Astra/GPT-6, Claude Opus 5, Gemini 3.1 Pro, xAI Grok) | Cloud WAN | Autoregressive Frontier Deliberation | 850.00 ms | 1,480.00 ms | 1.0× (Baseline) | Full Payload |
 | ReAct Multi-Turn Cloud Agent Loop | Cloud WAN | Multi-Call Tool Reasoning Loop | 3,200.00 ms | 6,800.00 ms | 0.26× | Full Payload |
 
-Reflex delivers an **867× latency improvement** over single-call frontier cloud reasoning models for cold forward passes on metal, and an **86,700× improvement** over cloud LLMs on repeated L1 cache hits (a 100× speedup over cold forward passes), eliminating WAN transit jitter completely.
+System 1 delivers an **867× latency improvement** over single-call frontier cloud reasoning models for cold forward passes on metal, and an **86,700× improvement** over cloud LLMs on repeated L1 cache hits (a 100× speedup over cold forward passes), eliminating WAN transit jitter completely.
 
 ---
 
 ### 7.2 60 FPS Real-Time Game Boy Control (Pokémon Red/Blue)
-To test Reflex under unforgiving real-time constraints, we interfaced the runtime directly with the `PyBoy` Game Boy hardware emulator running *Pokémon Red*. Game Boy hardware ticks at exactly 60.0 Hz (16.6 ms per frame).
+To test System 1 under unforgiving real-time constraints, we interfaced the runtime directly with the `PyBoy` Game Boy hardware emulator running *Pokémon Red*. Game Boy hardware ticks at exactly 60.0 Hz (16.6 ms per frame).
 
 ```
 Hardware Frame Budget:  |================| (16.6 ms)
 Cloud LLM Latency:      |======================================================...| (850 ms -> 51 frame drops)
-Reflex System 1 Pass:   |=| (0.98 ms -> consumes 5.9% of budget; up to 16 evaluations per frame)
+System 1 System 1 Pass:   |=| (0.98 ms -> consumes 5.9% of budget; up to 16 evaluations per frame)
 ```
 
-* **Observation Window**: Reflex extracted battle RAM vectors directly from `$D057` (Battle Mode flag `wIsInBattle`), `$D015` (Player HP `wBattleMonHP`), `$CFE6` (Enemy HP `wEnemyMonHP`), and combat move selection tables.
-* **Throughput**: In headless benchmark mode, Reflex sustained **10,400+ FPS** (measuring up to 13,096 FPS on hardware), evaluating 38 µs forward passes per state transition.
+* **Observation Window**: System 1 extracted battle RAM vectors directly from `$D057` (Battle Mode flag `wIsInBattle`), `$D015` (Player HP `wBattleMonHP`), `$CFE6` (Enemy HP `wEnemyMonHP`), and combat move selection tables.
+* **Throughput**: In headless benchmark mode, System 1 sustained **10,400+ FPS** (measuring up to 13,096 FPS on hardware), evaluating 38 µs forward passes per state transition.
 * **Combat Decision**: Navigated the combat decision graph (FIGHT menu $\to$ TACKLE selection), executing policy-prescribed controller actions and processing HP bar depleting animations at native 60 FPS with zero frame stutter.
 
 ---
@@ -539,7 +539,7 @@ Reflex System 1 Pass:   |=| (0.98 ms -> consumes 5.9% of budget; up to 16 evalua
 ### 7.3 Autonomous Apprentice-to-Metal Cutover Engine
 We evaluated `TypeSafeClient(mode="auto_cutover")` within an autonomous agent tool pipeline processing live streaming requests:
 * **Phase 1: Shadow Apprentice (Queries 1–50)**: Transparently proxied requests to the cloud SaaS API baseline (mean latency: 220 ms) while asynchronously recording prompt-action pairs to `ActionLedger`.
-* **Phase 2: Closed-Form Cutover (Query 51)**: `ReflexCompiler` solved closed-form Ridge Regression in 14.2 ms, calibrated conformal prediction bounds at $\alpha = 0.05$, verified 100% agreement on validation exemplars, and executed an atomic pointer swap to 100% local metal execution.
+* **Phase 2: Closed-Form Cutover (Query 51)**: `SystemOneCompiler` solved closed-form Ridge Regression in 14.2 ms, calibrated conformal prediction bounds at $\alpha = 0.05$, verified 100% agreement on validation exemplars, and executed an atomic pointer swap to 100% local metal execution.
 * **Post-Cutover Performance**: Decision latency immediately collapsed from 220 ms to 0.98 ms. With an empirical System 2 escalation rate of only 1.6%, external WAN data egress dropped by **98.4%** across production traffic, while localized decisions achieved **100% egress elimination (0 bytes)**.
 
 ---
@@ -555,15 +555,15 @@ Under a multi-threaded stress test simulating 8 concurrent worker threads execut
 ## 8. Related Work
 
 1. **Speculative Decoding & Draft Models**: Leviathan et al. (2023) introduced speculative decoding using small autoregressive draft models to propose token sequences verified in parallel by larger models. While effective for prose generation, speculative decoding remains fundamentally autoregressive and cannot achieve the sub-millisecond execution envelope required for real-time discrete state decisions.
-2. **Dual-Process Cognitive AI**: Booch et al. (2021) and Bengio (2017) formalized the conceptual integration of fast intuitive heuristics (System 1) with deliberate symbolic or neural reasoning (System 2). In late-2026 architectures, frontier models (OpenAI Astra & GPT-6 series, Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, and xAI Grok) represent powerful System 2 governors; Reflex provides the first machine-native, non-autoregressive System 1 runtime engineered to interface directly with these governors.
-3. **Conformal Risk Control & Uncertainty Quantification**: Vovk et al. (2005) and Angelopoulos & Bates (2021) developed distribution-free conformal prediction frameworks guaranteeing finite-sample error coverage. Reflex operationalizes conformal prediction for discrete agentic control, replacing uncalibrated softmax heuristics with provable fail-closed escalation gates.
-4. **Hardware-Attested Computing & Ledger Transparency**: Prior verifiable computing frameworks rely on confidential hardware enclaves (e.g., Intel SGX, AMD SEV) with significant virtualization overhead. Reflex establishes cryptographic non-repudiation at the application runtime layer through append-only SQLite Merkle chains and Ed25519 witness receipts (Bernstein et al., 2012).
+2. **Dual-Process Cognitive AI**: Booch et al. (2021) and Bengio (2017) formalized the conceptual integration of fast intuitive heuristics (System 1) with deliberate symbolic or neural reasoning (System 2). In late-2026 architectures, frontier models (OpenAI Astra & GPT-6 series, Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, and xAI Grok) represent powerful System 2 governors; System 1 provides the first machine-native, non-autoregressive System 1 runtime engineered to interface directly with these governors.
+3. **Conformal Risk Control & Uncertainty Quantification**: Vovk et al. (2005) and Angelopoulos & Bates (2021) developed distribution-free conformal prediction frameworks guaranteeing finite-sample error coverage. System 1 operationalizes conformal prediction for discrete agentic control, replacing uncalibrated softmax heuristics with provable fail-closed escalation gates.
+4. **Hardware-Attested Computing & Ledger Transparency**: Prior verifiable computing frameworks rely on confidential hardware enclaves (e.g., Intel SGX, AMD SEV) with significant virtualization overhead. System 1 establishes cryptographic non-repudiation at the application runtime layer through append-only SQLite Merkle chains and Ed25519 witness receipts (Bernstein et al., 2012).
 
 ---
 
 ## 9. Conclusion
 
-Reflex addresses the acute latency, economic, and data privacy bottlenecks of contemporary agentic AI. By decoupling high-frequency System 1 reflex actions from deliberate System 2 reasoning, Reflex enables autonomous agents to operate at machine-native speeds (0.98 ms P50 latency, 60 FPS hardware budgets) while enforcing rigorous mathematical safety guarantees through Split Conformal Prediction and Ed25519 cryptographic audit receipts. Reflex is fully open source under the Apache 2.0 license at `https://github.com/steph4n-gh/reflex`.
+System 1 addresses the acute latency, economic, and data privacy bottlenecks of contemporary agentic AI. By decoupling high-frequency System 1 reflex actions from deliberate System 2 reasoning, System 1 enables autonomous agents to operate at machine-native speeds (0.98 ms P50 latency, 60 FPS hardware budgets) while enforcing rigorous mathematical safety guarantees through Split Conformal Prediction and Ed25519 cryptographic audit receipts. System 1 is fully open source under the Apache 2.0 license at `https://github.com/steph4n-gh/system1`.
 
 ---
 
@@ -577,4 +577,4 @@ Reflex addresses the acute latency, economic, and data privacy bottlenecks of co
 6. Leviathan, Y., Kalman, M., & Matias, Y. (2023). *Fast Inference from Large Language Models via Speculative Decoding*. International Conference on Machine Learning (ICML).
 7. Booch, G., Fabiano, F., Horesh, L., et al. (2021). *Thinking Fast and Slow in AI*. Proceedings of the AAAI Conference on Human Computation and Crowdsourcing.
 8. Weinberger, K., Dasgupta, A., Langford, J., Smola, A., & Attenberg, J. (2009). *Feature Hashing for Large Scale Multitask Learning*. International Conference on Machine Learning (ICML).
-9. steph4n. (2026). *Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. Reflex Core Research Team. `https://github.com/steph4n-gh/reflex`.
+9. steph4n. (2026). *System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Cryptographic Witness Receipts*. System 1 Core Research Team. `https://github.com/steph4n-gh/system1`.

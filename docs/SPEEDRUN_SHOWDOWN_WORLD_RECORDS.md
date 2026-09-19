@@ -1,6 +1,6 @@
-# Reflex System 1: World Record & #1 Title Game Engines
+# System 1 System 1: World Record & #1 Title Game Engines
 
-This document specifies the architecture, algorithmic formulations, and operational instructions for three autonomous game-playing engines powered by the **Reflex / System 1** dual-process cognitive runtime:
+This document specifies the architecture, algorithmic formulations, and operational instructions for three autonomous game-playing engines powered by the **System 1 / System 1** dual-process cognitive runtime:
 1. **Option A: Universal Paperclips Speedrun (Speedrun.com World Record attempt)**
 2. **Option B: Pokémon Showdown Competitive Ladder (#1 Peak Elo bot)**
 3. **Option C: Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine**
@@ -24,7 +24,7 @@ This document specifies the architecture, algorithmic formulations, and operatio
                                        │
                                        ▼
                    ┌───────────────────────────────────────┐
-                   │    System 1: Local Reflex BLAS        │
+                   │    System 1: Local System 1 BLAS        │
                    │    - Sub-2ms Latency (P50 < 0.05 ms)  │
                    │    - Gen 1 Combat Damage Matrix       │
                    │    - 3-Phase Elasticity Policy        │
@@ -39,7 +39,7 @@ This document specifies the architecture, algorithmic formulations, and operatio
             Gated (Ambiguous) │                 │ Decisive
                               ▼                 ▼
              ┌────────────────────────┐  ┌────────────────────────┐
-             │ System 2 Planner:      │  │ Instant Reflex Dispatch│
+             │ System 2 Planner:      │  │ Instant System 1 Dispatch│
              │ - Minimax Yomi (L0/1/2)│  │ - Sub-millisecond      │
              │ - Sherman-Morrison     │  │   action execution     │
              │   distillation         │  └───────────┬────────────┘
@@ -122,7 +122,7 @@ python scripts/run_paperclips_speedrun.py --mode live --headed
 python scripts/run_pokemon_showdown.py --mode mock --turns 15
 
 # Live WebSocket connection to Pokémon Showdown ladder
-python scripts/run_pokemon_showdown.py --mode live --username MyReflexBot --turns 30
+python scripts/run_pokemon_showdown.py --mode live --username MySystemOneBot --turns 30
 ```
 
 ---
@@ -169,10 +169,10 @@ python scripts/run_pokemon_kaizo.py --no-pyboy --steps 16
 
 All three game engines are fully verified by dedicated unit and integration test suites:
 - `tests/test_paperclips_speedrun.py`: 18 tests covering split timer, 3-phase policy, mock simulation, and Playwright integration.
-- `tests/test_pokemon_showdown_reflex.py`: 17 tests covering Gen 1 stats, damage rolls, fixed-damage immunities, Showdown condition parsing, Sherman-Morrison distillation, Yomi planner, and mock battle exchange.
+- `tests/test_pokemon_showdown_system1.py`: 17 tests covering Gen 1 stats, damage rolls, fixed-damage immunities, Showdown condition parsing, Sherman-Morrison distillation, Yomi planner, and mock battle exchange.
 - `tests/test_pokemon_kaizo_speedrun.py`: 11 tests covering worst-case damage assessment, critical hit detection, route milestones, enemy level scaling, type immunity handling, and 13,000+ FPS turbo emulation.
 
 Run all tests:
 ```bash
-pytest tests/test_paperclips_speedrun.py tests/test_pokemon_showdown_reflex.py tests/test_pokemon_kaizo_speedrun.py -v
+pytest tests/test_paperclips_speedrun.py tests/test_pokemon_showdown_system1.py tests/test_pokemon_kaizo_speedrun.py -v
 ```

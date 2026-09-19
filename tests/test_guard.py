@@ -1,4 +1,4 @@
-"""Tests for Reflex Fail-Closed Reference Monitor / Guard Hook."""
+"""Tests for System 1 Fail-Closed Reference Monitor / Guard Hook."""
 
 import pytest
 
@@ -10,8 +10,8 @@ from system1 import (
     DecisionSchema,
     DefaultGuardDecisionSchema,
     MultiChoiceField,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneEngine,
+    SystemOneGuardHook,
     RiskLevel,
     ScoreField,
     SystemOneGuardHook,
@@ -30,7 +30,7 @@ def _make_proposal(tool: str, target: str, args: str = "") -> ActionProposal:
 
 
 def test_guard_hook_allows_safe_confident_action():
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     proposal = _make_proposal(
         tool="read_file",
         target="/Volumes/Storage/project/README.md",
@@ -48,7 +48,7 @@ def test_guard_hook_allows_safe_confident_action():
 
 
 def test_guard_hook_denies_unsafe_action():
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     proposal = _make_proposal(
         tool="execute_command",
         target="/bin/bash",
@@ -66,7 +66,7 @@ def test_guard_hook_denies_unsafe_action():
 
 
 def test_guard_hook_requires_approval_on_low_confidence():
-    hook = ReflexGuardHook(min_confidence=0.999, alpha=0.05)
+    hook = SystemOneGuardHook(min_confidence=0.999, alpha=0.05)
     proposal = _make_proposal(
         tool="network_request",
         target="https://external-service.org/webhook",
@@ -93,13 +93,13 @@ def test_guard_hook_handles_multichoice_without_false_ambiguity():
             threshold=0.1,
         )
 
-    engine = ReflexEngine(MultiTagGuardSchema)
+    engine = SystemOneEngine(MultiTagGuardSchema)
     engine.calibrate([
         ("read documentation", {"is_safe": True, "tags": ["audit", "local_fs"]}),
         ("wipe hard drive", {"is_safe": False, "tags": ["audit"]}),
     ] * 5)
 
-    hook = ReflexGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
+    hook = SystemOneGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
     proposal = _make_proposal(tool="read_file", target="README.md")
 
     interception = hook.evaluate_proposal(proposal, context_prompt="safe local read file project documentation")
@@ -115,7 +115,7 @@ def test_guard_hook_requires_approval_on_ood_empty_set():
     class SimpleSchema(DecisionSchema):
         category = ChoiceField(options=["read", "write"])
 
-    engine = ReflexEngine(SimpleSchema)
+    engine = SystemOneEngine(SimpleSchema)
     engine.calibrate([
         ("read file", {"category": "read"}),
         ("write file", {"category": "write"}),
@@ -131,10 +131,10 @@ def test_guard_hook_requires_approval_on_ood_empty_set():
         }
     )()
 
-    hook = ReflexGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
+    hook = SystemOneGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
     proposal = _make_proposal(tool="random_tool", target="unknown")
 
     interception = hook.evaluate_proposal(proposal, context_prompt="totally foreign out of distribution payload")
     assert interception.outcome == DecisionOutcome.REQUIRE_APPROVAL
     assert "out-of-distribution" in interception.reason.lower()
-    assert interception.policy_decision.rule_id == "reflex_conformal_ood"
+    assert interception.policy_decision.rule_id == "system1_conformal_ood"

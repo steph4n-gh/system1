@@ -1,4 +1,4 @@
-"""Reflex OpenTelemetry Tracing Integration (re-export from system1.integrations.otel)."""
+"""System 1 OpenTelemetry Tracing Integration (re-export from system1.integrations.otel)."""
 from __future__ import annotations
 
 from system1.integrations.otel import *

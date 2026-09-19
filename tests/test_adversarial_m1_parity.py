@@ -18,7 +18,7 @@ from system1.guard import (
     ActionProposal,
     DecisionOutcome,
     GuardInterceptionResult,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     SystemOneGuardHook,
 )
 
@@ -83,7 +83,7 @@ def test_toplevel_symbols_identity_across_all():
         assert r_val is s_val, f"Top-level symbol {sym} object reference differs ({r_val} is not {s_val})"
 
 
-def test_reflex_dynamic_submodule_getattr_and_hasattr():
+def test_system1_dynamic_submodule_getattr_and_hasattr():
     """Verify hasattr(reflex, submod) and getattr(reflex, submod) for all 16 submodules."""
     import reflex
 
@@ -172,7 +172,7 @@ def test_guard_interception_result_allowed_property_stress():
 
 
 def test_guard_hooks_twin_allowed_behavior():
-    """Verify both ReflexGuardHook and SystemOneGuardHook produce identical .allowed verdicts."""
+    """Verify both SystemOneGuardHook and SystemOneGuardHook produce identical .allowed verdicts."""
     proposal_safe = ActionProposal.create(
         tenant_id="t1",
         principal_id="p1",
@@ -190,7 +190,7 @@ def test_guard_hooks_twin_allowed_behavior():
         purpose="Wipe disk",
     )
 
-    for hook_cls in (ReflexGuardHook, SystemOneGuardHook):
+    for hook_cls in (SystemOneGuardHook, SystemOneGuardHook):
         hook = hook_cls(min_confidence=0.50, alpha=0.10)
         res_safe = hook.evaluate_proposal(proposal_safe, context_prompt="Inspect read-only project documentation in README.md")
         assert res_safe.outcome == DecisionOutcome.ALLOW

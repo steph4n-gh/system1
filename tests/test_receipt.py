@@ -1,4 +1,4 @@
-"""Tests for Reflex Cryptographic Decision Receipts and RunWitnessEnvelope."""
+"""Tests for System 1 Cryptographic Decision Receipts and RunWitnessEnvelope."""
 
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey

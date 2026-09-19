@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Pokémon Live Game Boy GUI Spectator & System 1 Reflex Agent.
+"""Pokémon Live Game Boy GUI Spectator & System 1 System 1 Agent.
 
 Runs the official Pokémon Game Boy cartridges on PyBoy with a native graphical
-macOS SDL2 window, full sprite animations, and real-time System 1 Reflex
+macOS SDL2 window, full sprite animations, and real-time System 1 System 1
 memory-bridge decision control.
 
 Features:
 - Native Graphical macOS Game Boy Window: Real Game Boy pixels, audio, and sprites.
 - In-Place Terminal HUD: Zero scrolling, zero flashing—updates smoothly like a real monitor.
-- Dual-Process Control: System 1 Reflex evaluates battle states at 60 FPS on the metal.
+- Dual-Process Control: System 1 System 1 evaluates battle states at 60 FPS on the metal.
 - Tactical Game Advisor HUD: Live weakness mapping and elemental advice.
 - Multi-Game Support: Seamlessly switch across Red, Blue, Yellow, Gold, Silver, Crystal.
 - Spectator Modes: Overworld navigation, Live Battle showcase, and Campaign speedrun.
@@ -42,8 +42,8 @@ def ensure_venv_reexec() -> None:
     if venv_py.is_file() and Path(sys.executable).resolve() != venv_py.resolve() and sys.version_info[:2] != (3, 13):
         os.execv(str(venv_py), [str(venv_py)] + sys.argv)
 
-# Import Reflex battle mechanics and PyBoy bridges
-from examples.gaming.pokemon_battle_reflex import (
+# Import System 1 battle mechanics and PyBoy bridges
+from examples.gaming.pokemon_battle_system1 import (
     BattleState,
     BattleType,
     Pokemon,
@@ -479,7 +479,7 @@ def run_pyboy_live_game(
     auto_play: bool = True,
     mode: str = "overworld",
 ) -> None:
-    """Boots Pokémon in PyBoy with native GUI window and System 1 Reflex integration."""
+    """Boots Pokémon in PyBoy with native GUI window and System 1 System 1 integration."""
     if mode == "battle":
         run_live_battle_mode(
             rom_path=rom_path,
@@ -850,7 +850,7 @@ def run_pyboy_live_game(
 
 def parse_gui_args(args_list: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Pokémon Live Game Boy GUI Spectator & System 1 Reflex Agent"
+        description="Pokémon Live Game Boy GUI Spectator & System 1 System 1 Agent"
     )
     parser.add_argument(
         "--game",

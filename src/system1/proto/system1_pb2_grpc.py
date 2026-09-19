@@ -3,10 +3,7 @@
 import grpc
 import warnings
 
-try:
-    from . import reflex_pb2 as reflex__pb2
-except (ImportError, ValueError):
-    import reflex_pb2 as reflex__pb2
+from . import system1_pb2 as system1__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__
@@ -21,15 +18,15 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + ' but the generated code in reflex_pb2_grpc.py depends on'
+        + ' but the generated code in system1_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class ReflexServiceStub(object):
-    """ReflexService exposes the Reflex decision engine over gRPC for polyglot
+class SystemOneServiceStub:
+    """SystemOneService exposes the System 1 decision engine over gRPC for polyglot
     agent stacks (TypeScript, Go, Rust, etc.).
     """
 
@@ -40,29 +37,29 @@ class ReflexServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Decide = channel.unary_unary(
-                '/reflex.v1.ReflexService/Decide',
-                request_serializer=reflex__pb2.DecideRequest.SerializeToString,
-                response_deserializer=reflex__pb2.DecideResponse.FromString,
+                '/reflex.v1.SystemOneService/Decide',
+                request_serializer=system1__pb2.DecideRequest.SerializeToString,
+                response_deserializer=system1__pb2.DecideResponse.FromString,
                 _registered_method=True)
         self.Guard = channel.unary_unary(
-                '/reflex.v1.ReflexService/Guard',
-                request_serializer=reflex__pb2.GuardRequest.SerializeToString,
-                response_deserializer=reflex__pb2.GuardResponse.FromString,
+                '/reflex.v1.SystemOneService/Guard',
+                request_serializer=system1__pb2.GuardRequest.SerializeToString,
+                response_deserializer=system1__pb2.GuardResponse.FromString,
                 _registered_method=True)
         self.VerifyReceipt = channel.unary_unary(
-                '/reflex.v1.ReflexService/VerifyReceipt',
-                request_serializer=reflex__pb2.VerifyReceiptRequest.SerializeToString,
-                response_deserializer=reflex__pb2.VerifyReceiptResponse.FromString,
+                '/reflex.v1.SystemOneService/VerifyReceipt',
+                request_serializer=system1__pb2.VerifyReceiptRequest.SerializeToString,
+                response_deserializer=system1__pb2.VerifyReceiptResponse.FromString,
                 _registered_method=True)
         self.HealthCheck = channel.unary_unary(
-                '/reflex.v1.ReflexService/HealthCheck',
-                request_serializer=reflex__pb2.HealthCheckRequest.SerializeToString,
-                response_deserializer=reflex__pb2.HealthCheckResponse.FromString,
+                '/reflex.v1.SystemOneService/HealthCheck',
+                request_serializer=system1__pb2.HealthCheckRequest.SerializeToString,
+                response_deserializer=system1__pb2.HealthCheckResponse.FromString,
                 _registered_method=True)
 
 
-class ReflexServiceServicer(object):
-    """ReflexService exposes the Reflex decision engine over gRPC for polyglot
+class SystemOneServiceServicer:
+    """SystemOneService exposes the System 1 decision engine over gRPC for polyglot
     agent stacks (TypeScript, Go, Rust, etc.).
     """
 
@@ -95,38 +92,38 @@ class ReflexServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_ReflexServiceServicer_to_server(servicer, server):
+def add_SystemOneServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Decide': grpc.unary_unary_rpc_method_handler(
                     servicer.Decide,
-                    request_deserializer=reflex__pb2.DecideRequest.FromString,
-                    response_serializer=reflex__pb2.DecideResponse.SerializeToString,
+                    request_deserializer=system1__pb2.DecideRequest.FromString,
+                    response_serializer=system1__pb2.DecideResponse.SerializeToString,
             ),
             'Guard': grpc.unary_unary_rpc_method_handler(
                     servicer.Guard,
-                    request_deserializer=reflex__pb2.GuardRequest.FromString,
-                    response_serializer=reflex__pb2.GuardResponse.SerializeToString,
+                    request_deserializer=system1__pb2.GuardRequest.FromString,
+                    response_serializer=system1__pb2.GuardResponse.SerializeToString,
             ),
             'VerifyReceipt': grpc.unary_unary_rpc_method_handler(
                     servicer.VerifyReceipt,
-                    request_deserializer=reflex__pb2.VerifyReceiptRequest.FromString,
-                    response_serializer=reflex__pb2.VerifyReceiptResponse.SerializeToString,
+                    request_deserializer=system1__pb2.VerifyReceiptRequest.FromString,
+                    response_serializer=system1__pb2.VerifyReceiptResponse.SerializeToString,
             ),
             'HealthCheck': grpc.unary_unary_rpc_method_handler(
                     servicer.HealthCheck,
-                    request_deserializer=reflex__pb2.HealthCheckRequest.FromString,
-                    response_serializer=reflex__pb2.HealthCheckResponse.SerializeToString,
+                    request_deserializer=system1__pb2.HealthCheckRequest.FromString,
+                    response_serializer=system1__pb2.HealthCheckResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'reflex.v1.ReflexService', rpc_method_handlers)
+            'reflex.v1.SystemOneService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('reflex.v1.ReflexService', rpc_method_handlers)
+    server.add_registered_method_handlers('reflex.v1.SystemOneService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class ReflexService(object):
-    """ReflexService exposes the Reflex decision engine over gRPC for polyglot
+class SystemOneService:
+    """SystemOneService exposes the System 1 decision engine over gRPC for polyglot
     agent stacks (TypeScript, Go, Rust, etc.).
     """
 
@@ -144,9 +141,9 @@ class ReflexService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/reflex.v1.ReflexService/Decide',
-            reflex__pb2.DecideRequest.SerializeToString,
-            reflex__pb2.DecideResponse.FromString,
+            '/reflex.v1.SystemOneService/Decide',
+            system1__pb2.DecideRequest.SerializeToString,
+            system1__pb2.DecideResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -171,9 +168,9 @@ class ReflexService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/reflex.v1.ReflexService/Guard',
-            reflex__pb2.GuardRequest.SerializeToString,
-            reflex__pb2.GuardResponse.FromString,
+            '/reflex.v1.SystemOneService/Guard',
+            system1__pb2.GuardRequest.SerializeToString,
+            system1__pb2.GuardResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -198,9 +195,9 @@ class ReflexService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/reflex.v1.ReflexService/VerifyReceipt',
-            reflex__pb2.VerifyReceiptRequest.SerializeToString,
-            reflex__pb2.VerifyReceiptResponse.FromString,
+            '/reflex.v1.SystemOneService/VerifyReceipt',
+            system1__pb2.VerifyReceiptRequest.SerializeToString,
+            system1__pb2.VerifyReceiptResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -225,9 +222,9 @@ class ReflexService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/reflex.v1.ReflexService/HealthCheck',
-            reflex__pb2.HealthCheckRequest.SerializeToString,
-            reflex__pb2.HealthCheckResponse.FromString,
+            '/reflex.v1.SystemOneService/HealthCheck',
+            system1__pb2.HealthCheckRequest.SerializeToString,
+            system1__pb2.HealthCheckResponse.FromString,
             options,
             channel_credentials,
             insecure,

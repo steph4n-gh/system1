@@ -1,4 +1,4 @@
-"""Tests for Reflex Domain Expert Training, Distillation, and MoE Workflows.
+"""Tests for System 1 Domain Expert Training, Distillation, and MoE Workflows.
 
 Validates the full lifecycle described in docs/guides/training_experts.md and examples/train_expert.py:
 - Pathway A: Synthetic distillation, .s1m serialization (<20KB), and deserialization.
@@ -22,7 +22,7 @@ from system1.compiler import (
     MAGIC_HEADER,
     CompiledHeadWeights,
     CompiledSystemOneModel,
-    ReflexCompiler,
+    SystemOneCompiler,
 )
 from system1.core.schema import (
     BooleanField,
@@ -30,7 +30,7 @@ from system1.core.schema import (
     DecisionSchema,
     ScoreField,
 )
-from system1.engine import ReflexEngine
+from system1.engine import SystemOneEngine
 
 
 # ============================================================================
@@ -91,7 +91,7 @@ class MoERouterSchema(DecisionSchema):
 
 def test_pathway_a_synthetic_distillation_and_s1m_binary(tmp_path: Path):
     """Verify Pathway A: Synthetic distillation, binary size < 20KB, and exact deserialization."""
-    compiler = ReflexCompiler(
+    compiler = SystemOneCompiler(
         IncidentTriageSchema,
         dimension=256,
         regularization=1.0,
@@ -163,7 +163,7 @@ def test_pathway_b_offline_supervised_compilation(tmp_path: Path):
         ],
     }
 
-    compiler = ReflexCompiler(IncidentTriageSchema, dimension=128, regularization=0.5)
+    compiler = SystemOneCompiler(IncidentTriageSchema, dimension=128, regularization=0.5)
     expert = compiler.compile(exemplars=historical_dataset, samples_per_choice=15)
 
     # Verify domain predictions on clear samples
@@ -179,15 +179,15 @@ def test_pathway_b_offline_supervised_compilation(tmp_path: Path):
 
 
 def test_pathway_c_engine_evaluation_and_latency(tmp_path: Path):
-    """Verify Pathway C: Wrapping in ReflexEngine, conformal gating, and sub-1ms SLA."""
-    compiler = ReflexCompiler(IncidentTriageSchema, dimension=128)
+    """Verify Pathway C: Wrapping in SystemOneEngine, conformal gating, and sub-1ms SLA."""
+    compiler = SystemOneCompiler(IncidentTriageSchema, dimension=128)
     expert = compiler.compile(samples_per_choice=10)
 
     s1m_path = tmp_path / "compiled_eval.s1m"
     expert.save(s1m_path)
 
     loaded = CompiledSystemOneModel.load(s1m_path)
-    engine = ReflexEngine(IncidentTriageSchema, model=loaded, enable_margin_gating=True)
+    engine = SystemOneEngine(IncidentTriageSchema, model=loaded, enable_margin_gating=True)
 
     # 1. Warmup and evaluate decision
     prompt = "Checkout service responding with elevated P99 latency of 850ms"
@@ -215,7 +215,7 @@ def test_pathway_c_engine_evaluation_and_latency(tmp_path: Path):
 
 def test_pathway_d_online_sherman_morrison_adaptation(tmp_path: Path):
     """Verify Pathway D: Online Sherman-Morrison rank-1 adaptation with forgetting factor."""
-    compiler = ReflexCompiler(IncidentTriageSchema, dimension=128, forgetting_factor=0.995)
+    compiler = SystemOneCompiler(IncidentTriageSchema, dimension=128, forgetting_factor=0.995)
     expert = compiler.compile(samples_per_choice=10)
 
     novel_prompt = "Unseen zero-day network anomaly on internal mesh gateway"
@@ -254,9 +254,9 @@ def test_pathway_d_online_sherman_morrison_adaptation(tmp_path: Path):
 def test_pathway_e_mixture_of_experts_composition(tmp_path: Path):
     """Verify Pathway E: 2-tier Mixture of Experts dispatching with total pipeline latency < 1.5ms."""
     # 1. Compile Router and Domain Experts (dimension=256 for linguistic fidelity)
-    router = ReflexCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
-    infra_exp = ReflexCompiler(IncidentTriageSchema, dimension=256).compile(samples_per_choice=15)
-    sec_exp = ReflexCompiler(SecurityIncidentSchema, dimension=256).compile(samples_per_choice=15)
+    router = SystemOneCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
+    infra_exp = SystemOneCompiler(IncidentTriageSchema, dimension=256).compile(samples_per_choice=15)
+    sec_exp = SystemOneCompiler(SecurityIncidentSchema, dimension=256).compile(samples_per_choice=15)
 
     experts = {
         "infra_expert": infra_exp,
@@ -293,8 +293,8 @@ def test_pathway_e_mixture_of_experts_composition(tmp_path: Path):
 def test_expert_hyperparameter_bounds_and_drift_handling():
     """Verify different regularization, dimensions, and continuous drift updates."""
     # Test low regularization (0.05) and high regularization (5.0)
-    c_low = ReflexCompiler(IncidentTriageSchema, dimension=128, regularization=0.05).compile(samples_per_choice=5)
-    c_high = ReflexCompiler(IncidentTriageSchema, dimension=128, regularization=5.0).compile(samples_per_choice=5)
+    c_low = SystemOneCompiler(IncidentTriageSchema, dimension=128, regularization=0.05).compile(samples_per_choice=5)
+    c_high = SystemOneCompiler(IncidentTriageSchema, dimension=128, regularization=5.0).compile(samples_per_choice=5)
 
     assert c_low.dimension == 128
     assert c_high.dimension == 128
@@ -323,7 +323,7 @@ def test_adversarial_label_flip_online_adaptation():
     Tests alternating label flip sequences (y -> ~y -> y) to verify that exponential forgetting
     unlearns outdated hyperplanes without causing numerical ill-conditioning or covariance blowup.
     """
-    compiler = ReflexCompiler(IncidentTriageSchema, dimension=128, forgetting_factor=0.995)
+    compiler = SystemOneCompiler(IncidentTriageSchema, dimension=128, forgetting_factor=0.995)
     expert = compiler.compile(samples_per_choice=10)
 
     prompt = "Kubernetes pod crash loop backoff with memory saturation"
@@ -353,7 +353,7 @@ def test_metal_mlx_backend_support(tmp_path: Path):
     """Verify expert compilation, serialization, and inference with Apple Silicon Metal (backend='mlx')."""
     pytest.importorskip("mlx.core")
 
-    compiler = ReflexCompiler(IncidentTriageSchema, dimension=128, backend="mlx")
+    compiler = SystemOneCompiler(IncidentTriageSchema, dimension=128, backend="mlx")
     expert = compiler.compile(samples_per_choice=8)
 
     s1m_path = tmp_path / "mlx_expert.s1m"

@@ -1,4 +1,4 @@
-"""Shared fixtures and configuration for Reflex / System 1 E2E test suite."""
+"""Shared fixtures and configuration for System 1 / System 1 E2E test suite."""
 
 from __future__ import annotations
 
@@ -63,9 +63,9 @@ class E2ETriageSchema(DecisionSchema):
     """Canonical triage schema for requirement-driven E2E tests."""
 
     route = ChoiceField(
-        options=["local_reflex", "cloud_planner", "human_escalation"],
+        options=["local_system1", "cloud_planner", "human_escalation"],
         descriptions={
-            "local_reflex": "deterministic safe fast read or cached calculation",
+            "local_system1": "deterministic safe fast read or cached calculation",
             "cloud_planner": "complex synthesis multi-step strategic planning",
             "human_escalation": "high-consequence irreversible credential or security action",
         },

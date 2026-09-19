@@ -234,7 +234,7 @@ def test_enterprise_stress_showcase_alias():
 def test_firewall_classification_and_conformal_accuracy():
     """Verify distilled firewall achieves high accuracy across benign, admin, exploit, and multi-choice tags."""
     from system1.core.embeddings import HybridProjector
-    from system1.compiler import ReflexCompiler
+    from system1.compiler import SystemOneCompiler
     from system1.compat.typesafe import _build_dynamic_schema
 
     schema_dict = get_autonomous_agent_firewall_schema()

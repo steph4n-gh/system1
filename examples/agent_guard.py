@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Reflex Standalone Example: Agent Tool Guard & Confinement.
+"""System 1 Standalone Example: Agent Tool Guard & Confinement.
 
-Demonstrates using Reflex as a hardware-enforced fail-closed reference monitor
+Demonstrates using System 1 as a hardware-enforced fail-closed reference monitor
 intercepting agent tool calls with sub-2ms latency, conformal ambiguity detection,
 cryptographic Ed25519 receipts, and tamper-evident SQLite ActionLedger hash chaining.
 
 Showcases four integration paradigms:
-1. Native Reference Monitor (ReflexGuardHook + ActionProposal + ActionLedger)
+1. Native Reference Monitor (SystemOneGuardHook + ActionProposal + ActionLedger)
 2. TypeSafe SDK Drop-in Import Swap (from system1.compat.typesafe import TypeSafeClient, Choice, Noul, Score)
 3. Zero-Code-Change Monkey Patching (patch_typesafe() -> import typesafe_sdk)
 4. Live Side-by-Side Comparison vs TypeSafe Cloud (or realistic WAN baseline fallback)
@@ -30,7 +30,7 @@ import system1
 from system1 import (
     ActionProposal,
     DecisionOutcome,
-    ReflexGuardHook,
+    SystemOneGuardHook,
 )
 from system1.compat.typesafe import (
     Choice,
@@ -60,12 +60,12 @@ def make_proposal(tool: str, target: str, args: str, purpose: str) -> ActionProp
 
 def run_native_reference_monitor(test_actions: list[tuple[ActionProposal, str]]):
     print("\n" + "=" * 76)
-    print("  MODE 1: NATIVE HARDWARE REFERENCE MONITOR (ReflexGuardHook + Ledger)")
+    print("  MODE 1: NATIVE HARDWARE REFERENCE MONITOR (SystemOneGuardHook + Ledger)")
     print("=" * 76)
 
     signing_key = Ed25519PrivateKey.generate()
     ledger = ActionLedger(":memory:")
-    guard = ReflexGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.05)
+    guard = SystemOneGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.05)
 
     print("\nIntercepting Agent Proposals via Reference Monitor:")
     for proposal, prompt in test_actions:
@@ -173,7 +173,7 @@ def run_monkey_patch_mode(test_actions: list[tuple[ActionProposal, str]]):
 
 def run_side_by_side_comparison(test_actions: list[tuple[ActionProposal, str]]):
     print("\n" + "=" * 76)
-    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (Reflex System 1 vs TypeSafe Cloud)")
+    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (System 1 System 1 vs TypeSafe Cloud)")
     print("=" * 76)
 
     api_key = os.environ.get("TYPESAFE_API_KEY", "") or os.environ.get("JEV_API_KEY", "")

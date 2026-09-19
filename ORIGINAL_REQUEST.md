@@ -2,7 +2,7 @@
 
 ## Initial Request — 2026-09-17T23:00:52Z
 
-Execute a comprehensive final polish and packaging pass across the Reflex / System 1 repository to prepare it for public release, ensuring cohesive documentation, verified benchmarks and demos, robust packaging, and clean automated test execution.
+Execute a comprehensive final polish and packaging pass across the System 1 / System 1 repository to prepare it for public release, ensuring cohesive documentation, verified benchmarks and demos, robust packaging, and clean automated test execution.
 
 Working directory: /Volumes/Storage/reflex
 Integrity mode: development
@@ -39,7 +39,7 @@ User directive received: "make sure the paperclip demos are well dcouimented, th
 
 Please note that `examples/paperclips_typesafe_dropin.py` is a high-fidelity demonstration recreating Diogo Almeida's (TypeSafe AI / Jev CEO) viral Universal Paperclips demo. It features:
 - 1-line `patch_typesafe()` drop-in compatibility
-- 4 execution modes: `dropin`, `baseline`, `compare` (side-by-side Reflex vs Jev WAN with latency/egress comparison), and `cutover` (Trojan Horse apprentice-to-metal transition)
+- 4 execution modes: `dropin`, `baseline`, `compare` (side-by-side System 1 vs Jev WAN with latency/egress comparison), and `cutover` (Trojan Horse apprentice-to-metal transition)
 - Dynamic choices and system prompt matching the Jev workspace
 - Dual-pane ASCII HUD with real-time state and calibrated probability bars
 - Ed25519 receipts, SQLite ActionLedger auditing, and JSONL run trajectory logging in `scratch/runs/`
@@ -56,21 +56,21 @@ Ensure that:
 
 Requested team: Academic Document Review & Fact-Checking Team (Technical Writer, late-2026 AI SME, Mathematical Verifier, Adversarial Bullshit Detectors)
 
-Rigorous peer review, mathematical verification, empirical validation, and technical refinement of the Reflex academic whitepaper (`docs/paper/reflex_whitepaper.md`) and technical architecture specification (`docs/architecture/technical_specification.md`). The team must rigorously audit every equation, eliminate superficial hype or unsubstantiated claims, verify late-2026 AI landscape consistency, and ensure publication-grade clarity that resonates with senior systems researchers.
+Rigorous peer review, mathematical verification, empirical validation, and technical refinement of the System 1 academic whitepaper (`docs/paper/system1_whitepaper.md`) and technical architecture specification (`docs/architecture/technical_specification.md`). The team must rigorously audit every equation, eliminate superficial hype or unsubstantiated claims, verify late-2026 AI landscape consistency, and ensure publication-grade clarity that resonates with senior systems researchers.
 
 Working directory: `/Volumes/Storage/reflex`
 Integrity mode: `development`
 
 ## Reference Documents
-- Target Whitepaper: `docs/paper/reflex_whitepaper.md`
+- Target Whitepaper: `docs/paper/system1_whitepaper.md`
 - System Architecture Specification: `docs/architecture/technical_specification.md`
-- Primary Benchmark Codebase: `examples/four_levers_benchmark.py`, `examples/deep_jev_benchmark.py`, `examples/pokemon_battle_reflex.py`
+- Primary Benchmark Codebase: `examples/four_levers_benchmark.py`, `examples/deep_jev_benchmark.py`, `examples/pokemon_battle_system1.py`
 - Test Suite: `tests/` (377 passing unit and integration tests)
 
 ## Requirements
 
 ### R1. Mathematical & Proof Rigor Audit
-Every mathematical formulation, theorem, proof, and matrix dimension in `docs/paper/reflex_whitepaper.md` must be mathematically sound, formally verified, and dimensionally consistent:
+Every mathematical formulation, theorem, proof, and matrix dimension in `docs/paper/system1_whitepaper.md` must be mathematically sound, formally verified, and dimensionally consistent:
 - Theorem 1 (Contrastive Centering & Whitening / Angular Expansion): Formal statement, geometric proof, and hypersphere projection properties.
 - Theorem 2 (Finite-Sample Conformal Coverage): Formal proof of exchangeability and coverage bound $\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(X_{n+1})) \ge 1 - \alpha$.
 - Sherman-Morrison Rank-1 Inversion: Matrix dimensional consistency ($\mathbf{x}$ as $D \times 1$ column vector vs $1 \times D$ row vector, $\mathbf{W}$ as $D \times K$, covariance matrix $\mathbf{A} \in \mathbb{R}^{D \times D}$).
@@ -102,7 +102,7 @@ Audit every section for unwarranted hand-waving, ungrounded marketing hype, or b
 
 ### Empirical Verifiability
 - [ ] 100% of benchmark numbers cited in tables and text are traceable to executable benchmark scripts in `examples/`.
-- [ ] Memory-mapped addresses for Pokémon Red/Blue match exact PyBoy RAM offsets in `examples/pokemon_battle_reflex.py`.
+- [ ] Memory-mapped addresses for Pokémon Red/Blue match exact PyBoy RAM offsets in `examples/pokemon_battle_system1.py`.
 - [ ] Zero unsubstantiated performance claims.
 
 ### Content & Tone Certification
@@ -113,11 +113,11 @@ Audit every section for unwarranted hand-waving, ungrounded marketing hype, or b
 
 ## 2026-09-18T14:10:45Z
 
-# Reflex / System 1 — Close Correctness, Authorization, Attestation, and Reliability Gaps
+# System 1 / System 1 — Close Correctness, Authorization, Attestation, and Reliability Gaps
 
 Requested team: Full engineering, integrator, and independent verification team with adversarial challenger
 
-Close correctness, authorization, cryptographic attestation, calibration, cache lifecycle, cutover validation, and packaging/benchmark gaps across the Reflex / System 1 runtime while preserving compact local decision performance and reflex/system1 parity.
+Close correctness, authorization, cryptographic attestation, calibration, cache lifecycle, cutover validation, and packaging/benchmark gaps across the System 1 / System 1 runtime while preserving compact local decision performance and reflex/system1 parity.
 
 Working directory: /Volumes/Storage/reflex
 Integrity mode: development
@@ -141,7 +141,7 @@ Integrity mode: development
 ## Requirements
 
 ### R1. Authorization & Tool Execution Gating (P0)
-- Enforce that only valid `tools/call` JSON-RPC messages can enter tool dispatch in `ReflexMCPProxy.handle_call()`; non-tool methods (`ping`, `initialize`) must never invoke the tool executor.
+- Enforce that only valid `tools/call` JSON-RPC messages can enter tool dispatch in `SystemOneMCPProxy.handle_call()`; non-tool methods (`ping`, `initialize`) must never invoke the tool executor.
 - Bind the complete executable request (including defaults, positional `_args`, and nested structures) to the policy proposal without character truncation (eliminate the 256-char limit in LangChain and context replacement in MCP).
 - Implement explicit policy checks (principal, tenant, scope, target, action, limits) that deterministically override classifier confidence, cached evaluations, and teacher feedback.
 - Harmless sentinel executor must record zero side effects after any denial, malformed request, argument mismatch, or authorization error.
@@ -205,7 +205,7 @@ Integrity mode: development
 
 ## 2026-09-18T18:26:21Z
 
-# Reflex / System 1 — Round 2: Close Enforcement, Attestation, and Promotion Gaps
+# System 1 / System 1 — Round 2: Close Enforcement, Attestation, and Promotion Gaps
 
 Requested team: Full engineering, integrator, and independent verification team with adversarial challenger
 

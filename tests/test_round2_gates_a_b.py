@@ -6,7 +6,7 @@ Covers:
   2. Decouple Rule Applicability from Constraint Evaluation in PolicyRule.
   3. Fail-Closed Constrained Arguments in argument_limits (missing keys, type mismatches, boolean values).
   4. Release Invariant 1: No Execution Bypass on deterministic ALLOW (signed receipt + durable ledger entry).
-  5. Immutable Canonical Action Dispatch in ReflexMCPProxy, wrap_mcp_tool, and ReflexToolInterceptor.
+  5. Immutable Canonical Action Dispatch in SystemOneMCPProxy, wrap_mcp_tool, and SystemOneToolInterceptor.
   6. Harmless Sentinel Execution (0 invocations on all rejections and ledger failures).
 
 - Gate B: Authenticated Final Authorization & Durability (P0)
@@ -37,19 +37,19 @@ from system1.guard import (
     PolicyDecision,
     PolicyEngine,
     PolicyRule,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     RiskLevel,
 )
 from system1.integrations.langchain import (
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexIndeterminateExecutionError,
-    ReflexToolInterceptor,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneIndeterminateExecutionError,
+    SystemOneToolInterceptor,
     wrap_langchain_tool,
 )
 from system1.integrations.mcp import (
-    ReflexMCPBlockedError,
-    ReflexMCPProxy,
+    SystemOneMCPBlockedError,
+    SystemOneMCPProxy,
     wrap_mcp_tool,
 )
 from system1.ledger import ActionLedger, LedgerError, LedgerWriteError
@@ -294,7 +294,7 @@ def test_gate_a_deterministic_allow_issues_signed_receipt_and_ledger_entry(tmp_p
     )
     policy_engine = PolicyEngine(rules=[allow_rule])
 
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=policy_engine,
         ledger=ledger,
         signing_key=signing_key,
@@ -350,7 +350,7 @@ def test_gate_a_deterministic_allow_fails_closed_if_ledger_write_fails(tmp_path)
     )
     policy_engine = PolicyEngine(rules=[allow_rule])
 
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=policy_engine,
         ledger=ledger,
         fail_closed_ledger=True,
@@ -371,7 +371,7 @@ def test_gate_a_deterministic_allow_fails_closed_if_ledger_write_fails(tmp_path)
     assert result.outcome == DecisionOutcome.DENY
     assert result.allowed is False
     assert "ActionLedger write failed" in result.reason
-    assert result.policy_decision.rule_id == "reflex_ledger_failure"
+    assert result.policy_decision.rule_id == "system1_ledger_failure"
 
 
 # ===========================================================================
@@ -380,11 +380,11 @@ def test_gate_a_deterministic_allow_fails_closed_if_ledger_write_fails(tmp_path)
 
 
 def test_gate_a_mcp_proxy_canonical_immutable_dispatch():
-    """ReflexMCPProxy dispatches exact frozen canonical arguments, ignoring caller mutations."""
+    """SystemOneMCPProxy dispatches exact frozen canonical arguments, ignoring caller mutations."""
     allow_rule = PolicyRule(rule_id="allow_safe", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow test")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
     sentinel = SentinelTarget()
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     request_dict = {
         "jsonrpc": "2.0",
@@ -415,8 +415,8 @@ def test_gate_a_wrap_mcp_tool_immutable_dispatch_and_sentinel():
         PolicyRule(rule_id="deny_writes", effect=DecisionOutcome.DENY, target_pattern=r".*write.*", reason="Veto writes"),
         PolicyRule(rule_id="allow_reads", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow reads"),
     ]
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=rules))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=rules))
+    proxy = SystemOneMCPProxy(guard=hook)
 
     sentinel = SentinelTarget()
     wrapped_fn = wrap_mcp_tool(proxy=proxy, tool_name="execute_file")(sentinel.execute_file)
@@ -427,22 +427,22 @@ def test_gate_a_wrap_mcp_tool_immutable_dispatch_and_sentinel():
     assert sentinel.call_count == 1
 
     # 2. Denied call -> 0 executions
-    with pytest.raises(ReflexMCPBlockedError):
+    with pytest.raises(SystemOneMCPBlockedError):
         wrapped_fn("/safe/write_payload.txt", mode="write", retries=1)
 
     assert sentinel.call_count == 1  # call count did not increase
 
 
 def test_gate_a_langchain_interceptor_immutable_dispatch_and_sentinel():
-    """ReflexToolInterceptor dispatches canonicalized arguments and guarantees 0 executions on denial."""
+    """SystemOneToolInterceptor dispatches canonicalized arguments and guarantees 0 executions on denial."""
     rules = [
         PolicyRule(rule_id="deny_deletions", effect=DecisionOutcome.DENY, target_pattern=r".*delete.*", reason="Veto deletions"),
         PolicyRule(rule_id="allow_reads", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow reads"),
     ]
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=rules))
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=rules))
 
     sentinel = SentinelTarget()
-    interceptor = ReflexToolInterceptor(tool=sentinel.execute_file, guard=hook, tool_name="file_tool")
+    interceptor = SystemOneToolInterceptor(tool=sentinel.execute_file, guard=hook, tool_name="file_tool")
 
     # 1. Allowed call
     res = interceptor("/safe/data.txt", mode="read", retries=5)
@@ -450,7 +450,7 @@ def test_gate_a_langchain_interceptor_immutable_dispatch_and_sentinel():
     assert sentinel.call_count == 1
 
     # 2. Denied call
-    with pytest.raises(ReflexGuardBlockedException):
+    with pytest.raises(SystemOneGuardBlockedException):
         interceptor("/data/delete_all.txt", mode="delete")
 
     assert sentinel.call_count == 1
@@ -613,13 +613,13 @@ def test_gate_b_authorization_receipt_binding_and_tamper_detection():
 
 
 def test_gate_b_mcp_handle_call_outcome_chaining_and_indeterminate(tmp_path):
-    """ReflexMCPProxy chains execution outcome and returns structured INDETERMINATE error on audit failure."""
+    """SystemOneMCPProxy chains execution outcome and returns structured INDETERMINATE error on audit failure."""
     db_path = str(tmp_path / "mcp_chain_audit.db")
     ledger = ActionLedger(path=db_path)
     allow_rule = PolicyRule(rule_id="allow_doc", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow docs")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
     sentinel = SentinelTarget(return_value="mcp_success")
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     # 1. Normal execution chains SUCCEEDED outcome to ledger
     req = {
@@ -659,12 +659,12 @@ def test_gate_b_mcp_handle_call_outcome_chaining_and_indeterminate(tmp_path):
 
 
 def test_gate_b_wrap_mcp_tool_outcome_chaining_and_indeterminate(tmp_path):
-    """@wrap_mcp_tool chains execution outcome and raises ReflexIndeterminateExecutionError on audit failure."""
+    """@wrap_mcp_tool chains execution outcome and raises SystemOneIndeterminateExecutionError on audit failure."""
     db_path = str(tmp_path / "wrap_chain_audit.db")
     ledger = ActionLedger(path=db_path)
     allow_rule = PolicyRule(rule_id="allow_sample", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow sample")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     sentinel = SentinelTarget()
     wrapped_fn = wrap_mcp_tool(proxy=proxy, tool_name="execute_file")(sentinel.execute_file)
@@ -675,13 +675,13 @@ def test_gate_b_wrap_mcp_tool_outcome_chaining_and_indeterminate(tmp_path):
     seq, head = ledger.audit_head()
     assert seq == 2
 
-    # 2. Failure on outcome recording raises ReflexIndeterminateExecutionError with evidence
+    # 2. Failure on outcome recording raises SystemOneIndeterminateExecutionError with evidence
     def failing_outcome(*args, **kwargs):
         raise sqlite3.OperationalError("ledger WAL locked")
 
     ledger.record_execution_outcome = failing_outcome
 
-    with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+    with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
         wrapped_fn("/safe/sample2.txt")
 
     err = exc_info.value
@@ -693,14 +693,14 @@ def test_gate_b_wrap_mcp_tool_outcome_chaining_and_indeterminate(tmp_path):
 
 
 def test_gate_b_langchain_interceptor_sync_and_async_outcome_chaining(tmp_path):
-    """ReflexToolInterceptor chains sync and async outcomes and raises ReflexIndeterminateExecutionError."""
+    """SystemOneToolInterceptor chains sync and async outcomes and raises SystemOneIndeterminateExecutionError."""
     db_path = str(tmp_path / "lc_chain_audit.db")
     ledger = ActionLedger(path=db_path)
     allow_rule = PolicyRule(rule_id="allow_lc", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow LC")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
 
     sentinel = SentinelTarget()
-    interceptor = ReflexToolInterceptor(tool=sentinel.execute_file, guard=hook, tool_name="file_tool")
+    interceptor = SystemOneToolInterceptor(tool=sentinel.execute_file, guard=hook, tool_name="file_tool")
 
     # 1. Synchronous invocation chains outcome
     res = interceptor("/safe/sync.txt")
@@ -709,7 +709,7 @@ def test_gate_b_langchain_interceptor_sync_and_async_outcome_chaining(tmp_path):
     assert seq == 2
 
     # 2. Async invocation chains outcome
-    ainterceptor = ReflexToolInterceptor(tool=sentinel.aexecute_file, guard=hook, tool_name="afile_tool")
+    ainterceptor = SystemOneToolInterceptor(tool=sentinel.aexecute_file, guard=hook, tool_name="afile_tool")
     ares = asyncio.run(ainterceptor.ainvoke("/safe/async.txt"))
     assert ares == "afile:/safe/async.txt:read:3"
     seq2, head2 = ledger.audit_head()
@@ -721,7 +721,7 @@ def test_gate_b_langchain_interceptor_sync_and_async_outcome_chaining(tmp_path):
 
     ledger.record_execution_outcome = failing_outcome
 
-    with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+    with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
         interceptor("/safe/sync_fail.txt")
 
     err = exc_info.value
@@ -731,12 +731,12 @@ def test_gate_b_langchain_interceptor_sync_and_async_outcome_chaining(tmp_path):
 
 
 def test_gate_b_langchain_callback_handler_outcome_chaining(tmp_path):
-    """ReflexGuardCallbackHandler chains on_tool_end and on_tool_error to ActionLedger."""
+    """SystemOneGuardCallbackHandler chains on_tool_end and on_tool_error to ActionLedger."""
     db_path = str(tmp_path / "cb_chain_audit.db")
     ledger = ActionLedger(path=db_path)
     allow_rule = PolicyRule(rule_id="allow_cb", effect=DecisionOutcome.ALLOW, target_pattern=r".*", reason="Allow CB")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
-    handler = ReflexGuardCallbackHandler(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]), ledger=ledger, min_confidence=0.50, alpha=0.10)
+    handler = SystemOneGuardCallbackHandler(guard=hook)
 
     serialized = {"name": "search_tool", "description": "Search index"}
 

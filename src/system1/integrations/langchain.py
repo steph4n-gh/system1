@@ -1,4 +1,4 @@
-"""Reflex LangChain & Agent Framework Guard.
+"""System 1 LangChain & Agent Framework Guard.
 
 Provides fail-closed tool execution gating, sub-millisecond local safety checks,
 and Ed25519 cryptographic audit receipts for LangChain and autonomous agent frameworks.
@@ -11,13 +11,13 @@ import hashlib
 import inspect
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 from system1.guard import (
     ActionProposal,
     DecisionOutcome,
     GuardInterceptionResult,
     PolicyDecision,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     RiskLevel,
 )
 from system1.ledger import ActionLedger
@@ -34,22 +34,22 @@ except ImportError:
             pass
 
 
-class ReflexGuardBlockedException(PermissionError):
-    """Raised when an agent tool call is blocked or requires approval by Reflex Guard."""
+class SystemOneGuardBlockedException(PermissionError):
+    """Raised when an agent tool call is blocked or requires approval by System 1 Guard."""
 
     def __init__(self, interception: GuardInterceptionResult):
         self.interception = interception
         self.outcome = interception.outcome
         self.reason = interception.reason
         self.policy_decision = interception.policy_decision
-        super().__init__(f"Reflex Guard Blocked Tool Execution: {self.outcome.value} - {self.reason}")
+        super().__init__(f"System 1 Guard Blocked Tool Execution: {self.outcome.value} - {self.reason}")
 
 
 # Alias matching Technical Specification Section 7.3
-ReflexSecurityException = ReflexGuardBlockedException
+SystemOneSecurityException = SystemOneGuardBlockedException
 
 
-class ReflexIndeterminateExecutionError(RuntimeError):
+class SystemOneIndeterminateExecutionError(RuntimeError):
     """Raised when a tool executed with potential side effects, but durable outcome audit recording failed.
 
     Preserves reconciliation evidence (action_id, receipt_digest, raw_result) for governors.
@@ -74,12 +74,12 @@ class ReflexIndeterminateExecutionError(RuntimeError):
         self.exec_error = exec_error
 
 
-class ReflexGuardCallbackHandler(_BaseCallbackHandler):
-    """LangChain CallbackHandler enforcing sub-millisecond Reflex safety before tool execution."""
+class SystemOneGuardCallbackHandler(_BaseCallbackHandler):
+    """LangChain CallbackHandler enforcing sub-millisecond System 1 safety before tool execution."""
 
     def __init__(
         self,
-        guard: Optional[ReflexGuardHook] = None,
+        guard: Optional[SystemOneGuardHook] = None,
         *,
         ledger: Optional[ActionLedger] = None,
         alpha: float = 0.20,
@@ -87,7 +87,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
         tenant_id: str = "tenant_langchain",
         principal_id: str = "agent_langchain_runner",
     ):
-        self.guard = guard or ReflexGuardHook(
+        self.guard = guard or SystemOneGuardHook(
             ledger=ledger,
             alpha=alpha,
             min_confidence=min_confidence,
@@ -134,7 +134,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
             self._active_runs[str(run_id)] = interception
 
         if interception.outcome != DecisionOutcome.ALLOW:
-            raise ReflexGuardBlockedException(interception)
+            raise SystemOneGuardBlockedException(interception)
 
     def on_tool_end(
         self,
@@ -176,7 +176,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         trusted_public_key=pub_key,
                     )
                 except Exception as le:
-                    raise ReflexIndeterminateExecutionError(
+                    raise SystemOneIndeterminateExecutionError(
                         f"LangChain tool executed but outcome recording failed (status: INDETERMINATE): {le}",
                         action_id=action_id,
                         receipt_digest=receipt_digest,
@@ -224,7 +224,7 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
                         trusted_public_key=pub_key,
                     )
                 except Exception as le:
-                    raise ReflexIndeterminateExecutionError(
+                    raise SystemOneIndeterminateExecutionError(
                         f"LangChain tool failed ({error}) AND outcome recording failed: {le}",
                         action_id=action_id,
                         receipt_digest=receipt_digest,
@@ -235,20 +235,20 @@ class ReflexGuardCallbackHandler(_BaseCallbackHandler):
 
 
 
-class ReflexToolInterceptor:
-    """Wraps a LangChain BaseTool or generic tool callable with fail-closed Reflex gating."""
+class SystemOneToolInterceptor:
+    """Wraps a LangChain BaseTool or generic tool callable with fail-closed System 1 gating."""
 
     def __init__(
         self,
         tool: Any,
-        guard: Optional[ReflexGuardHook] = None,
+        guard: Optional[SystemOneGuardHook] = None,
         *,
         alpha: float = 0.20,
         min_confidence: float = 0.50,
         tool_name: Optional[str] = None,
     ):
         self.tool = tool
-        self.guard = guard or ReflexGuardHook(alpha=alpha, min_confidence=min_confidence)
+        self.guard = guard or SystemOneGuardHook(alpha=alpha, min_confidence=min_confidence)
         self.name = tool_name or getattr(tool, "name", getattr(tool, "__name__", "tool"))
         self.description = getattr(tool, "description", getattr(tool, "__doc__", ""))
 
@@ -288,7 +288,7 @@ class ReflexToolInterceptor:
             else target
         )
         proposal = ActionProposal.create(
-            tenant_id="tenant_reflex_tool",
+            tenant_id="tenant_system1_tool",
             principal_id="agent_caller",
             scope="langchain:tool:invoke",
             tool=self.name,
@@ -299,7 +299,7 @@ class ReflexToolInterceptor:
         context = f"{purpose}. Tool: {self.name} on {target}. Arguments: {raw_args}"
         interception = self.guard.evaluate_proposal(proposal, context_prompt=context)
         if interception.outcome != DecisionOutcome.ALLOW:
-            raise ReflexGuardBlockedException(interception)
+            raise SystemOneGuardBlockedException(interception)
 
         ledger = self.guard.ledger
         action_id = (
@@ -377,13 +377,13 @@ class ReflexToolInterceptor:
                     status=outcome_status,
                     result_payload={"result": str(exec_output)[:500]} if exec_output is not None else None,
                     error_message=str(exec_error) if exec_error is not None else None,
-                    tenant_id="tenant_reflex_tool",
+                    tenant_id="tenant_system1_tool",
                     principal_id="agent_caller",
                     scope="langchain:tool:invoke",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:
-                raise ReflexIndeterminateExecutionError(
+                raise SystemOneIndeterminateExecutionError(
                     f"LangChain tool executed but outcome recording failed (status: INDETERMINATE): {le}",
                     action_id=action_id,
                     receipt_digest=receipt_digest,
@@ -430,7 +430,7 @@ class ReflexToolInterceptor:
             else target
         )
         proposal = ActionProposal.create(
-            tenant_id="tenant_reflex_tool",
+            tenant_id="tenant_system1_tool",
             principal_id="agent_caller",
             scope="langchain:tool:ainvoke",
             tool=self.name,
@@ -441,7 +441,7 @@ class ReflexToolInterceptor:
         context = f"{purpose}. Tool: {self.name} on {target}. Arguments: {raw_args}"
         interception = self.guard.evaluate_proposal(proposal, context_prompt=context)
         if interception.outcome != DecisionOutcome.ALLOW:
-            raise ReflexGuardBlockedException(interception)
+            raise SystemOneGuardBlockedException(interception)
 
         ledger = self.guard.ledger
         action_id = (
@@ -530,13 +530,13 @@ class ReflexToolInterceptor:
                     status=outcome_status,
                     result_payload={"result": str(exec_output)[:500]} if exec_output is not None else None,
                     error_message=str(exec_error) if exec_error is not None else None,
-                    tenant_id="tenant_reflex_tool",
+                    tenant_id="tenant_system1_tool",
                     principal_id="agent_caller",
                     scope="langchain:tool:ainvoke",
                     trusted_public_key=pub_key,
                 )
             except Exception as le:
-                raise ReflexIndeterminateExecutionError(
+                raise SystemOneIndeterminateExecutionError(
                     f"Tool executed asynchronously but outcome recording failed (status: INDETERMINATE): {le}",
                     action_id=action_id,
                     receipt_digest=receipt_digest,
@@ -554,20 +554,20 @@ class ReflexToolInterceptor:
 def wrap_langchain_tool(
     tool: Any,
     *,
-    guard: Optional[ReflexGuardHook] = None,
+    guard: Optional[SystemOneGuardHook] = None,
     alpha: float = 0.20,
     min_confidence: float = 0.50,
     tool_name: Optional[str] = None,
-) -> ReflexToolInterceptor:
-    """Wraps any LangChain tool or callable function with Reflex fail-closed safety interceptor."""
-    return ReflexToolInterceptor(tool, guard=guard, alpha=alpha, min_confidence=min_confidence, tool_name=tool_name)
+) -> SystemOneToolInterceptor:
+    """Wraps any LangChain tool or callable function with System 1 fail-closed safety interceptor."""
+    return SystemOneToolInterceptor(tool, guard=guard, alpha=alpha, min_confidence=min_confidence, tool_name=tool_name)
 
 
 __all__ = [
-    "ReflexGuardBlockedException",
-    "ReflexIndeterminateExecutionError",
-    "ReflexSecurityException",
-    "ReflexGuardCallbackHandler",
-    "ReflexToolInterceptor",
+    "SystemOneGuardBlockedException",
+    "SystemOneIndeterminateExecutionError",
+    "SystemOneSecurityException",
+    "SystemOneGuardCallbackHandler",
+    "SystemOneToolInterceptor",
     "wrap_langchain_tool",
 ]

@@ -1,6 +1,6 @@
-"""Reflex Prometheus / OpenMetrics Observability Integration.
+"""System 1 Prometheus / OpenMetrics Observability Integration.
 
-Exposes a Prometheus-compatible ``/metrics`` HTTP endpoint for the Reflex
+Exposes a Prometheus-compatible ``/metrics`` HTTP endpoint for the System 1
 decision engine, tracking decision counts, latency histograms, escalation
 rates, cache-hit ratios, conformal-set sizes, and ledger depth.
 
@@ -24,26 +24,26 @@ from prometheus_client import (
 )
 
 if TYPE_CHECKING:
-    from system1.engine import DecisionResult, ReflexEngine
+    from system1.engine import DecisionResult, SystemOneEngine
 
 
-# Sub-millisecond histogram buckets suitable for the Reflex engine
+# Sub-millisecond histogram buckets suitable for the System 1 engine
 _LATENCY_BUCKETS = (0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 1.0)
 
 # Default conformal-set-size buckets (1 to 20)
 _SET_SIZE_BUCKETS = tuple(float(i) for i in range(1, 21))
 
 
-class ReflexMetricsExporter:
-    """Prometheus metrics exporter for :class:`ReflexEngine`.
+class SystemOneMetricsExporter:
+    """Prometheus metrics exporter for :class:`SystemOneEngine`.
 
     Usage::
 
-        from system1.engine import ReflexEngine
-        from system1.integrations.observability import ReflexMetricsExporter
+        from system1.engine import SystemOneEngine
+        from system1.integrations.observability import SystemOneMetricsExporter
 
-        engine = ReflexEngine(MySchema)
-        metrics = ReflexMetricsExporter()
+        engine = SystemOneEngine(MySchema)
+        metrics = SystemOneMetricsExporter()
         metrics.instrument(engine)      # auto-records on every decide()
         metrics.start_server(port=9090) # serves /metrics
     """
@@ -54,14 +54,14 @@ class ReflexMetricsExporter:
 
         # --- Counters ---
         self.decisions_total = Counter(
-            "reflex_decisions_total",
-            "Total number of Reflex decisions evaluated.",
+            "system1_decisions_total",
+            "Total number of System 1 decisions evaluated.",
             labelnames=["schema", "outcome", "cache_hit"],
             registry=self._registry,
         )
 
         self.escalations_total = Counter(
-            "reflex_escalations_total",
+            "system1_escalations_total",
             "Total number of escalated decisions.",
             labelnames=["schema", "reason"],
             registry=self._registry,
@@ -69,7 +69,7 @@ class ReflexMetricsExporter:
 
         # --- Histograms ---
         self.decision_latency_seconds = Histogram(
-            "reflex_decision_latency_seconds",
+            "system1_decision_latency_seconds",
             "Decision evaluation latency in seconds.",
             labelnames=["schema"],
             buckets=_LATENCY_BUCKETS,
@@ -77,7 +77,7 @@ class ReflexMetricsExporter:
         )
 
         self.conformal_set_size = Histogram(
-            "reflex_conformal_set_size",
+            "system1_conformal_set_size",
             "Size of conformal prediction sets per decision.",
             labelnames=["schema"],
             buckets=_SET_SIZE_BUCKETS,
@@ -86,13 +86,13 @@ class ReflexMetricsExporter:
 
         # --- Gauges ---
         self.cache_hit_ratio = Gauge(
-            "reflex_cache_hit_ratio",
+            "system1_cache_hit_ratio",
             "Rolling ratio of cache hits to total decisions.",
             registry=self._registry,
         )
 
         self.ledger_entries_total = Gauge(
-            "reflex_ledger_entries_total",
+            "system1_ledger_entries_total",
             "Current number of entries in the ActionLedger.",
             registry=self._registry,
         )
@@ -118,7 +118,7 @@ class ReflexMetricsExporter:
         Parameters
         ----------
         result:
-            The :class:`DecisionResult` returned by :meth:`ReflexEngine.decide`.
+            The :class:`DecisionResult` returned by :meth:`SystemOneEngine.decide`.
         schema_name:
             Name of the decision schema used.
         cache_hit:
@@ -178,7 +178,7 @@ class ReflexMetricsExporter:
     # Instrumentation (monkey-patch wrapper)
     # ------------------------------------------------------------------
 
-    def instrument(self, engine: "ReflexEngine") -> "ReflexEngine":
+    def instrument(self, engine: "SystemOneEngine") -> "SystemOneEngine":
         """Wrap *engine.decide* so that every call auto-records metrics.
 
         Returns the same engine instance (mutated) for chaining convenience.
@@ -244,4 +244,4 @@ class ReflexMetricsExporter:
         return self._registry
 
 
-__all__ = ["ReflexMetricsExporter"]
+__all__ = ["SystemOneMetricsExporter"]

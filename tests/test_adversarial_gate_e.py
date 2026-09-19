@@ -44,7 +44,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 import pytest
 
 import reflex
-import reflex.compat.typesafe as reflex_typesafe
+import reflex.compat.typesafe as system1_typesafe
 import system1
 import system1.compat.typesafe as s1_typesafe
 from system1.compat.typesafe import (
@@ -311,19 +311,19 @@ class TestAttack1SocketInterception:
 
         assert len(network_trap) == 0
 
-    def test_twin_namespace_reflex_zero_egress(self, network_trap):
+    def test_twin_namespace_system1_zero_egress(self, network_trap):
         """Verify reflex namespace exports enforce identical zero-egress guarantees."""
         questions = {"action": Choice("Action", {"allow": "Allow", "deny": "Deny"})}
 
         with pytest.raises(reflex.ZeroEgressViolationError, match="zero_egress=True"):
-            reflex_typesafe.call_real_typesafe_api("Reflex call", questions, zero_egress=True)
+            system1_typesafe.call_real_typesafe_api("System 1 call", questions, zero_egress=True)
 
         client = reflex.TypeSafeClient(mode="local", zero_egress=True)
-        resp = client.systemone("Reflex client call", questions)
+        resp = client.systemone("System 1 client call", questions)
         assert resp.egress_bytes == 0
 
         with pytest.raises(reflex.ZeroEgressViolationError, match="zero_egress=True"):
-            client.compare("Reflex compare", questions)
+            client.compare("System 1 compare", questions)
 
         assert len(network_trap) == 0
 
@@ -775,7 +775,7 @@ class TestAttack6NamespaceAndPatchBoundary:
         """Verify exact type equivalence between system1 and reflex modules."""
         assert system1.ZeroEgressViolationError is reflex.ZeroEgressViolationError
         assert system1.ZeroEgressViolationError is s1_typesafe.ZeroEgressViolationError
-        assert reflex.ZeroEgressViolationError is reflex_typesafe.ZeroEgressViolationError
+        assert reflex.ZeroEgressViolationError is system1_typesafe.ZeroEgressViolationError
         assert issubclass(ZeroEgressViolationError, RuntimeError)
 
     def test_patch_typesafe_unpatching_lifecycle_and_nesting(self, network_trap):

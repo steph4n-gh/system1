@@ -2,7 +2,7 @@
 
 Authoritative Invariants:
 1. Single-pass non-autoregressive decision latency on local metal achieves p50 < 2.0ms.
-2. Tier 0 L1 Reflex Cache lookups execute in sub-100µs (< 0.10ms).
+2. Tier 0 L1 System 1 Cache lookups execute in sub-100µs (< 0.10ms).
 3. Online Sherman-Morrison rank-1 distillation updates execute in sub-200µs (< 0.20ms).
 4. Guard hook proposal evaluations complete within single-digit milliseconds.
 5. Benchmark reports verify superior latency over TypeSafe AI Jev baseline bounds.
@@ -22,9 +22,9 @@ from reflex import (
     ChoiceField,
     DecisionSchema,
     DefaultGuardDecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneCompiler,
+    SystemOneEngine,
+    SystemOneGuardHook,
 )
 
 
@@ -55,10 +55,10 @@ def get_latency_exemplars():
 
 
 @pytest.fixture
-def compiled_latency_engine() -> ReflexEngine:
-    compiler = ReflexCompiler(LatencyBenchSchema, dimension=64, regularization=0.5)
+def compiled_latency_engine() -> SystemOneEngine:
+    compiler = SystemOneCompiler(LatencyBenchSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_latency_exemplars())
-    return ReflexEngine(
+    return SystemOneEngine(
         LatencyBenchSchema,
         model=model,
         use_cache=True,
@@ -92,7 +92,7 @@ def test_sub_2ms_warm_single_pass_latency(compiled_latency_engine):
 
 
 def test_sub_100us_tier0_cache_hit_latency(compiled_latency_engine):
-    """Verify Tier 0 L1 Reflex Cache hits execute in sub-100µs (< 0.10ms)."""
+    """Verify Tier 0 L1 System 1 Cache hits execute in sub-100µs (< 0.10ms)."""
     engine = compiled_latency_engine
     prompt = "Routine system observation and metric poll"
     res1 = engine.decide(prompt, record_receipt=False)
@@ -145,8 +145,8 @@ def test_sub_2ms_amortized_batch_throughput(compiled_latency_engine):
 
 
 def test_sub_3ms_guard_proposal_evaluation():
-    """Verify ReflexGuardHook proposal evaluation executes within single-digit milliseconds."""
-    guard = ReflexGuardHook(auto_calibrate=False)
+    """Verify SystemOneGuardHook proposal evaluation executes within single-digit milliseconds."""
+    guard = SystemOneGuardHook(auto_calibrate=False)
     proposal = ActionProposal.create(
         tenant_id="ten_perf",
         principal_id="prin_perf",

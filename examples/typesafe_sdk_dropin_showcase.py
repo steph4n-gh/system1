@@ -266,7 +266,7 @@ def showcase_part_5_side_by_side_comparison(api_key: str):
 
     print("-" * 96)
     print("\nMoat Highlights:")
-    print("  1. Latency:   Reflex runs locally on Apple Silicon Metal in ~1-3 ms (vs ~200-300 ms cloud roundtrips)")
+    print("  1. Latency:   System 1 runs locally on Apple Silicon Metal in ~1-3 ms (vs ~200-300 ms cloud roundtrips)")
     print("  2. Privacy:   Zero bytes egress public internet vs full prompt text sent to cloud")
     print("  3. Cost:      $0.00 token billing vs SaaS per-decision pricing")
     print("  4. Bounds:    Split Conformal Prediction sets with exact finite-sample math guarantees")

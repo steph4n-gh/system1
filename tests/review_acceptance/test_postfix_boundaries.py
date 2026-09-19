@@ -7,7 +7,7 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from system1 import DecisionSchema, ScoreField, ReflexEngine
+from system1 import DecisionSchema, ScoreField, SystemOneEngine
 from system1.compiler import CompiledHeadWeights, CompiledSystemOneModel
 from system1.ledger import ActionLedger, LedgerError
 from system1.receipt import create_decision_receipt
@@ -27,7 +27,7 @@ def test_nonstrict_update_invalidates_calibration_for_later_strict_call():
 
 def test_strict_regression_update_invalidates_previous_interval_calibration():
     schema = DecisionSchema(schema_name='regression', fields={'score': ScoreField(min_value=0, max_value=10)})
-    e = ReflexEngine(schema, dimension=16, backend='numpy', strict_mode=True, use_cache=False)
+    e = SystemOneEngine(schema, dimension=16, backend='numpy', strict_mode=True, use_cache=False)
     h = e.model.heads['score']
     h.set_weights(np.zeros_like(h.weights), np.zeros_like(h.biases))
     before = h.weights.copy()
@@ -67,7 +67,7 @@ def test_serialization_preserves_strict_prediction_set_at_boundary():
     cm = CompiledSystemOneModel(e.schema, heads={'route': ch}, dimension=16, backend='numpy', use_cache=False)
     restored = CompiledSystemOneModel.from_bytes(cm.to_bytes(), backend='numpy')
     restored.use_cache = False
-    loaded_engine = ReflexEngine(restored.schema, model=restored, backend='numpy', use_cache=False)
+    loaded_engine = SystemOneEngine(restored.schema, model=restored, backend='numpy', use_cache=False)
     after = loaded_engine.decide('boundary', strict=True, record_receipt=False)
     assert after.conformal_sets == before.conformal_sets, {
         'live_threshold': q, 'reloaded_threshold': float(loaded_engine.conformal_predictors['route'].calibration_scores[0]),

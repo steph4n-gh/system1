@@ -22,7 +22,7 @@ Verifies:
    - Live 8-badge trophy board formatting ([🏆 Boulder] ... [🏆 Earth]).
    - Party Pokémon roster, level, HP bar, and status display.
    - Playback speed mode support (normal, fast, turbo, instant).
-4. Reflex Compiler & < 20 KB static model invariant running in pure NumPy.
+4. System 1 Compiler & < 20 KB static model invariant running in pure NumPy.
 5. Real ROM header parsing and PyBoy memory bridge RAM synchronization.
 6. Starter selection variants (Squirtle, Charmander, Bulbasaur).
 """
@@ -63,11 +63,11 @@ from pokemon_full_campaign_speedrun import (
     parse_args,
     render_spectator_hud,
 )
-from pokemon_battle_reflex import (
+from pokemon_battle_system1 import (
     BattleState,
     BattleType,
     Pokemon,
-    PokemonBattleReflex,
+    PokemonBattleSystemOne,
     PokemonMove,
     PyBoyAdapter,
     PyBoyMemoryBridge,
@@ -229,7 +229,7 @@ def test_spectator_hud_battle_scene_rendering():
     assert "ACTIVE MOVES:" in hud
     assert "BATTLE DIALOGUE:" in hud
     assert "Mega Punch" in hud
-    assert "Reflex Latency:" in hud
+    assert "System 1 Latency:" in hud
     assert "0.820 ms" in hud
 
 
@@ -345,7 +345,7 @@ def test_party_progression_and_evolution():
 
 
 # ============================================================================
-# 4. Reflex Compiler & < 20 KB Binary Model Invariant Tests
+# 4. System 1 Compiler & < 20 KB Binary Model Invariant Tests
 # ============================================================================
 
 def test_compile_speedrun_campaign_model(tmp_path: Path):

@@ -56,7 +56,7 @@
     <text x="580" y="23" class="speedup" fill="#34D399">85,000x FASTER THAN CLOUD</text>
   </g>
 
-  <!-- Row 2: Reflex Metal BLAS Forward Pass -->
+  <!-- Row 2: System 1 Metal BLAS Forward Pass -->
   <g transform="translate(40, 160)">
     <text x="0" y="16" class="label">System 1 Forward Pass</text>
     <text x="0" y="32" class="meta">Single-pass BLAS/Metal • 0 token cost</text>

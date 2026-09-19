@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex vs TypeSafe AI: Enterprise Stress Showcase.
+"""System 1 vs TypeSafe AI: Enterprise Stress Showcase.
 
 Alias entrypoint for `examples/autonomous_agent_firewall_showcase.py`
 demonstrating the high-stakes Autonomous Agent Firewall scenario under high concurrency.

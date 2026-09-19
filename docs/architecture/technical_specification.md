@@ -1,24 +1,24 @@
-# Reflex: Technical Architecture & System Specification
+# System 1: Technical Architecture & System Specification
 
 **Author:** steph4n (2026)  
-**Affiliation:** Reflex Core Research Team  
+**Affiliation:** System 1 Core Research Team  
 **Contact:** [`@steph4n`](https://x.com/steph4n) on X (Twitter)  
-**Repository:** [`https://github.com/steph4n-gh/reflex`](https://github.com/steph4n-gh/reflex)  
+**Repository:** [`https://github.com/steph4n-gh/system1`](https://github.com/steph4n-gh/system1)  
 **Version:** 0.1.0  
 **Specification Date:** September 2026  
 **Status:** Certified Publication-Grade System Architecture Specification  
 **Target Systems:** Apple Silicon (macOS 14+), Linux (x86_64, aarch64), Embedded Edge  
 
 > **Suggested Citation:**  
-> steph4n (2026). *Reflex: Technical Architecture & System Specification*. Reflex Core Research Team. Available at: `https://github.com/steph4n-gh/reflex`.
+> steph4n (2026). *System 1: Technical Architecture & System Specification*. System 1 Core Research Team. Available at: `https://github.com/steph4n-gh/system1`.
 
 ---
 
 ## 1. Executive Summary & Component Topology
 
-Reflex is an open-source, machine-native **System 1 decision runtime** for autonomous AI agents. Unlike standard agent frameworks that delegate every discrete routing, parameter triage, and safety filter to slow, non-deterministic cloud LLMs, Reflex evaluates structured decision schemas on host silicon in **sub-millisecond time (<1.0 ms P50)** with **zero marginal cloud API token expenditure** and **zero external network egress**.
+System 1 is an open-source, machine-native **System 1 decision runtime** for autonomous AI agents. Unlike standard agent frameworks that delegate every discrete routing, parameter triage, and safety filter to slow, non-deterministic cloud LLMs, System 1 evaluates structured decision schemas on host silicon in **sub-millisecond time (<1.0 ms P50)** with **zero marginal cloud API token expenditure** and **zero external network egress**.
 
-Inspired by Daniel Kahneman’s dual-process cognitive framework, Reflex implements the non-autoregressive machine-native System 1 reflex layer. Under empirical enterprise workloads and calibrated conformal prediction bounds, it resolves 95% to 99% of routine agent actions directly on local CPU/GPU/NPU metal (exact retention is workload- and distribution-dependent), halting and escalating to an external deliberative System 2 governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—only when mathematically rigorous conformal ambiguity or out-of-distribution conditions are detected.
+Inspired by Daniel Kahneman’s dual-process cognitive framework, System 1 implements the non-autoregressive machine-native System 1 reflex layer. Under empirical enterprise workloads and calibrated conformal prediction bounds, it resolves 95% to 99% of routine agent actions directly on local CPU/GPU/NPU metal (exact retention is workload- and distribution-dependent), halting and escalating to an external deliberative System 2 governor—such as OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok—only when mathematically rigorous conformal ambiguity or out-of-distribution conditions are detected.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -81,7 +81,7 @@ Inspired by Daniel Kahneman’s dual-process cognitive framework, Reflex impleme
 
 ## 2. Layer-by-Layer Execution Pipeline
 
-Reflex operates across two complementary architectural dimensions:
+System 1 operates across two complementary architectural dimensions:
 1. **Hardware Execution Pipeline (Tiers 0–3)**: The concrete silicon execution path cascading from sub-10µs CPU L1 caching to sub-millisecond BLAS/Metal linear projection, sub-50µs conformal gating, and cloud fallback.
 2. **Cognitive Dual-Process Architecture (System 1 vs System 2)**: Kahneman’s cognitive duality, where System 1 encompasses Tiers 0, 1, and 2 running on local silicon with zero token cost, and System 2 encompasses Tier 3 deliberate reasoning. In the codebase, the distillation methods are accessible via `learn_from_tier2()` with transparent aliases `learn_from_system2()` and `learn_from_tier3()`.
 
@@ -95,7 +95,7 @@ When an agent requests an action via `engine.evaluate(schema_instance, prompt)` 
 ### Tier 1: Machine-Native Matrix Forward Pass
 * **Latency:** $0.72\,\text{ms} - 1.45\,\text{ms}$ (P50: $0.98\,\text{ms}$, P99: $1.34\,\text{ms}$).
 * **Mechanism:** If a cache miss occurs, the input string undergoes **Hybrid Sparse-Dense Semantic Projection** followed by multi-head linear hyperplane evaluation using NumPy BLAS or Apple Metal Accelerate.
-* **Non-Autoregressive Property:** Unlike autoregressive transformers that generate outputs token-by-token across $T$ iterations ($O(T)$ forward passes), Reflex performs a **single matrix-vector multiplication**:
+* **Non-Autoregressive Property:** Unlike autoregressive transformers that generate outputs token-by-token across $T$ iterations ($O(T)$ forward passes), System 1 performs a **single matrix-vector multiplication**:
   $$\mathbf{z} = \mathbf{x}^T \mathbf{W}$$
   Where $\mathbf{x} \in \mathbb{R}^{1 \times D}$ ($D = 4,160$) and $\mathbf{W} \in \mathbb{R}^{D \times K}$. All output heads (Choice, MultiChoice, Boolean, Score) are resolved simultaneously in a single memory access cycle.
 
@@ -136,13 +136,13 @@ When an agent requests an action via `engine.evaluate(schema_instance, prompt)` 
   - **Google DeepMind:** Gemini 3.1 Pro (extended reasoning), Gemini 3.8 Flash (rapid cloud fallback)
   - **xAI:** Grok series (Grok 3, Grok 4)
 * **Feedback Loop & Online Sherman-Morrison Distillation:**  
-  When System 2 returns ground truth $\mathbf{y}_{t+1}$, Reflex logs the transaction to the ledger and updates local weights in **38.4 µs** via recursive least squares.
+  When System 2 returns ground truth $\mathbf{y}_{t+1}$, System 1 logs the transaction to the ledger and updates local weights in **38.4 µs** via recursive least squares.
 
 ---
 
 ## 3. The Schema Type System (`reflex.core.schema`)
 
-Reflex schemas are defined using declarative Python classes subclassing `DecisionSchema`. Under the hood, a metaclass inspects field definitions, generates typed descriptors, and computes composite multi-head dimensions $\sum_h K_h$.
+System 1 schemas are defined using declarative Python classes subclassing `DecisionSchema`. Under the hood, a metaclass inspects field definitions, generates typed descriptors, and computes composite multi-head dimensions $\sum_h K_h$.
 
 ```python
 from reflex import DecisionSchema, ChoiceField, MultiChoiceField, BooleanField, ScoreField
@@ -199,7 +199,7 @@ Every `DecisionField` definition accepts an explicit configuration flag `escalat
 
 ## 4. Vector Projection, Hypersphere Fusion & Contrastive Whitening
 
-Reflex combines sub-millisecond feature extraction with rigorous hypersphere geometry, bypassing heavy transformer tokenizers in favor of a dual-stream hybrid projector:
+System 1 combines sub-millisecond feature extraction with rigorous hypersphere geometry, bypassing heavy transformer tokenizers in favor of a dual-stream hybrid projector:
 
 ### 4.1 Subword Feature Hashing (Sparse Stream)
 * **Subspace Dimension:** $D_{\text{sparse}} = 4,096$.
@@ -215,7 +215,7 @@ Reflex combines sub-millisecond feature extraction with rigorous hypersphere geo
   $$\mathbf{x}_{\text{dense}} = \frac{1}{|T|} \sum_{t \in T} \mathbf{E}_{t, :}$$
 
 ### 4.3 Unit-Norm Hypersphere Fusion Geometry
-To guarantee that the fused representation resides strictly on the unit hypersphere $\mathbb{S}^{D-1}$ ($D = D_{\text{sparse}} + d_{\text{dense}} = 4,160$) without post-hoc scaling distortion, Reflex standardizes on square-root coefficient concatenation matching `src/system1/core/embeddings.py`:
+To guarantee that the fused representation resides strictly on the unit hypersphere $\mathbb{S}^{D-1}$ ($D = D_{\text{sparse}} + d_{\text{dense}} = 4,160$) without post-hoc scaling distortion, System 1 standardizes on square-root coefficient concatenation matching `src/system1/core/embeddings.py`:
 
 $$\hat{\mathbf{x}} = \sqrt{\alpha} \hat{\mathbf{x}}_{\text{sparse}} \oplus \sqrt{1 - \alpha} \hat{\mathbf{x}}_{\text{dense}}$$
 
@@ -229,7 +229,7 @@ This guarantees that $\|\hat{\mathbf{x}}\|_2 \equiv 1.0$ unconditionally, preser
 ### 4.4 Contrastive Centering & Whitening Transformation (Theorem 1)
 In classification tasks where options share domain syntax (e.g., "approve standard loan" vs "approve expedited loan"), candidate prototype vectors $\mathbf{w}_k \in \mathbb{R}^D$ cluster tightly around a shared background vector $\mathbf{b} \in \mathbb{R}^D$, causing pairwise cosine similarities to approach unity ($\cos \theta \to 1$) and compressing linear decision margins.
 
-Reflex implements **Contrastive Centering & Whitening** (`src/system1/core/model.py`):
+System 1 implements **Contrastive Centering & Whitening** (`src/system1/core/model.py`):
 1. Compute the background centroid vector:
    $$\boldsymbol{\mu} = \frac{1}{K} \sum_{k=1}^K \mathbf{w}_k$$
 2. Subtract the shared centroid to isolate discriminative features:
@@ -294,7 +294,7 @@ Because $B/c \approx 10$ to $50$ in natural language representations, contrastiv
 ### 4.5 Recency-Aware Context Weighting for Multi-Turn Agent Traces
 In conversational agent loops and tool execution traces, historical tokens (system prompt, prior tool outputs) easily outnumber recent instructions, diluting critical trailing context under standard uniform token averaging.
 
-Reflex implements **Recency-Aware Context Weighting** in `DeterministicSemanticProjector`:
+System 1 implements **Recency-Aware Context Weighting** in `DeterministicSemanticProjector`:
 $$\text{weight}(i) = \frac{\log(1 + \text{len}(w_i))}{\sqrt{1.0 + 0.05 \cdot (N - 1 - i)}}$$
 where $N$ is the total token count and $i \in \{0, \dots, N-1\}$ indexes tokens from head to tail.
 * **Trailing Token Priority:** For the most recent token ($i = N - 1$), the denominator is $\sqrt{1.0 + 0} = 1.0$, receiving full unattenuated weight.
@@ -303,9 +303,9 @@ where $N$ is the total token count and $i \in \{0, \dots, N-1\}$ indexes tokens 
 
 ---
 
-## 5. The Reflex Compiler (`reflex.compiler`)
+## 5. The System 1 Compiler (`reflex.compiler`)
 
-The `ReflexCompiler` translates a declarative `DecisionSchema` and exemplar dataset into an optimized, serialized binary model (`.s1m`):
+The `SystemOneCompiler` translates a declarative `DecisionSchema` and exemplar dataset into an optimized, serialized binary model (`.s1m`):
 
 ```bash
 # Compile schema into standalone binary model file via console script
@@ -324,7 +324,7 @@ python3 -m reflex.cli compile \
 ```
 
 ### 5.1 Multi-Head Closed-Form Ridge Regression Derivation
-When training on design matrix $\mathbf{X} \in \mathbb{R}^{N \times D}$ and composite target matrix $\mathbf{Y} \in \mathbb{R}^{N \times K_{\text{total}}}$, Reflex solves the empirical risk minimizer in closed form without backpropagation:
+When training on design matrix $\mathbf{X} \in \mathbb{R}^{N \times D}$ and composite target matrix $\mathbf{Y} \in \mathbb{R}^{N \times K_{\text{total}}}$, System 1 solves the empirical risk minimizer in closed form without backpropagation:
 
 $$\mathcal{L}(\mathbf{W}) = \frac{1}{2} \|\mathbf{X} \mathbf{W} - \mathbf{Y}\|_F^2 + \frac{\lambda}{2} \|\mathbf{W}\|_F^2$$
 
@@ -340,7 +340,7 @@ $$\mathbf{W}^* = (\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D)^{-1} \mathbf{X
 In production (`src/system1/compiler.py`), the input is augmented with a bias column $\tilde{\mathbf{X}} = [\mathbf{X}, \mathbf{1}] \in \mathbb{R}^{N \times (D+1)}$:
 $$\mathbf{A} = \tilde{\mathbf{X}}^T \tilde{\mathbf{X}} + \operatorname{diag}(\lambda \mathbf{1}_D, \lambda_{\text{bias}}), \quad \mathbf{B} = \tilde{\mathbf{X}}^T \mathbf{Y}, \quad \begin{bmatrix} \mathbf{W}^* \\ \mathbf{b}^* \end{bmatrix} = \mathbf{A}^{-1} \mathbf{B}$$
 
-Reflex computes the Cholesky decomposition $\mathbf{A} = \mathbf{L}\mathbf{L}^T$ in under 12 ms, solving via forward and back-substitution.
+System 1 computes the Cholesky decomposition $\mathbf{A} = \mathbf{L}\mathbf{L}^T$ in under 12 ms, solving via forward and back-substitution.
 
 ### 5.2 Condition Number Spectral Bound
 **Theorem (Condition Number Bound)**. *Let $\mathbf{A} = \mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_D \in \mathbb{R}^{D \times D}$ with $\lambda > 0$. If each sample embedding is unit-normalized ($\|\mathbf{x}_i\|_2 = 1$ for all $i$), then the $L_2$ condition number satisfies:*
@@ -349,7 +349,7 @@ $$\kappa(\mathbf{A}) \le 1 + \frac{N}{\lambda}$$
 *Proof*. The extreme eigenvalues of $\mathbf{A}$ are $\lambda_{\max} = \sigma_{\max}(\mathbf{X})^2 + \lambda$ and $\lambda_{\min} = \sigma_{\min}(\mathbf{X})^2 + \lambda \ge \lambda$. Because $\|\mathbf{X}\|_F^2 = \sum_{i=1}^N \|\mathbf{x}_i\|_2^2 = N$, the operator norm satisfies $\sigma_{\max}(\mathbf{X})^2 \le \|\mathbf{X}\|_F^2 = N$. Therefore:
 $$\kappa(\mathbf{A}) = \frac{\lambda_{\max}}{\lambda_{\min}} \le \frac{N + \lambda}{\lambda} = 1 + \frac{N}{\lambda} \quad \blacksquare$$
 
-For typical Reflex exemplar counts ($N \approx 500$ to $2,000$) with $\lambda = 1.0$:
+For typical System 1 exemplar counts ($N \approx 500$ to $2,000$) with $\lambda = 1.0$:
 $$\kappa(\mathbf{A}) \le 1 + 2,000 = 2,001 \ll 10^7$$
 The condition number remains orders of magnitude below single-precision float32 reciprocal machine epsilon ($1 / \epsilon_{\text{float32}} \approx 1.2 \times 10^7$), guaranteeing zero numerical degeneracy.
 
@@ -394,13 +394,13 @@ This guarantees zero approximation drift between online streaming adaptation and
 ### 5.5 Exponential Forgetting Factor & Numerical Stabilization
 Over extended production lifecycles ($t > 500$ streaming updates), standard recursive least squares ($\lambda_f = 1.0$) accumulates eigenvalues in $\mathbf{A}_t$, causing $\mathbf{P}_t = \mathbf{A}_t^{-1} \to \mathbf{0}$ and freezing model adaptation (**Covariance Asphyxiation**).
 
-Reflex incorporates an exponential forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
+System 1 incorporates an exponential forgetting factor $\lambda_f \in (0, 1.0]$ (default $\lambda_f = 0.995$):
 $$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left[ \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{t+1} \mathbf{x}_{t+1}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}_{t+1}^T \mathbf{P}_t \mathbf{x}_{t+1}} \right]$$
 $$\mathbf{B}_{t+1} = \lambda_f \mathbf{B}_t + \mathbf{x}_{t+1} \mathbf{y}_{t+1}^T$$
 $$\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$$
 
 * **Bounded Memory Horizon:** The effective sample horizon is bounded by $N_{\text{eff}} = \frac{1}{1 - \lambda_f} = 200$, preventing eigenvalue asphyxiation while maintaining long-term stability.
-* **Hermitian Symmetrization:** Floating-point rounding on physical metal can introduce minor non-symmetric skew ($\mathbf{P} \ne \mathbf{P}^T$). Reflex explicitly enforces symmetry after every online rank-1 update:
+* **Hermitian Symmetrization:** Floating-point rounding on physical metal can introduce minor non-symmetric skew ($\mathbf{P} \ne \mathbf{P}^T$). System 1 explicitly enforces symmetry after every online rank-1 update:
   $$\mathbf{P} \leftarrow \frac{1}{2}(\mathbf{P} + \mathbf{P}^T)$$
 * **Regularized Covariance Bounding:** To prevent covariance windup along unexcited subspace dimensions ($\lambda_{\max}(\mathbf{P}) \to \infty$), if $\max_i P_{ii} > \frac{50.0}{\lambda_{\text{reg}}}$, the runtime rescales $\mathbf{P} \leftarrow s \mathbf{P}$ and $\mathbf{B} \leftarrow s^{-1} \mathbf{B}$ where $s = \frac{50.0 / \lambda_{\text{reg}}}{\max_i P_{ii}}$, exactly preserving weight invariance $\mathbf{W} = (\mathbf{P} \mathbf{B})^T$ while bounding spectral condition $\kappa(\mathbf{P}) < 10^5$.
 * **Strict Positive-Definiteness:** $P_{ii} \leftarrow \max(P_{ii}, 10^{-6})$, eliminating indefinite floating-point cancellation across unexcited coordinates.
@@ -410,7 +410,7 @@ $$\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$$
 
 ## 6. The Autonomous Apprentice-to-Metal Cutover Engine
 
-To eliminate enterprise adoption friction, Reflex includes a transparent drop-in cutover engine for third-party cloud decision SDKs (such as TypeSafe AI / Jev):
+To eliminate enterprise adoption friction, System 1 includes a transparent drop-in cutover engine for third-party cloud decision SDKs (such as TypeSafe AI / Jev):
 
 ```python
 from reflex.compat.typesafe import patch_typesafe, TypeSafeClient
@@ -431,7 +431,7 @@ client = TypeSafeClient(
    - Queries are dispatched to the cloud SaaS endpoint (latency: ~220 ms).
    - Prompts and response payloads are recorded asynchronously to the local `ActionLedger` SQLite database.
 2. **Phase 2: Autonomous Distillation (`n == cutover_threshold`)**:
-   - The engine automatically invokes `ReflexCompiler` in a background worker thread.
+   - The engine automatically invokes `SystemOneCompiler` in a background worker thread.
    - Closed-form Ridge Regression fits local weights $\mathbf{W}^*$ in under 15 ms (14.2 ms measured).
    - Conformal quantiles are calibrated against recent holdout queries.
 3. **Phase 3: Dual-Flight Agreement Verification**:
@@ -447,7 +447,7 @@ client = TypeSafeClient(
 
 ## 7. Native Framework Integrations Layer
 
-Reflex includes native integration middleware for modern agent stacks:
+System 1 includes native integration middleware for modern agent stacks:
 
 ### 7.1 Model Context Protocol (MCP) Safety Proxy (`reflex.integrations.mcp`)
 Intercepts JSON-RPC tool invocations before execution on MCP servers:
@@ -462,13 +462,13 @@ Wraps any ASGI web service to fast-path high-confidence agent intents:
 
 ### 7.3 LangChain Agent Guard (`reflex.integrations.langchain`)
 * **Callback Handler**: Subclasses `BaseCallbackHandler`, intercepting `on_tool_start` and `on_agent_action`.
-* **Execution Interruption**: Raises `ReflexSecurityException` (aliased to `ReflexGuardBlockedException`) if destructive shell commands, credential access, or prompt injection patterns are detected.
+* **Execution Interruption**: Raises `SystemOneSecurityException` (aliased to `SystemOneGuardBlockedException`) if destructive shell commands, credential access, or prompt injection patterns are detected.
 
 ---
 
 ## 8. Cryptographic ActionLedger & Non-Repudiation
 
-Reflex provides architectural security controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures for HIPAA, GDPR, and SOC 2 Type II environments (rather than claiming independent certification of customer deployments).
+System 1 provides architectural security controls (zero network egress, verifiable software execution proofs, and tamper-evident audit ledgers) that support organizational compliance postures for HIPAA, GDPR, and SOC 2 Type II environments (rather than claiming independent certification of customer deployments).
 
 ### 8.1 SQLite Append-Only Table Schema
 The production ledger (`src/system1/ledger.py`) operates in Write-Ahead Logging (`WAL`) mode with `PRAGMA synchronous = NORMAL` across normalized tables:
@@ -497,7 +497,7 @@ $$h_t = \text{SHA-256}\left( h_{t-1} \;\|\; \text{canonical\_json}(e_t) \right)$
 Integrity verification walks the sequence sequentially, asserting that $h_t$ matches the recomputed digest. Any out-of-order write or row mutation immediately breaks the chain and triggers fail-closed operation.
 
 ### 8.3 Ed25519 Cryptographic Witness Receipts
-Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. Digital signatures are generated in software via RFC 8032 standard primitives (using Python's `cryptography` library), establishing application-layer non-repudiation and chronological ordering without proprietary hardware enclave dependencies. (Hardware enclave or HSM root-of-trust key management is an optional architectural integration, not a shipped hardware requirement). For every decision, Reflex constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
+Each System 1 deployment maintains an on-device Ed25519 asymmetric keypair stored in `~/.system1/identity/`. Digital signatures are generated in software via RFC 8032 standard primitives (using Python's `cryptography` library), establishing application-layer non-repudiation and chronological ordering without proprietary hardware enclave dependencies. (Hardware enclave or HSM root-of-trust key management is an optional architectural integration, not a shipped hardware requirement). For every decision, System 1 constructs a signed `RunWitnessEnvelope` (`src/system1/receipt.py`):
 * Canonical decision telemetry (action, parameters, calibrated probabilities, latency)
 * Conformal gating status ($|\mathcal{C}_{1-\alpha}|$, empirical threshold $\hat{q}_{1-\alpha}$, margin $M(\mathbf{x})$)
 * Rolling ledger head hash $h_t$
@@ -505,7 +505,7 @@ Each Reflex deployment maintains an on-device Ed25519 asymmetric keypair stored 
   $$\sigma_t = \text{Ed25519\_Sign}\left( \text{private\_key}, \; h_t \;\|\; \text{timestamp\_ns} \right)$$
 
 ### 8.4 Architectural & In-Process Zero-Network-Egress Invariant
-Reflex enforces a strict zero-dependency architectural constraint. The core runtime imports exclusively from Python’s standard library and `numpy`. Crucially:
+System 1 enforces a strict zero-dependency architectural constraint. The core runtime imports exclusively from Python’s standard library and `numpy`. Crucially:
 * No HTTP clients (`requests`, `httpx`, `urllib.request`, `aiohttp`) are packaged or imported in the System 1 execution path.
 * No low-level networking sockets (`import socket`) are instantiated during local inference.
 * All matrix evaluations, conformal checks, and SQLite ledger writes execute strictly within host process memory and local disk.
@@ -516,14 +516,14 @@ Reflex enforces a strict zero-dependency architectural constraint. The core runt
 
 ## 9. Twin-Namespace Parity Architecture (`reflex` <-> `system1`)
 
-Reflex provides 100% symmetric 1:1 twin-namespace parity across both package aliases:
+System 1 provides 100% symmetric 1:1 twin-namespace parity across both package aliases:
 
 ```python
 import reflex
 import system1
 
 # Exact object identity across both namespaces
-assert reflex.ReflexEngine is system1.ReflexEngine
+assert reflex.SystemOneEngine is system1.SystemOneEngine
 assert reflex.DecisionSchema is system1.DecisionSchema
 assert reflex.ActionLedger is system1.ActionLedger
 assert reflex.__version__ == system1.__version__ == "0.1.0"
@@ -554,20 +554,20 @@ Benchmarked on Apple Silicon (M3 Max, 14-core CPU, 36 GB Unified Memory) running
 
 | Runtime Architecture | Hardware Location | Execution Paradigm | P50 Latency | P99 Latency | Relative Speedup | WAN Egress |
 |---|---|---|---|---|---|---|
-| **Reflex Tier 0 (L1 Cache)** | Host Memory | In-Process Exact Hash | **0.0098 ms (9.8 µs)** | **0.014 ms** | **86,700×** | **0 Bytes** |
-| **Reflex System 1 (Metal)** | Host Metal/BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **867×** | **0 Bytes** |
+| **System 1 Tier 0 (L1 Cache)** | Host Memory | In-Process Exact Hash | **0.0098 ms (9.8 µs)** | **0.014 ms** | **86,700×** | **0 Bytes** |
+| **System 1 System 1 (Metal)** | Host Metal/BLAS | Non-Autoregressive Matrix | **0.98 ms** | **1.34 ms** | **867×** | **0 Bytes** |
 | Local 8B LLM (vLLM / Ollama) | Local GPU (RTX 4090) | Autoregressive (KV Cache) | 180.00 ms | 245.00 ms | 4.7× | 0 Bytes |
 | Cloud Fast API (Groq / Cerebras) | US-East WAN | Autoregressive Specialized ASIC | 220.00 ms | 410.00 ms | 3.9× | Full Payload |
 | Frontier Deliberative Governor (Astra / GPT-6 / Opus 5 / Gemini 3.1 / Grok) | Cloud WAN | Autoregressive Frontier Deliberation | 850.00 ms | 1,480.00 ms | 1.0× (Baseline) | Full Payload |
 | ReAct Multi-Turn Cloud Agent | Cloud WAN | Multi-Call Tool Reasoning Loop | 3,200.00 ms | 6,800.00 ms | 0.26× | Full Payload |
 
-*Note on Relative Speedup:* Reflex delivers an **867× speedup** over single-call frontier cloud reasoning models on cold forward passes, and an **86,700× speedup** over cloud models on repeated L1 cache hits (representing a **100× speedup** over cold forward passes: $0.98\,\text{ms} / 0.0098\,\text{ms} = 100\times$).
+*Note on Relative Speedup:* System 1 delivers an **867× speedup** over single-call frontier cloud reasoning models on cold forward passes, and an **86,700× speedup** over cloud models on repeated L1 cache hits (representing a **100× speedup** over cold forward passes: $0.98\,\text{ms} / 0.0098\,\text{ms} = 100\times$).
 
 ### 10.3 Real-Time 60 FPS Emulation Testbed (Pokémon Red/Blue)
-To test Reflex under rigid real-time constraints, the runtime was interfaced with the `PyBoy` Game Boy hardware emulator running *Pokémon Red* at 60.0 Hz (16.6 ms per frame):
-* **Frame Budget Allocation:** A cloud LLM forward pass ($850\,\text{ms}$) causes **51 dropped frames**. Reflex evaluates in $0.98\,\text{ms}$, consuming only **5.9% of the 16.6 ms hardware frame budget**, permitting up to **16 evaluations per frame**.
-* **Memory-Mapped RAM Offsets:** Verified in `examples/gaming/pokemon_battle_reflex.py`:
+To test System 1 under rigid real-time constraints, the runtime was interfaced with the `PyBoy` Game Boy hardware emulator running *Pokémon Red* at 60.0 Hz (16.6 ms per frame):
+* **Frame Budget Allocation:** A cloud LLM forward pass ($850\,\text{ms}$) causes **51 dropped frames**. System 1 evaluates in $0.98\,\text{ms}$, consuming only **5.9% of the 16.6 ms hardware frame budget**, permitting up to **16 evaluations per frame**.
+* **Memory-Mapped RAM Offsets:** Verified in `examples/gaming/pokemon_battle_system1.py`:
   - Battle Mode: `$D057` (`wIsInBattle`)
   - Player HP: `$D015` (`wBattleMonHP`)
   - Opponent HP: `$CFE6` (`wEnemyMonHP`)
-* **Throughput:** In headless benchmark mode, Reflex sustains **10,400+ FPS** (measured up to $13,096\,\text{FPS}$), evaluating $38\,\mu\text{s}$ forward passes per state transition with zero frame stutter.
+* **Throughput:** In headless benchmark mode, System 1 sustains **10,400+ FPS** (measured up to $13,096\,\text{FPS}$), evaluating $38\,\mu\text{s}$ forward passes per state transition with zero frame stutter.

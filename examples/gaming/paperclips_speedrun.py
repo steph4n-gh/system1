@@ -2,7 +2,7 @@
 """Universal Paperclips Speedrun: Playwright / Chromium Autonomous World Record Engine.
 
 Achieves high-frequency (50-100 Hz) browser automation for Frank Lantz's 'Universal Paperclips'
-(https://www.decisionproblem.com/paperclips/index2.html) using Playwright / Chromium and Reflex System 1.
+(https://www.decisionproblem.com/paperclips/index2.html) using Playwright / Chromium and System 1 System 1.
 
 Key Architecture:
 1. High-Frequency Browser Observation & Action Loop (50-100 Hz):
@@ -20,7 +20,7 @@ Key Architecture:
      zero-wipe hazard remediation, drifter combat war response, and 100% universe conversion (30 Septendecillion clips).
 3. Split Timer & Milestone Logging:
    - Benchmarked against Speedrun.com World Record pace across all 8 major milestones with live delta tracking.
-4. Reflex System 1 Conformal Ambiguity Gating:
+4. System 1 System 1 Conformal Ambiguity Gating:
    - Sub-2ms local reflex evaluation with conformal prediction sets on critical decision forks.
    - Signed Ed25519 decision witness receipts.
 """
@@ -51,8 +51,8 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compiler import CompiledSystemOneModel
@@ -248,10 +248,10 @@ class PaperclipsObservation:
 
 
 # ============================================================================
-# 3. Reflex System 1 Decision Schema & Fast Gating
+# 3. System 1 System 1 Decision Schema & Fast Gating
 # ============================================================================
 
-class PaperclipsSpeedrunReflex(DecisionSchema):
+class PaperclipsSpeedrunSystemOne(DecisionSchema):
     """Decision schema for sub-millisecond Paperclips speedrun control."""
 
     action = ChoiceField(
@@ -1048,11 +1048,11 @@ class PlaywrightPaperclipsController:
 
 
 # ============================================================================
-# 7. Speedrun Runner & Dual-Process Reflex Engine
+# 7. Speedrun Runner & Dual-Process System 1 Engine
 # ============================================================================
 
 class PaperclipsSpeedrunRunner:
-    """Full 3-Phase Speedrun Runner integrating high-frequency observation and Reflex System 1."""
+    """Full 3-Phase Speedrun Runner integrating high-frequency observation and System 1 System 1."""
 
     def __init__(
         self,
@@ -1190,7 +1190,7 @@ def main() -> None:
     """CLI entrypoint for Universal Paperclips Speedrun."""
     import asyncio
 
-    parser = argparse.ArgumentParser(description="Universal Paperclips Speedrun (Playwright / Reflex System 1)")
+    parser = argparse.ArgumentParser(description="Universal Paperclips Speedrun (Playwright / System 1 System 1)")
     parser.add_argument("--mode", choices=["mock", "live"], default="mock", help="Execution mode (mock or live Playwright)")
     parser.add_argument("--headed", action="store_true", help="Launch visible browser window (default is headless)")
     parser.add_argument("--steps", type=int, default=150, help="Maximum number of speedrun loop steps")

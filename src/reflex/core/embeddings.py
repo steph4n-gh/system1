@@ -1,4 +1,4 @@
-"""Reflex Core Embeddings Module (re-export from system1.core.embeddings)."""
+"""System 1 Core Embeddings Module (re-export from system1.core.embeddings)."""
 from __future__ import annotations
 
 from system1.core.embeddings import *

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex Full Repository Audit Bundle Generator.
+"""System 1 Full Repository Audit Bundle Generator.
 
 Consolidates all project code, documentation, specifications, benchmarks,
 and test suites into a single structured, self-indexing text file for external

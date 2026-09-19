@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates high-FPS animated GIF of Game Boy Pokémon running under Reflex System 1 control."""
+"""Generates high-FPS animated GIF of Game Boy Pokémon running under System 1 System 1 control."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ if str(ROOT_DIR) not in sys.path:
 
 import pyboy
 from examples.gaming.pokemon_gameboy_gui import fast_forward_to_rival_battle
-from examples.gaming.pokemon_battle_reflex import PyBoyMemoryBridge, System1BattleAgent
+from examples.gaming.pokemon_battle_system1 import PyBoyMemoryBridge, System1BattleAgent
 
 
 def get_font(size: int = 14) -> ImageFont.ImageFont:
@@ -72,7 +72,7 @@ def main() -> None:
         elif t % 16 in (6, 7):
             emulator.button_release("a")
 
-    print("[3/4] Recording 60 FPS battle frames with live Reflex telemetry overlay...")
+    print("[3/4] Recording 60 FPS battle frames with live System 1 telemetry overlay...")
 
     # Advance battle turns and record 110 dynamic action frames
     for i in range(330):

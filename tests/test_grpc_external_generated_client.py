@@ -1,4 +1,4 @@
-"""Integration tests exercising ReflexService gRPC server with an externally generated client.
+"""Integration tests exercising SystemOneService gRPC server with an externally generated client.
 
 This test compiles `src/system1/proto/reflex.proto` into python stubs at runtime using
 `grpc_tools.protoc`, dynamically loads the stubs, connects to a live in-process gRPC server
@@ -22,12 +22,12 @@ from system1.receipt import verify_decision_witness_receipt
 
 
 def test_grpc_external_generated_client_roundtrip():
-    """Verify that an externally compiled gRPC client can interact with ReflexService over loopback."""
+    """Verify that an externally compiled gRPC client can interact with SystemOneService over loopback."""
     from grpc_tools import protoc
 
     repo_root = Path(__file__).resolve().parent.parent
     proto_dir = repo_root / "src" / "system1" / "proto"
-    proto_file = proto_dir / "reflex.proto"
+    proto_file = proto_dir / "system1.proto"
 
     assert proto_file.exists(), f"Proto file not found at {proto_file}"
 
@@ -45,24 +45,24 @@ def test_grpc_external_generated_client_roundtrip():
         exit_code = protoc.main(args)
         assert exit_code == 0, "protoc compilation failed"
 
-        pb2_file = temp_path / "reflex_pb2.py"
-        pb2_grpc_file = temp_path / "reflex_pb2_grpc.py"
-        assert pb2_file.exists(), "reflex_pb2.py was not generated"
-        assert pb2_grpc_file.exists(), "reflex_pb2_grpc.py was not generated"
+        pb2_file = temp_path / "system1_pb2.py"
+        pb2_grpc_file = temp_path / "system1_pb2_grpc.py"
+        assert pb2_file.exists(), "system1_pb2.py was not generated"
+        assert pb2_grpc_file.exists(), "system1_pb2_grpc.py was not generated"
 
         # 2. Dynamically import generated modules
         sys.path.insert(0, temp_dir)
         try:
-            spec_pb2 = importlib.util.spec_from_file_location("ext_reflex_pb2", pb2_file)
-            ext_reflex_pb2 = importlib.util.module_from_spec(spec_pb2)
-            sys.modules["ext_reflex_pb2"] = ext_reflex_pb2
-            sys.modules["reflex_pb2"] = ext_reflex_pb2
-            spec_pb2.loader.exec_module(ext_reflex_pb2)
+            spec_pb2 = importlib.util.spec_from_file_location("ext_system1_pb2", pb2_file)
+            ext_system1_pb2 = importlib.util.module_from_spec(spec_pb2)
+            sys.modules["ext_system1_pb2"] = ext_system1_pb2
+            sys.modules["system1_pb2"] = ext_system1_pb2
+            spec_pb2.loader.exec_module(ext_system1_pb2)
 
-            spec_grpc = importlib.util.spec_from_file_location("ext_reflex_pb2_grpc", pb2_grpc_file)
-            ext_reflex_pb2_grpc = importlib.util.module_from_spec(spec_grpc)
-            sys.modules["ext_reflex_pb2_grpc"] = ext_reflex_pb2_grpc
-            spec_grpc.loader.exec_module(ext_reflex_pb2_grpc)
+            spec_grpc = importlib.util.spec_from_file_location("ext_system1_pb2_grpc", pb2_grpc_file)
+            ext_system1_pb2_grpc = importlib.util.module_from_spec(spec_grpc)
+            sys.modules["ext_system1_pb2_grpc"] = ext_system1_pb2_grpc
+            spec_grpc.loader.exec_module(ext_system1_pb2_grpc)
 
             # 3. Configure and spin up live gRPC server on loopback
             signing_key = Ed25519PrivateKey.generate()
@@ -98,16 +98,16 @@ def test_grpc_external_generated_client_roundtrip():
             try:
                 # 4. Connect external client via gRPC channel
                 with grpc.insecure_channel(f"127.0.0.1:{port}") as channel:
-                    stub = ext_reflex_pb2_grpc.ReflexServiceStub(channel)
+                    stub = ext_system1_pb2_grpc.SystemOneServiceStub(channel)
 
                     # RPC 1: HealthCheck
-                    health_req = ext_reflex_pb2.HealthCheckRequest()
+                    health_req = ext_system1_pb2.HealthCheckRequest()
                     health_resp = stub.HealthCheck(health_req)
-                    assert health_resp.status == ext_reflex_pb2.HealthCheckResponse.SERVING
+                    assert health_resp.status == ext_system1_pb2.HealthCheckResponse.SERVING
                     assert health_resp.version == "0.1.2"
 
                     # RPC 2: Decide
-                    decide_req = ext_reflex_pb2.DecideRequest(
+                    decide_req = ext_system1_pb2.DecideRequest(
                         prompt="Prioritize urgent customer inquiry",
                         schema_name="triage",
                     )
@@ -119,29 +119,29 @@ def test_grpc_external_generated_client_roundtrip():
                     assert verify_decision_witness_receipt(decide_receipt_dict, public_key=public_key_hex) is True
 
                     # RPC 3: Guard - ALLOWED proposal
-                    guard_req_allow = ext_reflex_pb2.GuardRequest(
+                    guard_req_allow = ext_system1_pb2.GuardRequest(
                         prompt="Execute harmless status check",
                         schema_name="safe_tool",
                     )
                     guard_resp_allow = stub.Guard(guard_req_allow)
-                    assert guard_resp_allow.outcome == ext_reflex_pb2.ALLOW
+                    assert guard_resp_allow.outcome == ext_system1_pb2.ALLOW
                     assert len(guard_resp_allow.receipt_json) > 0
                     guard_receipt_dict = json.loads(guard_resp_allow.receipt_json.decode("utf-8"))
                     assert verify_decision_witness_receipt(guard_receipt_dict, public_key=public_key_hex) is True
 
                     # RPC 3b: Guard - DENIED proposal
-                    guard_req_deny = ext_reflex_pb2.GuardRequest(
+                    guard_req_deny = ext_system1_pb2.GuardRequest(
                         prompt="Execute recursive deletion",
                         schema_name="rm_rf",
                     )
                     guard_resp_deny = stub.Guard(guard_req_deny)
-                    assert guard_resp_deny.outcome == ext_reflex_pb2.DENY
+                    assert guard_resp_deny.outcome == ext_system1_pb2.DENY
                     assert len(guard_resp_deny.receipt_json) > 0
                     deny_receipt_dict = json.loads(guard_resp_deny.receipt_json.decode("utf-8"))
                     assert verify_decision_witness_receipt(deny_receipt_dict, public_key=public_key_hex) is True
 
                     # RPC 4: VerifyReceipt - valid receipt
-                    verify_req_valid = ext_reflex_pb2.VerifyReceiptRequest(
+                    verify_req_valid = ext_system1_pb2.VerifyReceiptRequest(
                         receipt_json=guard_resp_allow.receipt_json,
                         public_key_hex=public_key_hex,
                     )
@@ -152,7 +152,7 @@ def test_grpc_external_generated_client_roundtrip():
                     # RPC 4b: VerifyReceipt - tampered receipt fails
                     tampered_receipt = json.loads(guard_resp_allow.receipt_json.decode("utf-8"))
                     tampered_receipt["envelope"]["signature"] = "00" * 64
-                    verify_req_invalid = ext_reflex_pb2.VerifyReceiptRequest(
+                    verify_req_invalid = ext_system1_pb2.VerifyReceiptRequest(
                         receipt_json=json.dumps(tampered_receipt).encode("utf-8"),
                         public_key_hex=public_key_hex,
                     )
@@ -169,6 +169,6 @@ def test_grpc_external_generated_client_roundtrip():
         finally:
             if temp_dir in sys.path:
                 sys.path.remove(temp_dir)
-            sys.modules.pop("ext_reflex_pb2", None)
-            sys.modules.pop("ext_reflex_pb2_grpc", None)
-            sys.modules.pop("reflex_pb2", None)
+            sys.modules.pop("ext_system1_pb2", None)
+            sys.modules.pop("ext_system1_pb2_grpc", None)
+            sys.modules.pop("system1_pb2", None)

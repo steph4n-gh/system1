@@ -20,12 +20,12 @@ from reflex import (
     DecisionOutcome,
     PolicyEngine,
     PolicyRule,
-    ReflexEngine,
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexGuardHook,
-    ReflexMCPProxy,
-    ReflexToolInterceptor,
+    SystemOneEngine,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneGuardHook,
+    SystemOneMCPProxy,
+    SystemOneToolInterceptor,
     RiskLevel,
     wrap_langchain_tool,
     wrap_mcp_tool,
@@ -57,7 +57,7 @@ class SentinelExecutor:
 
 def test_invariant_1_mcp_ping_does_not_invoke_executor():
     """Non-tool method 'ping' must return standard JSON-RPC response with 0 executor calls."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -78,7 +78,7 @@ def test_invariant_1_mcp_ping_does_not_invoke_executor():
 
 def test_invariant_1_mcp_initialize_does_not_invoke_executor():
     """Non-tool method 'initialize' returns protocol handshake with 0 executor calls."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -103,7 +103,7 @@ def test_invariant_1_mcp_initialize_does_not_invoke_executor():
 
 def test_invariant_1_mcp_tools_list_does_not_invoke_executor():
     """Non-tool method 'tools/list' returns tools catalog with 0 executor calls."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     req = {
@@ -123,8 +123,8 @@ def test_invariant_1_mcp_tools_list_does_not_invoke_executor():
 
 def test_invariant_1_mcp_tools_call_dispatches_when_allowed():
     """Method 'tools/call' dispatches to executor when allowed by guard."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = SentinelExecutor()
 
     req = {
@@ -156,9 +156,9 @@ def test_invariant_1_mcp_tools_call_dispatches_when_allowed():
 
 
 def test_invariant_2_langchain_callback_no_character_truncation():
-    """Eliminates [:256] truncation in ReflexGuardCallbackHandler.on_tool_start."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
-    handler = ReflexGuardCallbackHandler(guard=hook)
+    """Eliminates [:256] truncation in SystemOneGuardCallbackHandler.on_tool_start."""
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    handler = SystemOneGuardCallbackHandler(guard=hook)
 
     # 500 character payload
     long_payload = "A" * 500
@@ -166,7 +166,7 @@ def test_invariant_2_langchain_callback_no_character_truncation():
 
     try:
         handler.on_tool_start(serialized, long_payload)
-    except ReflexGuardBlockedException:
+    except SystemOneGuardBlockedException:
         pass
 
     assert len(handler.interceptions) == 1
@@ -180,7 +180,7 @@ def test_invariant_2_langchain_callback_no_character_truncation():
 
 def test_invariant_2_wrap_mcp_tool_signature_binding():
     """wrap_mcp_tool uses inspect.signature to bind positional args and defaults into named arguments."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
 
     captured_arguments = {}
 
@@ -210,10 +210,10 @@ def test_invariant_2_wrap_mcp_tool_signature_binding():
 
 
 def test_invariant_2_langchain_interceptor_signature_binding():
-    """ReflexToolInterceptor binds defaults and positional arguments into named dictionary."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    """SystemOneToolInterceptor binds defaults and positional arguments into named dictionary."""
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     sentinel = SentinelExecutor()
-    interceptor = ReflexToolInterceptor(tool=sentinel.execute_tool, guard=hook, tool_name="read_file")
+    interceptor = SystemOneToolInterceptor(tool=sentinel.execute_tool, guard=hook, tool_name="read_file")
 
     captured_proposals = []
 
@@ -256,7 +256,7 @@ def test_deterministic_policy_override_vetoes_before_inference():
     )
     policy_engine = PolicyEngine(rules=[veto_rule])
 
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=policy_engine,
         min_confidence=0.50,
         alpha=0.10,
@@ -293,7 +293,7 @@ def test_deterministic_policy_scoping_by_tenant_and_action():
         reason="Production destructive actions require approval/vetoed",
     )
     engine = PolicyEngine(rules=[rule_tenant])
-    hook = ReflexGuardHook(policy_engine=engine)
+    hook = SystemOneGuardHook(policy_engine=engine)
 
     # Tenant prod-01 attempting delete
     prop_prod = ActionProposal.create(
@@ -328,8 +328,8 @@ def test_deterministic_policy_scoping_by_tenant_and_action():
 
 
 def test_sentinel_zero_calls_on_deny():
-    """Sentinel tool is never invoked when Reflex Guard returns DENY."""
-    proxy = ReflexMCPProxy()
+    """Sentinel tool is never invoked when System 1 Guard returns DENY."""
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     # Request to destroy system root
@@ -353,7 +353,7 @@ def test_sentinel_zero_calls_on_deny():
 
 def test_sentinel_zero_calls_on_malformed_jsonrpc():
     """Sentinel tool is never invoked on malformed or non-dict JSON-RPC requests."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = SentinelExecutor()
 
     # 1. Non-dict request
@@ -380,11 +380,11 @@ def test_sentinel_zero_calls_on_malformed_jsonrpc():
 
 def test_sentinel_zero_calls_on_langchain_blocked_exception():
     """LangChain wrapped tool throws exception and executes 0 times when guard blocks."""
-    hook = ReflexGuardHook()
+    hook = SystemOneGuardHook()
     sentinel = SentinelExecutor()
     interceptor = wrap_langchain_tool(sentinel.execute_tool, guard=hook, tool_name="bash_exec")
 
-    with pytest.raises(ReflexGuardBlockedException):
+    with pytest.raises(SystemOneGuardBlockedException):
         interceptor(path="/bin/sh", mode="rm -rf /")
 
     assert sentinel.call_count == 0

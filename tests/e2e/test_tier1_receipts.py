@@ -26,7 +26,7 @@ from reflex import (
     DecisionSchema,
     DecisionWitnessReceipt,
     DefaultGuardDecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     RunWitnessEnvelope,
     canonical_bytes,
     canonical_json,
@@ -51,7 +51,7 @@ def test_ed25519_signature_creation_and_offline_verification(triage_schema):
     priv = Ed25519PrivateKey.generate()
     pub = priv.public_key()
 
-    engine = ReflexEngine(triage_schema, signing_key=priv)
+    engine = SystemOneEngine(triage_schema, signing_key=priv)
     res = engine.decide("Check network status for host", record_receipt=True)
     receipt = res.receipt
 
@@ -70,7 +70,7 @@ def test_tamper_evident_payload_detection(triage_schema):
     priv = Ed25519PrivateKey.generate()
     pub = priv.public_key()
 
-    engine = ReflexEngine(triage_schema, signing_key=priv)
+    engine = SystemOneEngine(triage_schema, signing_key=priv)
     res = engine.decide("Perform non-destructive telemetry check", record_receipt=True)
     original_dict = res.receipt.to_dict()
 
@@ -162,7 +162,7 @@ def test_keypair_persistence_and_loading(tmp_path: Path):
 def test_truth_ledger_head_binding(temp_ledger, triage_schema):
     """Verify decision receipts record the tip of the SQLite ledger."""
     priv = Ed25519PrivateKey.generate()
-    engine = ReflexEngine(triage_schema, signing_key=priv, ledger=temp_ledger)
+    engine = SystemOneEngine(triage_schema, signing_key=priv, ledger=temp_ledger)
 
     res1 = engine.decide("First transaction prompt", record_receipt=True)
     head1 = temp_ledger.head_hash()

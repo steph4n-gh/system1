@@ -307,17 +307,17 @@ def test_core_system_one_model_forward():
 
 def test_governance_layers_build_on_top_of_core():
     """Verify governance modules correctly import and subclass/use core primitives."""
-    from system1.engine import ReflexEngine
-    from system1.guard import ReflexGuardHook
+    from system1.engine import SystemOneEngine
+    from system1.guard import SystemOneGuardHook
     from system1.compat.typesafe import TypeSafeClient
 
     class QuickSchema(DecisionSchema):
         opt = ChoiceField(options=["a", "b"])
 
-    engine = ReflexEngine(QuickSchema, dimension=128, backend="numpy")
+    engine = SystemOneEngine(QuickSchema, dimension=128, backend="numpy")
     assert isinstance(engine.model, SystemOneModel)
 
-    hook = ReflexGuardHook(engine=engine)
+    hook = SystemOneGuardHook(engine=engine)
     assert isinstance(hook.engine.schema, DecisionSchema)
 
     client = TypeSafeClient()

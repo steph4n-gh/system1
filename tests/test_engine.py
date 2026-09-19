@@ -1,4 +1,4 @@
-"""Tests for Reflex Engine and Developer API."""
+"""Tests for System 1 Engine and Developer API."""
 
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -11,7 +11,7 @@ from system1 import (
     DecisionResult,
     DecisionSchema,
     MultiChoiceField,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
     SystemOneEngine,
     decide,
@@ -43,7 +43,7 @@ class CompleteServiceSchema(DecisionSchema):
 
 def test_engine_decide_and_dynamic_attributes():
     signing_key = Ed25519PrivateKey.generate()
-    engine = ReflexEngine(CompleteServiceSchema, signing_key=signing_key)
+    engine = SystemOneEngine(CompleteServiceSchema, signing_key=signing_key)
 
     res = engine.decide(
         "Request dedicated enterprise cluster with GPU acceleration and compliance review",
@@ -87,7 +87,7 @@ def test_top_level_system1_decide_api():
 
 
 def test_engine_calibration_workflow():
-    engine = ReflexEngine(CompleteServiceSchema)
+    engine = SystemOneEngine(CompleteServiceSchema)
 
     calib_dataset = [
         ("Free tier user ping", {"tier": "free", "is_compliant": True}),
@@ -112,7 +112,7 @@ def test_engine_calibration_workflow():
 
 
 def test_engine_benchmark_beats_jev():
-    engine = ReflexEngine(CompleteServiceSchema)
+    engine = SystemOneEngine(CompleteServiceSchema)
     prompts = [
         "Read file system metadata",
         "Enterprise workload allocation",
@@ -134,7 +134,7 @@ def test_engine_action_ledger_integration(tmp_path):
     ledger = ActionLedger(str(ledger_db))
 
     signing_key = Ed25519PrivateKey.generate()
-    engine = ReflexEngine(CompleteServiceSchema, signing_key=signing_key, ledger=ledger)
+    engine = SystemOneEngine(CompleteServiceSchema, signing_key=signing_key, ledger=ledger)
 
     # First decision
     res = engine.decide(
@@ -165,7 +165,7 @@ def test_engine_action_ledger_integration(tmp_path):
 
 
 def test_engine_multichoice_and_score_calibration():
-    engine = ReflexEngine(CompleteServiceSchema)
+    engine = SystemOneEngine(CompleteServiceSchema)
     calib_dataset = [
         ("Deploy GPU enterprise service", {
             "tier": "enterprise",
@@ -202,7 +202,7 @@ def test_engine_multichoice_and_score_calibration():
 
 
 def test_engine_prompt_type_validation():
-    engine = ReflexEngine(CompleteServiceSchema)
+    engine = SystemOneEngine(CompleteServiceSchema)
     with pytest.raises(TypeError, match="Prompt must be a string"):
         engine.decide(None)  # type: ignore
 
@@ -211,7 +211,7 @@ def test_engine_prompt_type_validation():
 
 
 def test_engine_invalid_choice_label_in_calibration():
-    engine = ReflexEngine(CompleteServiceSchema)
+    engine = SystemOneEngine(CompleteServiceSchema)
     invalid_dataset = [("Deploy service", {"tier": "invalid_tier_option"})]
     with pytest.raises(ValueError, match="not permitted"):
         engine.calibrate(invalid_dataset)

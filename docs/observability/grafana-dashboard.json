@@ -3,7 +3,7 @@
     {
       "name": "DS_PROMETHEUS",
       "label": "Prometheus",
-      "description": "Prometheus data source for Reflex metrics",
+      "description": "Prometheus data source for System 1 metrics",
       "type": "datasource",
       "pluginId": "prometheus",
       "pluginName": "Prometheus"
@@ -12,7 +12,7 @@
   "annotations": {
     "list": []
   },
-  "description": "Reflex Decision Engine — Prometheus Observability Dashboard",
+  "description": "System 1 Decision Engine — Prometheus Observability Dashboard",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -36,17 +36,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(reflex_decision_latency_seconds_bucket[5m])) by (le, schema))",
+          "expr": "histogram_quantile(0.50, sum(rate(system1_decision_latency_seconds_bucket[5m])) by (le, schema))",
           "legendFormat": "P50 — {{ schema }}",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.90, sum(rate(reflex_decision_latency_seconds_bucket[5m])) by (le, schema))",
+          "expr": "histogram_quantile(0.90, sum(rate(system1_decision_latency_seconds_bucket[5m])) by (le, schema))",
           "legendFormat": "P90 — {{ schema }}",
           "refId": "B"
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(reflex_decision_latency_seconds_bucket[5m])) by (le, schema))",
+          "expr": "histogram_quantile(0.99, sum(rate(system1_decision_latency_seconds_bucket[5m])) by (le, schema))",
           "legendFormat": "P99 — {{ schema }}",
           "refId": "C"
         }
@@ -68,7 +68,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(reflex_decisions_total[1m])) by (schema)",
+          "expr": "sum(rate(system1_decisions_total[1m])) by (schema)",
           "legendFormat": "{{ schema }}",
           "refId": "A"
         }
@@ -91,7 +91,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(reflex_escalations_total[5m])) by (schema, reason)",
+          "expr": "sum(rate(system1_escalations_total[5m])) by (schema, reason)",
           "legendFormat": "{{ schema }} — {{ reason }}",
           "refId": "A"
         }
@@ -119,7 +119,7 @@
       },
       "targets": [
         {
-          "expr": "reflex_cache_hit_ratio",
+          "expr": "system1_cache_hit_ratio",
           "legendFormat": "Cache Hit Ratio",
           "refId": "A"
         }
@@ -140,7 +140,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(reflex_conformal_set_size_bucket[5m])) by (le, schema)",
+          "expr": "sum(rate(system1_conformal_set_size_bucket[5m])) by (le, schema)",
           "legendFormat": "{{ schema }} — le={{ le }}",
           "refId": "A",
           "format": "heatmap"
@@ -167,7 +167,7 @@
       },
       "targets": [
         {
-          "expr": "reflex_ledger_entries_total",
+          "expr": "system1_ledger_entries_total",
           "legendFormat": "Ledger Entries",
           "refId": "A"
         }
@@ -180,7 +180,7 @@
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Reflex Decision Engine",
+  "title": "System 1 Decision Engine",
   "uid": "reflex-decision-engine",
   "version": 1
 }

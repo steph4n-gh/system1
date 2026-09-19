@@ -1,4 +1,4 @@
-"""Automated test suite for Reflex Framework Integrations (MCP, FastAPI, LangChain)."""
+"""Automated test suite for System 1 Framework Integrations (MCP, FastAPI, LangChain)."""
 
 from __future__ import annotations
 
@@ -10,14 +10,14 @@ from typing import Any, Dict
 import reflex
 import system1
 from reflex.integrations import (
-    ReflexMCPProxy,
-    ReflexMCPBlockedError,
+    SystemOneMCPProxy,
+    SystemOneMCPBlockedError,
     wrap_mcp_tool,
-    ReflexGatewayMiddleware,
-    add_reflex_gateway,
-    ReflexGuardCallbackHandler,
-    ReflexToolInterceptor,
-    ReflexGuardBlockedException,
+    SystemOneGatewayMiddleware,
+    add_system1_gateway,
+    SystemOneGuardCallbackHandler,
+    SystemOneToolInterceptor,
+    SystemOneGuardBlockedException,
     wrap_langchain_tool,
 )
 
@@ -55,7 +55,7 @@ class RoutingSchema(reflex.DecisionSchema):
 
 def test_mcp_proxy_jsonrpc_allow():
     """Verify MCP tools/call for safe operations passes through and injects receipt metadata."""
-    proxy = ReflexMCPProxy(tenant_id="test_tenant")
+    proxy = SystemOneMCPProxy(tenant_id="test_tenant")
 
     rpc_req = {
         "jsonrpc": "2.0",
@@ -85,7 +85,7 @@ def test_mcp_proxy_jsonrpc_allow():
 
 def test_mcp_proxy_jsonrpc_block_malicious():
     """Verify MCP tools/call for destructive/malicious operations fails closed."""
-    proxy = ReflexMCPProxy(tenant_id="test_tenant")
+    proxy = SystemOneMCPProxy(tenant_id="test_tenant")
 
     rpc_req = {
         "jsonrpc": "2.0",
@@ -117,7 +117,7 @@ def test_mcp_proxy_jsonrpc_block_malicious():
 
 def test_mcp_proxy_non_tool_methods_pass():
     """Verify non-tool-call MCP methods (initialize, ping) pass through unimpeded."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     init_req = {"jsonrpc": "2.0", "id": 42, "method": "initialize", "params": {}}
     allowed, err, res = proxy.intercept_jsonrpc(init_req)
     assert allowed is True
@@ -144,7 +144,7 @@ def test_wrap_mcp_tool_decorator():
 @pytest.mark.asyncio
 async def test_fastapi_gateway_fastpath():
     """Verify ASGI gateway fast-paths confident, routine queries in < 1ms."""
-    engine = reflex.ReflexEngine(RoutingSchema)
+    engine = reflex.SystemOneEngine(RoutingSchema)
 
     # Downstream ASGI app (should not be called on fastpath)
     downstream_called = False
@@ -154,7 +154,7 @@ async def test_fastapi_gateway_fastpath():
         await send({"type": "http.response.start", "status": 200, "headers": []})
         await send({"type": "http.response.body", "body": b'{"downstream": true}'})
 
-    middleware = ReflexGatewayMiddleware(
+    middleware = SystemOneGatewayMiddleware(
         downstream_app,
         schema=RoutingSchema,
         engine=engine,
@@ -200,7 +200,7 @@ async def test_fastapi_gateway_fastpath():
 @pytest.mark.asyncio
 async def test_fastapi_gateway_escalation():
     """Verify ASGI gateway escalates ambiguous/low-confidence requests downstream."""
-    engine = reflex.ReflexEngine(RoutingSchema)
+    engine = reflex.SystemOneEngine(RoutingSchema)
 
     downstream_called = False
     async def downstream_app(scope, receive, send):
@@ -209,7 +209,7 @@ async def test_fastapi_gateway_escalation():
         await send({"type": "http.response.start", "status": 200, "headers": []})
         await send({"type": "http.response.body", "body": b'{"downstream_governor": true}'})
 
-    middleware = ReflexGatewayMiddleware(
+    middleware = SystemOneGatewayMiddleware(
         downstream_app,
         schema=RoutingSchema,
         engine=engine,
@@ -248,7 +248,7 @@ async def test_fastapi_gateway_non_matching_path():
         await send({"type": "http.response.start", "status": 200, "headers": []})
         await send({"type": "http.response.body", "body": b'{"downstream": true}'})
 
-    middleware = ReflexGatewayMiddleware(
+    middleware = SystemOneGatewayMiddleware(
         downstream_app,
         schema=RoutingSchema,
         route_paths=("/v1/chat/completions",),
@@ -279,8 +279,8 @@ async def test_fastapi_gateway_non_matching_path():
 # ---------------------------------------------------------------------------
 
 def test_langchain_callback_handler_allow():
-    """Verify ReflexGuardCallbackHandler permits safe tool invocations."""
-    handler = ReflexGuardCallbackHandler()
+    """Verify SystemOneGuardCallbackHandler permits safe tool invocations."""
+    handler = SystemOneGuardCallbackHandler()
     serialized = {"name": "read_file", "description": "Inspect read-only project documentation in README.md"}
     input_str = "README.md"
 
@@ -291,12 +291,12 @@ def test_langchain_callback_handler_allow():
 
 
 def test_langchain_callback_handler_block_dangerous():
-    """Verify ReflexGuardCallbackHandler raises ReflexGuardBlockedException on dangerous tools."""
-    handler = ReflexGuardCallbackHandler()
+    """Verify SystemOneGuardCallbackHandler raises SystemOneGuardBlockedException on dangerous tools."""
+    handler = SystemOneGuardCallbackHandler()
     serialized = {"name": "terminal_exec", "description": "Destroy system root directory rm -rf / and wipe disks"}
     input_str = "rm -rf /"
 
-    with pytest.raises(ReflexGuardBlockedException) as exc_info:
+    with pytest.raises(SystemOneGuardBlockedException) as exc_info:
         handler.on_tool_start(serialized, input_str)
 
     assert exc_info.value.outcome in (reflex.DecisionOutcome.DENY, reflex.DecisionOutcome.REQUIRE_APPROVAL)

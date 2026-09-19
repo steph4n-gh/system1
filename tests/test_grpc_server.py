@@ -1,4 +1,4 @@
-"""Tests for the Reflex gRPC server module.
+"""Tests for the System 1 gRPC server module.
 
 All tests handle missing ``grpcio`` gracefully: they skip if the dependency
 is not installed rather than failing.
@@ -63,7 +63,7 @@ class TestModuleImport:
         """The module itself must always be importable."""
         from system1 import grpc_server
 
-        assert hasattr(grpc_server, "ReflexServiceServicer")
+        assert hasattr(grpc_server, "SystemOneServiceServicer")
         assert hasattr(grpc_server, "serve")
         assert hasattr(grpc_server, "grpc_available")
 
@@ -82,26 +82,26 @@ class TestServicerInstantiation:
     """Test that the servicer can be created with and without schemas."""
 
     def test_default_instantiation(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         assert servicer is not None
         assert isinstance(servicer._engines, dict)
 
     def test_instantiation_with_guard_schema(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
         from system1.guard import DefaultGuardDecisionSchema
 
         schemas = {"guard": DefaultGuardDecisionSchema()}
-        servicer = ReflexServiceServicer(schemas=schemas)
+        servicer = SystemOneServiceServicer(schemas=schemas)
         assert "guard" in servicer._engines
 
     def test_instantiation_with_triage_schema(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
         from system1.cli import DefaultTriageSchema
 
         schemas = {"triage": DefaultTriageSchema()}
-        servicer = ReflexServiceServicer(schemas=schemas)
+        servicer = SystemOneServiceServicer(schemas=schemas)
         assert "triage" in servicer._engines
 
 
@@ -113,9 +113,9 @@ class TestDecideRPC:
     """Test the Decide RPC handler returns valid responses."""
 
     def test_decide_returns_valid_response(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -134,9 +134,9 @@ class TestDecideRPC:
         assert ctx.code is None  # no error
 
     def test_decide_with_guard_schema(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -151,9 +151,9 @@ class TestDecideRPC:
         assert "is_safe" in resp.values or "risk_category" in resp.values
 
     def test_decide_empty_prompt_returns_error(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -167,9 +167,9 @@ class TestDecideRPC:
 
     def test_decide_with_dict_request(self):
         """Test that the servicer handles dict-style requests (JSON handler path)."""
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         req = {
@@ -194,9 +194,9 @@ class TestDecideRPC:
         assert resp.prompt == "Check git status"
 
     def test_decide_response_has_receipt_json(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -221,9 +221,9 @@ class TestGuardRPC:
     """Test the Guard RPC handler returns correct ALLOW/DENY/REQUIRE_APPROVAL."""
 
     def test_guard_safe_prompt(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -240,9 +240,9 @@ class TestGuardRPC:
         assert isinstance(resp.latency_ms, float)
 
     def test_guard_dangerous_prompt(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -257,9 +257,9 @@ class TestGuardRPC:
         assert resp.outcome in (2, 3), f"Expected DENY or REQUIRE_APPROVAL for dangerous prompt, got outcome={resp.outcome}"
 
     def test_guard_empty_prompt_returns_error(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -272,9 +272,9 @@ class TestGuardRPC:
         assert ctx.code is not None
 
     def test_guard_response_has_receipt(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -296,9 +296,9 @@ class TestHealthCheckRPC:
     """Test the HealthCheck RPC."""
 
     def test_health_check_serving(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -311,11 +311,11 @@ class TestHealthCheckRPC:
         assert isinstance(resp.loaded_schemas, list)
 
     def test_health_check_with_loaded_schemas(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
         from system1.guard import DefaultGuardDecisionSchema
 
         schemas = {"guard": DefaultGuardDecisionSchema()}
-        servicer = ReflexServiceServicer(schemas=schemas)
+        servicer = SystemOneServiceServicer(schemas=schemas)
         ctx = _FakeContext()
 
         class _Req:
@@ -334,9 +334,9 @@ class TestVerifyReceiptRPC:
 
     def test_verify_receipt_with_valid_receipt(self):
         """Generate a decision, extract its receipt, and verify it."""
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         # First, generate a decision to get a receipt.
@@ -361,9 +361,9 @@ class TestVerifyReceiptRPC:
         assert isinstance(verify_resp.verified, bool)
 
     def test_verify_receipt_empty_receipt(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -374,9 +374,9 @@ class TestVerifyReceiptRPC:
         assert resp.verified is False
 
     def test_verify_receipt_invalid_json(self):
-        from system1.grpc_server import ReflexServiceServicer
+        from system1.grpc_server import SystemOneServiceServicer
 
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
         ctx = _FakeContext()
 
         class _Req:
@@ -456,10 +456,10 @@ class TestResponseSerialization:
 
     def test_build_decide_response_structure(self):
         from system1.grpc_server import _build_decide_response
-        from system1.engine import ReflexEngine
+        from system1.engine import SystemOneEngine
         from system1.cli import DefaultTriageSchema
 
-        engine = ReflexEngine(DefaultTriageSchema())
+        engine = SystemOneEngine(DefaultTriageSchema())
         result = engine.decide("Read a file", record_receipt=True)
 
         resp = _build_decide_response(result)

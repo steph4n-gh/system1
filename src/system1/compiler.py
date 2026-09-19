@@ -1,4 +1,4 @@
-"""Reflex Compiler: Closed-Form Distillation & Static Model Serialization.
+"""System 1 Compiler: Closed-Form Distillation & Static Model Serialization.
 
 Distills foundation models (or synthetic exemplars) into compact, non-autoregressive
 binary model files (.s1m) using closed-form Ridge Regression:
@@ -46,7 +46,7 @@ from system1.core.schema import (
 )
 from system1.calibration import ConformalPredictor, DecisionCalibrator
 from system1.core.telemetry import TelemetryProjector
-from system1.cache import SemanticReflexCache
+from system1.cache import SemanticSystemOneCache
 
 MAGIC_HEADER = b"S1M\x01"
 
@@ -111,7 +111,7 @@ class CompiledSystemOneModel:
             )
         )
         self.use_cache = bool(use_cache)
-        self.cache = SemanticReflexCache(
+        self.cache = SemanticSystemOneCache(
             capacity=cache_capacity,
             similarity_threshold=cache_threshold,
         )
@@ -179,7 +179,7 @@ class CompiledSystemOneModel:
         else:
             emb = self.encode(prompt, telemetry=telemetry, recency_weighted=use_recency)
 
-        # Check Tier 0 Semantic Reflex Cache
+        # Check Tier 0 Semantic System 1 Cache
         cur_version = getattr(self, "model_version", 1)
         schema_dig = self.schema.schema_digest()
         if self.use_cache:
@@ -264,7 +264,7 @@ class CompiledSystemOneModel:
         """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
 
         Permanently adapts decision hyperplanes for resolved edge cases and updates the
-        Tier 0 Semantic Reflex Cache for sub-0.05ms certified execution on repeat edge cases.
+        Tier 0 Semantic System 1 Cache for sub-0.05ms certified execution on repeat edge cases.
         """
         with self._lock:
             t0 = time.perf_counter()
@@ -492,8 +492,8 @@ class CompiledSystemOneModel:
         return cls.from_bytes(data, projector=projector, backend=backend)
 
 
-class ReflexCompiler:
-    """The Reflex Closed-Form Distillation & Compilation Engine.
+class SystemOneCompiler:
+    """The System 1 Closed-Form Distillation & Compilation Engine.
 
     Takes a DecisionSchema and training exemplars (or generates synthetic exemplars),
     fits closed-form Ridge Regression hyperplanes:
@@ -1227,7 +1227,7 @@ class ReflexCompiler:
 
 
 __all__ = [
-    "ReflexCompiler",
+    "SystemOneCompiler",
     "CompiledSystemOneModel",
     "CompiledHeadWeights",
     "MAGIC_HEADER",

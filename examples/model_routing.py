@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Reflex Standalone Example: Dynamic Model Gateway & Routing.
+"""System 1 Standalone Example: Dynamic Model Gateway & Routing.
 
-Demonstrates using Reflex as a low-latency (<2ms) front-line router to classify
+Demonstrates using System 1 as a low-latency (<2ms) front-line router to classify
 prompts and route them between local small models, cloud chat models, and expensive
 frontier reasoning models, with calibrated confidences and conformal prediction sets.
 
 Showcases three integration paradigms:
-1. Native Reflex Declarative Schema (DecisionSchema + ReflexEngine)
+1. Native System 1 Declarative Schema (DecisionSchema + SystemOneEngine)
 2. TypeSafe SDK Drop-in Import Swap (from system1.compat.typesafe import TypeSafeClient, Choice, Noul, Score)
 3. Zero-Code-Change Monkey Patching (patch_typesafe() -> import typesafe_sdk)
 4. Live Side-by-Side Comparison vs TypeSafe Cloud (or realistic WAN baseline fallback)
@@ -30,7 +30,7 @@ from system1 import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compat.typesafe import (
@@ -43,7 +43,7 @@ from system1.compat.typesafe import (
 
 
 # ============================================================================
-# 1. Native Reflex Schema
+# 1. Native System 1 Schema
 # ============================================================================
 
 class ModelRouterSchema(DecisionSchema):
@@ -79,12 +79,12 @@ class ModelRouterSchema(DecisionSchema):
     )
 
 
-def run_native_reflex_mode(test_queries: list[str]):
+def run_native_system1_mode(test_queries: list[str]):
     print("\n" + "=" * 76)
-    print("  MODE 1: NATIVE REFLEX DECISION ENGINE (DecisionSchema + ReflexEngine)")
+    print("  MODE 1: NATIVE REFLEX DECISION ENGINE (DecisionSchema + SystemOneEngine)")
     print("=" * 76)
 
-    engine = ReflexEngine(ModelRouterSchema, backend="auto")
+    engine = SystemOneEngine(ModelRouterSchema, backend="auto")
 
     # Calibration dataset
     calibration_data = [
@@ -208,7 +208,7 @@ def run_monkey_patch_mode(test_queries: list[str]):
 
 def run_side_by_side_comparison(test_queries: list[str]):
     print("\n" + "=" * 76)
-    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (Reflex System 1 vs TypeSafe Cloud)")
+    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (System 1 System 1 vs TypeSafe Cloud)")
     print("=" * 76)
 
     api_key = os.environ.get("TYPESAFE_API_KEY", "") or os.environ.get("JEV_API_KEY", "")
@@ -253,7 +253,7 @@ def main():
     print("  REFLEX SYSTEM 1: DYNAMIC MODEL GATEWAY & ROUTING SHOWCASE")
     print("#" * 76)
 
-    run_native_reflex_mode(test_queries)
+    run_native_system1_mode(test_queries)
     run_typesafe_sdk_dropin_mode(test_queries)
     run_monkey_patch_mode(test_queries)
     run_side_by_side_comparison(test_queries)

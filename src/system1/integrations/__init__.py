@@ -1,4 +1,4 @@
-"""Reflex Framework Integrations.
+"""System 1 Framework Integrations.
 
 Native, drop-in adapters and middleware for production AI stacks:
 - mcp: Fail-closed Model Context Protocol (MCP) JSON-RPC safety proxy (< 1ms).
@@ -11,48 +11,48 @@ Native, drop-in adapters and middleware for production AI stacks:
 from __future__ import annotations
 
 from system1.integrations.mcp import (
-    ReflexMCPBlockedError,
-    ReflexMCPProxy,
+    SystemOneMCPBlockedError,
+    SystemOneMCPProxy,
     wrap_mcp_tool,
 )
 from system1.integrations.fastapi import (
-    ReflexGatewayMiddleware,
-    add_reflex_gateway,
+    SystemOneGatewayMiddleware,
+    add_system1_gateway,
 )
 from system1.integrations.langchain import (
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexToolInterceptor,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneToolInterceptor,
     wrap_langchain_tool,
 )
 
 __all__ = [
     # MCP
-    "ReflexMCPBlockedError",
-    "ReflexMCPProxy",
+    "SystemOneMCPBlockedError",
+    "SystemOneMCPProxy",
     "wrap_mcp_tool",
     # FastAPI / ASGI
-    "ReflexGatewayMiddleware",
-    "add_reflex_gateway",
+    "SystemOneGatewayMiddleware",
+    "add_system1_gateway",
     # LangChain / Agent
-    "ReflexGuardBlockedException",
-    "ReflexGuardCallbackHandler",
-    "ReflexToolInterceptor",
+    "SystemOneGuardBlockedException",
+    "SystemOneGuardCallbackHandler",
+    "SystemOneToolInterceptor",
     "wrap_langchain_tool",
 ]
 
 # Optional: Prometheus observability (requires `prometheus_client`)
 try:
-    from system1.integrations.observability import ReflexMetricsExporter
+    from system1.integrations.observability import SystemOneMetricsExporter
 
-    __all__.append("ReflexMetricsExporter")
+    __all__.append("SystemOneMetricsExporter")
 except ImportError:
     pass
 
 # Optional: OpenTelemetry tracing (requires `opentelemetry-api`)
 try:
-    from system1.integrations.otel import ReflexOTelInstrumentor
+    from system1.integrations.otel import SystemOneOTelInstrumentor
 
-    __all__.append("ReflexOTelInstrumentor")
+    __all__.append("SystemOneOTelInstrumentor")
 except ImportError:
     pass

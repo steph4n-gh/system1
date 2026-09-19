@@ -17,7 +17,7 @@ completing 100% of Pokémon Red/Blue across all 10 major campaign chapters:
    - Grand Finale (Indigo Plateau): Victory Road -> Elite Four (Lorelei, Bruno, Agatha, Lance) -> Champion Blue -> Hall of Fame!
 
 2. Dual-Process Cognitive Split:
-   - System 1 (Local Fast Reflex, ~1.0 ms): Evaluates every turn on the metal in real time ($0 cost, 0 egress).
+   - System 1 (Local Fast System 1, ~1.0 ms): Evaluates every turn on the metal in real time ($0 cost, 0 egress).
      Chooses super-effective moves, applies potions, and auto-flees from random wild encounters.
    - System 2 (Campaign Planner): Handles route waypoints, dungeon navigation, badge objectives, and HM puzzle gating.
    - Conformal Safety: Flags ambiguity when facing unfamiliar Gym Leader aces, halting the emulator and triggering System 2 tactical directives.
@@ -29,7 +29,7 @@ completing 100% of Pokémon Red/Blue across all 10 major campaign chapters:
    - Party Pokémon roster, current levels, moves, and HP bars.
    - Playback speed controls: --speed {normal, fast, turbo, instant}.
 
-4. Reflex Compiler & Zero-Dependency Invariant:
+4. System 1 Compiler & Zero-Dependency Invariant:
    - Compiles campaign battle heuristics into a static < 20 KB .s1m model running in pure NumPy.
 
 5. Real ROM & PyBoy Support:
@@ -77,13 +77,13 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compiler import CompiledSystemOneModel
 
-from pokemon_battle_reflex import (
+from pokemon_battle_system1 import (
     GEN1_BADGE_NAMES,
     GEN1_MAP_NAMES,
     GEN1_MOVES_BY_ID,
@@ -94,7 +94,7 @@ from pokemon_battle_reflex import (
     BattleType,
     ExplorationState,
     Pokemon,
-    PokemonBattleReflex,
+    PokemonBattleSystemOne,
     PokemonMove,
     PyBoyAdapter,
     PyBoyMemoryBridge,
@@ -1391,11 +1391,11 @@ def render_spectator_hud(
         act = telemetry.get("action", "fight")
         m_name = telemetry.get("move_name", "Tackle")
         th = telemetry.get("threat_level", 5.0)
-        lines.append(_format_box_line(f"  System 1 (Metal Reflex): Action={act.upper()}, Move={m_name}, Threat={th:.1f}", width))
-        lines.append(_format_box_line(f"  Reflex Latency: {lat:.3f} ms | Frame Budget: 16.67 ms (OK) | Cost: $0.00", width))
+        lines.append(_format_box_line(f"  System 1 (Metal System 1): Action={act.upper()}, Move={m_name}, Threat={th:.1f}", width))
+        lines.append(_format_box_line(f"  System 1 Latency: {lat:.3f} ms | Frame Budget: 16.67 ms (OK) | Cost: $0.00", width))
     else:
         avg_lat = (campaign_state.total_latency_ms / max(1, campaign_state.total_decisions)) if campaign_state.total_decisions > 0 else 0.85
-        lines.append(_format_box_line(f"  System 1 (Metal Reflex): Total Decisions={campaign_state.total_decisions} | Avg Latency={avg_lat:.3f} ms", width))
+        lines.append(_format_box_line(f"  System 1 (Metal System 1): Total Decisions={campaign_state.total_decisions} | Avg Latency={avg_lat:.3f} ms", width))
         lines.append(_format_box_line("  Speedrun Budget: 60 FPS Target | Egress: 0 Bytes | Pure Local Metal", width))
 
     # System 2 & Conformal Safety status
@@ -1445,7 +1445,7 @@ def render_spectator_hud(
 
 
 # ============================================================================
-# 5. Reflex Compiler: Domain Exemplars & < 20 KB .s1m Artifact
+# 5. System 1 Compiler: Domain Exemplars & < 20 KB .s1m Artifact
 # ============================================================================
 
 def get_campaign_speedrun_exemplars() -> Dict[str, List[Tuple[str, Any]]]:
@@ -1528,7 +1528,7 @@ def compile_speedrun_campaign_model(
     dimension: int = 128,
 ) -> Tuple[CompiledSystemOneModel, int]:
     """Compiles campaign battle heuristics into a static < 20 KB .s1m model running in pure NumPy."""
-    compiler = ReflexCompiler(PokemonBattleReflex, dimension=dimension, regularization=0.5)
+    compiler = SystemOneCompiler(PokemonBattleSystemOne, dimension=dimension, regularization=0.5)
     exemplars = get_campaign_speedrun_exemplars()
     compiled_model = compiler.compile(exemplars=exemplars, samples_per_choice=20)
 
@@ -1557,7 +1557,7 @@ def compile_speedrun_campaign_model(
 class CampaignSpeedrunEngine:
     """End-to-End Autonomous Pokémon Speedrun Engine with Dual-Process Control.
 
-    - System 1 (Local Metal Reflex): Executes sub-millisecond combat decisions ($0 egress).
+    - System 1 (Local Metal System 1): Executes sub-millisecond combat decisions ($0 egress).
     - System 2 (Campaign Planner): Navigates 10-chapter route graph and solves HM puzzle gates.
     - Conformal Safety: Halts and issues tactical directives when facing unfamiliar boss aces.
     - Spectator HUD: Renders live Game Boy ASCII screen with 8-Badge Trophy Board.
@@ -1628,7 +1628,7 @@ class CampaignSpeedrunEngine:
             except ValueError:
                 self.delay = 0.0
 
-        # System 1 Reflex Agent
+        # System 1 System 1 Agent
         self.agent = agent if agent is not None else System1BattleAgent()
 
         # ROM & Emulator Bridge
@@ -1887,7 +1887,7 @@ class CampaignSpeedrunEngine:
             self._display_hud(hud)
 
     def _evaluate_decision(self, battle: BattleState) -> Tuple[Dict[str, Any], bool, str]:
-        """Evaluates a battle decision turn via System 1 Reflex and optionally compares or auto-cutovers with TypeSafe AI."""
+        """Evaluates a battle decision turn via System 1 System 1 and optionally compares or auto-cutovers with TypeSafe AI."""
         # Check if in pre-cutover apprentice phase
         in_apprentice = (
             self.cutover_threshold is not None
@@ -1971,7 +1971,7 @@ class CampaignSpeedrunEngine:
         lat = telemetry.get("latency_ms", 1.0)
 
         # System 1 auto-flees from random wild encounters during speedrun
-        battle.battle_log.append(f"[System 1 Reflex: {lat:.2f} ms] Fled from wild {species} to preserve PP and pace splits.")
+        battle.battle_log.append(f"[System 1 System 1: {lat:.2f} ms] Fled from wild {species} to preserve PP and pace splits.")
         self.state.log.append(f"[System 1: {lat:.2f} ms] Auto-fled from wild {species} on {self.state.current_map_name}.")
 
         if not self.quiet:
@@ -2092,7 +2092,7 @@ class CampaignSpeedrunEngine:
                     self.state.inventory[item_name] -= 1
                     healed = lead.heal(heal_amt)
                     lead.status = "OK"
-                    battle.battle_log.append(f"[System 1 Reflex] Used {item_name}! {lead.name} restored {healed} HP.")
+                    battle.battle_log.append(f"[System 1 System 1] Used {item_name}! {lead.name} restored {healed} HP.")
                     act = "item_used"
 
                 # 2. Action: switch_pokemon
@@ -2104,7 +2104,7 @@ class CampaignSpeedrunEngine:
                         self.state.party[0], self.state.party[idx_new] = self.state.party[idx_new], self.state.party[0]
                         lead = new_lead
                         battle.player_pokemon = lead
-                        battle.battle_log.append(f"[System 1 Reflex] Switched active Pokémon to {lead.name} Lv{lead.level}!")
+                        battle.battle_log.append(f"[System 1 System 1] Switched active Pokémon to {lead.name} Lv{lead.level}!")
                         act = "switched"
                     else:
                         act = "fight"
@@ -2387,7 +2387,7 @@ def main() -> None:
             print("Please place pokemon_red.gb in roms/ or specify --rom path/to/rom.gb\n")
             sys.exit(1)
 
-    # Optional ReflexCompiler compilation
+    # Optional SystemOneCompiler compilation
     agent: Optional[System1BattleAgent] = None
     if args.compile or args.model_path:
         target_path = Path(args.model_path) if args.model_path else None
@@ -2397,7 +2397,7 @@ def main() -> None:
 
     print("=" * 76)
     print("  POKÉMON RED/BLUE: 100% AUTONOMOUS CAMPAIGN SPEEDRUN SPECTATOR ENGINE")
-    print("  Dual-Process Cognitive Split (System 1 Reflex + System 2 Campaign Planner)")
+    print("  Dual-Process Cognitive Split (System 1 System 1 + System 2 Campaign Planner)")
     print("=" * 76)
     if rom_target:
         print(f"  Game Boy ROM:  {rom_target.name}")
@@ -2440,9 +2440,9 @@ def main() -> None:
     print(f"  Total Decisions:     {summary['total_decisions']}")
     print(f"  Average Latency:     {summary['avg_latency_ms']:.3f} ms (sub-millisecond metal reflex)")
     if summary.get("compare_typesafe"):
-        print(f"  TypeSafe Cloud Lat:  {summary['avg_cloud_latency_ms']:.1f} ms (Reflex Speedup: {summary['speedup_factor']:.1f}x)")
+        print(f"  TypeSafe Cloud Lat:  {summary['avg_cloud_latency_ms']:.1f} ms (System 1 Speedup: {summary['speedup_factor']:.1f}x)")
         print(f"  TypeSafe Cloud Tokens: {summary['total_cloud_tokens']:,} tokens (${summary['total_cloud_cost']:.4f})")
-        print(f"  TypeSafe Cloud Egress: {summary['total_cloud_egress_bytes']:,} bytes (Reflex: 0 B egress)")
+        print(f"  TypeSafe Cloud Egress: {summary['total_cloud_egress_bytes']:,} bytes (System 1: 0 B egress)")
     if summary.get("cutover_threshold"):
         print(f"  Trojan Horse Cutover: Triggered at Step {summary['cutover_threshold']} (Apprentice: {summary['apprentice_cloud_decisions']} -> Metal: {summary['local_metal_decisions']})")
         print(f"  Cloud Egress Bounded: {summary['total_cloud_egress_bytes']:,} bytes (Permanently halted after Step {summary['cutover_threshold']})")

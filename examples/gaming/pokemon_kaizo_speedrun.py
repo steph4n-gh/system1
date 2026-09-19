@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine.
 
-Demonstration of Reflex System 1 + System 2 Dual-Process Cognitive Architecture:
+Demonstration of System 1 System 1 + System 2 Dual-Process Cognitive Architecture:
 1. Uncapped Headless PyBoy Turbo Runner:
    - Executes PyBoy Game Boy emulation uncapped (`window='null'`, `set_emulation_speed(0)`)
      achieving 3,000 to 13,000+ FPS on Apple Silicon / local CPU.
@@ -52,8 +52,8 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.ledger import ActionLedger

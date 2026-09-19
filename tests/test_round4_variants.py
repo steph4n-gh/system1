@@ -5,7 +5,7 @@ import numpy as np
 from system1.schema import DecisionSchema, ChoiceField
 from system1.compat.typesafe import TypeSafeClient
 from system1.compiler import CompiledSystemOneModel
-from system1.engine import ReflexEngine
+from system1.engine import SystemOneEngine
 
 def test_exported_candidate_preserves_validated_runtime_calibration():
     # Setup client

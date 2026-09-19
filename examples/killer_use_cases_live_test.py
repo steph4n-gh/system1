@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex vs TypeSafe AI (Jev): Side-by-Side Killer Use Cases Live Benchmark.
+"""System 1 vs TypeSafe AI (Jev): Side-by-Side Killer Use Cases Live Benchmark.
 
 Implements 5 canonical killer use cases highlighted by TypeSafe AI:
 1. Real-Time Smart Home Assistant (Speculative Fan-Out)
@@ -37,7 +37,7 @@ from system1 import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.ledger import ActionLedger
@@ -429,7 +429,7 @@ def run_use_case_tests(api_key: str):
     print("   TYPESAFE AI (JEV) vs. REFLEX SYSTEM 1: KILLER USE CASES SHOWCASE")
     print("=" * 80)
     print(f"Jev Model:      jev-latest (via api.typesafe.ai/v1/systemone)")
-    print(f"Reflex Engine:  SystemOneModel (Apple Silicon Metal / NumPy BLAS)")
+    print(f"System 1 Engine:  SystemOneModel (Apple Silicon Metal / NumPy BLAS)")
     print("=" * 80 + "\n")
 
     summary_records = []
@@ -446,18 +446,18 @@ def run_use_case_tests(api_key: str):
         # 1. Execute on TypeSafe AI (Jev)
         jev_resp, jev_lat, egress_bytes = call_jev_api(prompt_text, scen["jev_questions"], api_key)
 
-        # 2. Execute on Reflex System 1
-        engine = ReflexEngine(scen["schema_cls"], signing_key=signing_key, ledger=ledger, backend="auto")
+        # 2. Execute on System 1 System 1
+        engine = SystemOneEngine(scen["schema_cls"], signing_key=signing_key, ledger=ledger, backend="auto")
         # Warmup
         _ = engine.decide("warmup", record_receipt=False)
 
         t0 = time.perf_counter()
-        reflex_res = engine.decide(prompt_text, alpha=0.05, record_receipt=True)
-        reflex_lat = (time.perf_counter() - t0) * 1000.0
+        system1_res = engine.decide(prompt_text, alpha=0.05, record_receipt=True)
+        system1_lat = (time.perf_counter() - t0) * 1000.0
 
-        receipt_dict = reflex_res.receipt.to_dict()
+        receipt_dict = system1_res.receipt.to_dict()
         receipt_valid = verify_decision_witness_receipt(receipt_dict, public_key=signing_key.public_key())
-        speedup = jev_lat / reflex_lat if reflex_lat > 0 else 0.0
+        speedup = jev_lat / system1_lat if system1_lat > 0 else 0.0
 
         # Print Side-by-Side Outputs
         print("-" * 80)
@@ -478,14 +478,14 @@ def run_use_case_tests(api_key: str):
             print(f"    -> ERROR calling Jev API: {jev_resp}")
 
         print("\n" + "-" * 80)
-        print(f"  [B] REFLEX SYSTEM 1 OUTPUT    (Latency: {reflex_lat:.3f} ms | Egress: 0 B)")
+        print(f"  [B] REFLEX SYSTEM 1 OUTPUT    (Latency: {system1_lat:.3f} ms | Egress: 0 B)")
         print("-" * 80)
-        for field_name, field_val in reflex_res.values.items():
-            conf = reflex_res.confidences.get(field_name, 0.0)
-            cset = reflex_res.conformal_sets.get(field_name, [])
+        for field_name, field_val in system1_res.values.items():
+            conf = system1_res.confidences.get(field_name, 0.0)
+            cset = system1_res.conformal_sets.get(field_name, [])
             print(f"    • {field_name:<25}: {field_val} (Confidence: {conf:.1%}, Conformal Set: {cset})")
         print(f"    -> Token Cost: $0.00 (0 tokens)")
-        print(f"    -> Ed25519 Receipt Digest: {reflex_res.receipt.digest[:24]}...")
+        print(f"    -> Ed25519 Receipt Digest: {system1_res.receipt.digest[:24]}...")
         print(f"    -> Cryptographic Non-Repudiation Verified: {receipt_valid}")
         print(f"    -> ActionLedger Entry: SHA-256 Hash Chained to SQLite")
 
@@ -495,7 +495,7 @@ def run_use_case_tests(api_key: str):
             "use_case": f"UC-{i}",
             "name": cat_title.split(":")[0],
             "jev_latency": jev_lat,
-            "reflex_latency": reflex_lat,
+            "system1_latency": system1_lat,
             "speedup": speedup,
             "receipt_valid": receipt_valid,
         })
@@ -504,16 +504,16 @@ def run_use_case_tests(api_key: str):
     print("\n" + "=" * 90)
     print("                     FINAL SIDE-BY-SIDE SUMMARY TABLE")
     print("=" * 90)
-    print(f"{'Use Case':<10} | {'Jev Cloud (ms)':<15} | {'Reflex Metal (ms)':<18} | {'Speedup':<12} | {'Ed25519 Verified'}")
+    print(f"{'Use Case':<10} | {'Jev Cloud (ms)':<15} | {'System 1 Metal (ms)':<18} | {'Speedup':<12} | {'Ed25519 Verified'}")
     print("-" * 90)
     for r in summary_records:
-        print(f"{r['use_case']:<10} | {r['jev_latency']:>10.2f} ms   | {r['reflex_latency']:>12.3f} ms    | {r['speedup']:>8.1f}x   | {str(r['receipt_valid']):<16}")
+        print(f"{r['use_case']:<10} | {r['jev_latency']:>10.2f} ms   | {r['system1_latency']:>12.3f} ms    | {r['speedup']:>8.1f}x   | {str(r['receipt_valid']):<16}")
     print("=" * 90)
 
     mean_j = np.mean([r["jev_latency"] for r in summary_records])
-    mean_r = np.mean([r["reflex_latency"] for r in summary_records])
+    mean_r = np.mean([r["system1_latency"] for r in summary_records])
     print(f"Average Jev Latency:     {mean_j:.2f} ms")
-    print(f"Average Reflex Latency:  {mean_r:.3f} ms")
+    print(f"Average System 1 Latency:  {mean_r:.3f} ms")
     print(f"Overall Average Speedup: {mean_j / mean_r:.1f}x FASTER\n")
 
 

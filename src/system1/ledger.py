@@ -1,4 +1,4 @@
-"""Reflex Lightweight Tamper-Evident SQLite Action Ledger.
+"""System 1 Lightweight Tamper-Evident SQLite Action Ledger.
 
 Provides cryptographic audit logging and hash chaining for decision receipts,
 ensuring non-repudiation, tamper detection, and historical chain verification.
@@ -221,7 +221,7 @@ class ActionLedger:
                     elif "envelope" in payload_data:
                         target_receipt = payload_data
 
-                if row["event_type"] in ("reflex_decision", "decision_receipt", "action_receipt"):
+                if row["event_type"] in ("system1_decision", "decision_receipt", "action_receipt"):
                     if not target_receipt:
                         return False
                     try:
@@ -259,7 +259,7 @@ class ActionLedger:
         scope: str = "decision",
         trusted_public_key: Optional[Any] = None,
     ) -> str:
-        """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
+        """Appends a System 1 decision receipt to the tamper-evident audit ledger."""
         with self._transaction() as connection:
             payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt)
             
@@ -285,7 +285,7 @@ class ActionLedger:
             previous_hash = meta.get("audit_head_hash", _ZERO_HASH)
             previous_sequence = int(meta.get("audit_head_sequence", "0"))
             created_at = utc_now()
-            event_type = "reflex_decision"
+            event_type = "system1_decision"
             event_id = f"audit_{fingerprint([previous_hash, event_type, created_at])[:32]}"
 
             entry_payload = {
@@ -356,7 +356,7 @@ class ActionLedger:
         scope: str = "decision",
         trusted_public_key: Optional[Any] = None,
     ) -> str:
-        """Appends a Reflex decision receipt to the tamper-evident audit ledger."""
+        """Appends a System 1 decision receipt to the tamper-evident audit ledger."""
         return self.append(receipt, tenant_id=tenant_id, principal_id=principal_id, scope=scope, trusted_public_key=trusted_public_key)
 
     def record_execution_outcome(
@@ -382,7 +382,7 @@ class ActionLedger:
                 raise LedgerWriteError(f"Invalid execution outcome status: {status}")
 
             prior = connection.execute(
-                "SELECT * FROM audit_entries WHERE (action_id = ? OR json_extract(payload_json, '$.decision_id') = ?) AND event_type IN ('reflex_decision', 'decision_receipt') ORDER BY sequence DESC LIMIT 1",
+                "SELECT * FROM audit_entries WHERE (action_id = ? OR json_extract(payload_json, '$.decision_id') = ?) AND event_type IN ('system1_decision', 'decision_receipt') ORDER BY sequence DESC LIMIT 1",
                 (action_id, action_id)
             ).fetchone()
 
@@ -579,7 +579,7 @@ class ActionLedger:
                             target_receipt = payload_data
 
                     # If this is a decision receipt event, it MUST have a valid envelope signed by trusted_public_key
-                    if row["event_type"] in ("reflex_decision", "decision_receipt", "action_receipt"):
+                    if row["event_type"] in ("system1_decision", "decision_receipt", "action_receipt"):
                         if not target_receipt:
                             return False
                         try:

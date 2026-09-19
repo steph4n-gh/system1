@@ -1,6 +1,6 @@
-"""Reflex: Machine-Native System 1 Decision Runtime.
+"""System 1: Machine-Native System 1 Decision Runtime.
 
-Reflex is the primary framework brand implementing Daniel Kahneman's System 1 (fast reflex)
+System 1 is the primary framework brand implementing Daniel Kahneman's System 1 (fast reflex)
 cognitive layer, designed to pair with deliberate System 2 governors (Astra, Fable, Gemini, or Grok).
 Symmetrically available as both `import reflex` and `import system1`.
 """
@@ -12,7 +12,7 @@ from typing import Any
 import system1
 from system1 import *
 from system1 import (
-    ReflexEngine,
+    SystemOneEngine,
     SystemOneEngine,
     System1Engine,
     DecisionResult,
@@ -58,8 +58,8 @@ from system1 import (
     LedgerError,
     LedgerWriteError,
     IntegrityError,
-    ReflexGuard,
-    ReflexGuardHook,
+    SystemOneGuard,
+    SystemOneGuardHook,
     SystemOneGuard,
     SystemOneGuardHook,
     PolicyRule,
@@ -105,20 +105,20 @@ from system1 import (
     patch_typesafe,
     DotDict,
     ZeroEgressViolationError,
-    ReflexCompiler,
+    SystemOneCompiler,
     CompiledSystemOneModel,
-    SemanticReflexCache,
+    SemanticSystemOneCache,
     CacheEntry,
     TelemetryProjector,
     evaluate,
-    ReflexMCPProxy,
-    ReflexMCPBlockedError,
+    SystemOneMCPProxy,
+    SystemOneMCPBlockedError,
     wrap_mcp_tool,
-    ReflexGatewayMiddleware,
-    add_reflex_gateway,
-    ReflexGuardCallbackHandler,
-    ReflexToolInterceptor,
-    ReflexGuardBlockedException,
+    SystemOneGatewayMiddleware,
+    add_system1_gateway,
+    SystemOneGuardCallbackHandler,
+    SystemOneToolInterceptor,
+    SystemOneGuardBlockedException,
     wrap_langchain_tool,
 )
 from system1 import __all__ as _system1_all
@@ -169,12 +169,12 @@ _MODULE_MAP = {
     "schema": "reflex.schema",
     "telemetry": "reflex.telemetry",
     # cache (Lever 1)
-    "SemanticReflexCache": "reflex.cache",
+    "SemanticSystemOneCache": "reflex.cache",
     "CacheEntry": "reflex.cache",
     # telemetry (Lever 4)
     "TelemetryProjector": "reflex.telemetry",
     # engine
-    "ReflexEngine": "reflex.engine",
+    "SystemOneEngine": "reflex.engine",
     "SystemOneEngine": "reflex.engine",
     "System1Engine": "reflex.engine",
     "DecisionResult": "reflex.engine",
@@ -207,8 +207,8 @@ _MODULE_MAP = {
     "LedgerWriteError": "reflex.ledger",
     "IntegrityError": "reflex.ledger",
     # guard
-    "ReflexGuard": "reflex.guard",
-    "ReflexGuardHook": "reflex.guard",
+    "SystemOneGuard": "reflex.guard",
+    "SystemOneGuardHook": "reflex.guard",
     "SystemOneGuard": "reflex.guard",
     "SystemOneGuardHook": "reflex.guard",
     "PolicyRule": "reflex.guard",
@@ -247,17 +247,17 @@ _MODULE_MAP = {
     "DotDict": "reflex.compat.typesafe",
     "ZeroEgressViolationError": "reflex.compat.typesafe",
     # compiler
-    "ReflexCompiler": "reflex.compiler",
+    "SystemOneCompiler": "reflex.compiler",
     "CompiledSystemOneModel": "reflex.compiler",
     # integrations
-    "ReflexMCPProxy": "reflex.integrations",
-    "ReflexMCPBlockedError": "reflex.integrations",
+    "SystemOneMCPProxy": "reflex.integrations",
+    "SystemOneMCPBlockedError": "reflex.integrations",
     "wrap_mcp_tool": "reflex.integrations",
-    "ReflexGatewayMiddleware": "reflex.integrations",
-    "add_reflex_gateway": "reflex.integrations",
-    "ReflexGuardCallbackHandler": "reflex.integrations",
-    "ReflexToolInterceptor": "reflex.integrations",
-    "ReflexGuardBlockedException": "reflex.integrations",
+    "SystemOneGatewayMiddleware": "reflex.integrations",
+    "add_system1_gateway": "reflex.integrations",
+    "SystemOneGuardCallbackHandler": "reflex.integrations",
+    "SystemOneToolInterceptor": "reflex.integrations",
+    "SystemOneGuardBlockedException": "reflex.integrations",
     "wrap_langchain_tool": "reflex.integrations",
 }
 

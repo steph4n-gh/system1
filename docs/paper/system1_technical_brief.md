@@ -1,4 +1,4 @@
-# Reflex: Technical Brief & Architecture Guide
+# System 1: Technical Brief & Architecture Guide
 **The On-Metal Decision Firewall for Autonomous AI Agents**
 
 ---
@@ -12,7 +12,7 @@ This architectural pattern creates three enterprise bottlenecks:
 2. **Data Sovereignty Violations**: Tool execution parameters and context prompts traverse public WAN networks, exposing PII, PHI, and credentials.
 3. **Uncalibrated Safety Failure**: Heuristic scalar confidence scores emitted by neural networks are uncalibrated under covariate shift, causing silent permissions failures.
 
-**Reflex** is the machine-native decision firewall engineered to sit directly between autonomous agents and their execution environments. Running entirely in-process on host silicon (CPU SIMD or Apple Silicon Metal), Reflex evaluates structured decision policies in **< 1.0 ms P50** with **zero external network egress**, enforced by **finite-sample Split Conformal Prediction** and **tamper-evident Ed25519 digital witness receipts**.
+**System 1** is the machine-native decision firewall engineered to sit directly between autonomous agents and their execution environments. Running entirely in-process on host silicon (CPU SIMD or Apple Silicon Metal), System 1 evaluates structured decision policies in **< 1.0 ms P50** with **zero external network egress**, enforced by **finite-sample Split Conformal Prediction** and **tamper-evident Ed25519 digital witness receipts**.
 
 ```
                            Incoming Agent Tool Request
@@ -24,7 +24,7 @@ This architectural pattern creates three enterprise bottlenecks:
                                         │ Miss
                                         ▼
                      ┌───────────────────────────────────────┐
-                     │    Reflex Decision Engine (< 1 ms)    │
+                     │    System 1 Decision Engine (< 1 ms)    │
                      │    • In-Process Metal / BLAS GEMM     │
                      │    • Zero External Network Sockets    │
                      └──────────────────┬────────────────────┘
@@ -57,7 +57,7 @@ This architectural pattern creates three enterprise bottlenecks:
 
 ## 1. System Topology & Memory Hierarchy
 
-Reflex organizes decision evaluation across a 4-tier execution hierarchy:
+System 1 organizes decision evaluation across a 4-tier execution hierarchy:
 
 | Tier | Component | Latency (P50) | Description |
 |---|---|---|---|
@@ -72,10 +72,10 @@ Reflex organizes decision evaluation across a 4-tier execution hierarchy:
 
 ### 2.1 Model Context Protocol (MCP) Safety Proxy
 
-Reflex intercepts MCP `tools/call` JSON-RPC requests on host silicon before tool execution:
+System 1 intercepts MCP `tools/call` JSON-RPC requests on host silicon before tool execution:
 
 ```python
-from reflex.integrations import ReflexMCPProxy, wrap_mcp_tool
+from reflex.integrations import SystemOneMCPProxy, wrap_mcp_tool
 
 # Option A: Protect individual tool functions
 @wrap_mcp_tool(tool_name="execute_terminal_command")
@@ -83,7 +83,7 @@ def run_command(command: str) -> str:
     return subprocess.check_output(command, shell=True).decode()
 
 # Option B: Raw JSON-RPC proxy for MCP servers
-proxy = ReflexMCPProxy(tenant_id="prod_cluster")
+proxy = SystemOneMCPProxy(tenant_id="prod_cluster")
 allowed, err_resp, result = proxy.intercept_jsonrpc(mcp_request_json)
 if not allowed:
     return err_resp  # JSON-RPC 2.0 error (-32000) with cryptographic audit proof
@@ -95,7 +95,7 @@ Route incoming requests at the gateway level in $<1$ ms:
 
 ```python
 from fastapi import FastAPI
-from reflex.integrations import add_reflex_gateway
+from reflex.integrations import add_system1_gateway
 from reflex import DecisionSchema, ChoiceField
 
 app = FastAPI()
@@ -110,7 +110,7 @@ class IntentRouter(DecisionSchema):
         }
     )
 
-add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
+add_system1_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
 ```
 
 ### 2.3 LangChain Agent Guard
@@ -118,21 +118,21 @@ add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
 Fail-closed callback handler preventing unauthorized actions during multi-turn agent execution:
 
 ```python
-from reflex.integrations import ReflexGuardCallbackHandler
+from reflex.integrations import SystemOneGuardCallbackHandler
 
-guard_handler = ReflexGuardCallbackHandler()
+guard_handler = SystemOneGuardCallbackHandler()
 agent_executor = create_react_agent(llm, tools, callbacks=[guard_handler])
 ```
 
 ### 2.4 Polyglot gRPC Sidecar
 
-Deploy Reflex as a Kubernetes sidecar for non-Python agents (Go, TypeScript, Rust):
+Deploy System 1 as a Kubernetes sidecar for non-Python agents (Go, TypeScript, Rust):
 
 ```protobuf
 syntax = "proto3";
 package reflex.v1;
 
-service ReflexService {
+service SystemOneService {
   rpc Decide(DecideRequest) returns (DecideResponse);
   rpc Guard(GuardRequest) returns (GuardResponse);
   rpc VerifyReceipt(VerifyReceiptRequest) returns (VerifyReceiptResponse);
@@ -149,15 +149,15 @@ reflex serve --grpc --port 50051
 
 ## 3. Observability & Monitoring
 
-Reflex includes native Prometheus and OpenTelemetry instrumentation:
+System 1 includes native Prometheus and OpenTelemetry instrumentation:
 
 * **Prometheus `/metrics`**:
-  * `reflex_decisions_total` (counter, labels: `schema`, `outcome`, `cache_hit`)
-  * `reflex_decision_latency_seconds` (histogram: 0.1ms to 1000ms buckets)
-  * `reflex_escalations_total` (counter, labels: `schema`, `reason`)
-  * `reflex_cache_hit_ratio` (gauge: rolling hit rate)
-  * `reflex_conformal_set_size` (histogram: prediction set cardinality)
-  * `reflex_ledger_entries_total` (gauge: audit trail depth)
+  * `system1_decisions_total` (counter, labels: `schema`, `outcome`, `cache_hit`)
+  * `system1_decision_latency_seconds` (histogram: 0.1ms to 1000ms buckets)
+  * `system1_escalations_total` (counter, labels: `schema`, `reason`)
+  * `system1_cache_hit_ratio` (gauge: rolling hit rate)
+  * `system1_conformal_set_size` (histogram: prediction set cardinality)
+  * `system1_ledger_entries_total` (gauge: audit trail depth)
 * **Grafana Dashboard**: Pre-built dashboard template located in `docs/observability/grafana-dashboard.json`.
 
 ---
@@ -186,7 +186,7 @@ Every authorized or denied decision generates an immutable cryptographic proof:
 
 Empirical SLA on Apple M3 Max and Ubuntu 24.04 LTS (10,000 trials):
 
-| Metric | Reflex L1 Cache | Reflex Forward Pass | Cloud Fast API | Frontier LLM |
+| Metric | System 1 L1 Cache | System 1 Forward Pass | Cloud Fast API | Frontier LLM |
 |---|---|---|---|---|
 | **P50 Latency** | **9.8 µs** | **0.98 ms** | 220 ms | 850 ms |
 | **P99 Latency** | **14 µs** | **1.34 ms** | 410 ms | 1,480 ms |

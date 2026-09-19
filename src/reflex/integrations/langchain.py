@@ -1,4 +1,4 @@
-"""Reflex LangChain Integration (re-export from system1.integrations.langchain)."""
+"""System 1 LangChain Integration (re-export from system1.integrations.langchain)."""
 from __future__ import annotations
 
 from system1.integrations.langchain import *

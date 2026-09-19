@@ -1,6 +1,6 @@
-"""Reflex Fail-Closed Reference Monitor & Guard Hook.
+"""System 1 Fail-Closed Reference Monitor & Guard Hook.
 
-Binds Reflex decision outputs into a hardware-enforced fail-closed Reference Monitor
+Binds System 1 decision outputs into a hardware-enforced fail-closed Reference Monitor
 and ActionLedger. Guarantees that ambiguous, low-confidence, or unsafe decisions
 fail-closed to REQUIRE_APPROVAL or DENY.
 """
@@ -15,7 +15,7 @@ from dataclasses import dataclass, replace
 from enum import IntEnum, StrEnum
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
-from system1.engine import DecisionResult, ReflexEngine, SystemOneEngine
+from system1.engine import DecisionResult, SystemOneEngine, SystemOneEngine
 from system1.ledger import ActionLedger, LedgerError, LedgerWriteError
 from system1.receipt import (
     DecisionWitnessReceipt,
@@ -708,8 +708,8 @@ _DEFAULT_GUARD_CALIBRATION = [
 ] * 4
 
 
-class ReflexGuardHook:
-    """Fail-closed reference monitor hook driven by Reflex decisions.
+class SystemOneGuardHook:
+    """Fail-closed reference monitor hook driven by System 1 decisions.
 
     Guarantees:
     1. Unsafe evaluation -> immediate DENY.
@@ -721,7 +721,7 @@ class ReflexGuardHook:
 
     def __init__(
         self,
-        engine: Optional[ReflexEngine] = None,
+        engine: Optional[SystemOneEngine] = None,
         *,
         min_confidence: float = 0.85,
         alpha: float = 0.05,
@@ -745,7 +745,7 @@ class ReflexGuardHook:
             self.enforcement_profile = None
 
         if engine is None:
-            self.engine = ReflexEngine(
+            self.engine = SystemOneEngine(
                 DefaultGuardDecisionSchema,
                 ledger=ledger,
                 signing_key=signing_key,
@@ -791,7 +791,7 @@ class ReflexGuardHook:
             scope=proposal.scope,
             adapter_contract_fingerprint=proposal.adapter_contract_fingerprint,
             canonical_target=proposal.canonical_target,
-            policy_id="policy_reflex_guard",
+            policy_id="policy_system1_guard",
             policy_epoch=1,
             revocation_epoch=1,
             outcome=outcome,
@@ -827,7 +827,7 @@ class ReflexGuardHook:
         *,
         context_prompt: Optional[str] = None,
     ) -> GuardInterceptionResult:
-        """Evaluates an ActionProposal through Reflex fail-closed gates."""
+        """Evaluates an ActionProposal through System 1 fail-closed gates."""
         # 0. Deterministic policy evaluation BEFORE model inference and caching
         pol_eval = None
         if self.policy is not None:
@@ -864,7 +864,7 @@ class ReflexGuardHook:
                 outcome = DecisionOutcome.DENY
                 reason = "Fail-closed Reference Monitor: Enforcement profile requires an applicable deterministic permission grant."
                 pol_decision = self._build_policy_decision(
-                    proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_missing_grant", reason
+                    proposal, outcome, RiskLevel.IRREVERSIBLE, "system1_missing_grant", reason
                 )
                 return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
 
@@ -885,14 +885,14 @@ class ReflexGuardHook:
             outcome = DecisionOutcome.DENY
             reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
             pol_decision = self._build_policy_decision(
-                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", reason
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "system1_ledger_failure", reason
             )
             return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
         except Exception as ex:
             outcome = DecisionOutcome.DENY
-            reason = f"Reflex inference engine failure ({ex})"
+            reason = f"System 1 inference engine failure ({ex})"
             pol_decision = self._build_policy_decision(
-                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_engine_failure", reason
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "system1_engine_failure", reason
             )
             return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
 
@@ -901,7 +901,7 @@ class ReflexGuardHook:
             outcome = DecisionOutcome.DENY
             reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
             pol_decision = self._build_policy_decision(
-                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", reason
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "system1_ledger_unrecorded", reason
             )
             return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
@@ -909,10 +909,10 @@ class ReflexGuardHook:
         if "is_safe" in decision.values and not decision.values["is_safe"]:
             outcome = DecisionOutcome.DENY
             reason = (
-                f"Reflex classified action as unsafe (confidence: {decision.confidences.get('is_safe', 0.0):.3f})"
+                f"System 1 classified action as unsafe (confidence: {decision.confidences.get('is_safe', 0.0):.3f})"
             )
             pol_decision = self._build_policy_decision(
-                proposal, outcome, RiskLevel.IRREVERSIBLE, "reflex_safety_deny", reason
+                proposal, outcome, RiskLevel.IRREVERSIBLE, "system1_safety_deny", reason
             )
             return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
         # 2. Check conformal ambiguity (|C(x)| > 1) or OOD (|C(x)| == 0)
@@ -922,9 +922,9 @@ class ReflexGuardHook:
             # Out-of-distribution detection across all fields
             if len(cset) == 0:
                 outcome = DecisionOutcome.REQUIRE_APPROVAL
-                reason = f"Reflex detected out-of-distribution input for field {field_name!r} (empty conformal set)"
+                reason = f"System 1 detected out-of-distribution input for field {field_name!r} (empty conformal set)"
                 pol_decision = self._build_policy_decision(
-                    proposal, outcome, RiskLevel.EXTERNAL, "reflex_conformal_ood", reason
+                    proposal, outcome, RiskLevel.EXTERNAL, "system1_conformal_ood", reason
                 )
                 return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
@@ -932,10 +932,10 @@ class ReflexGuardHook:
             if isinstance(f_def, (ChoiceField, BooleanField)) and len(cset) > 1:
                 outcome = DecisionOutcome.REQUIRE_APPROVAL
                 reason = (
-                    f"Reflex conformal ambiguity for {field_name!r}: set {cset} has {len(cset)} candidates at 1-alpha={1.0 - self.alpha:.2f}"
+                    f"System 1 conformal ambiguity for {field_name!r}: set {cset} has {len(cset)} candidates at 1-alpha={1.0 - self.alpha:.2f}"
                 )
                 pol_decision = self._build_policy_decision(
-                    proposal, outcome, RiskLevel.EXTERNAL, "reflex_conformal_ambiguity", reason
+                    proposal, outcome, RiskLevel.EXTERNAL, "system1_conformal_ambiguity", reason
                 )
                 return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
@@ -943,9 +943,9 @@ class ReflexGuardHook:
         if getattr(decision, "is_ambiguous", False) or getattr(decision, "escalated_fields", None):
             outcome = DecisionOutcome.REQUIRE_APPROVAL
             fields_str = ", ".join(getattr(decision, "escalated_fields", []) or [])
-            reason = f"Reflex structured escalation required due to ambiguity/uncertainty (fields: {fields_str})"
+            reason = f"System 1 structured escalation required due to ambiguity/uncertainty (fields: {fields_str})"
             pol_decision = self._build_policy_decision(
-                proposal, outcome, RiskLevel.EXTERNAL, "reflex_structured_escalation", reason
+                proposal, outcome, RiskLevel.EXTERNAL, "system1_structured_escalation", reason
             )
             return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
@@ -954,19 +954,19 @@ class ReflexGuardHook:
             if conf < self.min_confidence:
                 outcome = DecisionOutcome.REQUIRE_APPROVAL
                 reason = (
-                    f"Reflex calibrated confidence {conf:.3f} for {field_name!r} below required threshold {self.min_confidence:.3f}"
+                    f"System 1 calibrated confidence {conf:.3f} for {field_name!r} below required threshold {self.min_confidence:.3f}"
                 )
                 pol_decision = self._build_policy_decision(
-                    proposal, outcome, RiskLevel.REVERSIBLE, "reflex_low_confidence", reason
+                    proposal, outcome, RiskLevel.REVERSIBLE, "system1_low_confidence", reason
                 )
                 return GuardInterceptionResult(outcome, reason, decision, pol_decision, proposal=proposal)
 
         # 4. Safe and confident
         outcome = DecisionOutcome.ALLOW
         lat_str = f"{decision.latency_ms:.2f}" if isinstance(decision.latency_ms, (int, float)) else str(decision.latency_ms)
-        reason = f"Reflex verified action with full conformal confidence in {lat_str}ms"
+        reason = f"System 1 verified action with full conformal confidence in {lat_str}ms"
         pol_decision = self._build_policy_decision(
-            proposal, outcome, RiskLevel.READ_ONLY, "reflex_verified_allow", reason
+            proposal, outcome, RiskLevel.READ_ONLY, "system1_verified_allow", reason
         )
 
         return self._finalize_authorization(
@@ -1060,7 +1060,7 @@ class ReflexGuardHook:
                     f_outcome = DecisionOutcome.DENY
                     f_reason = f"Fail-closed Reference Monitor: ActionLedger write failed ({ex})"
                     f_pol_decision = self._build_policy_decision(
-                        proposal, f_outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_failure", f_reason
+                        proposal, f_outcome, RiskLevel.IRREVERSIBLE, "system1_ledger_failure", f_reason
                     )
                     return GuardInterceptionResult(f_outcome, f_reason, decision_result=None, policy_decision=f_pol_decision, proposal=proposal)
 
@@ -1069,7 +1069,7 @@ class ReflexGuardHook:
                 f_outcome = DecisionOutcome.DENY
                 f_reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
                 f_pol_decision = self._build_policy_decision(
-                    proposal, f_outcome, RiskLevel.IRREVERSIBLE, "reflex_ledger_unrecorded", f_reason
+                    proposal, f_outcome, RiskLevel.IRREVERSIBLE, "system1_ledger_unrecorded", f_reason
                 )
                 return GuardInterceptionResult(f_outcome, f_reason, None, f_pol_decision, proposal=proposal)
 
@@ -1100,9 +1100,9 @@ class ReflexGuardHook:
 
 
 # Compatibility aliases
-ReflexGuard = ReflexGuardHook
-SystemOneGuard = ReflexGuardHook
-SystemOneGuardHook = ReflexGuardHook
+SystemOneGuard = SystemOneGuardHook
+SystemOneGuard = SystemOneGuardHook
+SystemOneGuardHook = SystemOneGuardHook
 
 __all__ = [
     "ActionProposal",
@@ -1117,8 +1117,8 @@ __all__ = [
     "PolicyDecision",
     "PolicyEngine",
     "PolicyRule",
-    "ReflexGuard",
-    "ReflexGuardHook",
+    "SystemOneGuard",
+    "SystemOneGuardHook",
     "ResultStatus",
     "RiskLevel",
     "SystemOneGuard",

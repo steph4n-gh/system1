@@ -6,7 +6,7 @@ import pytest
 import system1.core.neural as core_neural
 import system1.neural as system1_neural
 from system1.neural import LocalNeuralProjector
-from system1 import ReflexEngine, DecisionSchema, ChoiceField
+from system1 import SystemOneEngine, DecisionSchema, ChoiceField
 
 
 def test_neural_projector_parity():
@@ -82,7 +82,7 @@ def test_neural_projector_empty_and_long_inputs():
 
 
 def test_neural_projector_engine_integration():
-    """Verify LocalNeuralProjector can be plugged into ReflexEngine."""
+    """Verify LocalNeuralProjector can be plugged into SystemOneEngine."""
     class TriageSchema(DecisionSchema):
         route = ChoiceField(
             options=["code", "db", "chat"],
@@ -94,7 +94,7 @@ def test_neural_projector_engine_integration():
         )
 
     proj = LocalNeuralProjector(dimension=384, seed=99)
-    engine = ReflexEngine(TriageSchema, projector=proj, backend="numpy")
+    engine = SystemOneEngine(TriageSchema, projector=proj, backend="numpy")
 
     result = engine.decide("Fix python indent error in line 25")
     assert result.route == "code"

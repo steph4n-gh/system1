@@ -19,11 +19,11 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from system1 import ReflexEngine, DecisionSchema, ChoiceField, MultiChoiceField
+from system1 import SystemOneEngine, DecisionSchema, ChoiceField, MultiChoiceField
 from system1.calibration import ConformalPredictor, RegressionConformalPredictor
 from system1.compiler import CompiledSystemOneModel
-from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, ReflexGuardHook
-from system1.integrations.mcp import ReflexMCPProxy
+from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, SystemOneGuardHook
+from system1.integrations.mcp import SystemOneMCPProxy
 from system1.ledger import ActionLedger, LedgerError
 from system1.receipt import create_decision_receipt, verify_decision_witness_receipt
 import system1.compat.typesafe as compat
@@ -32,7 +32,7 @@ class Route(DecisionSchema):
     route=ChoiceField(options=['north','south'], descriptions={'north':'north route','south':'south route'})
 
 def engine(*,p=.99999,strict=True,ledger=None,key=None):
-    e=ReflexEngine(Route,dimension=16,backend='numpy',strict_mode=strict,
+    e=SystemOneEngine(Route,dimension=16,backend='numpy',strict_mode=strict,
                    margin_threshold=.1,ledger=ledger,signing_key=key)
     h=e.model.heads['route']
     h.set_weights(np.zeros_like(h.weights),np.log([p,1-p]).astype(np.float32)*.25)
@@ -62,25 +62,25 @@ def test_control_allow_constraint_violation_is_denied():
 def test_control_enforcement_rejects_missing_key(tmp_path):
     with ActionLedger(tmp_path/'a.db') as l:
         with pytest.raises(ValueError):
-            ReflexGuardHook(engine=engine(ledger=l),enforcement_profile=True,policy=allow_policy())
+            SystemOneGuardHook(engine=engine(ledger=l),enforcement_profile=True,policy=allow_policy())
 
 def test_control_deterministic_allow_records_and_executes(tmp_path):
     key=Ed25519PrivateKey.generate()
     with ActionLedger(tmp_path/'a.db') as l:
-        g=ReflexGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
+        g=SystemOneGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
         result=g.evaluate_proposal(proposal())
         assert result.allowed
         r=result.decision_result.receipt
         assert verify_decision_witness_receipt(r.to_dict(),public_key=key.public_key())
         assert any(row['payload'].get('receipt_digest')==r.compute_digest() for row in l.entries())
-        calls=[]; response=ReflexMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args: calls.append(name) or 'ok')
+        calls=[]; response=SystemOneMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args: calls.append(name) or 'ok')
         assert calls==['sentinel'] and 'result' in response
 
 def test_control_readonly_ledger_blocks_deterministic_allow(tmp_path):
     key=Ed25519PrivateKey.generate();path=tmp_path/'a.db';ActionLedger(path).close()
     with ActionLedger(path,read_only=True) as l:
-        g=ReflexGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
-        calls=[];ReflexMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args: calls.append(name))
+        g=SystemOneGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
+        calls=[];SystemOneMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args: calls.append(name))
         assert calls==[]
 
 def test_control_zero_egress_rejects_passthrough():
@@ -101,7 +101,7 @@ def test_model_final_authorization_is_actually_in_ledger(tmp_path):
         # Conditional invariant: any ALLOW must reference its own persisted receipt.
         # A corrected enforcement API may instead reject this ungranted path.
         try:
-            g=ReflexGuardHook(engine=engine(ledger=l,key=key),enforcement_profile=True)
+            g=SystemOneGuardHook(engine=engine(ledger=l,key=key),enforcement_profile=True)
         except ValueError:
             return
         result=g.evaluate_proposal(proposal())
@@ -118,18 +118,18 @@ def test_enforcement_does_not_invent_permission_for_unmatched_tool(tmp_path):
     key=Ed25519PrivateKey.generate()
     with ActionLedger(tmp_path/'a.db') as l:
         p=PolicyEngine([PolicyRule('known_only',outcome=DecisionOutcome.ALLOW,action_pattern='^known_tool$')])
-        g=ReflexGuardHook(engine=engine(ledger=l,key=key),policy=p,enforcement_profile=True)
-        calls=[];out=ReflexMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args:calls.append(name) or 'ok')
+        g=SystemOneGuardHook(engine=engine(ledger=l,key=key),policy=p,enforcement_profile=True)
+        calls=[];out=SystemOneMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args:calls.append(name) or 'ok')
         assert not calls, {'effect_count':len(calls),'response':out}
 
 def test_corrupt_history_prevents_new_enforced_effect(tmp_path):
     key=Ed25519PrivateKey.generate()
     with ActionLedger(tmp_path/'a.db') as l:
-        g=ReflexGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
+        g=SystemOneGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
         assert g.evaluate_proposal(proposal()).allowed
         l._connection.execute("UPDATE audit_entries SET payload_json=? WHERE sequence=1", ('{"tampered":true}',))
         assert not l.verify_integrity(trusted_public_key=key.public_key())
-        calls=[];out=ReflexMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args:calls.append(name) or 'ok')
+        calls=[];out=SystemOneMCPProxy(guard=g).handle_call(mcp_request(),lambda name,args:calls.append(name) or 'ok')
         assert not calls, {'effect_count':len(calls),'response':out}
 
 def test_orphan_execution_outcome_is_rejected(tmp_path):
@@ -165,7 +165,7 @@ def test_learning_marks_previous_calibration_stale():
 
 def test_uncalibrated_multilabel_strict_abstains():
     schema=DecisionSchema(schema_name='multi',fields={'tags':MultiChoiceField(options=['a','b'])})
-    e=ReflexEngine(schema,dimension=16,backend='numpy',strict_mode=True)
+    e=SystemOneEngine(schema,dimension=16,backend='numpy',strict_mode=True)
     h=e.model.heads['tags'];h.set_weights(np.zeros_like(h.weights),np.array([3.,-3.],dtype=np.float32))
     r=e.decide('fixture',strict=True)
     assert r.is_ambiguous, {'calibrator_has_is_calibrated':hasattr(e.calibrators['tags'],'is_calibrated'),'values':r.values}
@@ -183,7 +183,7 @@ def test_exported_candidate_preserves_validated_runtime_calibration(tmp_path):
     c,q=make_promoted_client();live=c._get_engine(q);p=tmp_path/'candidate.s1m'
     assert c.export_model(p)
     restored=CompiledSystemOneModel.load(p,backend='numpy')
-    e=ReflexEngine(restored.schema,model=restored,backend='numpy')
+    e=SystemOneEngine(restored.schema,model=restored,backend='numpy')
     assert e._calibration_digest()==live._calibration_digest(), {
         'live_temperature':live.calibrators['route'].temperature,'loaded_temperature':e.calibrators['route'].temperature,
         'live_scores':len(live.conformal_predictors['route'].calibration_scores),
@@ -215,7 +215,7 @@ def test_declared_grpc_lower_bound_covers_generated_stubs():
     root=Path(system1.__file__).resolve().parents[2]
     py=tomllib.loads((root/'pyproject.toml').read_text())
     requirements={Requirement(s).name:Requirement(s) for s in py['project']['optional-dependencies']['grpc']}
-    stub=(root/'src/system1/proto/reflex_pb2_grpc.py').read_text()
+    stub=(root/'src/system1/proto/system1_pb2_grpc.py').read_text()
     generated=re.search(r"GRPC_GENERATED_VERSION = '([^']+)'",stub).group(1)
     minimum=next(s.version for s in requirements['grpcio'].specifier if s.operator=='>=')
     from packaging.version import Version
@@ -226,7 +226,7 @@ def test_async_mcp_tool_is_not_recorded_succeeded_before_it_runs(tmp_path):
     from system1.integrations.mcp import wrap_mcp_tool
     key=Ed25519PrivateKey.generate()
     with ActionLedger(tmp_path/'a.db') as l:
-        g=ReflexGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
+        g=SystemOneGuardHook(engine=engine(ledger=l,key=key),policy=allow_policy(),enforcement_profile=True)
         calls=[]
         @wrap_mcp_tool(guard=g,tool_name='sentinel')
         async def sentinel(path='/safe/readme'):

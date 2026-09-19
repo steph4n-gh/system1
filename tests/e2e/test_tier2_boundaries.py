@@ -26,8 +26,8 @@ from reflex import (
     DefaultGuardDecisionSchema,
     EvidenceRef,
     IntegrityError,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneEngine,
+    SystemOneGuardHook,
 )
 
 
@@ -45,7 +45,7 @@ class BoundarySchema(DecisionSchema):
 
 def test_boundary_empty_prompt_and_whitespace():
     """Verify empty string and whitespace prompts evaluate safely without crashing."""
-    engine = ReflexEngine(BoundarySchema)
+    engine = SystemOneEngine(BoundarySchema)
     
     # 1. Empty string prompt
     res_empty = engine.decide("", record_receipt=True)
@@ -62,7 +62,7 @@ def test_boundary_empty_prompt_and_whitespace():
 
 def test_boundary_extreme_batch_sizes():
     """Verify handling of extreme batch sizes: 0, 1, and 200."""
-    engine = ReflexEngine(BoundarySchema)
+    engine = SystemOneEngine(BoundarySchema)
 
     # 1. Unitary batch
     res_single = engine.decide("Single item", record_receipt=False)
@@ -115,7 +115,7 @@ def test_boundary_invalid_and_corrupt_hashes():
 
 def test_boundary_threshold_limits_alpha_and_confidence():
     """Verify alpha bounds in (0, 1) and confidence threshold edge behavior."""
-    engine = ReflexEngine(BoundarySchema)
+    engine = SystemOneEngine(BoundarySchema)
 
     # Alpha <= 0.0 or >= 1.0 must raise ValueError
     with pytest.raises(ValueError, match="alpha must be in"):
@@ -141,7 +141,7 @@ def test_boundary_threshold_limits_alpha_and_confidence():
 
 def test_boundary_extreme_prompt_lengths():
     """Verify extreme prompt length (20,000+ chars) embeds safely without memory blowout."""
-    engine = ReflexEngine(BoundarySchema)
+    engine = SystemOneEngine(BoundarySchema)
     
     giant_prompt = "Large corpus evaluation block. " * 700  # ~21,000 characters
     assert len(giant_prompt) > 20000
@@ -155,7 +155,7 @@ def test_boundary_extreme_prompt_lengths():
 
 def test_boundary_special_characters_and_injections(temp_ledger):
     """Verify SQL injection, null characters, control characters, and emojis preserve integrity."""
-    engine = ReflexEngine(DefaultGuardDecisionSchema, ledger=temp_ledger)
+    engine = SystemOneEngine(DefaultGuardDecisionSchema, ledger=temp_ledger)
 
     adversarial_inputs = [
         "'; DROP TABLE audit_entries; --",

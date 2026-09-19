@@ -1,4 +1,4 @@
-"""Tests for Reflex Non-Autoregressive Decision Model."""
+"""Tests for System 1 Non-Autoregressive Decision Model."""
 
 import time
 import numpy as np

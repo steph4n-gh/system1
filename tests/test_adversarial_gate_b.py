@@ -19,7 +19,7 @@ Empirical Challenger verification covering:
    - Attempt to pass ':memory:' to EnforcementProfile.validate_configuration.
    - Attempt to initialize ActionLedger(':memory:', require_durable=True / enforce_durability=True).
    - Attempt to pass file::memory: URI variants.
-   - Attempt to pass ':memory:' ActionLedger to ReflexGuardHook in enforcement mode.
+   - Attempt to pass ':memory:' ActionLedger to SystemOneGuardHook in enforcement mode.
    - Attempt read-only ':memory:' initialization.
 
 4. Hash Chain & Signature Forgery:
@@ -32,11 +32,11 @@ Empirical Challenger verification covering:
 5. Two-Phase Outcome Interception:
    - SQLite locks/errors during record_execution_outcome across:
      * wrap_mcp_tool
-     * ReflexMCPProxy.handle_call (JSON-RPC error code -32001)
-     * ReflexToolInterceptor (sync invoke)
-     * ReflexToolInterceptor (async ainvoke)
-     * ReflexGuardCallbackHandler (on_tool_end)
-     * ReflexGuardCallbackHandler (on_tool_error with exec_error preservation)
+     * SystemOneMCPProxy.handle_call (JSON-RPC error code -32001)
+     * SystemOneToolInterceptor (sync invoke)
+     * SystemOneToolInterceptor (async ainvoke)
+     * SystemOneGuardCallbackHandler (on_tool_end)
+     * SystemOneGuardCallbackHandler (on_tool_error with exec_error preservation)
    - Ensure complete structured reconciliation evidence (status=INDETERMINATE, action_id, receipt_digest, raw_result, underlying_error).
 
 6. Twin Namespace Parity:
@@ -76,19 +76,19 @@ from system1.guard import (
     PolicyDecision,
     PolicyEngine,
     PolicyRule,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     RiskLevel,
 )
 from system1.integrations.langchain import (
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexIndeterminateExecutionError,
-    ReflexToolInterceptor,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneIndeterminateExecutionError,
+    SystemOneToolInterceptor,
     wrap_langchain_tool,
 )
 from system1.integrations.mcp import (
-    ReflexMCPBlockedError,
-    ReflexMCPProxy,
+    SystemOneMCPBlockedError,
+    SystemOneMCPProxy,
     wrap_mcp_tool,
 )
 from system1.ledger import ActionLedger, IntegrityError, LedgerError, LedgerWriteError
@@ -570,20 +570,20 @@ class TestLedgerDurabilityEvasion:
         if Path("file::memory:").exists():
             os.remove("file::memory:")
 
-    def test_reflex_guard_hook_with_memory_ledger_and_enforcement_profile_raises(self):
-        """ReflexGuardHook initialization fails closed when given ':memory:' ledger in enforcement mode."""
+    def test_system1_guard_hook_with_memory_ledger_and_enforcement_profile_raises(self):
+        """SystemOneGuardHook initialization fails closed when given ':memory:' ledger in enforcement mode."""
         key = Ed25519PrivateKey.generate()
         mem_ledger = ActionLedger(path=":memory:")
 
         with pytest.raises(ValueError, match="rejects in-memory ledger"):
-            ReflexGuardHook(
+            SystemOneGuardHook(
                 signing_key=key,
                 ledger=mem_ledger,
                 enforcement_profile=True,
             )
 
         with pytest.raises(ValueError, match="rejects in-memory ledger"):
-            ReflexGuardHook(
+            SystemOneGuardHook(
                 signing_key=key,
                 ledger=mem_ledger,
                 enforcement_profile=ENFORCEMENT_PROFILE_V1,
@@ -792,7 +792,7 @@ class TestTwoPhaseOutcomeInterception:
             reason="Allow all actions in test",
         )
         engine_policy = PolicyEngine(rules=[allow_rule])
-        guard = ReflexGuardHook(
+        guard = SystemOneGuardHook(
             policy_engine=engine_policy,
             ledger=ledger,
             signing_key=key,
@@ -802,9 +802,9 @@ class TestTwoPhaseOutcomeInterception:
         return guard, ledger, key
 
     def test_wrap_mcp_tool_indeterminate_on_ledger_write_failure(self, setup_guard):
-        """wrap_mcp_tool executes side effect, but raises ReflexIndeterminateExecutionError on outcome record failure."""
+        """wrap_mcp_tool executes side effect, but raises SystemOneIndeterminateExecutionError on outcome record failure."""
         guard, ledger, key = setup_guard
-        proxy = ReflexMCPProxy(guard=guard)
+        proxy = SystemOneMCPProxy(guard=guard)
         target = MockSideEffectTarget(return_val="asset_created_id_999")
 
         wrapped = wrap_mcp_tool(proxy=proxy, tool_name="create_asset")(target.execute_action)
@@ -815,8 +815,8 @@ class TestTwoPhaseOutcomeInterception:
 
         ledger.record_execution_outcome = locked_outcome
 
-        # Action execution must raise ReflexIndeterminateExecutionError
-        with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+        # Action execution must raise SystemOneIndeterminateExecutionError
+        with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
             wrapped("asset_db_target", amount=750.0)
 
         err = exc_info.value
@@ -832,9 +832,9 @@ class TestTwoPhaseOutcomeInterception:
         assert isinstance(err.underlying_error, sqlite3.OperationalError)
 
     def test_mcp_proxy_handle_call_indeterminate_on_ledger_write_failure(self, setup_guard):
-        """ReflexMCPProxy.handle_call returns structured JSON-RPC -32001 INDETERMINATE response on audit lock."""
+        """SystemOneMCPProxy.handle_call returns structured JSON-RPC -32001 INDETERMINATE response on audit lock."""
         guard, ledger, key = setup_guard
-        proxy = ReflexMCPProxy(guard=guard)
+        proxy = SystemOneMCPProxy(guard=guard)
         target = MockSideEffectTarget(return_val="account_debited_100")
 
         # Simulate SQLite failure on outcome recording
@@ -864,17 +864,17 @@ class TestTwoPhaseOutcomeInterception:
         assert data["raw_result"] == {"status": "success", "result": "account_debited_100"}
 
     def test_tool_interceptor_sync_indeterminate_on_ledger_write_failure(self, setup_guard):
-        """ReflexToolInterceptor synchronous invoke raises ReflexIndeterminateExecutionError on audit lock."""
+        """SystemOneToolInterceptor synchronous invoke raises SystemOneIndeterminateExecutionError on audit lock."""
         guard, ledger, key = setup_guard
         target = MockSideEffectTarget(return_val="file_written_successfully")
-        interceptor = ReflexToolInterceptor(tool=target.execute_action, guard=guard, tool_name="writer")
+        interceptor = SystemOneToolInterceptor(tool=target.execute_action, guard=guard, tool_name="writer")
 
         def disk_full_outcome(*args, **kwargs):
             raise sqlite3.OperationalError("disk I/O error: device full")
 
         ledger.record_execution_outcome = disk_full_outcome
 
-        with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+        with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
             interceptor("/critical/audit.log", amount=1.0)
 
         err = exc_info.value
@@ -887,17 +887,17 @@ class TestTwoPhaseOutcomeInterception:
 
     @pytest.mark.asyncio
     async def test_tool_interceptor_async_ainvoke_indeterminate_on_ledger_write_failure(self, setup_guard):
-        """ReflexToolInterceptor asynchronous ainvoke raises ReflexIndeterminateExecutionError on audit lock."""
+        """SystemOneToolInterceptor asynchronous ainvoke raises SystemOneIndeterminateExecutionError on audit lock."""
         guard, ledger, key = setup_guard
         target = MockSideEffectTarget(return_val="async_effect_complete")
-        ainterceptor = ReflexToolInterceptor(tool=target.aexecute_action, guard=guard, tool_name="async_writer")
+        ainterceptor = SystemOneToolInterceptor(tool=target.aexecute_action, guard=guard, tool_name="async_writer")
 
         def wal_locked_outcome(*args, **kwargs):
             raise sqlite3.OperationalError("sqlite3 WAL lock contention")
 
         ledger.record_execution_outcome = wal_locked_outcome
 
-        with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+        with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
             await ainterceptor.ainvoke("/async/path", amount=42.0)
 
         err = exc_info.value
@@ -909,9 +909,9 @@ class TestTwoPhaseOutcomeInterception:
         assert isinstance(err.underlying_error, sqlite3.OperationalError)
 
     def test_callback_handler_on_tool_end_indeterminate_on_ledger_failure(self, setup_guard):
-        """ReflexGuardCallbackHandler.on_tool_end raises ReflexIndeterminateExecutionError when outcome recording fails."""
+        """SystemOneGuardCallbackHandler.on_tool_end raises SystemOneIndeterminateExecutionError when outcome recording fails."""
         guard, ledger, key = setup_guard
-        handler = ReflexGuardCallbackHandler(guard=guard)
+        handler = SystemOneGuardCallbackHandler(guard=guard)
 
         serialized = {"name": "db_update_tool", "description": "Update customer status"}
         handler.on_tool_start(serialized, "status=ACTIVE", run_id="run_cb_101")
@@ -921,7 +921,7 @@ class TestTwoPhaseOutcomeInterception:
 
         ledger.record_execution_outcome = failing_outcome
 
-        with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+        with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
             handler.on_tool_end("row_updated_ok", run_id="run_cb_101")
 
         err = exc_info.value
@@ -931,9 +931,9 @@ class TestTwoPhaseOutcomeInterception:
         assert err.raw_result == "row_updated_ok"
 
     def test_callback_handler_on_tool_error_preserves_both_errors(self, setup_guard):
-        """ReflexGuardCallbackHandler.on_tool_error preserves tool exception AND audit failure."""
+        """SystemOneGuardCallbackHandler.on_tool_error preserves tool exception AND audit failure."""
         guard, ledger, key = setup_guard
-        handler = ReflexGuardCallbackHandler(guard=guard)
+        handler = SystemOneGuardCallbackHandler(guard=guard)
 
         serialized = {"name": "db_tool", "description": "Execute query"}
         handler.on_tool_start(serialized, "SELECT * FROM secrets", run_id="run_cb_102")
@@ -944,7 +944,7 @@ class TestTwoPhaseOutcomeInterception:
         ledger.record_execution_outcome = failing_outcome
 
         original_tool_err = RuntimeError("Target database connection timed out")
-        with pytest.raises(ReflexIndeterminateExecutionError) as exc_info:
+        with pytest.raises(SystemOneIndeterminateExecutionError) as exc_info:
             handler.on_tool_error(original_tool_err, run_id="run_cb_102")
 
         err = exc_info.value
@@ -977,13 +977,13 @@ class TestNamespaceParityGateB:
         assert r_ledger.LedgerWriteError is s1_ledger.LedgerWriteError
         assert r_ledger.IntegrityError is s1_ledger.IntegrityError
 
-        assert r_guard.ReflexGuardHook is s1_guard.ReflexGuardHook
+        assert r_guard.SystemOneGuardHook is s1_guard.SystemOneGuardHook
         assert r_guard.EnforcementProfile is s1_guard.EnforcementProfile
         assert r_guard.ENFORCEMENT_PROFILE_V1 == s1_guard.ENFORCEMENT_PROFILE_V1
 
-        assert r_mcp.ReflexMCPProxy is s1_mcp.ReflexMCPProxy
+        assert r_mcp.SystemOneMCPProxy is s1_mcp.SystemOneMCPProxy
         assert r_mcp.wrap_mcp_tool is s1_mcp.wrap_mcp_tool
 
-        assert r_lc.ReflexIndeterminateExecutionError is s1_lc.ReflexIndeterminateExecutionError
-        assert r_lc.ReflexToolInterceptor is s1_lc.ReflexToolInterceptor
-        assert r_lc.ReflexGuardCallbackHandler is s1_lc.ReflexGuardCallbackHandler
+        assert r_lc.SystemOneIndeterminateExecutionError is s1_lc.SystemOneIndeterminateExecutionError
+        assert r_lc.SystemOneToolInterceptor is s1_lc.SystemOneToolInterceptor
+        assert r_lc.SystemOneGuardCallbackHandler is s1_lc.SystemOneGuardCallbackHandler

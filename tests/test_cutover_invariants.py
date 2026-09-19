@@ -31,8 +31,8 @@ from system1.compat.typesafe import (
     evaluate_promotion_eligibility,
     partition_cutover_history,
 )
-from system1.compiler import ReflexCompiler
-from system1.engine import ReflexEngine
+from system1.compiler import SystemOneCompiler
+from system1.engine import SystemOneEngine
 from system1.ledger import ActionLedger
 
 
@@ -55,11 +55,11 @@ def test_invariant_10_held_out_validation_prevents_overfit_promotion():
     ]
 
     # Fit model strictly on train_history
-    compiler = ReflexCompiler(schema=schema, dimension=128)
+    compiler = SystemOneCompiler(schema=schema, dimension=128)
     exemplars = {"access": [(h["state"], h["answers"]["access"]) for h in train_history]}
     compiled_model = compiler.compile(exemplars=exemplars)
 
-    engine = ReflexEngine(schema, dimension=128)
+    engine = SystemOneEngine(schema, dimension=128)
     for f_name, ch in compiled_model.heads.items():
         engine.model.heads[f_name].set_weights(ch.weights, ch.biases)
 

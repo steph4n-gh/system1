@@ -1,4 +1,4 @@
-"""Reflex CLI Command Handlers.
+"""System 1 CLI Command Handlers.
 
 Provides:
 - system1 decide: Evaluates inputs against typed decision schemas.
@@ -27,7 +27,7 @@ from system1.calibration import (
     compute_ece_and_bins,
     compute_nll,
 )
-from system1.engine import BenchmarkReport, DecisionResult, ReflexEngine
+from system1.engine import BenchmarkReport, DecisionResult, SystemOneEngine
 from system1.guard import DefaultGuardDecisionSchema
 from system1.ledger import ActionLedger
 from system1.receipt import (
@@ -179,7 +179,7 @@ def handle_decide_command(args: argparse.Namespace) -> int:
     if ledger_path:
         ledger = ActionLedger(ledger_path)
 
-    engine = ReflexEngine(schema, signing_key=signing_key, ledger=ledger)
+    engine = SystemOneEngine(schema, signing_key=signing_key, ledger=ledger)
     result = engine.decide(prompt, alpha=alpha, record_receipt=True)
 
     if getattr(args, "json", False):
@@ -234,7 +234,7 @@ def handle_bench_command(args: argparse.Namespace) -> int:
     if custom_prompt:
         prompts = [custom_prompt]
 
-    engine = ReflexEngine(schema)
+    engine = SystemOneEngine(schema)
     report = engine.benchmark(prompts, iterations=iterations, warmup=warmup)
 
     if getattr(args, "json", False):
@@ -259,7 +259,7 @@ def handle_bench_command(args: argparse.Namespace) -> int:
     print("-" * 70)
     print(f"HEAD-TO-HEAD COMPARISON VS {report.baseline_label.upper()}:")
     print(f"  Baseline Latency:   {report.baseline_latency_ms:.1f} ms ({report.baseline_label})")
-    print(f"  Reflex P50:         {report.p50_latency_ms:.3f} ms (Local Metal/CPU)")
+    print(f"  System 1 P50:         {report.p50_latency_ms:.3f} ms (Local Metal/CPU)")
     print(f"  Speedup Factor:     {report.speedup_factor:.1f}x FASTER than {report.baseline_label}")
     print(f"  Target (<{target_ms:.0f}ms):    {'PASSED' if report.p95_latency_ms <= target_ms else 'FAILED'}")
     print(f"  Data Privacy:       ZERO DATA EGRESS (100% on-device local execution)")
@@ -292,7 +292,7 @@ def handle_calibrate_command(args: argparse.Namespace) -> int:
     schema = _load_schema(getattr(args, "schema", None))
     bins = int(getattr(args, "bins", 10))
 
-    engine = ReflexEngine(schema)
+    engine = SystemOneEngine(schema)
     metrics = engine.calibrate(formatted_dataset, n_bins=bins)
 
     output = {k: v.to_dict() for k, v in metrics.items()}
@@ -411,7 +411,7 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
 
 def handle_compile_command(args: argparse.Namespace) -> int:
     """CLI handler for 'system1 compile'."""
-    from system1.compiler import ReflexCompiler
+    from system1.compiler import SystemOneCompiler
 
     t0 = time.perf_counter()
     schema = _load_schema(args.schema)
@@ -438,7 +438,7 @@ def handle_compile_command(args: argparse.Namespace) -> int:
                         for fk, fv in labels.items():
                             exemplars.setdefault(fk, []).append((p, fv))
 
-    compiler = ReflexCompiler(
+    compiler = SystemOneCompiler(
         schema=schema,
         regularization=getattr(args, "regularization", 1.0),
     )

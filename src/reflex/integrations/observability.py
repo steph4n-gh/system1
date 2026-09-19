@@ -1,4 +1,4 @@
-"""Reflex Prometheus / OpenMetrics Observability Integration (re-export from system1.integrations.observability)."""
+"""System 1 Prometheus / OpenMetrics Observability Integration (re-export from system1.integrations.observability)."""
 from __future__ import annotations
 
 from system1.integrations.observability import *

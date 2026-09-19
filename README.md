@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/steph4n-gh/reflex"><img src="assets/system1-logo.jpg" alt="System 1 Logo" width="110" /></a>
+  <a href="https://github.com/steph4n-gh/system1"><img src="assets/system1-logo.jpg" alt="System 1 Logo" width="110" /></a>
 </p>
 
 <h1 align="center">System 1: On-Metal Decision Firewall for AI Agents</h1>
@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/reflex/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
+  <a href="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml"><img src="https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="Apache 2.0 License" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+" /></a>
   <a href="tests/"><img src="https://img.shields.io/badge/tests-506%20passed-brightgreen.svg" alt="506 Tests Passed" /></a>
@@ -220,7 +220,7 @@ Route confident classifications locally and escalate edge cases to frontier mode
 
 ```python
 from fastapi import FastAPI
-from system1.integrations import add_reflex_gateway
+from system1.integrations import add_system1_gateway
 from system1 import DecisionSchema, ChoiceField
 
 app = FastAPI()
@@ -235,7 +235,7 @@ class IntentRouter(DecisionSchema):
         }
     )
 
-add_reflex_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
+add_system1_gateway(app, schema=IntentRouter, fastpath_threshold=0.85)
 ```
 
 ### 3. LangChain Agent Guard
@@ -384,7 +384,7 @@ System 1 includes **18 runnable demonstrations** across enterprise security, mig
 | # | Demo | Script | Highlights |
 |:---:|---|---|---|
 | 15 | **Multi-Cartridge Pokémon Benchmark** | `examples/gaming/pokemon_all_games_benchmark.py` | 10,000+ FPS, 38µs neural forward pass |
-| 16 | **60 FPS Battle System 1 Agent** | `examples/gaming/pokemon_battle_reflex.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
+| 16 | **60 FPS Battle System 1 Agent** | `examples/gaming/pokemon_battle_system1.py` | Sub-1ms battle decisions, PyBoy RAM extraction |
 | 17 | **10-Chapter Campaign Speedrun** | `examples/gaming/pokemon_full_campaign_speedrun.py` | Pallet Town to Indigo Plateau |
 | 18 | **Live Game Boy Spectator GUI** | `examples/gaming/pokemon_gameboy_gui.py` | Live desktop window, turbo intro skip |
 
@@ -485,7 +485,7 @@ python3 -m pytest tests/ -v
 - **[Academic Paper: Conformal Ambiguity Gating](docs/paper/conformal_gating.md)** — Formal mathematical proof of Theorem 1 (Simplex Equiangular Separation & Welch optimality), finite-sample coverage guarantees, and Sherman-Morrison online rank-1 adaptation.
 - **[Technical Architecture & System Brief](docs/paper/reflex_technical_brief.md)** — Comprehensive architecture brief for CISOs, security engineers, and platform architects evaluating the on-metal decision firewall.
 - **[Training, Distilling, and Deploying Domain Experts](docs/guides/training_experts.md)** — Practitioner guide covering 4 training pathways, Sherman-Morrison online adaptation, and Mixture of Experts dispatching.
-- **[Foundational Whitepaper](docs/paper/reflex_whitepaper.md)** — Complete research monograph covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
+- **[Foundational Whitepaper](docs/paper/system1_whitepaper.md)** — Complete research monograph covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
 - **[Technical Architecture Specification](docs/architecture/technical_specification.md)** — Exhaustive engineering specification covering the memory hierarchy, schema type system, `.s1m` binary format, and SQLite ledger schema.
 
 ---

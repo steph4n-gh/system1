@@ -27,9 +27,9 @@ from reflex import (
     DefaultGuardDecisionSchema,
     LedgerError,
     LedgerWriteError,
-    ReflexEngine,
-    ReflexGuardHook,
-    ReflexMCPProxy,
+    SystemOneEngine,
+    SystemOneGuardHook,
+    SystemOneMCPProxy,
     create_decision_receipt,
     verify_decision_witness_receipt,
 )
@@ -220,11 +220,11 @@ def test_invariant_4_mutating_probabilities_breaks_verification():
 
 
 def test_invariant_5_engine_decide_raises_ledger_write_error_when_fail_closed(tmp_path):
-    """ReflexEngine.decide() with fail_closed_ledger=True raises LedgerWriteError on append failure."""
+    """SystemOneEngine.decide() with fail_closed_ledger=True raises LedgerWriteError on append failure."""
     db_path = str(tmp_path / "test_ledger.db")
     ledger = ActionLedger(path=db_path)
 
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         DefaultGuardDecisionSchema,
         ledger=ledger,
         fail_closed_ledger=True,
@@ -246,11 +246,11 @@ def test_invariant_5_engine_decide_raises_ledger_write_error_when_fail_closed(tm
 
 
 def test_invariant_5_guard_hook_fails_closed_on_ledger_error(tmp_path):
-    """ReflexGuardHook denies tool execution and sentinel is called 0 times on ledger failure."""
+    """SystemOneGuardHook denies tool execution and sentinel is called 0 times on ledger failure."""
     db_path = str(tmp_path / "guard_ledger.db")
     ledger = ActionLedger(path=db_path)
 
-    hook = ReflexGuardHook(ledger=ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(ledger=ledger, fail_closed_ledger=True)
 
     # Force ledger append failure
     def broken_append(*args, **kwargs):
@@ -292,7 +292,7 @@ def test_invariant_5_guard_hook_denies_on_unrecorded_receipt():
     mock_engine.decide.return_value = mock_decision
 
     fake_ledger = MagicMock()
-    hook = ReflexGuardHook(engine=mock_engine, ledger=fake_ledger, fail_closed_ledger=True)
+    hook = SystemOneGuardHook(engine=mock_engine, ledger=fake_ledger, fail_closed_ledger=True)
 
     proposal = ActionProposal.create(
         tenant_id="tenant_001",
@@ -358,7 +358,7 @@ def test_execution_outcome_chaining_success(tmp_path):
     # 3. Verify ledger entries and hash chain
     entries = ledger.entries()
     assert len(entries) == 2
-    assert entries[0]["event_type"] == "reflex_decision"
+    assert entries[0]["event_type"] == "system1_decision"
     assert entries[1]["event_type"] == "execution_outcome"
     assert entries[1]["previous_hash"] == entries[0]["entry_hash"]
     assert entries[1]["payload"]["status"] == "SUCCEEDED"
@@ -416,11 +416,11 @@ def test_execution_outcome_chaining_failure(tmp_path):
 
 
 def test_mcp_handle_call_chains_outcome_to_ledger(tmp_path):
-    """ReflexMCPProxy.handle_call automatically logs post-execution outcome to ActionLedger."""
+    """SystemOneMCPProxy.handle_call automatically logs post-execution outcome to ActionLedger."""
     db_path = str(tmp_path / "mcp_chain_ledger.db")
     ledger = ActionLedger(path=db_path)
-    hook = ReflexGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.10)
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(ledger=ledger, min_confidence=0.50, alpha=0.10)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     def mock_executor(name: str, args: dict):
         return {"data": "file contents", "size": 13}

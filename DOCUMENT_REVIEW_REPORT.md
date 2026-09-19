@@ -1,19 +1,19 @@
-> **Paper**: Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts
+> **Paper**: System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts
 > **Category**: General ML/AI / Systems Architecture
 > **Segments reviewed**: 6
 > **Date**: September 18, 2026
 
 # Paper Summary
 
-The whitepaper *"Reflex: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts"* (authored by steph4n, Reflex Core Research Team, September 2026) presents a machine-native, non-autoregressive decision runtime designed to address the latency (300–1,500 ms), economic cost, non-deterministic jitter, and data sovereignty limitations of autoregressive Large Language Models (LLMs) when executing low-level agentic micro-decisions (such as tool dispatch, action routing, and state triage).
+The whitepaper *"System 1: Non-Autoregressive System 1 Decision Runtime with Conformal Ambiguity Gating and Hardware Audit Receipts"* (authored by steph4n, System 1 Core Research Team, September 2026) presents a machine-native, non-autoregressive decision runtime designed to address the latency (300–1,500 ms), economic cost, non-deterministic jitter, and data sovereignty limitations of autoregressive Large Language Models (LLMs) when executing low-level agentic micro-decisions (such as tool dispatch, action routing, and state triage).
 
 Grounded in Daniel Kahneman's dual-process cognitive framework (*Thinking, Fast and Slow*), the architecture bifurcates agent execution into two complementary systems:
-1. **System 1 (Reflex Runtime)**: Executes routine, pattern-matched discrete actions in sub-millisecond time directly on host silicon (CPU/Metal/BLAS) without autoregressive token generation. Prompts are mapped through a hybrid sparse-dense representation (4,096-dimensional sparse MurmurHash3 feature hashing fused with 64-dimensional dense semantic subword embeddings on a unit hypersphere, $D=4160$). Multi-choice candidate vectors undergo contrastive centering and whitening to eliminate shared background bias, maximally widening decision boundary margins to regular $(K-1)$-simplex equiangular separation matching the Welch/Rankin lower bound ($-\frac{1}{K-1}$). Decision weights are computed via multi-head closed-form Ridge Regression solved with Cholesky factorization in pure NumPy, and live online calibration is achieved via Sherman-Morrison rank-1 inverse covariance updates in 38.4 µs ($>600\times$ faster than batch re-inversion).
+1. **System 1 (System 1 Runtime)**: Executes routine, pattern-matched discrete actions in sub-millisecond time directly on host silicon (CPU/Metal/BLAS) without autoregressive token generation. Prompts are mapped through a hybrid sparse-dense representation (4,096-dimensional sparse MurmurHash3 feature hashing fused with 64-dimensional dense semantic subword embeddings on a unit hypersphere, $D=4160$). Multi-choice candidate vectors undergo contrastive centering and whitening to eliminate shared background bias, maximally widening decision boundary margins to regular $(K-1)$-simplex equiangular separation matching the Welch/Rankin lower bound ($-\frac{1}{K-1}$). Decision weights are computed via multi-head closed-form Ridge Regression solved with Cholesky factorization in pure NumPy, and live online calibration is achieved via Sherman-Morrison rank-1 inverse covariance updates in 38.4 µs ($>600\times$ faster than batch re-inversion).
 2. **System 2 (Deliberative Governor)**: Handles complex reasoning, novel stimuli, and edge cases by delegating to frontier foundation models (OpenAI Astra & GPT-6 series [Sol, Terra, Luna], Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, or xAI Grok).
 3. **Split Conformal Prediction Ambiguity Gate**: Replaces heuristic softmax thresholds with distribution-free conformal calibration, guaranteeing finite-sample coverage $\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$ under exchangeability. Local fast-path execution occurs only when the prediction set is a singleton ($|\mathcal{C}_{1-\alpha}| = 1$) and margin dominance is satisfied ($M(\mathbf{x}) \ge \tau$); statistical ambiguity ($|\mathcal{C}_{1-\alpha}| \ge 2$), novel/OOD stimuli ($|\mathcal{C}_{1-\alpha}| = 0$), or margin deficiency triggers deterministic, fail-closed escalation to System 2.
 4. **Hardware-Attested Cryptographic Receipts & Zero-Egress Invariants**: Every decision is committed to an append-only SQLite ActionLedger (`audit_trail.db`) in WAL mode via an unbroken SHA-256 rolling Merkle chain and signed using local Ed25519 cryptographic keys (`RunWitnessEnvelope`). The runtime operates under an architectural zero-network-egress invariant (no network sockets or HTTP dependencies), guaranteeing zero packet egress across external interfaces during System 1 inference.
 
-Empirically, Reflex demonstrates:
+Empirically, System 1 demonstrates:
 - **9.8 µs L1 exact-cache hit latency** and **0.98 ms P50 cold forward-pass latency** on Apple Silicon Metal and Linux BLAS (an 867× speedup over cloud LLMs).
 - **60 FPS real-time Game Boy emulation** in *Pokémon Red/Blue* on PyBoy, reading battle memory offsets (`0xD057`, `0xD015`, `0xCFE6`) and issuing policy-prescribed actions in 0.98 ms (consuming 5.9% of the 16.6 ms frame budget and permitting up to 16 evaluations per frame, compared to 51 dropped frames for cloud LLMs).
 - **Autonomous apprentice-to-metal cutover**: Seamless shadow-mode distillation collapsing latency from 220 ms to 0.98 ms, eliminating 98.4% of WAN data egress across production traffic and 100% across localized decisions.
@@ -34,7 +34,7 @@ Empirically, Reflex demonstrates:
 ## [abstract_and_introduction]
 
 # Summary
-The abstract and introduction establish the problem formulation: autonomous AI agents bottlenecked by slow (300–1500 ms), expensive ($0.03–$0.15/1k tokens), non-deterministic autoregressive LLM calls for discrete micro-decisions. Reflex introduces a machine-native System 1 runtime on host silicon (<1ms P50 latency, zero cloud API token cost) with conformal ambiguity gating escalating edge cases to frontier System 2 models. The author citation is formally established as `steph4n (2026)` with contact `@steph4n` on X, affiliation Reflex Core Research Team, and repository `https://github.com/steph4n-gh/reflex`.
+The abstract and introduction establish the problem formulation: autonomous AI agents bottlenecked by slow (300–1500 ms), expensive ($0.03–$0.15/1k tokens), non-deterministic autoregressive LLM calls for discrete micro-decisions. System 1 introduces a machine-native System 1 runtime on host silicon (<1ms P50 latency, zero cloud API token cost) with conformal ambiguity gating escalating edge cases to frontier System 2 models. The author citation is formally established as `steph4n (2026)` with contact `@steph4n` on X, affiliation System 1 Core Research Team, and repository `https://github.com/steph4n-gh/system1`.
 
 # Potential Mistakes and Improvements
 1. **Frontier Model Nomenclature**: In the original draft, deliberative governors were referenced with generic or legacy terms (e.g., `(Astra, Fable, Gemini, Grok)`). Standardized across the abstract, diagrams, and text to late-2026 frontier models: OpenAI Astra & GPT-6 series (Sol, Terra, Luna), Anthropic Claude Opus 5 / Fable 5.1 / Mythos 5, Google Gemini 3.1 Pro & 3.8 Flash, and xAI Grok.
@@ -81,7 +81,7 @@ Section 3 details the Multi-Head Closed-Form Ridge Regression solver and sub-50�
 ## [conformal_safety_gating]
 
 # Summary
-Section 4 establishes Reflex's Conformal Ambiguity Gating based on Split Conformal Prediction. Given a calibration dataset $\mathcal{D}_{\text{cal}} = \{(\mathbf{x}_i, y_i)\}_{i=1}^n$, non-conformity scores $s_i = 1 - \hat{P}(Y=y_i \mid \mathbf{x}_i)$ are calibrated at quantile $\hat{q}_{1-\alpha} = s_{(\lceil (n+1)(1-\alpha) \rceil)}$. For unseen queries $\mathbf{x}_{n+1}$, prediction sets $\mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})$ guarantee coverage $\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$. Queries with $|\mathcal{C}_{1-\alpha}| = 1$ and margin $M(\mathbf{x}) \ge \tau$ execute locally, while ambiguous queries ($|\mathcal{C}_{1-\alpha}| \ge 2$ or 0) escalate to frontier System 2 models.
+Section 4 establishes System 1's Conformal Ambiguity Gating based on Split Conformal Prediction. Given a calibration dataset $\mathcal{D}_{\text{cal}} = \{(\mathbf{x}_i, y_i)\}_{i=1}^n$, non-conformity scores $s_i = 1 - \hat{P}(Y=y_i \mid \mathbf{x}_i)$ are calibrated at quantile $\hat{q}_{1-\alpha} = s_{(\lceil (n+1)(1-\alpha) \rceil)}$. For unseen queries $\mathbf{x}_{n+1}$, prediction sets $\mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})$ guarantee coverage $\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$. Queries with $|\mathcal{C}_{1-\alpha}| = 1$ and margin $M(\mathbf{x}) \ge \tau$ execute locally, while ambiguous queries ($|\mathcal{C}_{1-\alpha}| \ge 2$ or 0) escalate to frontier System 2 models.
 
 # Potential Mistakes and Improvements
 1. **Theorem 2 Formalization & Proof**: The initial proof sketch lacked the formal exchangeability framing and two-sided bounds.
@@ -114,7 +114,7 @@ Section 5 defines the cryptographic receipts and audit trail architecture: appen
 ## [empirical_benchmarks_and_conclusion]
 
 # Summary
-Section 6, 7, 8, and References present the empirical evaluation, hardware telemetry, related work, and concluding remarks. Reflex is benchmarked across latency, Game Boy 60 FPS real-time control, apprentice-to-metal cutover, and multi-threaded concurrency.
+Section 6, 7, 8, and References present the empirical evaluation, hardware telemetry, related work, and concluding remarks. System 1 is benchmarked across latency, Game Boy 60 FPS real-time control, apprentice-to-metal cutover, and multi-threaded concurrency.
 
 # Potential Mistakes and Improvements
 1. **100% Traceability of Empirical Figures**: Audited every cited metric against live runnable scripts:
@@ -124,7 +124,7 @@ Section 6, 7, 8, and References present the empirical evaluation, hardware telem
    - Conformal Coverage SLA: >=95.0% (96.8% cited). Verified in `examples/autonomous_agent_firewall_showcase.py` and `tests/test_conformal.py`.
    - Multi-threaded Concurrency: >1,000 QPS (1,240+ QPS cited). Verified in `examples/enterprise_stress_showcase.py` (measured 1,186.5 to 2,546.7 QPS).
 2. **Game Boy RAM Offsets & Frame Budgets**:
-   - Verified exact Gen-1 Game Boy RAM offsets against `examples/pokemon_battle_reflex.py`: Battle Mode `$D057`, Player HP `$D015`, Opponent HP `$CFE6`.
+   - Verified exact Gen-1 Game Boy RAM offsets against `examples/pokemon_battle_system1.py`: Battle Mode `$D057`, Player HP `$D015`, Opponent HP `$CFE6`.
    - Verified 60.0 Hz frame budget (16.6ms/frame), 16 forward passes per frame at ~1ms, and 51 dropped frames for 850ms cloud LLM calls.
    - Headless throughput of 10,400+ FPS verified in `examples/pokemon_all_games_benchmark.py` (measured 12,463–13,096 FPS).
 3. **Speedup Ratios Phrasing**: Clarified that 867x speedup is cold forward pass over cloud LLM baseline, and 86,700x is L1 cache hit speedup over cloud LLM baseline.

@@ -43,7 +43,7 @@ import grpc
 import pytest
 
 from system1.cli import build_parser
-from system1.grpc_server import ReflexServiceServicer, serve
+from system1.grpc_server import SystemOneServiceServicer, serve
 from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
 from system1.ledger import ActionLedger
 from system1.receipt import verify_decision_witness_receipt
@@ -139,7 +139,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = ReflexServiceServicer(
+        servicer = SystemOneServiceServicer(
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
@@ -205,7 +205,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = ReflexServiceServicer(
+        servicer = SystemOneServiceServicer(
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
@@ -242,7 +242,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = ReflexServiceServicer(
+        servicer = SystemOneServiceServicer(
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
@@ -272,7 +272,7 @@ class TestAttack2GuardReferenceMonitorBypass:
 
     def test_guard_malformed_inputs_fail_closed(self):
         """Verify that missing prompts or out-of-bound alpha values fail closed without crashing."""
-        servicer = ReflexServiceServicer()
+        servicer = SystemOneServiceServicer()
 
         class MockContext:
             def __init__(self):
@@ -319,7 +319,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = ReflexServiceServicer(
+        servicer = SystemOneServiceServicer(
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
@@ -369,7 +369,7 @@ class TestAttack2GuardReferenceMonitorBypass:
 
     def test_guard_unauthenticated_profile_when_signing_key_omitted(self):
         """Verify that omitting signing_key falls back to diagnostic_local profile."""
-        servicer = ReflexServiceServicer(signing_key=None, ledger=None)
+        servicer = SystemOneServiceServicer(signing_key=None, ledger=None)
 
         class GuardReq:
             prompt = "Quick diagnostic probe"
@@ -398,7 +398,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = ReflexServiceServicer(policy_engine=policy_engine)
+        servicer = SystemOneServiceServicer(policy_engine=policy_engine)
 
         class GuardReq:
             prompt = "Transfer $1,000"
@@ -425,7 +425,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
 
         repo_root = Path(__file__).resolve().parent.parent
         proto_dir = repo_root / "src" / "system1" / "proto"
-        proto_file = proto_dir / "reflex.proto"
+        proto_file = proto_dir / "system1.proto"
 
         assert proto_file.exists(), f"reflex.proto not found at {proto_file}"
 
@@ -442,18 +442,18 @@ class TestAttack3ProtobufPolyglotInteroperability:
         exit_code = protoc.main(args)
         assert exit_code == 0, "protoc compilation failed"
 
-        pb2_file = temp_path / "reflex_pb2.py"
-        pb2_grpc_file = temp_path / "reflex_pb2_grpc.py"
+        pb2_file = temp_path / "system1_pb2.py"
+        pb2_grpc_file = temp_path / "system1_pb2_grpc.py"
         assert pb2_file.exists()
         assert pb2_grpc_file.exists()
 
         sys.path.insert(0, str(temp_path))
 
-        spec_pb2 = importlib.util.spec_from_file_location("adv_reflex_pb2", pb2_file)
+        spec_pb2 = importlib.util.spec_from_file_location("adv_system1_pb2", pb2_file)
         adv_pb2 = importlib.util.module_from_spec(spec_pb2)
         spec_pb2.loader.exec_module(adv_pb2)
 
-        spec_grpc = importlib.util.spec_from_file_location("adv_reflex_pb2_grpc", pb2_grpc_file)
+        spec_grpc = importlib.util.spec_from_file_location("adv_system1_pb2_grpc", pb2_grpc_file)
         adv_grpc = importlib.util.module_from_spec(spec_grpc)
         spec_grpc.loader.exec_module(adv_grpc)
 
@@ -499,7 +499,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
 
         try:
             with grpc.insecure_channel(f"127.0.0.1:{port}") as channel:
-                stub = adv_grpc.ReflexServiceStub(channel)
+                stub = adv_grpc.SystemOneServiceStub(channel)
 
                 # 1. HealthCheck
                 h_resp = stub.HealthCheck(adv_pb2.HealthCheckRequest())
@@ -598,7 +598,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
 
         try:
             with grpc.insecure_channel(f"127.0.0.1:{port}") as channel:
-                stub = adv_grpc.ReflexServiceStub(channel)
+                stub = adv_grpc.SystemOneServiceStub(channel)
 
                 def run_rpc(idx: int):
                     if idx % 3 == 0:
@@ -674,7 +674,7 @@ class TestAttack4DocumentationRigorAndPackagingParity:
         """Ensure claims regarding retention bounds and cryptographic signing are strictly qualified."""
         repo_root = Path(__file__).resolve().parent.parent
         readme_text = (repo_root / "README.md").read_text()
-        whitepaper_text = (repo_root / "docs" / "paper" / "reflex_whitepaper.md").read_text()
+        whitepaper_text = (repo_root / "docs" / "paper" / "system1_whitepaper.md").read_text()
         techspec_text = (repo_root / "docs" / "architecture" / "technical_specification.md").read_text()
 
         # 1. Ed25519 signatures are documented as software digital signatures (RFC 8032)
@@ -707,7 +707,7 @@ class TestAttack4DocumentationRigorAndPackagingParity:
 
         # gRPC exports parity
         assert r_grpc.serve is s_grpc.serve
-        assert r_grpc.ReflexServiceServicer is s_grpc.ReflexServiceServicer
+        assert r_grpc.SystemOneServiceServicer is s_grpc.SystemOneServiceServicer
         assert r_grpc.grpc_available is s_grpc.grpc_available
 
         # Egress audit log parity

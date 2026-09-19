@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex / System 1 Core: Standalone Non-Autoregressive Forward Evaluator.
+"""System 1 / System 1 Core: Standalone Non-Autoregressive Forward Evaluator.
 
 Demonstrates using `system1.core` as an ultra-lightweight, zero-overhead standalone
 library requiring ONLY NumPy (with optional Apple Silicon Metal MLX acceleration):

@@ -1,4 +1,4 @@
-"""Unit and Integration Tests for Pokémon Battle Reflex Agent.
+"""Unit and Integration Tests for Pokémon Battle System 1 Agent.
 
 Verifies:
 1. DecisionSchema definitions and field validations.
@@ -7,7 +7,7 @@ Verifies:
 4. Real Game Boy ROM header parsing.
 5. High-fidelity visual ASCII Game Boy screen & Game Advisor HUD rendering.
 6. Dual-Process cognitive architecture (System 1 fast reflex + System 2 slow planner).
-7. ReflexCompiler static distillation to < 20KB .s1m binary model.
+7. SystemOneCompiler static distillation to < 20KB .s1m binary model.
 8. TypeSafeClient and patch_typesafe() compatibility.
 9. 60 FPS simulated battle loop execution across wild encounters and Gym Leaders.
 10. Performance scorecard generation and frame budget compliance.
@@ -31,20 +31,20 @@ if str(GAMING_DIR) not in sys.path:
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-import pokemon_battle_reflex
-from pokemon_battle_reflex import (
+import pokemon_battle_system1
+from pokemon_battle_system1 import (
     BattleState,
     BattleType,
     ExplorationState,
     GEN1_TYPE_CHART,
     Pokemon,
-    PokemonBattleReflex,
+    PokemonBattleSystemOne,
     PokemonMove,
     PyBoyAdapter,
     PyBoyMemoryBridge,
     System1BattleAgent,
     calculate_damage,
-    compile_pokemon_reflex_model,
+    compile_pokemon_system1_model,
     create_gym_leader_battle,
     create_player_party,
     create_player_pikachu,
@@ -66,8 +66,8 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compat.typesafe import patch_typesafe
@@ -78,9 +78,9 @@ from system1.compiler import CompiledSystemOneModel
 # 1. Schema & Field Validation Tests
 # ============================================================================
 
-def test_pokemon_battle_reflex_schema():
-    """Verify PokemonBattleReflex schema fields, types, options, and descriptions."""
-    schema = PokemonBattleReflex()
+def test_pokemon_battle_system1_schema():
+    """Verify PokemonBattleSystemOne schema fields, types, options, and descriptions."""
+    schema = PokemonBattleSystemOne()
     assert isinstance(schema, DecisionSchema)
     assert "action" in schema.fields
     assert "chosen_move" in schema.fields
@@ -348,13 +348,13 @@ def test_dual_process_cognitive_split():
 
 
 # ============================================================================
-# 8. Reflex Compiler (< 20 KB .s1m) Tests
+# 8. System 1 Compiler (< 20 KB .s1m) Tests
 # ============================================================================
 
-def test_reflex_compiler_s1m_artifact(tmp_path: Path):
-    """Verify ReflexCompiler produces a static binary artifact strictly < 20 KB."""
-    target_path = tmp_path / "pokemon_battle_reflex.s1m"
-    compiled_model, file_size_bytes = compile_pokemon_reflex_model(output_path=target_path, dimension=128)
+def test_system1_compiler_s1m_artifact(tmp_path: Path):
+    """Verify SystemOneCompiler produces a static binary artifact strictly < 20 KB."""
+    target_path = tmp_path / "pokemon_battle_system1.s1m"
+    compiled_model, file_size_bytes = compile_pokemon_system1_model(output_path=target_path, dimension=128)
 
     assert target_path.is_file()
     assert file_size_bytes < 20 * 1024  # Strict requirement: < 20 KB
@@ -696,7 +696,7 @@ def test_battle_simulation_poison_residual_damage():
 def test_battle_simulation_with_compiled_model(tmp_path: Path):
     """Verify full battle simulation running exclusively through compiled .s1m model."""
     target_path = tmp_path / "test_compiled_battle.s1m"
-    compiled_model, file_size = compile_pokemon_reflex_model(output_path=target_path)
+    compiled_model, file_size = compile_pokemon_system1_model(output_path=target_path)
     assert file_size < 20 * 1024
 
     agent = System1BattleAgent(compiled_model=compiled_model)

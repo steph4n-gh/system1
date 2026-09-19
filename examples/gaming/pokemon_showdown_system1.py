@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pokémon Showdown Competitive Ladder (#1 Peak Elo Bot): Reflex System 1 Engine.
+"""Pokémon Showdown Competitive Ladder (#1 Peak Elo Bot): System 1 System 1 Engine.
 
 Implements an autonomous, sub-millisecond competitive agent for Pokémon Showdown
 connecting via WebSocket (to `wss://sim3.psim.us/showdown/websocket` or local simulator)
@@ -57,8 +57,8 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.ledger import ActionLedger
@@ -375,10 +375,10 @@ class System2YomiPlanner:
 
 
 # ============================================================================
-# 4. Reflex System 1 Decision Schema
+# 4. System 1 System 1 Decision Schema
 # ============================================================================
 
-class PokemonShowdownReflex(DecisionSchema):
+class PokemonShowdownSystemOne(DecisionSchema):
     """Sub-millisecond decision runtime schema for Pokémon Showdown turns."""
 
     action_type = ChoiceField(
@@ -444,17 +444,17 @@ class ShowdownBattleState:
 
 
 # ============================================================================
-# 6. Autonomous Showdown Battle Reflex Agent
+# 6. Autonomous Showdown Battle System 1 Agent
 # ============================================================================
 
-class ShowdownBattleReflexAgent:
+class ShowdownBattleSystemOneAgent:
     """Master agent combining System 1 fast damage reflex, Conformal Safety Gate, and System 2 Yomi."""
 
     def __init__(self, conformal_threshold: float = 0.15) -> None:
         self.conformal_threshold = conformal_threshold
         self.opponent_model = ShermanMorrisonOpponentModel(dim=4)
         self.yomi_planner = System2YomiPlanner(self.opponent_model)
-        self.schema = PokemonShowdownReflex()
+        self.schema = PokemonShowdownSystemOne()
         self.schema_digest = self.schema.schema_digest()
         self.signing_key = Ed25519PrivateKey.generate()
         self.ledger = ActionLedger(":memory:")
@@ -476,7 +476,7 @@ class ShowdownBattleReflexAgent:
                 probs[opt] = (1.0 - conf) / 4.0
 
         return create_decision_receipt(
-            schema_name="PokemonShowdownReflex",
+            schema_name="PokemonShowdownSystemOne",
             schema_digest=self.schema_digest,
             prompt=f"Battle {state.battle_id} Turn {state.turn} | {state.player_active.species} vs {state.opponent_active.species}",
             values={"action_type": action_type, "conformal_ambiguity": is_ambiguous, "risk_score": 2.5},
@@ -615,7 +615,7 @@ class MockShowdownServer:
         return {
             "active": [{"moves": active_moves}],
             "side": {
-                "name": "ReflexAgent",
+                "name": "SystemOneAgent",
                 "id": "p1",
                 "pokemon": [
                     {
@@ -646,8 +646,8 @@ class MockShowdownServer:
 
         if self.state.opponent_active.current_hp == 0:
             self.is_finished = True
-            self.winner = "ReflexAgent"
-            return "|win|ReflexAgent"
+            self.winner = "SystemOneAgent"
+            return "|win|SystemOneAgent"
         elif self.state.player_active.current_hp == 0:
             self.is_finished = True
             self.winner = "Opponent"
@@ -661,14 +661,14 @@ class ShowdownWebSocketClient:
 
     def __init__(
         self,
-        username: str = "ReflexSystem1Bot",
+        username: str = "SystemOneSystem1Bot",
         server_url: str = "wss://sim3.psim.us/showdown/websocket",
         use_mock: bool = False,
     ) -> None:
         self.username = username
         self.server_url = server_url
         self.use_mock = use_mock
-        self.agent = ShowdownBattleReflexAgent()
+        self.agent = ShowdownBattleSystemOneAgent()
         self.mock_server = MockShowdownServer() if use_mock else None
         self.connected = False
 
@@ -819,10 +819,10 @@ class ShowdownWebSocketClient:
 # ============================================================================
 
 def main() -> None:
-    """CLI launcher for Pokémon Showdown Competitive Reflex Bot."""
+    """CLI launcher for Pokémon Showdown Competitive System 1 Bot."""
     parser = argparse.ArgumentParser(description="Pokémon Showdown Competitive Bot (Gen 1 OU)")
     parser.add_argument("--mode", choices=["mock", "live"], default="mock", help="Execution mode (mock or live WebSocket)")
-    parser.add_argument("--username", type=str, default="ReflexPeakBot", help="Showdown username")
+    parser.add_argument("--username", type=str, default="SystemOnePeakBot", help="Showdown username")
     parser.add_argument("--server", type=str, default="wss://sim3.psim.us/showdown/websocket", help="Showdown server URL")
     parser.add_argument("--turns", type=int, default=15, help="Number of turns to simulate")
 

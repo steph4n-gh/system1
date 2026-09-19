@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Reflex Standalone Example: Customer Support Ticket Triage.
+"""System 1 Standalone Example: Customer Support Ticket Triage.
 
 Demonstrates real-time customer support routing and sentiment triage,
 deciding routing department, urgency, human escalation, and customer frustration
 with sub-2ms latency.
 
 Showcases three integration paradigms:
-1. Native Reflex Declarative Schema (DecisionSchema + ReflexEngine)
+1. Native System 1 Declarative Schema (DecisionSchema + SystemOneEngine)
 2. TypeSafe SDK Drop-in Import Swap (from system1.compat.typesafe import TypeSafeClient, Choice, Noul, Score)
 3. Zero-Code-Change Monkey Patching (patch_typesafe() -> import typesafe_sdk)
 4. Live Side-by-Side Comparison vs TypeSafe Cloud (or realistic WAN baseline fallback)
@@ -30,7 +30,7 @@ from system1 import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compat.typesafe import (
@@ -43,7 +43,7 @@ from system1.compat.typesafe import (
 
 
 # ============================================================================
-# 1. Native Reflex Schema
+# 1. Native System 1 Schema
 # ============================================================================
 
 class SupportTicketSchema(DecisionSchema):
@@ -82,10 +82,10 @@ class SupportTicketSchema(DecisionSchema):
 
 def run_native_mode(incoming_tickets: list[str]):
     print("\n" + "=" * 76)
-    print("  MODE 1: NATIVE REFLEX DECISION ENGINE (DecisionSchema + ReflexEngine)")
+    print("  MODE 1: NATIVE REFLEX DECISION ENGINE (DecisionSchema + SystemOneEngine)")
     print("=" * 76)
 
-    engine = ReflexEngine(SupportTicketSchema, backend="auto")
+    engine = SystemOneEngine(SupportTicketSchema, backend="auto")
 
     print("\nProcessing Incoming Tickets:")
     for ticket in incoming_tickets:
@@ -188,7 +188,7 @@ def run_monkey_patch_mode(incoming_tickets: list[str]):
 
 def run_side_by_side_comparison(incoming_tickets: list[str]):
     print("\n" + "=" * 76)
-    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (Reflex System 1 vs TypeSafe Cloud)")
+    print("  MODE 4: LIVE HEAD-TO-HEAD COMPARISON (System 1 System 1 vs TypeSafe Cloud)")
     print("=" * 76)
 
     api_key = os.environ.get("TYPESAFE_API_KEY", "") or os.environ.get("JEV_API_KEY", "")

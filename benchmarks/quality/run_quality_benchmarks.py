@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex Decision Engine — Quality Benchmark Suite.
+"""System 1 Decision Engine — Quality Benchmark Suite.
 
 Measures decision accuracy, precision, recall, F1, confusion matrices,
 regression error (MAE/RMSE/correlation), and latency (P50/P99) for three
@@ -45,7 +45,7 @@ from system1 import (  # noqa: E402
     BooleanField,
     ChoiceField,
     DecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 
@@ -407,7 +407,7 @@ def _load_dataset(name: str) -> List[Dict[str, Any]]:
 def run_security_triage_benchmark() -> Dict[str, Any]:
     """Benchmark: Security Triage (3-class classification)."""
     dataset = _load_dataset("security_triage")
-    engine = ReflexEngine(SecurityTriageSchema, backend="auto")
+    engine = SystemOneEngine(SecurityTriageSchema, backend="auto")
 
     labels = ["ALLOW", "QUARANTINE", "BLOCK"]
     y_true: List[str] = []
@@ -448,7 +448,7 @@ def run_security_triage_benchmark() -> Dict[str, Any]:
 def run_intent_routing_benchmark() -> Dict[str, Any]:
     """Benchmark: Intent Routing (4-class classification)."""
     dataset = _load_dataset("intent_routing")
-    engine = ReflexEngine(IntentRoutingSchema, backend="auto")
+    engine = SystemOneEngine(IntentRoutingSchema, backend="auto")
 
     labels = ["technical_support", "billing", "sales", "escalate"]
     y_true: List[str] = []
@@ -489,7 +489,7 @@ def run_intent_routing_benchmark() -> Dict[str, Any]:
 def run_threat_scoring_benchmark() -> Dict[str, Any]:
     """Benchmark: Threat Scoring (continuous 0–10 regression)."""
     dataset = _load_dataset("threat_scoring")
-    engine = ReflexEngine(ThreatScoringSchema, backend="auto")
+    engine = SystemOneEngine(ThreatScoringSchema, backend="auto")
 
     y_true: List[float] = []
     y_pred: List[float] = []
@@ -538,7 +538,7 @@ BENCHMARKS = {
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Reflex Decision Engine — Quality Benchmark Suite",
+        description="System 1 Decision Engine — Quality Benchmark Suite",
     )
     parser.add_argument(
         "--bench",

@@ -1,4 +1,4 @@
-"""Tests for Reflex Calibration and Proper Scoring Rules."""
+"""Tests for System 1 Calibration and Proper Scoring Rules."""
 
 import numpy as np
 import pytest

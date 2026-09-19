@@ -1,6 +1,6 @@
 """Comprehensive tests for the 4 Tier 1 architectural levers:
 
-1. Lever 1: Tier 0 Semantic Reflex Cache (L1 Vector/Exact Cache, sub-0.05ms certified execution)
+1. Lever 1: Tier 0 Semantic System 1 Cache (L1 Vector/Exact Cache, sub-0.05ms certified execution)
 2. Lever 2: Online Sherman-Morrison Distillation (closed-form rank-1 update, <0.1ms, live boundary adaptation)
 3. Lever 3: Margin-Based Conformal Gating (M(x) = s_{(1)} - s_{(2)} >= tau_margin suppresses false ambiguity)
 4. Lever 4: Telemetry & Continuous State Vector Fusion (normalization, projection, multimodal decision hyperplanes)
@@ -11,9 +11,9 @@ import numpy as np
 import pytest
 
 from system1.schema import DecisionSchema, ChoiceField, BooleanField, ScoreField
-from system1.compiler import ReflexCompiler, CompiledSystemOneModel
-from system1.engine import ReflexEngine, DecisionResult
-from system1.cache import SemanticReflexCache, CacheEntry
+from system1.compiler import SystemOneCompiler, CompiledSystemOneModel
+from system1.engine import SystemOneEngine, DecisionResult
+from system1.cache import SemanticSystemOneCache, CacheEntry
 from system1.telemetry import TelemetryProjector
 from system1.calibration import ConformalPredictor, ConformalPredictionSet
 
@@ -54,11 +54,11 @@ def get_alert_exemplars():
 
 
 # ==============================================================================
-# Lever 1: Tier 0 Semantic Reflex Cache Tests
+# Lever 1: Tier 0 Semantic System 1 Cache Tests
 # ==============================================================================
 
-def test_semantic_reflex_cache_exact_and_vector_hits():
-    cache = SemanticReflexCache(capacity=100, similarity_threshold=0.95)
+def test_semantic_system1_cache_exact_and_vector_hits():
+    cache = SemanticSystemOneCache(capacity=100, similarity_threshold=0.95)
 
     emb1 = np.random.randn(64).astype(np.float32)
     emb1 /= np.linalg.norm(emb1)
@@ -101,8 +101,8 @@ def test_semantic_reflex_cache_exact_and_vector_hits():
     assert cache.get("completely unrelated query", embedding=emb_far) is None
 
 
-def test_semantic_reflex_cache_lru_eviction():
-    cache = SemanticReflexCache(capacity=3, similarity_threshold=0.98)
+def test_semantic_system1_cache_lru_eviction():
+    cache = SemanticSystemOneCache(capacity=3, similarity_threshold=0.98)
 
     for i in range(5):
         emb = np.zeros(16, dtype=np.float32)
@@ -120,10 +120,10 @@ def test_semantic_reflex_cache_lru_eviction():
     assert cache.get("query_4") is not None
 
 
-def test_semantic_reflex_cache_engine_integration_and_certified_execution():
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+def test_semantic_system1_cache_engine_integration_and_certified_execution():
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         AlertRoutingSchema,
         model=model,
         use_cache=True,
@@ -185,9 +185,9 @@ def test_sherman_morrison_mathematical_identity():
 
 def test_online_distillation_learn_from_tier2():
     """Verify live boundary adaptation when Tier 2 resolves an edge case."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
-    engine = ReflexEngine(AlertRoutingSchema, model=model, use_cache=True)
+    engine = SystemOneEngine(AlertRoutingSchema, model=model, use_cache=True)
 
     edge_prompt = "Unexpected kernel telemetry: anomalous interrupt storm on eth0"
     
@@ -251,13 +251,13 @@ def test_margin_based_conformal_gating():
     assert len(cset_tie.prediction_set) >= 2
 
 
-def test_margin_gating_in_reflex_engine():
-    """Verify ReflexEngine respects margin_threshold and records margin telemetry in DecisionResult."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+def test_margin_gating_in_system1_engine():
+    """Verify SystemOneEngine respects margin_threshold and records margin telemetry in DecisionResult."""
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
     
     # Enable margin gating with threshold 0.15
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         AlertRoutingSchema,
         model=model,
         enable_margin_gating=True,
@@ -304,9 +304,9 @@ def test_telemetry_projector_normalization_and_modes():
 
 def test_continuous_telemetry_alters_decision_boundary():
     """Verify that structured continuous telemetry shifts System 1 hyperplanes."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
-    engine = ReflexEngine(AlertRoutingSchema, model=model, use_cache=False)
+    engine = SystemOneEngine(AlertRoutingSchema, model=model, use_cache=False)
 
     neutral_prompt = "Server cluster node status update event received"
 
@@ -331,9 +331,9 @@ def test_continuous_telemetry_alters_decision_boundary():
 
 def test_four_levers_synergy_escalation_collapse():
     """Verify that combining all 4 levers drives Tier 2 escalations down to zero on repeat/adapted queries."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         AlertRoutingSchema,
         model=model,
         use_cache=True,
@@ -374,7 +374,7 @@ def test_four_levers_synergy_escalation_collapse():
 
 def test_compiled_model_save_load_roundtrip_with_online_adaptation(tmp_path):
     """Verify .s1m saving (<20KB), loading, and subsequent online Sherman-Morrison distillation."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
 
     model_path = tmp_path / "edge_routing.s1m"
@@ -424,9 +424,9 @@ def test_telemetry_projector_edge_cases():
     assert np.all(norm_zero == 0.0)
 
 
-def test_semantic_reflex_cache_edge_cases():
+def test_semantic_system1_cache_edge_cases():
     """Verify cache handles empty string prompts, clear operations, and threshold boundaries."""
-    cache = SemanticReflexCache(capacity=5, similarity_threshold=0.98)
+    cache = SemanticSystemOneCache(capacity=5, similarity_threshold=0.98)
 
     # 1. Empty string prompt
     cache.put("", "empty_result")
@@ -453,7 +453,7 @@ def test_scorefield_online_update_and_extreme_values():
             ("high risk dangerous prompt", 9.0),
         ] * 5
     }
-    compiler = ReflexCompiler(ScoreSchema, dimension=32, regularization=0.5)
+    compiler = SystemOneCompiler(ScoreSchema, dimension=32, regularization=0.5)
     model = compiler.compile(exemplars=exemplars)
 
     prompt_high = "critical zero day kernel exploit"
@@ -483,10 +483,10 @@ def test_telemetry_projector_high_dimensional_rank():
     assert rank == 20, f"Expected full column rank 20, but got {rank} (indicates subspace collapse)"
 
 
-def test_semantic_reflex_cache_continuous_telemetry_vector_hit():
-    """Verify that SemanticReflexCache vector search allows continuous telemetry float variations (e.g. 1e-6)
+def test_semantic_system1_cache_continuous_telemetry_vector_hit():
+    """Verify that SemanticSystemOneCache vector search allows continuous telemetry float variations (e.g. 1e-6)
     to hit the cache when embeddings are highly similar, rather than masking them out via exact digest mismatch."""
-    cache = SemanticReflexCache(capacity=50, similarity_threshold=0.95)
+    cache = SemanticSystemOneCache(capacity=50, similarity_threshold=0.95)
     emb = np.random.randn(32).astype(np.float32)
     emb /= np.linalg.norm(emb)
 
@@ -509,7 +509,7 @@ def test_sherman_morrison_thread_safety_concurrent_updates():
     """Verify that concurrent online updates across multiple threads do not corrupt the inverse covariance matrix."""
     import threading
 
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
 
     errors = []
@@ -536,7 +536,7 @@ def test_sherman_morrison_thread_safety_concurrent_updates():
 
 def test_sherman_morrison_nan_inf_resilience():
     """Verify that online update validates inputs and rejects NaN/Inf embeddings without corrupting weights."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
 
     head = model._field_heads["action"]
@@ -584,7 +584,7 @@ def test_system_one_model_evaluate_and_learn_from_tier2():
 
 def test_online_update_precomputed_embedding():
     """Verify that passing precomputed embedding to learn_from_tier2 eliminates redundant encoding overhead."""
-    compiler = ReflexCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
+    compiler = SystemOneCompiler(AlertRoutingSchema, dimension=32, regularization=0.5)
     model = compiler.compile(exemplars=get_alert_exemplars())
 
     prompt = "repeat telemetry ping event"

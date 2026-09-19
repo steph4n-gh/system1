@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex vs TypeSafe AI: Enterprise Auto-Cutover Showcase.
+"""System 1 vs TypeSafe AI: Enterprise Auto-Cutover Showcase.
 
 Demonstrates the drop-in Trojan Horse compatibility layer (`mode="auto_cutover"`)
 for TypeSafe AI (Jev) SDK with:
@@ -12,7 +12,7 @@ for TypeSafe AI (Jev) SDK with:
 3. Autonomous Cutover with Live Query Stream:
    - Initial queries proxy to TypeSafe cloud API (or realistic cloud WAN baseline)
    - Automatically records prompt/response pairs into SQLite `ActionLedger`
-   - Dynamically distills closed-form Ridge Regression hyperplanes via `ReflexCompiler`
+   - Dynamically distills closed-form Ridge Regression hyperplanes via `SystemOneCompiler`
    - Verifies local agreement rate and automatically flips to 100% local execution
 4. Demonstrated Latency Drop, Zero Egress, and Throughput Gains:
    - Captures before/after latency curves (~250-300ms cloud WAN dropping to ~1.1ms local Metal/NumPy)
@@ -228,7 +228,7 @@ def get_clinical_triage_use_case() -> Tuple[str, Dict[str, Any], List[Dict[str, 
 
     Clinicians at triage desks require sub-second acuity scoring under ESI protocols.
     Egress of Protected Health Information (PHI) under HIPAA to public AI cloud APIs
-    is strictly forbidden. Reflex provides zero-egress local on-device scoring.
+    is strictly forbidden. System 1 provides zero-egress local on-device scoring.
     """
     title = "Clinical Intake & Medical Emergency Triage (HIPAA-Compliant ESI Protocol)"
 
@@ -431,7 +431,7 @@ def render_cutover_banner(event: Dict[str, Any]) -> None:
     print("╠" + "═" * 108 + "╣")
     print(f"║  Event:                  {event.get('event', 'trojan_horse_cutover'):<81}║")
     print(f"║  Timestamp:              {timestamp_str:<81}║")
-    print(f"║  Samples Distilled:      {samples} query/decision exemplars ingested into ReflexCompiler{' ':>24}║")
+    print(f"║  Samples Distilled:      {samples} query/decision exemplars ingested into SystemOneCompiler{' ':>24}║")
     print(f"║  Closed-Form Solve:      Ridge Regression Hyperplanes: W* = (X^T X + λI)^(-1) X^T Y{' ':>29}║")
     print(f"║  Local Model Agreement:  {agreement:.1f}% (Required Threshold: {threshold:.1f}%){' ':>45}║")
     print(f"║  New Execution Status:   100% LOCAL ON-DEVICE EXECUTION ACTIVE ($0 cost, sub-2ms latency){' ':>16}║")
@@ -502,7 +502,7 @@ def render_summary_scorecard(results: List[Dict[str, Any]]) -> None:
     print("\n" + "┌" + "─" * 86 + "┐")
     print("│" + " " * 28 + "METRICS & PERFORMANCE SCORECARD" + " " * 27 + "│")
     print("├" + "─" * 86 + "┤")
-    print(f"│  Metric                          │ Cloud Proxy Phase      │ Local System 1 Reflex │")
+    print(f"│  Metric                          │ Cloud Proxy Phase      │ Local System 1 System 1 │")
     print("├──────────────────────────────────┼────────────────────────┼───────────────────────┤")
     print(f"│  Average Latency                 │ {cloud_lat_str}   │ {local_lat_str}   │")
     print(f"│  Measured Speedup Factor         │ {'Baseline (1.0x)':<22} │ {speedup_str:>21} │")
@@ -838,7 +838,7 @@ def run_auto_cutover_showcase(
 def main() -> None:
     load_env_credentials()
     parser = argparse.ArgumentParser(
-        description="Reflex vs TypeSafe AI: Autonomous Trojan Horse Cutover Enterprise Showcase",
+        description="System 1 vs TypeSafe AI: Autonomous Trojan Horse Cutover Enterprise Showcase",
     )
     parser.add_argument(
         "--use-case",

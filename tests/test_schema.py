@@ -1,4 +1,4 @@
-"""Tests for Reflex Decision Schema definitions."""
+"""Tests for System 1 Decision Schema definitions."""
 
 import pytest
 

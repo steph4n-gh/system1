@@ -30,13 +30,13 @@ from benchmarks.run_triple_crown_benchmark import (
     InstructorTicketTriageSchema,
     OpenHandsActionSecurityRisk,
     OpenHandsSecuritySchema,
-    ReflexInstructorClassifier,
-    ReflexSecurityAnalyzer,
-    ReflexSemanticRouter,
+    SystemOneInstructorClassifier,
+    SystemOneSecurityAnalyzer,
+    SystemOneSemanticRouter,
     SemanticRouterSchema,
     run_all_benchmarks,
 )
-from reflex import ReflexEngine
+from reflex import SystemOneEngine
 from system1.receipt import verify_decision_witness_receipt
 
 
@@ -44,12 +44,12 @@ class TestOpenHandsSecurityGuardrail:
     """Test suite for OpenHands SecurityAnalyzer drop-in replacement."""
 
     def test_zero_shot_initialization(self) -> None:
-        analyzer = ReflexSecurityAnalyzer()
+        analyzer = SystemOneSecurityAnalyzer()
         assert analyzer.engine is not None
         assert "risk" in analyzer.engine.schema.fields
 
     def test_latency_sla_sub_two_ms(self) -> None:
-        analyzer = ReflexSecurityAnalyzer()
+        analyzer = SystemOneSecurityAnalyzer()
         # Warmup
         analyzer.security_risk("pwd")
 
@@ -64,7 +64,7 @@ class TestOpenHandsSecurityGuardrail:
         assert max(latencies) < 5.0, f"Max latency exceeded 5ms: {max(latencies):.3f}ms"
 
     def test_risk_classification_quality(self) -> None:
-        analyzer = ReflexSecurityAnalyzer()
+        analyzer = SystemOneSecurityAnalyzer()
         correct = 0
         total = len(OPENHANDS_DATASET)
 
@@ -78,7 +78,7 @@ class TestOpenHandsSecurityGuardrail:
         assert accuracy >= 90.0, f"Expected >=90% accuracy on OpenHands, got {accuracy:.1f}% ({correct}/{total})"
 
     def test_cryptographic_receipt_validity(self) -> None:
-        analyzer = ReflexSecurityAnalyzer()
+        analyzer = SystemOneSecurityAnalyzer()
         code, res = analyzer.security_risk("cat /etc/shadow")
         assert res.receipt is not None
         assert verify_decision_witness_receipt(res.receipt.to_dict()) is True
@@ -88,12 +88,12 @@ class TestInstructorStructuredClassifier:
     """Test suite for Instructor structured ticket triage drop-in replacement."""
 
     def test_zero_shot_initialization(self) -> None:
-        classifier = ReflexInstructorClassifier()
+        classifier = SystemOneInstructorClassifier()
         assert "department" in classifier.engine.schema.fields
         assert "urgency" in classifier.engine.schema.fields
 
     def test_latency_sla_sub_two_ms(self) -> None:
-        classifier = ReflexInstructorClassifier()
+        classifier = SystemOneInstructorClassifier()
         classifier.extract("ping")
         classifier.extract("warmup billing query")
 
@@ -109,7 +109,7 @@ class TestInstructorStructuredClassifier:
         assert max(latencies) < 5.0, f"Max latency exceeded 5ms: {max(latencies):.3f}ms"
 
     def test_triage_classification_quality(self) -> None:
-        classifier = ReflexInstructorClassifier()
+        classifier = SystemOneInstructorClassifier()
         correct = 0
         total = len(INSTRUCTOR_DATASET)
 
@@ -122,7 +122,7 @@ class TestInstructorStructuredClassifier:
         assert accuracy >= 90.0, f"Expected >=90% accuracy on Instructor, got {accuracy:.1f}% ({correct}/{total})"
 
     def test_cryptographic_receipt_validity(self) -> None:
-        classifier = ReflexInstructorClassifier()
+        classifier = SystemOneInstructorClassifier()
         triage = classifier.extract("I need a refund for my subscription charge")
         assert triage.receipt is not None
         assert verify_decision_witness_receipt(triage.receipt.to_dict()) is True
@@ -132,11 +132,11 @@ class TestSemanticRouterIntentLayer:
     """Test suite for Semantic Router RouteLayer drop-in replacement."""
 
     def test_zero_shot_initialization(self) -> None:
-        router = ReflexSemanticRouter()
+        router = SystemOneSemanticRouter()
         assert "route" in router.engine.schema.fields
 
     def test_latency_sla_sub_two_ms(self) -> None:
-        router = ReflexSemanticRouter()
+        router = SystemOneSemanticRouter()
         router("hello")
 
         latencies: List[float] = []
@@ -149,7 +149,7 @@ class TestSemanticRouterIntentLayer:
         assert max(latencies) < 5.0, f"Max latency exceeded 5ms: {max(latencies):.3f}ms"
 
     def test_routing_accuracy_quality(self) -> None:
-        router = ReflexSemanticRouter()
+        router = SystemOneSemanticRouter()
         correct = 0
         total = len(SEMANTIC_ROUTER_DATASET)
 
@@ -162,7 +162,7 @@ class TestSemanticRouterIntentLayer:
         assert accuracy >= 95.0, f"Expected >=95% accuracy on Semantic Router, got {accuracy:.1f}% ({correct}/{total})"
 
     def test_cryptographic_receipt_validity(self) -> None:
-        router = ReflexSemanticRouter()
+        router = SystemOneSemanticRouter()
         choice = router("Show me total revenue for 2025")
         assert choice.receipt is not None
         assert verify_decision_witness_receipt(choice.receipt.to_dict()) is True

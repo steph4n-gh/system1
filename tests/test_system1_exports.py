@@ -34,7 +34,7 @@ def test_system1_namespace_exports():
     """Verify system1 top-level exports and API integrity."""
     expected_exports = {
         "__version__",
-        "ReflexEngine",
+        "SystemOneEngine",
         "SystemOneEngine",
         "System1Engine",
         "DecisionResult",
@@ -65,7 +65,7 @@ def test_system1_namespace_exports():
         "ActionLedger",
         "LedgerError",
         "IntegrityError",
-        "ReflexGuardHook",
+        "SystemOneGuardHook",
         "SystemOneGuardHook",
         "DefaultGuardDecisionSchema",
         "GuardInterceptionResult",
@@ -153,7 +153,7 @@ def test_engine_benchmark_percentiles_np():
     class SimpleSchema(system1.DecisionSchema):
         choice = system1.ChoiceField(options=["a", "b"])
 
-    engine = system1.ReflexEngine(SimpleSchema, backend="numpy")
+    engine = system1.SystemOneEngine(SimpleSchema, backend="numpy")
     report = engine.benchmark(iterations=50, warmup=5)
 
     assert report.total_decisions == 50
@@ -168,7 +168,7 @@ def test_engine_benchmark_invalid_iterations():
     class SimpleSchema(system1.DecisionSchema):
         choice = system1.ChoiceField(options=["a", "b"])
 
-    engine = system1.ReflexEngine(SimpleSchema, backend="numpy")
+    engine = system1.SystemOneEngine(SimpleSchema, backend="numpy")
     with pytest.raises(ValueError, match="iterations must be a positive integer >= 1"):
         engine.benchmark(iterations=0)
 
@@ -228,12 +228,12 @@ def test_system1_cli_main_entrypoint(capsys):
     assert data["schema_name"] == "DefaultTriageSchema"
 
 
-def test_reflex_package_parity():
+def test_system1_package_parity():
     """Verify reflex package exports and provides 100% interoperability with system1."""
     import reflex
     assert reflex.__version__ == system1.__version__
-    assert reflex.ReflexEngine is system1.ReflexEngine
-    assert reflex.ReflexCompiler is system1.ReflexCompiler
+    assert reflex.SystemOneEngine is system1.SystemOneEngine
+    assert reflex.SystemOneCompiler is system1.SystemOneCompiler
     assert reflex.DecisionSchema is system1.DecisionSchema
     assert reflex.ChoiceField is system1.ChoiceField
     assert reflex.BooleanField is system1.BooleanField
@@ -248,7 +248,7 @@ def test_reflex_package_parity():
     assert res.choice in ("a", "b")
 
 
-def test_reflex_all_16_submodules_import_and_parity():
+def test_system1_all_16_submodules_import_and_parity():
     """Verify all 16 submodules in system1 can be imported via reflex.<submodule> and __all__ matches."""
     import importlib
     import pkgutil
@@ -276,7 +276,7 @@ def test_reflex_all_16_submodules_import_and_parity():
             assert r_val is s_val, f"Symbol {symbol} in {sub} is not identical object ({r_val} vs {s_val})"
 
 
-def test_reflex_dynamic_submodule_getattr():
+def test_system1_dynamic_submodule_getattr():
     """Verify getattr(reflex, submod) dynamically resolves all 15 submodules and __dir__ includes them."""
     import importlib
     import reflex
@@ -286,13 +286,13 @@ def test_reflex_dynamic_submodule_getattr():
         "core", "embeddings", "engine", "guard", "ledger",
         "model", "neural", "receipt", "schema", "telemetry",
     ]
-    reflex_dir = dir(reflex)
+    system1_dir = dir(reflex)
     for sub in submodules:
         mod = getattr(reflex, sub)
         assert mod is not None, f"getattr(reflex, {sub!r}) returned None"
         expected_mod = importlib.import_module(f"reflex.{sub}")
         assert mod is expected_mod, f"getattr(reflex, {sub!r}) returned {mod}, expected {expected_mod}"
-        assert sub in reflex_dir, f"Submodule {sub} missing from dir(reflex)"
+        assert sub in system1_dir, f"Submodule {sub} missing from dir(reflex)"
 
 
 def test_guard_interception_result_allowed_property():
@@ -301,7 +301,7 @@ def test_guard_interception_result_allowed_property():
         ActionProposal,
         DecisionOutcome,
         GuardInterceptionResult,
-        ReflexGuardHook,
+        SystemOneGuardHook,
     )
 
     # 1. Direct unit verification on GuardInterceptionResult instance
@@ -315,7 +315,7 @@ def test_guard_interception_result_allowed_property():
     assert res_escalate.allowed is False
 
     # 2. End-to-end reference monitor hook evaluation
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
     proposal_allow = ActionProposal.create(
         tenant_id="tenant_001",
         principal_id="principal_001",
@@ -347,7 +347,7 @@ def test_guard_interception_result_allowed_property():
     assert res_hook_deny.allowed is False
 
 
-def test_reflex_core_submodules_parity():
+def test_system1_core_submodules_parity():
     """Verify all reflex.core submodules match system1.core."""
     import importlib
     import reflex.core
@@ -364,7 +364,7 @@ def test_reflex_core_submodules_parity():
             assert getattr(r_mod, symbol) is getattr(s_mod, symbol)
 
 
-def test_reflex_cli_main_entrypoint(capsys):
+def test_system1_cli_main_entrypoint(capsys):
     """Verify reflex.cli.main executes correctly."""
     import reflex.cli as r_cli
     ret = r_cli.main(["decide", "Safe read check", "--json"])
@@ -510,12 +510,12 @@ def test_spec_harmonization_aliases():
     """Verify spec harmonization aliases for exceptions, TypeSafeClient, and engine learning methods."""
     import reflex
     import system1
-    from system1.integrations.langchain import ReflexSecurityException, ReflexGuardBlockedException
-    from reflex.integrations.langchain import ReflexSecurityException as ReflexSecurityExceptionReflex
+    from system1.integrations.langchain import SystemOneSecurityException, SystemOneGuardBlockedException
+    from reflex.integrations.langchain import SystemOneSecurityException as SystemOneSecurityExceptionReflex
 
     # 1. Exception alias parity
-    assert ReflexSecurityException is ReflexGuardBlockedException
-    assert ReflexSecurityExceptionReflex is ReflexSecurityException
+    assert SystemOneSecurityException is SystemOneGuardBlockedException
+    assert SystemOneSecurityExceptionReflex is SystemOneSecurityException
 
     # 2. TypeSafeClient agreement_threshold alias
     client = system1.compat.typesafe.TypeSafeClient(agreement_threshold=0.95)
@@ -524,9 +524,9 @@ def test_spec_harmonization_aliases():
     assert client_r.min_agreement_threshold == 0.92
 
     # 3. Engine and Model System 2 / Tier 3 learning aliases
-    assert system1.ReflexEngine.learn_from_system2 is system1.ReflexEngine.learn_from_tier2
-    assert system1.ReflexEngine.learn_from_tier3 is system1.ReflexEngine.learn_from_tier2
-    assert reflex.ReflexEngine.learn_from_system2 is reflex.ReflexEngine.learn_from_tier2
+    assert system1.SystemOneEngine.learn_from_system2 is system1.SystemOneEngine.learn_from_tier2
+    assert system1.SystemOneEngine.learn_from_tier3 is system1.SystemOneEngine.learn_from_tier2
+    assert reflex.SystemOneEngine.learn_from_system2 is reflex.SystemOneEngine.learn_from_tier2
 
     assert system1.compiler.CompiledSystemOneModel.learn_from_system2 is system1.compiler.CompiledSystemOneModel.learn_from_tier2
     assert system1.core.SystemOneModel.learn_from_system2 is system1.core.SystemOneModel.learn_from_tier2

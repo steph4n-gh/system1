@@ -3,8 +3,8 @@
 Probes white-box boundary conditions across:
 1. Conformal prediction gating, margin checks, calibration stability (calibration.py)
 2. Sherman-Morrison rank-1 distillation, vector fusion, projectors (core/model.py, core/telemetry.py)
-3. Tier 0 Semantic Reflex Cache boundary churn and thread safety (cache.py)
-4. ReflexEngine runtime robustness and fail-safe guarantees (engine.py)
+3. Tier 0 Semantic System 1 Cache boundary churn and thread safety (cache.py)
+4. SystemOneEngine runtime robustness and fail-safe guarantees (engine.py)
 """
 
 import concurrent.futures
@@ -21,7 +21,7 @@ from system1.calibration import (
     compute_ece_and_bins,
     compute_nll,
 )
-from system1.cache import SemanticReflexCache
+from system1.cache import SemanticSystemOneCache
 from system1.core.model import (
     DecisionFieldHead,
     DeterministicSemanticProjector,
@@ -36,7 +36,7 @@ from system1.core.schema import (
     ScoreField,
 )
 from system1.core.telemetry import TelemetryProjector
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 
 
 # ==============================================================================
@@ -368,7 +368,7 @@ def test_semantic_projector_adversarial_inputs():
     assert np.isclose(np.linalg.norm(v_punct), 1.0)
 
     # 3. Unicode and emojis
-    v_emoji = proj.project("🚀 System 1 Reflex Engine 🧠 Apple Silicon ⚡️")
+    v_emoji = proj.project("🚀 System 1 System 1 Engine 🧠 Apple Silicon ⚡️")
     assert np.all(np.isfinite(v_emoji))
     assert np.isclose(np.linalg.norm(v_emoji), 1.0)
 
@@ -435,12 +435,12 @@ def test_telemetry_projector_extreme_fusions():
 
 
 # ==============================================================================
-# 3. Tier 0 Semantic Reflex Cache Boundary & Thread-Safety Tests
+# 3. Tier 0 Semantic System 1 Cache Boundary & Thread-Safety Tests
 # ==============================================================================
 
 def test_cache_capacity_1_churn_and_zero_norm():
     """Verify cache LRU eviction with capacity=1 and zero-norm embedding handling."""
-    cache = SemanticReflexCache(capacity=1, similarity_threshold=0.98)
+    cache = SemanticSystemOneCache(capacity=1, similarity_threshold=0.98)
 
     # Put entry B -> evicts entry A immediately
     cache.put("prompt_B", {"res": "B"}, embedding=np.array([0.0, 1.0]))
@@ -464,7 +464,7 @@ def test_cache_capacity_1_churn_and_zero_norm():
 
 def test_cache_telemetry_isolation():
     """Verify identical prompts with different telemetry never collide in cache."""
-    cache = SemanticReflexCache(capacity=10)
+    cache = SemanticSystemOneCache(capacity=10)
 
     p = "transfer funds to external routing account"
     telem_low = {"amount": 50.0}
@@ -484,8 +484,8 @@ def test_cache_telemetry_isolation():
 
 
 def test_cache_multithreaded_concurrency_stress():
-    """Verify thread-safety of SemanticReflexCache under concurrent parallel reads and writes."""
-    cache = SemanticReflexCache(capacity=50, similarity_threshold=0.95)
+    """Verify thread-safety of SemanticSystemOneCache under concurrent parallel reads and writes."""
+    cache = SemanticSystemOneCache(capacity=50, similarity_threshold=0.95)
     num_threads = 8
     ops_per_thread = 50
 
@@ -513,12 +513,12 @@ def test_cache_multithreaded_concurrency_stress():
 
 
 # ==============================================================================
-# 4. ReflexEngine Runtime Robustness & Integration Stress
+# 4. SystemOneEngine Runtime Robustness & Integration Stress
 # ==============================================================================
 
 def test_engine_uncalibrated_baseline_execution():
-    """Verify ReflexEngine operates reliably in a completely uncalibrated state."""
-    engine = ReflexEngine(MultiFieldAdversarialSchema, enable_margin_gating=True)
+    """Verify SystemOneEngine operates reliably in a completely uncalibrated state."""
+    engine = SystemOneEngine(MultiFieldAdversarialSchema, enable_margin_gating=True)
 
     # Decide without calling engine.calibrate()
     res = engine.decide("Suspicious packet detected on gateway", alpha=0.05)
@@ -535,8 +535,8 @@ def test_engine_uncalibrated_baseline_execution():
 
 
 def test_engine_empty_prompt_and_batch_mismatch():
-    """Verify ReflexEngine with empty prompt and mismatched batch telemetry."""
-    engine = ReflexEngine(MultiFieldAdversarialSchema)
+    """Verify SystemOneEngine with empty prompt and mismatched batch telemetry."""
+    engine = SystemOneEngine(MultiFieldAdversarialSchema)
 
     # 1. Empty string prompt
     res_empty = engine.decide("")
@@ -557,7 +557,7 @@ def test_engine_empty_prompt_and_batch_mismatch():
 
 def test_engine_learn_from_tier2_unknown_field_graceful():
     """Verify learn_from_tier2 ignores unknown schema fields gracefully."""
-    engine = ReflexEngine(MultiFieldAdversarialSchema)
+    engine = SystemOneEngine(MultiFieldAdversarialSchema)
     stats = engine.learn_from_tier2(
         "anomalous request payload",
         target={"non_existent_field": "UNKNOWN", "route": "BLOCK"},
@@ -571,7 +571,7 @@ def test_engine_rapid_sequential_stress_loop():
     """Stress test: 50 sequential rapid decisions verifying zero state leakage and sub-2ms speed."""
     import statistics
 
-    engine = ReflexEngine(MultiFieldAdversarialSchema, use_cache=True)
+    engine = SystemOneEngine(MultiFieldAdversarialSchema, use_cache=True)
     prompts = [
         "Normal ping check",
         "Elevated traffic from user agent",
@@ -594,7 +594,7 @@ def test_engine_rapid_sequential_stress_loop():
 
 def test_engine_benchmark_minimal_warmup_and_custom_prompts():
     """Verify benchmark utility with minimal warmup and custom prompt set."""
-    engine = ReflexEngine(MultiFieldAdversarialSchema)
+    engine = SystemOneEngine(MultiFieldAdversarialSchema)
     report = engine.benchmark(
         prompts=["custom prompt alpha", "custom prompt beta"],
         iterations=5,

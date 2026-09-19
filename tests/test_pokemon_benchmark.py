@@ -4,7 +4,7 @@ Verifies:
 1. Extended ROM header parsing, platform identification, and 8-bit checksum verification.
 2. Latency statistics calculation (mean, median, p95, p99, min, max, QPS throughput).
 3. Memory Bridge integrity verification across Gen 1 and Gen 2 cartridges.
-4. System 1 Reflex inference evaluation and sub-1ms metal verification.
+4. System 1 System 1 inference evaluation and sub-1ms metal verification.
 5. Multi-game benchmark end-to-end execution.
 6. ANSI comparison table formatting and JSON serialization.
 7. CLI argument parsing for both benchmark and live GUI spectator scripts.
@@ -35,11 +35,11 @@ from examples.gaming.pokemon_all_games_benchmark import (
     CartridgeMetadata,
     LatencyMetrics,
     MemoryBridgeIntegrity,
-    ReflexPerformance,
+    SystemOnePerformance,
     SingleGameBenchmarkResult,
     compute_latency_stats,
     evaluate_memory_bridge_integrity,
-    evaluate_system1_reflex_performance,
+    evaluate_system1_performance,
     format_ansi_comparison_table,
     parse_benchmark_args,
     parse_extended_rom_header,
@@ -47,7 +47,7 @@ from examples.gaming.pokemon_all_games_benchmark import (
     run_multi_game_benchmark,
     run_single_game_benchmark,
 )
-from examples.gaming.pokemon_battle_reflex import (
+from examples.gaming.pokemon_battle_system1 import (
     BattleState,
     BattleType,
     Pokemon,
@@ -179,15 +179,15 @@ def test_memory_bridge_integrity_across_all_games():
 
 
 # ============================================================================
-# 4. System 1 Reflex Inference Performance Tests
+# 4. System 1 System 1 Inference Performance Tests
 # ============================================================================
 
-def test_system1_reflex_inference_performance():
+def test_system1_inference_performance():
     """Verify System 1 decision evaluation, sub-1ms verification, and conformal safety."""
     agent = System1BattleAgent()
     state = create_gym_leader_battle("misty")
 
-    perf = evaluate_system1_reflex_performance(state, agent=agent, num_decisions=25)
+    perf = evaluate_system1_performance(state, agent=agent, num_decisions=25)
 
     assert perf.total_decisions == 25
     assert perf.neural_forward.mean_us > 0
@@ -224,7 +224,7 @@ def test_run_single_game_benchmark():
     else:
         assert res.headless_fps >= 0.0
     assert res.memory_integrity.passed is True
-    assert res.reflex_performance.sub_1ms_verified is True
+    assert res.system1_performance.sub_1ms_verified is True
 
 
 def test_run_multi_game_benchmark_subset():
@@ -380,7 +380,7 @@ def test_format_ansi_dynamic_metrics():
         player_y=5,
         battle_mode=0,
     )
-    perf = ReflexPerformance(
+    perf = SystemOnePerformance(
         neural_forward=compute_latency_stats([50.0]),
         e2e_pipeline=compute_latency_stats([120.0]),
         sub_1ms_verified=True,
@@ -397,7 +397,7 @@ def test_format_ansi_dynamic_metrics():
         frame_count=100,
         frame_time_sec=0.02,
         memory_integrity=integrity,
-        reflex_performance=perf,
+        system1_performance=perf,
         emulator_available=True,
     )
 

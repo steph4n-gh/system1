@@ -28,9 +28,9 @@ from system1.core.schema import (
 )
 
 SingleChoiceField = ChoiceField
-ReflexSchema = DecisionSchema
-from system1.engine import ReflexEngine
-from system1.compiler import ReflexCompiler, CompiledSystemOneModel
+SystemOneSchema = DecisionSchema
+from system1.engine import SystemOneEngine
+from system1.compiler import SystemOneCompiler, CompiledSystemOneModel
 import system1.compat.typesafe as s1_typesafe
 from system1.compat.typesafe import (
     Choice,
@@ -141,14 +141,14 @@ class TestAttack1ArtifactSubstitution:
     def test_no_post_validation_retraining_on_full_history(self, monkeypatch):
         """Verify that compiler.compile is NOT called a second time post-validation."""
         compile_call_count = 0
-        original_compile = ReflexCompiler.compile
+        original_compile = SystemOneCompiler.compile
 
         def counting_compile(self, *args, **kwargs):
             nonlocal compile_call_count
             compile_call_count += 1
             return original_compile(self, *args, **kwargs)
 
-        monkeypatch.setattr(ReflexCompiler, "compile", counting_compile)
+        monkeypatch.setattr(SystemOneCompiler, "compile", counting_compile)
 
         client = TypeSafeClient(
             mode="auto_cutover",
@@ -182,11 +182,11 @@ class TestAttack2VacuousPromotion:
     """Adversarial challenge: Attempt promotion with zero valid scored checks."""
 
     def test_vacuous_promotion_empty_validation_history(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="VacuousCheck",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(min_agreement_threshold=0.80)
 
         report = evaluate_promotion_eligibility(engine, val_history=[], schema=schema, policy=policy)
@@ -196,11 +196,11 @@ class TestAttack2VacuousPromotion:
         assert any("Zero scored validation checks" in r for r in report.rejection_reasons)
 
     def test_vacuous_promotion_unmatched_answer_fields(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="VacuousCheckUnmatched",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(min_agreement_threshold=0.80)
 
         # Val history has answers, but none match the schema fields
@@ -215,11 +215,11 @@ class TestAttack2VacuousPromotion:
         assert any("Zero scored validation checks" in r for r in report.rejection_reasons)
 
     def test_vacuous_promotion_none_answer_values(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="VacuousCheckNone",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(min_agreement_threshold=0.80)
 
         # Val history has field name matching schema, but value is None
@@ -235,11 +235,11 @@ class TestAttack2VacuousPromotion:
 
     def test_client_cutover_defers_on_zero_scored_checks(self):
         """Verify client cutover audit log defers cutover when val checks are 0."""
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="VacuousClient",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(min_agreement_threshold=0.80)
 
         report = evaluate_promotion_eligibility(engine, [], schema, policy)
@@ -262,11 +262,11 @@ class TestAttack3SmallSampleRelaxation:
 
         Verify this relaxation no longer exists in evaluate_promotion_eligibility.
         """
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="SmallSampleAttack",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         # Mock engine to return predictable decisions: "allow" for all
         class MockEngine:
@@ -361,7 +361,7 @@ class TestAttack4StatisticalLowerBoundEvasion:
 
         but Wilson 95% lower bound = ~59.58% (< 80%). Must be REJECTED.
         """
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="WilsonBorderline10",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
@@ -398,7 +398,7 @@ class TestAttack4StatisticalLowerBoundEvasion:
 
         but Wilson 95% lower bound = ~63.96% (< 80%). Must be REJECTED.
         """
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="WilsonBorderline20",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
@@ -433,7 +433,7 @@ class TestAttack4StatisticalLowerBoundEvasion:
 
         Wilson 95% lower bound > 88% (> 80%). Must PASS.
         """
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="WilsonPass",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
@@ -480,7 +480,7 @@ class TestAttack5CriticalSecurityClassPoisoning:
         but false_allow_count = 1 on critical target 'deny' with predicted 'allow'.
         Must REJECT promotion strictly.
         """
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="PoisoningTest",
             fields={"action": SingleChoiceField(["view", "allow", "deny"])},
         )
@@ -538,7 +538,7 @@ class TestAttack5CriticalSecurityClassPoisoning:
     ])
     def test_all_critical_class_aliases_rejected_on_false_allow(self, critical_target, predicted_allow):
         """Test matrix of all documented critical class targets and permissive predictions."""
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="CriticalMatrix",
             fields={"decision": SingleChoiceField(["allow", "safe", "pass", "permit", "deny", "unsafe", "fraud", "block", "require_approval", "malicious", "high_risk", "critical"]) if not isinstance(critical_target, bool) else BooleanField()},
         )
@@ -570,7 +570,7 @@ class TestAttack5CriticalSecurityClassPoisoning:
         assert _is_allow_class("proceed") is True
         assert _is_allow_class("grant") is True
 
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="BlindspotTest",
             fields={"action": SingleChoiceField(["deny", "approve"])},
         )

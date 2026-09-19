@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "system1"
 version = "0.1.2"
-description = "System 1: Machine-Native Reflex Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
+description = "System 1: Machine-Native System 1 Runtime with < 1ms P50 latency, conformal safety gating, zero network egress, and Ed25519 receipts."
 readme = "README.md"
 license = "Apache-2.0"
-authors = [{name = "Reflex / System 1 Authors"}]
+authors = [{name = "System 1 / System 1 Authors"}]
 requires-python = ">=3.11"
 keywords = [
     "reflex",
@@ -40,10 +40,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/steph4n-gh/reflex"
-Repository = "https://github.com/steph4n-gh/reflex.git"
-Documentation = "https://github.com/steph4n-gh/reflex#readme"
-"Issue Tracker" = "https://github.com/steph4n-gh/reflex/issues"
+Homepage = "https://github.com/steph4n-gh/system1"
+Repository = "https://github.com/steph4n-gh/system1.git"
+Documentation = "https://github.com/steph4n-gh/system1#readme"
+"Issue Tracker" = "https://github.com/steph4n-gh/system1/issues"
 
 [project.optional-dependencies]
 metal = [

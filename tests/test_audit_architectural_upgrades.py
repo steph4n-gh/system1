@@ -20,7 +20,7 @@ from system1.core.model import (
     SystemOneModel,
 )
 from system1.core.schema import ChoiceField, DecisionSchema
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 
 
 # ---------------------------------------------------------------------------
@@ -207,11 +207,11 @@ def test_sherman_morrison_forgetting_factor_prevents_asphyxiation():
 
 
 def test_engine_learn_from_tier2_supports_forgetting_factor():
-    """Verify ReflexEngine.learn_from_tier2 forwards forgetting_factor."""
+    """Verify SystemOneEngine.learn_from_tier2 forwards forgetting_factor."""
     class SimpleSchema(DecisionSchema):
         action = ChoiceField(options=["A", "B"])
 
-    engine = ReflexEngine(SimpleSchema, forgetting_factor=0.99)
+    engine = SystemOneEngine(SimpleSchema, forgetting_factor=0.99)
     assert engine.forgetting_factor == 0.99
 
     res = engine.learn_from_tier2("test prompt", {"action": "B"}, forgetting_factor=0.98)
@@ -263,11 +263,11 @@ def test_recency_formula_decay():
 
 
 def test_engine_decide_with_recency_weighted():
-    """Verify ReflexEngine.decide and encode accept recency_weighted."""
+    """Verify SystemOneEngine.decide and encode accept recency_weighted."""
     class TriageSchema(DecisionSchema):
         action = ChoiceField(options=["READ", "EXECUTE"])
 
-    engine = ReflexEngine(TriageSchema, use_cache=False)
+    engine = SystemOneEngine(TriageSchema, use_cache=False)
     emb1 = engine.encode("user query", recency_weighted=True)
     emb2 = engine.encode("user query", recency_weighted=False)
     assert emb1.shape == (384,)
@@ -298,7 +298,7 @@ def test_field_level_escalation_granularity_prevents_advisory_poisoning():
             escalate_on_ambiguity=False,
         )
 
-    engine = ReflexEngine(CompositeAgentSchema, use_cache=False)
+    engine = SystemOneEngine(CompositeAgentSchema, use_cache=False)
 
     # Ensure route produces confident prediction for ALLOW
     engine.model.heads["route"].weights[0, :] = 1.0
@@ -345,7 +345,7 @@ def test_field_level_escalation_triggers_on_control_field_ambiguity():
             escalate_on_ambiguity=True,
         )
 
-    engine = ReflexEngine(StrictAgentSchema, use_cache=False)
+    engine = SystemOneEngine(StrictAgentSchema, use_cache=False)
     engine.conformal_predictors["route"].is_calibrated = True
     engine.conformal_predictors["route"].quantile = 1.0  # forces ambiguity
 
@@ -407,12 +407,12 @@ def test_s1m_serialization_roundtrip_preserves_all_hyperparameters():
     """Verify that .s1m compilation and binary serialization/deserialization faithfully preserves
     forgetting_factor, relative_odds_ratio, confidence_floor_tau0, and recency_weighted.
     """
-    from system1.compiler import ReflexCompiler, CompiledSystemOneModel
+    from system1.compiler import SystemOneCompiler, CompiledSystemOneModel
 
     class ModelSchema(DecisionSchema):
         action = ChoiceField(options=["read", "write"], escalate_on_ambiguity=False)
 
-    compiler = ReflexCompiler(
+    compiler = SystemOneCompiler(
         schema=ModelSchema,
         forgetting_factor=0.991,
         relative_odds_ratio=1.75,
@@ -436,13 +436,13 @@ def test_s1m_serialization_roundtrip_preserves_all_hyperparameters():
 
 
 def test_engine_init_and_decide_custom_odds_ratio_and_confidence_floor():
-    """Verify ReflexEngine initialization and decide() with custom relative_odds_ratio and confidence_floor_tau0,
+    """Verify SystemOneEngine initialization and decide() with custom relative_odds_ratio and confidence_floor_tau0,
     and verify DecisionResult contains odds_ratios and confidence_floors dictionaries in to_dict().
     """
     class RouterSchema(DecisionSchema):
         route = ChoiceField(options=["primary", "secondary"])
 
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         RouterSchema,
         relative_odds_ratio=2.5,
         confidence_floor_tau0=0.18,

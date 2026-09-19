@@ -1,6 +1,6 @@
-# Reflex Observability Guide
+# System 1 Observability Guide
 
-Production monitoring for the Reflex decision engine via **Prometheus** metrics and **OpenTelemetry** distributed tracing.
+Production monitoring for the System 1 decision engine via **Prometheus** metrics and **OpenTelemetry** distributed tracing.
 
 ## Installation
 
@@ -22,14 +22,14 @@ pip install system1[observability,otel]
 ### Quick Start
 
 ```python
-from system1.engine import ReflexEngine
-from system1.integrations.observability import ReflexMetricsExporter
+from system1.engine import SystemOneEngine
+from system1.integrations.observability import SystemOneMetricsExporter
 
 # 1. Create your engine
-engine = ReflexEngine(MySchema)
+engine = SystemOneEngine(MySchema)
 
 # 2. Attach metrics exporter (wraps engine.decide automatically)
-metrics = ReflexMetricsExporter()
+metrics = SystemOneMetricsExporter()
 metrics.instrument(engine)
 
 # 3. Start the /metrics HTTP server (default port 9090)
@@ -43,16 +43,16 @@ result = engine.decide("Is this action safe?")
 
 | Metric | Type | Labels | Description |
 |---|---|---|---|
-| `reflex_decisions_total` | Counter | `schema`, `outcome`, `cache_hit` | Total decisions evaluated |
-| `reflex_decision_latency_seconds` | Histogram | `schema` | Evaluation latency (sub-ms buckets) |
-| `reflex_escalations_total` | Counter | `schema`, `reason` | Escalated decisions count |
-| `reflex_cache_hit_ratio` | Gauge | — | Rolling cache hit ratio (0–1) |
-| `reflex_conformal_set_size` | Histogram | `schema` | Conformal prediction set sizes |
-| `reflex_ledger_entries_total` | Gauge | — | Current ActionLedger depth |
+| `system1_decisions_total` | Counter | `schema`, `outcome`, `cache_hit` | Total decisions evaluated |
+| `system1_decision_latency_seconds` | Histogram | `schema` | Evaluation latency (sub-ms buckets) |
+| `system1_escalations_total` | Counter | `schema`, `reason` | Escalated decisions count |
+| `system1_cache_hit_ratio` | Gauge | — | Rolling cache hit ratio (0–1) |
+| `system1_conformal_set_size` | Histogram | `schema` | Conformal prediction set sizes |
+| `system1_ledger_entries_total` | Gauge | — | Current ActionLedger depth |
 
 ### Histogram Buckets
 
-The latency histogram uses sub-millisecond buckets tuned for Reflex's performance profile:
+The latency histogram uses sub-millisecond buckets tuned for System 1's performance profile:
 
 ```
 0.0001s, 0.0005s, 0.001s, 0.005s, 0.01s, 0.05s, 0.1s, 1.0s
@@ -75,7 +75,7 @@ scrape_configs:
 If you prefer not to use `instrument()`, record decisions manually:
 
 ```python
-metrics = ReflexMetricsExporter()
+metrics = SystemOneMetricsExporter()
 result = engine.decide("route this query")
 
 metrics.record_decision(
@@ -104,16 +104,16 @@ metrics.update_ledger_gauge(ledger.audit_head()[0])
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 
-from system1.engine import ReflexEngine
-from system1.integrations.otel import ReflexOTelInstrumentor
+from system1.engine import SystemOneEngine
+from system1.integrations.otel import SystemOneOTelInstrumentor
 
 # 1. Configure OTel (example: console exporter)
 provider = TracerProvider()
 provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
 
 # 2. Instrument the engine
-engine = ReflexEngine(MySchema)
-instrumentor = ReflexOTelInstrumentor(tracer_provider=provider)
+engine = SystemOneEngine(MySchema)
+instrumentor = SystemOneOTelInstrumentor(tracer_provider=provider)
 instrumentor.instrument(engine)
 
 # 3. Decisions now emit spans automatically
@@ -152,8 +152,8 @@ provider.add_span_processor(
 Both instrumentors can wrap the same engine. They compose cleanly:
 
 ```python
-metrics = ReflexMetricsExporter()
-otel = ReflexOTelInstrumentor(tracer_provider=provider)
+metrics = SystemOneMetricsExporter()
+otel = SystemOneOTelInstrumentor(tracer_provider=provider)
 
 # Order doesn't matter
 metrics.instrument(engine)
@@ -185,11 +185,11 @@ The dashboard includes panels for:
 
 ```
 ┌──────────────────┐     ┌─────────────────────┐
-│  ReflexEngine    │────▶│ ReflexMetricsExporter│────▶ /metrics :9090
+│  SystemOneEngine    │────▶│ SystemOneMetricsExporter│────▶ /metrics :9090
 │  .decide()       │     │  (Prometheus)        │       ↓
 │                  │     └─────────────────────┘   Prometheus
 │                  │     ┌─────────────────────┐       ↓
-│                  │────▶│ ReflexOTelInstrumentor│    Grafana
+│                  │────▶│ SystemOneOTelInstrumentor│    Grafana
 │                  │     │  (OpenTelemetry)     │────▶ Jaeger / OTLP
 └──────────────────┘     └─────────────────────┘
 ```

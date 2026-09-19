@@ -1,4 +1,4 @@
-"""Reflex Core Schema Module (re-export from system1.core.schema)."""
+"""System 1 Core Schema Module (re-export from system1.core.schema)."""
 from __future__ import annotations
 
 from system1.core.schema import *

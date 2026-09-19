@@ -1,4 +1,4 @@
-"""Compatibility modules for Reflex (re-export from system1.compat)."""
+"""Compatibility modules for System 1 (re-export from system1.compat)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Reflex Core Kernel (re-export from system1.core)."""
+"""System 1 Core Kernel (re-export from system1.core)."""
 from __future__ import annotations
 
 from system1.core import *

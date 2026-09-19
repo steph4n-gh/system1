@@ -1,10 +1,10 @@
 """Comprehensive test suite for Milestone M4: Cache Lifecycle & Online Learning Semantic Invalidation.
 
 Authoritative Invariants Tested:
-1. Invariant 8: Cache invalidation and prompt eviction in ReflexEngine.learn_from_tier2().
+1. Invariant 8: Cache invalidation and prompt eviction in SystemOneEngine.learn_from_tier2().
    Verifies that after 10 consecutive online learning weight updates, subsequent queries
    immediately return post-update decisions without manual cache flush.
-2. Invariant 9: Full execution context binding in SemanticReflexCache keys.
+2. Invariant 9: Full execution context binding in SemanticSystemOneCache keys.
    Changing alpha, margin_threshold, strict, policy_scope, schema_digest, or model_version
    rejects cached decisions evaluated under different parameters.
 3. Defensive Copies:
@@ -29,11 +29,11 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
-from system1.cache import CacheEntry, SemanticReflexCache
+from system1.cache import CacheEntry, SemanticSystemOneCache
 
 
 class TriageRoutingSchema(DecisionSchema):
@@ -50,7 +50,7 @@ class TriageRoutingSchema(DecisionSchema):
 
 
 @pytest.fixture
-def base_triage_engine() -> ReflexEngine:
+def base_triage_engine() -> SystemOneEngine:
     exemplars = {
         "tier": [
             ("Read local config", "TIER_1_LOCAL"),
@@ -68,9 +68,9 @@ def base_triage_engine() -> ReflexEngine:
             ("Transfer corporate funds", 0.9),
         ] * 10,
     }
-    compiler = ReflexCompiler(TriageRoutingSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(TriageRoutingSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=exemplars)
-    return ReflexEngine(
+    return SystemOneEngine(
         TriageRoutingSchema,
         model=model,
         use_cache=True,
@@ -79,7 +79,7 @@ def base_triage_engine() -> ReflexEngine:
     )
 
 
-def test_invariant_8_online_learning_semantic_cache_invalidation(base_triage_engine: ReflexEngine):
+def test_invariant_8_online_learning_semantic_cache_invalidation(base_triage_engine: SystemOneEngine):
     """Invariant 8: After 10 consecutive online learning updates, queries return post-update decisions without manual flush."""
     engine = base_triage_engine
     test_prompt = "Execute ambiguous diagnostic probe on cluster node"
@@ -119,7 +119,7 @@ def test_invariant_8_online_learning_semantic_cache_invalidation(base_triage_eng
         assert res_after.values["tier"] != initial_tier
 
 
-def test_invariant_8_batch_of_ten_distinct_prompts_evicted_and_updated(base_triage_engine: ReflexEngine):
+def test_invariant_8_batch_of_ten_distinct_prompts_evicted_and_updated(base_triage_engine: SystemOneEngine):
     """Invariant 8: Verifies 10 distinct prompts are each evicted and updated without stale cache bleed."""
     engine = base_triage_engine
     prompts = [f"Automated edge case scenario {i}: inspect memory buffer" for i in range(10)]
@@ -144,7 +144,7 @@ def test_invariant_8_batch_of_ten_distinct_prompts_evicted_and_updated(base_tria
 
 
 def test_invariant_9_context_binding_rejects_cached_entries_under_different_risk_params(
-    base_triage_engine: ReflexEngine,
+    base_triage_engine: SystemOneEngine,
 ):
     """Invariant 9: Changing alpha, margin_threshold, strict, or policy_scope rejects entries evaluated under different parameters."""
     engine = base_triage_engine
@@ -178,7 +178,7 @@ def test_invariant_9_context_binding_rejects_cached_entries_under_different_risk
     assert res_scoped_hit.is_cache_hit is True
 
 
-def test_defensive_copies_prevent_cache_corruption(base_triage_engine: ReflexEngine):
+def test_defensive_copies_prevent_cache_corruption(base_triage_engine: SystemOneEngine):
     """Verify that caller mutations of returned DecisionResult do not corrupt the internal cache."""
     engine = base_triage_engine
     prompt = "Read local status dashboard"
@@ -208,8 +208,8 @@ def test_defensive_copies_prevent_cache_corruption(base_triage_engine: ReflexEng
 
 
 def test_cache_version_invalidation_methods():
-    """Verify SemanticReflexCache.evict_prompt and invalidate_prior_versions directly."""
-    cache = SemanticReflexCache(capacity=100)
+    """Verify SemanticSystemOneCache.evict_prompt and invalidate_prior_versions directly."""
+    cache = SemanticSystemOneCache(capacity=100)
     emb = np.zeros(64, dtype=np.float32)
     emb[0] = 1.0
 
@@ -251,5 +251,5 @@ def test_cache_version_invalidation_methods():
 
 def test_twin_namespace_parity_for_cache_components():
     """Verify system1.cache and reflex.cache export identical classes and functions."""
-    assert system1.cache.SemanticReflexCache is reflex.cache.SemanticReflexCache
+    assert system1.cache.SemanticSystemOneCache is reflex.cache.SemanticSystemOneCache
     assert system1.cache.CacheEntry is reflex.cache.CacheEntry

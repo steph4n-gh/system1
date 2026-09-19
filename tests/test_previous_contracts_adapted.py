@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from system1.engine import ReflexEngine
+from system1.engine import SystemOneEngine
 from system1.schema import DecisionSchema, ChoiceField
 
 def test_learning_marks_previous_calibration_stale():
@@ -9,7 +9,7 @@ def test_learning_marks_previous_calibration_stale():
         schema_name="TestSchema",
         fields={"label": ChoiceField(options=["A", "B"])}
     )
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         schema=schema,
         model="dummy_model",
         strict_mode=True
@@ -59,7 +59,7 @@ def test_explicit_embedding_does_not_poison_implicit_embedding():
         schema_name="TestSchema2",
         fields={"label": ChoiceField(options=["north", "south"])}
     )
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         schema=schema,
         model="dummy_model",
         strict_mode=True

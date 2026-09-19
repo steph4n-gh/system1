@@ -1,11 +1,11 @@
-"""Tests for Reflex Compiler, Closed-Form Distillation, and .s1m Serialization."""
+"""Tests for System 1 Compiler, Closed-Form Distillation, and .s1m Serialization."""
 
 import time
 from pathlib import Path
 import numpy as np
 import pytest
 
-from system1.compiler import CompiledSystemOneModel, MAGIC_HEADER, ReflexCompiler
+from system1.compiler import CompiledSystemOneModel, MAGIC_HEADER, SystemOneCompiler
 from system1.core.schema import BooleanField, ChoiceField, DecisionSchema, MultiChoiceField, ScoreField
 
 
@@ -33,7 +33,7 @@ class SupportTriageSchema(DecisionSchema):
 
 def test_compiler_synthetic_exemplar_generation():
     """Verify compiler generates rich synthetic exemplars for all schema fields."""
-    compiler = ReflexCompiler(SupportTriageSchema, dimension=128)
+    compiler = SystemOneCompiler(SupportTriageSchema, dimension=128)
     exemplars = compiler.generate_synthetic_exemplars(samples_per_choice=15)
 
     assert "category" in exemplars
@@ -52,7 +52,7 @@ def test_compiler_synthetic_exemplar_generation():
 
 def test_compiler_closed_form_solve_and_accuracy():
     """Verify compiler solves Ridge regression and achieves high accuracy on exemplars."""
-    compiler = ReflexCompiler(SupportTriageSchema, dimension=128, regularization=0.5)
+    compiler = SystemOneCompiler(SupportTriageSchema, dimension=128, regularization=0.5)
     compiled_model = compiler.compile(samples_per_choice=20)
 
     assert isinstance(compiled_model, CompiledSystemOneModel)
@@ -76,7 +76,7 @@ def test_compiler_closed_form_solve_and_accuracy():
 
 def test_compiler_binary_serialization_roundtrip(tmp_path: Path):
     """Verify compiled model serializes to .s1m binary and deserializes with exact fidelity."""
-    compiler = ReflexCompiler(SupportTriageSchema, dimension=128, regularization=1.0)
+    compiler = SystemOneCompiler(SupportTriageSchema, dimension=128, regularization=1.0)
     compiled_original = compiler.compile(samples_per_choice=10)
 
     s1m_path = tmp_path / "triage.s1m"
@@ -88,9 +88,9 @@ def test_compiler_binary_serialization_roundtrip(tmp_path: Path):
     # Compactness: should be well under 200 KB
     assert len(raw_bytes) < 200 * 1024
 
-    # Load via CompiledSystemOneModel.load and ReflexCompiler.load
+    # Load via CompiledSystemOneModel.load and SystemOneCompiler.load
     loaded1 = CompiledSystemOneModel.load(s1m_path)
-    loaded2 = ReflexCompiler.load(s1m_path)
+    loaded2 = SystemOneCompiler.load(s1m_path)
 
     assert loaded1.schema.schema_name == SupportTriageSchema().schema_name
     assert loaded1.dimension == 128
@@ -112,7 +112,7 @@ def test_compiler_binary_serialization_roundtrip(tmp_path: Path):
 
 def test_compiled_model_speed():
     """Verify compiled model forward evaluation executes in < 1 ms."""
-    compiler = ReflexCompiler(SupportTriageSchema, dimension=128)
+    compiler = SystemOneCompiler(SupportTriageSchema, dimension=128)
     compiled_model = compiler.compile(samples_per_choice=5)
 
     # Warmup
@@ -131,7 +131,7 @@ def test_compiled_model_speed():
 
 def test_compiler_boolean_and_score_fields_calibration_and_bounds():
     """Verify BooleanField and ScoreField in compiled model evaluate accurately in logit space."""
-    compiler = ReflexCompiler(SupportTriageSchema, dimension=128)
+    compiler = SystemOneCompiler(SupportTriageSchema, dimension=128)
     compiled_model = compiler.compile(samples_per_choice=20)
 
     # BooleanField: verify non-urgent inquiry evaluates to False, urgent evaluates to True
@@ -162,7 +162,7 @@ def test_compiler_multichoice_tag_separation():
             },
         )
 
-    compiler = ReflexCompiler(TagSchema, dimension=128)
+    compiler = SystemOneCompiler(TagSchema, dimension=128)
     compiled = compiler.compile(samples_per_choice=20)
 
     # Unrelated input should not trigger all tags
@@ -191,7 +191,7 @@ def test_compiler_class_imbalance_and_starvation_mitigation():
         "route": [("General routine support ticket inquiry for billing", "frequent")] * 500,
     }
 
-    compiler = ReflexCompiler(RoutingSchema, dimension=128)
+    compiler = SystemOneCompiler(RoutingSchema, dimension=128)
     compiled = compiler.compile(exemplars=exemplars)
 
     # The missing 'rare' option should have been augmented from schema definitions

@@ -1,1 +1,1 @@
-"""Gaming examples and benchmarks for Reflex (Pokémon, GameBoy, Universal Paperclips)."""
+"""Gaming examples and benchmarks for System 1 (Pokémon, GameBoy, Universal Paperclips)."""

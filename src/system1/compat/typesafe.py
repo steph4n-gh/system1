@@ -1,7 +1,7 @@
 """TypeSafe AI (Jev) Drop-in Compatibility Layer.
 
 Provides binary and API-level drop-in replacement for TypeSafe AI's Jev client.
-Enables instant migration from cloud HTTP-based TypeSafe AI to Reflex / System 1
+Enables instant migration from cloud HTTP-based TypeSafe AI to System 1 / System 1
 local on-device execution with:
 - Sub-2ms local latency (vs 70-500ms cloud WAN roundtrips)
 - Zero data egress (no prompt or schema sent to third-party servers)
@@ -49,7 +49,7 @@ from typing import (
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from system1.engine import DecisionResult, ReflexEngine, SystemOneEngine
+from system1.engine import DecisionResult, SystemOneEngine, SystemOneEngine
 from system1.ledger import ActionLedger
 from system1.receipt import DecisionWitnessReceipt
 from system1.core import (
@@ -1291,7 +1291,7 @@ def call_real_typesafe_api(
 
     headers = {
         "Content-Type": "application/json",
-        "User-Agent": "Reflex-TypeSafe-Compat/1.0",
+        "User-Agent": "System 1-TypeSafe-Compat/1.0",
     }
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
@@ -1400,7 +1400,7 @@ class TypeSafeClient:
         self.baseline_handler = kwargs.get("baseline_handler", None)
         self.extra_kwargs = kwargs
 
-        self._engine_cache: Dict[str, ReflexEngine] = {}
+        self._engine_cache: Dict[str, SystemOneEngine] = {}
         self._engine_lock = threading.Lock()
         self._call_count: Dict[str, int] = collections.defaultdict(int)
         self._teacher_sample_count: Dict[str, int] = collections.defaultdict(int)
@@ -1487,12 +1487,12 @@ class TypeSafeClient:
         cm.save(path)
         return True
 
-    def _get_engine(self, questions: Mapping[str, Any]) -> ReflexEngine:
+    def _get_engine(self, questions: Mapping[str, Any]) -> SystemOneEngine:
         schema = _build_dynamic_schema(questions)
         digest = schema.schema_digest()
         with self._engine_lock:
             if digest not in self._engine_cache:
-                engine = ReflexEngine(
+                engine = SystemOneEngine(
                     schema,
                     signing_key=self.signing_key,
                     ledger=self.ledger,
@@ -1633,7 +1633,7 @@ class TypeSafeClient:
 
     def _distill_and_cutover_locked(self, questions: Mapping[str, Any]) -> None:
         """Fits closed-form local weights from collected query history and flips to local."""
-        from system1.compiler import ReflexCompiler
+        from system1.compiler import SystemOneCompiler
 
         schema = _build_dynamic_schema(questions)
         digest = schema.schema_digest()
@@ -1655,7 +1655,7 @@ class TypeSafeClient:
                 if f_name in ans and ans[f_name] is not None:
                     exemplars[f_name].append((p, ans[f_name]))
 
-        compiler = ReflexCompiler(
+        compiler = SystemOneCompiler(
             schema=schema,
             dimension=self.dimension,
             projector=self.projector,
@@ -1663,7 +1663,7 @@ class TypeSafeClient:
         )
         compiled_model = compiler.compile(exemplars=exemplars)
 
-        engine = ReflexEngine(
+        engine = SystemOneEngine(
             schema,
             signing_key=self.signing_key,
             ledger=self.ledger,

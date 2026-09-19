@@ -25,9 +25,9 @@ from reflex import (
     DecisionOutcome,
     DecisionSchema,
     DefaultGuardDecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneCompiler,
+    SystemOneEngine,
+    SystemOneGuardHook,
     RegressionConformalPredictor,
 )
 
@@ -60,15 +60,15 @@ def get_conformal_dataset():
 
 
 @pytest.fixture
-def calibrated_conformal_engine() -> ReflexEngine:
+def calibrated_conformal_engine() -> SystemOneEngine:
     raw = get_conformal_dataset()
     exemplars = {
         "tier": [(p, d["tier"]) for p, d in raw],
         "is_safe": [(p, d["is_safe"]) for p, d in raw],
     }
-    compiler = ReflexCompiler(ConformalTriageSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(ConformalTriageSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=exemplars)
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         ConformalTriageSchema,
         model=model,
         enable_margin_gating=True,
@@ -117,8 +117,8 @@ def test_conformal_coverage_monotonicity_across_alpha(calibrated_conformal_engin
 
 
 def test_guard_hook_fail_closed_on_ambiguity_and_risk():
-    """Verify ReflexGuardHook enforces fail-closed decisions and sets .allowed property."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
+    """Verify SystemOneGuardHook enforces fail-closed decisions and sets .allowed property."""
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
 
     # 1. Benign safe action -> ALLOW
     safe_prop = ActionProposal.create(
@@ -153,7 +153,7 @@ def test_guard_hook_fail_closed_on_ambiguity_and_risk():
     assert res_danger.allowed is False
 
     # 3. Low confidence / ambiguous action -> REQUIRE_APPROVAL
-    strict_guard = ReflexGuardHook(min_confidence=0.999, alpha=0.05)
+    strict_guard = SystemOneGuardHook(min_confidence=0.999, alpha=0.05)
     res_strict = strict_guard.evaluate_proposal(
         safe_prop,
         context_prompt="Ambiguous partially authorized file update",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Reflex Domain Expert Training, Distillation, and Deployment Example.
+"""System 1 Domain Expert Training, Distillation, and Deployment Example.
 
-Demonstrates end-to-end workflows for training, distilling, and deploying Reflex
+Demonstrates end-to-end workflows for training, distilling, and deploying System 1
 Domain Experts (.s1m binaries) running on local host silicon (CPU/Metal) in < 1ms:
 
 1. Defining a domain schema (IncidentTriageSchema).
@@ -35,12 +35,12 @@ from reflex import (
     BooleanField,
     ChoiceField,
     DecisionSchema,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from reflex.compiler import (
     CompiledSystemOneModel,
-    ReflexCompiler,
+    SystemOneCompiler,
 )
 
 
@@ -109,7 +109,7 @@ class MoERouterSchema(DecisionSchema):
 def main() -> None:
     print("=" * 80)
     print("  REFLEX DOMAIN EXPERT: TRAINING, DISTILLATION & DEPLOYMENT GUIDE")
-    print(f"  Reflex Version: {reflex.__version__} | Target SLA: Sub-1ms on local silicon")
+    print(f"  System 1 Version: {reflex.__version__} | Target SLA: Sub-1ms on local silicon")
     print("=" * 80)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -123,7 +123,7 @@ def main() -> None:
         print("-" * 80)
 
         t0_synth = time.perf_counter()
-        compiler_synth = ReflexCompiler(
+        compiler_synth = SystemOneCompiler(
             IncidentTriageSchema,
             dimension=256,
             regularization=1.0,
@@ -182,7 +182,7 @@ def main() -> None:
         }
 
         print("1. Ingesting historical incident dataset...")
-        compiler_sup = ReflexCompiler(IncidentTriageSchema, dimension=256, regularization=0.5)
+        compiler_sup = SystemOneCompiler(IncidentTriageSchema, dimension=256, regularization=0.5)
 
         t0_fit = time.perf_counter()
         expert_supervised = compiler_sup.compile(exemplars=historical_dataset, samples_per_choice=15)
@@ -202,7 +202,7 @@ def main() -> None:
         # Load expert binary from disk
         print("1. Loading expert from binary container (.s1m)...")
         loaded_expert = CompiledSystemOneModel.load(s1m_file_path)
-        engine = ReflexEngine(IncidentTriageSchema, model=loaded_expert, enable_margin_gating=True)
+        engine = SystemOneEngine(IncidentTriageSchema, model=loaded_expert, enable_margin_gating=True)
 
         test_queries = [
             "Production Kubernetes cluster master node panic and etcd split-brain",
@@ -295,8 +295,8 @@ def main() -> None:
         print("-" * 80)
 
         print("1. Compiling Router Expert and Specialized Security Expert (dimension=256)...")
-        router_expert = ReflexCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
-        security_expert = ReflexCompiler(SecurityIncidentSchema, dimension=256).compile(samples_per_choice=15)
+        router_expert = SystemOneCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
+        security_expert = SystemOneCompiler(SecurityIncidentSchema, dimension=256).compile(samples_per_choice=15)
 
         moe_experts = {
             "infra_expert": loaded_expert,

@@ -1,10 +1,10 @@
-# Reflex / System 1 — Release Candidate Closure Report
+# System 1 / System 1 — Release Candidate Closure Report
 
 **Review Basis**: Bundle `a14ec0ff8692fe22c84cbc7b02aa88e49495475ba38749e7f9f212d01c98ddce`  
 **Evaluation Date**: September 18, 2026  
 **Status**: Release-Candidate Gates Passed for Local On-Metal Decision Firewall Runtime  
 
-This report certifies the resolution of all remaining correctness, authorization, cache fidelity, promotion, and distribution gaps identified across the independent review rounds. Reflex / System 1 is certified as an on-metal, zero-egress decision firewall operating under strict mathematical conformal bounds and Ed25519 cryptographic attestation.
+This report certifies the resolution of all remaining correctness, authorization, cache fidelity, promotion, and distribution gaps identified across the independent review rounds. System 1 / System 1 is certified as an on-metal, zero-egress decision firewall operating under strict mathematical conformal bounds and Ed25519 cryptographic attestation.
 
 ---
 
@@ -32,9 +32,9 @@ This report certifies the resolution of all remaining correctness, authorization
 ## 2. Section B: Validate, Promote, Export, and Reload Runtime Artifacts
 
 ### B1. Persist Validated Runtime Calibration (`compat/typesafe.py`)
-- **Defect**: `TypeSafeClient._distill_and_cutover_locked()` calibrated a live candidate `ReflexEngine`, but `export_model()` serialized the original `CompiledSystemOneModel` containing pre-calibration state, causing a mismatch on artifact reload (e.g. 10 live scores vs 15 reloaded scores).
+- **Defect**: `TypeSafeClient._distill_and_cutover_locked()` calibrated a live candidate `SystemOneEngine`, but `export_model()` serialized the original `CompiledSystemOneModel` containing pre-calibration state, causing a mismatch on artifact reload (e.g. 10 live scores vs 15 reloaded scores).
 - **Resolution**:
-  - `export_model()` inspects the live candidate `ReflexEngine` associated with the compiled model's schema digest under thread lock.
+  - `export_model()` inspects the live candidate `SystemOneEngine` associated with the compiled model's schema digest under thread lock.
   - Exact validated temperature scaling values and conformal score/residual arrays are copied into `cm.heads` prior to binary serialization.
   - Artifact reloads preserve exact prediction intervals, conformal set sizes, and escalation thresholds.
 - **Verification**: `tests/test_round4_variants.py::test_exported_candidate_preserves_validated_runtime_calibration` PASSED.
@@ -83,7 +83,7 @@ This report certifies the resolution of all remaining correctness, authorization
 - **Verification**: `tests/test_adversarial_gate_f.py` and polyglot gRPC benchmarks PASSED.
 
 ### D3. Enforcing Quickstart Documentation (`README.md`)
-- **Resolution**: Replaced the classification-only example with an authenticated, durable enforcing quickstart configuring `PolicyEngine`, `ReflexGuard`, `Ed25519PrivateKey`, and persistent WAL `ActionLedger`, explicitly separating deterministic rule policies from statistical conformal classification.
+- **Resolution**: Replaced the classification-only example with an authenticated, durable enforcing quickstart configuring `PolicyEngine`, `SystemOneGuard`, `Ed25519PrivateKey`, and persistent WAL `ActionLedger`, explicitly separating deterministic rule policies from statistical conformal classification.
 
 ---
 
@@ -140,7 +140,7 @@ A clean isolated virtual environment (`/tmp/reflex_wheel_env`) outside the repos
 | **Deterministic Reference Monitor** | Strict precedence (`DENY` > `REQUIRE_APPROVAL` > `ALLOW`), argument limits fail-closed | **VERIFIED** |
 | **Ed25519 Decision Receipts** | Final policy-decision binding, SHA-256 request digests, canonical probabilities | **VERIFIED** |
 | **Tamper-Evident Action Ledger** | SQLite with cryptographically chained audit hashes and two-phase outcome linking | **VERIFIED** |
-| **Tier 0 Exact Reflex Cache** | Lossless IEEE-754 float parameter binding, embedding identity, atomic synchronization | **VERIFIED** |
+| **Tier 0 Exact System 1 Cache** | Lossless IEEE-754 float parameter binding, embedding identity, atomic synchronization | **VERIFIED** |
 | **Split Conformal Safety Gate** | Non-conformity calibration sets, structured escalation consumption, OOD detection | **VERIFIED** |
 | **Validated Local Cutover** | Lineage-preserving group partitioning, Wilson lower bounds, per-schema promotion | **VERIFIED** |
 | **Zero-Egress Transport Boundary** | Incompatible construction fail-close, socket creation blocking across sync/async | **VERIFIED** |

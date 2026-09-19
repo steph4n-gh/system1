@@ -5,18 +5,18 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
-from system1 import ReflexEngine, DecisionSchema, ChoiceField
-from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, ReflexGuardHook
+from system1 import SystemOneEngine, DecisionSchema, ChoiceField
+from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, SystemOneGuardHook
 from system1.ledger import ActionLedger, LedgerError
 from system1.receipt import create_decision_receipt, verify_decision_witness_receipt
-from system1.integrations.mcp import ReflexMCPProxy
+from system1.integrations.mcp import SystemOneMCPProxy
 import system1.compat.typesafe as compat
 
 class Route(DecisionSchema):
     route = ChoiceField(['north', 'south'])
 
 def test_explicit_embedding_does_not_poison_implicit_embedding():
-    e=ReflexEngine(Route,dimension=16,backend='numpy',strict_mode=True)
+    e=SystemOneEngine(Route,dimension=16,backend='numpy',strict_mode=True)
     prompt='north native request'; native=e.encode(prompt)
     h=e.model.heads['route'];h.set_weights(np.vstack([3*native,-3*native]),np.zeros(2,dtype=np.float32))
     cp=e.conformal_predictors['route'];cp.is_calibrated=True;cp.calibration_scores=np.array([.99]*100)
@@ -52,7 +52,7 @@ def test_new_receipt_must_be_checked_against_supplied_trust_anchor(tmp_path):
 def test_outcome_identity_matches_signed_authorization(tmp_path):
     key=Ed25519PrivateKey.generate()
     with ActionLedger(tmp_path/'ledger.db') as l:
-        g=ReflexGuardHook(ledger=l,signing_key=key,enforcement_profile=True,auto_calibrate=False,
+        g=SystemOneGuardHook(ledger=l,signing_key=key,enforcement_profile=True,auto_calibrate=False,
              policy=PolicyEngine([PolicyRule('allow',outcome=DecisionOutcome.ALLOW,action_pattern='^sentinel$')]))
         p=ActionProposal.create(tenant_id='tenant_A',principal_id='alice',scope='tools',tool='sentinel',arguments={'path':'/fixture'},purpose='local fixture')
         r=g.evaluate_proposal(p).decision_result.receipt
@@ -62,9 +62,9 @@ def test_outcome_identity_matches_signed_authorization(tmp_path):
 def test_control_actual_effect_then_reopen_verifies(tmp_path):
     key=Ed25519PrivateKey.generate();db=tmp_path/'ledger.db';calls=[]
     with ActionLedger(db) as l:
-        g=ReflexGuardHook(ledger=l,signing_key=key,enforcement_profile=True,auto_calibrate=False,
+        g=SystemOneGuardHook(ledger=l,signing_key=key,enforcement_profile=True,auto_calibrate=False,
              policy=PolicyEngine([PolicyRule('allow',outcome=DecisionOutcome.ALLOW,action_pattern='^sentinel$')]))
-        proxy=ReflexMCPProxy(guard=g)
+        proxy=SystemOneMCPProxy(guard=g)
         request={'jsonrpc':'2.0','id':1,'method':'tools/call','params':{'name':'sentinel','arguments':{'path':'/fixture'}}}
         out=proxy.handle_call(request,lambda name,args:calls.append((name,dict(args))) or 'effect complete')
         assert 'result' in out and len(calls)==1

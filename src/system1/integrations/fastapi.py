@@ -1,4 +1,4 @@
-"""Reflex FastAPI / Starlette Gateway Middleware.
+"""System 1 FastAPI / Starlette Gateway Middleware.
 
 Sub-millisecond on-device ASGI middleware for local fast-path routing
 and fail-closed conformal escalation to frontier governors (Astra, Fable, Gemini, Grok).
@@ -11,11 +11,11 @@ import time
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence, Tuple, Type, Union
 
 from system1.core import DecisionSchema
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 from system1.receipt import DecisionWitnessReceipt, create_decision_receipt
 
 
-class ReflexGatewayMiddleware:
+class SystemOneGatewayMiddleware:
     """ASGI Middleware providing sub-millisecond local routing and frontier escalation.
     
     Compatible with FastAPI, Starlette, Litestar, and any ASGI 3.0 compliant framework.
@@ -26,7 +26,7 @@ class ReflexGatewayMiddleware:
         app: Any,
         schema: Union[DecisionSchema, Type[DecisionSchema]],
         *,
-        engine: Optional[ReflexEngine] = None,
+        engine: Optional[SystemOneEngine] = None,
         route_paths: Sequence[str] = ("/v1/chat/completions", "/v1/decide", "/api/route"),
         fastpath_threshold: Optional[float] = 0.85,
         alpha: float = 0.05,
@@ -37,7 +37,7 @@ class ReflexGatewayMiddleware:
     ):
         self.app = app
         self.schema = schema
-        self.engine = engine or ReflexEngine(schema)
+        self.engine = engine or SystemOneEngine(schema)
         self.route_paths = tuple(route_paths)
         self.fastpath_threshold = fastpath_threshold
         self.alpha = alpha
@@ -68,7 +68,7 @@ class ReflexGatewayMiddleware:
 
     @staticmethod
     def _default_fastpath_response(decision: DecisionResult, body_json: Dict[str, Any]) -> Dict[str, Any]:
-        """Constructs an OpenAI-compatible / Reflex response payload."""
+        """Constructs an OpenAI-compatible / System 1 response payload."""
         first_choice = next(iter(decision.values.values()), None) if decision.values else None
         return {
             "id": f"reflex_{int(time.time() * 1000)}",
@@ -195,7 +195,7 @@ class ReflexGatewayMiddleware:
 
         # Otherwise escalate upstream to the deliberate governor
         scope["state"] = scope.get("state", {})
-        scope["state"]["reflex_escalation"] = {
+        scope["state"]["system1_escalation"] = {
             "latency_ms": latency_ms,
             "confidences": decision.confidences,
             "conformal_sets": {k: list(v) for k, v in decision.conformal_sets.items()},
@@ -214,21 +214,21 @@ class ReflexGatewayMiddleware:
         await self.app(scope, replay_receive, send_with_escalation_header)
 
 
-def add_reflex_gateway(
+def add_system1_gateway(
     app: Any,
     schema: Union[DecisionSchema, Type[DecisionSchema]],
     *,
-    engine: Optional[ReflexEngine] = None,
+    engine: Optional[SystemOneEngine] = None,
     **kwargs: Any,
 ) -> Any:
-    """Convenience helper to add ReflexGatewayMiddleware to a FastAPI or Starlette application."""
+    """Convenience helper to add SystemOneGatewayMiddleware to a FastAPI or Starlette application."""
     if hasattr(app, "add_middleware"):
-        app.add_middleware(ReflexGatewayMiddleware, schema=schema, engine=engine, **kwargs)
+        app.add_middleware(SystemOneGatewayMiddleware, schema=schema, engine=engine, **kwargs)
         return app
-    return ReflexGatewayMiddleware(app, schema=schema, engine=engine, **kwargs)
+    return SystemOneGatewayMiddleware(app, schema=schema, engine=engine, **kwargs)
 
 
 __all__ = [
-    "ReflexGatewayMiddleware",
-    "add_reflex_gateway",
+    "SystemOneGatewayMiddleware",
+    "add_system1_gateway",
 ]

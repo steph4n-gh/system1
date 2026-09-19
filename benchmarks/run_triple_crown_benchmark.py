@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Triple-Crown Open-Source Benchmark Suite.
 
-Benchmarks Reflex (Machine-Native System 1) as a drop-in replacement across
+Benchmarks System 1 (Machine-Native System 1) as a drop-in replacement across
 three premier open-source repositories:
 1. OpenHands (SecurityAnalyzer command guardrails)
 2. Instructor (Pydantic structured ticket triage & routing)
@@ -37,7 +37,7 @@ from reflex import (
     DecisionResult,
     DecisionSchema,
     MultiChoiceField,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.receipt import verify_decision_witness_receipt
@@ -130,11 +130,11 @@ class OpenHandsSecuritySchema(DecisionSchema):
     )
 
 
-class ReflexSecurityAnalyzer:
+class SystemOneSecurityAnalyzer:
     """Drop-in replacement for OpenHands SecurityAnalyzer / LLMRiskAnalyzer."""
 
     def __init__(self) -> None:
-        self.engine = ReflexEngine(OpenHandsSecuritySchema, margin_threshold=0.08)
+        self.engine = SystemOneEngine(OpenHandsSecuritySchema, margin_threshold=0.08)
 
     def security_risk(self, command: str) -> Tuple[int, DecisionResult]:
         result = self.engine.decide(command)
@@ -317,11 +317,11 @@ class TicketTriageResult:
     receipt: Optional[Any] = None
 
 
-class ReflexInstructorClassifier:
+class SystemOneInstructorClassifier:
     """Drop-in replacement for instructor.patch() client on categorical triage."""
 
     def __init__(self) -> None:
-        self.engine = ReflexEngine(InstructorTicketTriageSchema, margin_threshold=0.08)
+        self.engine = SystemOneEngine(InstructorTicketTriageSchema, margin_threshold=0.08)
 
     def extract(self, text: str) -> TicketTriageResult:
         result = self.engine.decide(text)
@@ -478,11 +478,11 @@ class RouteChoice:
     receipt: Optional[Any] = None
 
 
-class ReflexSemanticRouter:
+class SystemOneSemanticRouter:
     """Drop-in replacement for semantic_router.RouteLayer."""
 
     def __init__(self) -> None:
-        self.engine = ReflexEngine(SemanticRouterSchema, margin_threshold=0.08)
+        self.engine = SystemOneEngine(SemanticRouterSchema, margin_threshold=0.08)
 
     def __call__(self, query: str) -> RouteChoice:
         result = self.engine.decide(query)
@@ -636,10 +636,10 @@ def simulate_cloud_call(query: str, domain: str) -> Tuple[float, int, int, str]:
 
 
 def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
-    analyzer = ReflexSecurityAnalyzer()
+    analyzer = SystemOneSecurityAnalyzer()
     dataset = OPENHANDS_DATASET[:iterations]
 
-    reflex_latencies: List[float] = []
+    system1_latencies: List[float] = []
     cloud_latencies: List[float] = []
     reflex_correct = 0
     conformal_escalations = 0
@@ -649,11 +649,11 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
     cloud_egress = 0
 
     for cmd, expected_risk, _ in dataset:
-        # Reflex evaluation
+        # System 1 evaluation
         t0 = time.perf_counter()
         code, result = analyzer.security_risk(cmd)
         lat = (time.perf_counter() - t0) * 1000.0
-        reflex_latencies.append(lat)
+        system1_latencies.append(lat)
 
         pred_risk = OpenHandsActionSecurityRisk.to_str(code)
         if pred_risk == expected_risk:
@@ -672,11 +672,11 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cloud_egress += c_egr
         cloud_prov = c_prov
 
-    # Reflex metrics
-    r_mean = statistics.mean(reflex_latencies)
-    r_p50 = calculate_percentile(reflex_latencies, 50)
-    r_p90 = calculate_percentile(reflex_latencies, 90)
-    r_p99 = calculate_percentile(reflex_latencies, 99)
+    # System 1 metrics
+    r_mean = statistics.mean(system1_latencies)
+    r_p50 = calculate_percentile(system1_latencies, 50)
+    r_p90 = calculate_percentile(system1_latencies, 90)
+    r_p99 = calculate_percentile(system1_latencies, 99)
     r_qps = 1000.0 / r_mean if r_mean > 0 else 0.0
     r_acc = (reflex_correct / len(dataset)) * 100.0
 
@@ -744,10 +744,10 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
 
 
 def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
-    classifier = ReflexInstructorClassifier()
+    classifier = SystemOneInstructorClassifier()
     dataset = INSTRUCTOR_DATASET[:iterations]
 
-    reflex_latencies: List[float] = []
+    system1_latencies: List[float] = []
     cloud_latencies: List[float] = []
     reflex_correct = 0
     conformal_escalations = 0
@@ -760,7 +760,7 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         t0 = time.perf_counter()
         triage = classifier.extract(text)
         lat = (time.perf_counter() - t0) * 1000.0
-        reflex_latencies.append(lat)
+        system1_latencies.append(lat)
 
         if triage.department == expected_dept:
             reflex_correct += 1
@@ -777,10 +777,10 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cloud_egress += c_egr
         cloud_prov = c_prov
 
-    r_mean = statistics.mean(reflex_latencies)
-    r_p50 = calculate_percentile(reflex_latencies, 50)
-    r_p90 = calculate_percentile(reflex_latencies, 90)
-    r_p99 = calculate_percentile(reflex_latencies, 99)
+    r_mean = statistics.mean(system1_latencies)
+    r_p50 = calculate_percentile(system1_latencies, 50)
+    r_p90 = calculate_percentile(system1_latencies, 90)
+    r_p99 = calculate_percentile(system1_latencies, 99)
     r_qps = 1000.0 / r_mean if r_mean > 0 else 0.0
     r_acc = (reflex_correct / len(dataset)) * 100.0
 
@@ -847,10 +847,10 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
 
 
 def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
-    router = ReflexSemanticRouter()
+    router = SystemOneSemanticRouter()
     dataset = SEMANTIC_ROUTER_DATASET[:iterations]
 
-    reflex_latencies: List[float] = []
+    system1_latencies: List[float] = []
     cloud_latencies: List[float] = []
     reflex_correct = 0
     conformal_escalations = 0
@@ -863,7 +863,7 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         t0 = time.perf_counter()
         choice = router(query)
         lat = (time.perf_counter() - t0) * 1000.0
-        reflex_latencies.append(lat)
+        system1_latencies.append(lat)
 
         if choice.name == expected_route:
             reflex_correct += 1
@@ -880,10 +880,10 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         cloud_egress += c_egr
         cloud_prov = c_prov
 
-    r_mean = statistics.mean(reflex_latencies)
-    r_p50 = calculate_percentile(reflex_latencies, 50)
-    r_p90 = calculate_percentile(reflex_latencies, 90)
-    r_p99 = calculate_percentile(reflex_latencies, 99)
+    r_mean = statistics.mean(system1_latencies)
+    r_p50 = calculate_percentile(system1_latencies, 50)
+    r_p90 = calculate_percentile(system1_latencies, 90)
+    r_p99 = calculate_percentile(system1_latencies, 99)
     r_qps = 1000.0 / r_mean if r_mean > 0 else 0.0
     r_acc = (reflex_correct / len(dataset)) * 100.0
 
@@ -959,8 +959,8 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
     lines.append("TRIPLE-CROWN OPEN-SOURCE BENCHMARK SCORECARD: REFLEX SYSTEM 1 (MEASURED_LIVE) vs. CLOUD BASELINE (SYNTHETIC_SIMULATED)")
     lines.append("=" * 128)
     header = (
-        f"{'Benchmark Target':<28} | {'Reflex P50 [LIVE]':<17} | {'Cloud P50 [SYNTHETIC_SIMULATED]':<31} | "
-        f"{'Speedup':<9} | {'Reflex Acc':<10} | {'Tokens Saved':<13} | {'Egress Saved':<12}"
+        f"{'Benchmark Target':<28} | {'System 1 P50 [LIVE]':<17} | {'Cloud P50 [SYNTHETIC_SIMULATED]':<31} | "
+        f"{'Speedup':<9} | {'System 1 Acc':<10} | {'Tokens Saved':<13} | {'Egress Saved':<12}"
     )
     lines.append(header)
     lines.append("-" * 128)
@@ -1006,7 +1006,7 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
     lines.append(f"  * Total Estimated Cloud Cost Saved: ${total_cost:.4f}")
     lines.append(f"  * Total WAN Network Egress Eliminated: {total_egress:,} bytes (100% On-Device Privacy)")
     lines.append("  * Training Epochs Required: 0 (Zero-Shot Semantic Hyperplane Compilation)")
-    lines.append("  * Benchmark Provenance: Reflex System 1 = MEASURED_LIVE; Cloud Baseline = SYNTHETIC_SIMULATED (calibrated Gaussian model)")
+    lines.append("  * Benchmark Provenance: System 1 System 1 = MEASURED_LIVE; Cloud Baseline = SYNTHETIC_SIMULATED (calibrated Gaussian model)")
     lines.append("=" * 128)
 
     return "\n".join(lines)
@@ -1020,18 +1020,18 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
     print()
 
     # Warmup
-    warmup_engine = ReflexEngine(OpenHandsSecuritySchema)
+    warmup_engine = SystemOneEngine(OpenHandsSecuritySchema)
     warmup_engine.decide("ls -la")
 
     # Run benchmarks
     oh_res = run_openhands_benchmark(iterations)
-    print(f"  [+] OpenHands complete: Reflex P50={oh_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={oh_res.cloud_baseline.latency_p50_ms:.1f}ms ({oh_res.speedup_factor:.1f}x)")
+    print(f"  [+] OpenHands complete: System 1 P50={oh_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={oh_res.cloud_baseline.latency_p50_ms:.1f}ms ({oh_res.speedup_factor:.1f}x)")
 
     inst_res = run_instructor_benchmark(iterations)
-    print(f"  [+] Instructor complete: Reflex P50={inst_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={inst_res.cloud_baseline.latency_p50_ms:.1f}ms ({inst_res.speedup_factor:.1f}x)")
+    print(f"  [+] Instructor complete: System 1 P50={inst_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={inst_res.cloud_baseline.latency_p50_ms:.1f}ms ({inst_res.speedup_factor:.1f}x)")
 
     sr_res = run_semantic_router_benchmark(iterations)
-    print(f"  [+] Semantic Router complete: Reflex P50={sr_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={sr_res.cloud_baseline.latency_p50_ms:.1f}ms ({sr_res.speedup_factor:.1f}x)")
+    print(f"  [+] Semantic Router complete: System 1 P50={sr_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={sr_res.cloud_baseline.latency_p50_ms:.1f}ms ({sr_res.speedup_factor:.1f}x)")
     print()
 
     comparisons = [oh_res, inst_res, sr_res]
@@ -1044,7 +1044,7 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
         "provenance_metadata": {
             "reflex_provenance": "MEASURED_LIVE",
             "cloud_baseline_provenance": "SYNTHETIC_SIMULATED",
-            "description": "Reflex System 1 latencies are measured live on local hardware. Cloud baseline latencies are generated via a calibrated empirical Gaussian model (SYNTHETIC_SIMULATED).",
+            "description": "System 1 System 1 latencies are measured live on local hardware. Cloud baseline latencies are generated via a calibrated empirical Gaussian model (SYNTHETIC_SIMULATED).",
         },
         "aggregate": {
             "mean_speedup_factor": statistics.mean([c.speedup_factor for c in comparisons]),

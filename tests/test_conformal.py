@@ -1,4 +1,4 @@
-"""Tests for Reflex Split Conformal Prediction Engine."""
+"""Tests for System 1 Split Conformal Prediction Engine."""
 
 import numpy as np
 import pytest

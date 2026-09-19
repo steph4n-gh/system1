@@ -1,4 +1,4 @@
-"""Reflex MCP Integration (re-export from system1.integrations.mcp)."""
+"""System 1 MCP Integration (re-export from system1.integrations.mcp)."""
 from __future__ import annotations
 
 from system1.integrations.mcp import *

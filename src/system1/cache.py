@@ -1,6 +1,6 @@
-"""Tier 0 Semantic Reflex Cache (L1 Vector & Exact Match Cache).
+"""Tier 0 Semantic System 1 Cache (L1 Vector & Exact Match Cache).
 
-In-memory, sub-millisecond L1 cache for ReflexEngine and CompiledSystemOneModel:
+In-memory, sub-millisecond L1 cache for SystemOneEngine and CompiledSystemOneModel:
 1. Exact Match Index: O(1) hash table lookup for identical prompts/telemetry (<0.005ms).
 2. Semantic Vector Index: Matrix-vector cosine similarity search over cached embeddings
    for near-identical edge cases (cosine similarity >= tau, default tau=0.98) (<0.03ms).
@@ -26,7 +26,7 @@ import numpy as np
 
 @dataclass
 class CacheEntry:
-    """An entry stored in the Tier 0 Semantic Reflex Cache."""
+    """An entry stored in the Tier 0 Semantic System 1 Cache."""
 
     prompt: str
     prompt_digest: str
@@ -203,8 +203,8 @@ def _format_context(
     )
 
 
-class SemanticReflexCache:
-    """Sub-0.05ms exact and semantic L1 cache for Reflex decision outputs.
+class SemanticSystemOneCache:
+    """Sub-0.05ms exact and semantic L1 cache for System 1 decision outputs.
 
     Provides exact SHA-256 hash lookup (<0.005ms) with fallback to
     cosine similarity search (<0.03ms) over dense semantic embeddings.
@@ -813,7 +813,7 @@ validate_cache_inputs = _validate_cache_inputs
 
 __all__ = [
     "CacheEntry",
-    "SemanticReflexCache",
+    "SemanticSystemOneCache",
     "_validate_cache_inputs",
     "validate_cache_inputs",
 ]

@@ -1,4 +1,4 @@
-"""Tests for Reflex Prometheus & OpenTelemetry observability integrations.
+"""Tests for System 1 Prometheus & OpenTelemetry observability integrations.
 
 Uses mocking to avoid hard dependencies on prometheus_client / opentelemetry
 packages in CI. When the real packages *are* installed, the tests exercise the
@@ -83,13 +83,13 @@ except ImportError:
 # Prometheus / Observability Tests
 # ========================================================================
 
-class TestReflexMetricsExporter:
-    """Tests for :class:`ReflexMetricsExporter`."""
+class TestSystemOneMetricsExporter:
+    """Tests for :class:`SystemOneMetricsExporter`."""
 
     # Helper — import with real or mocked prometheus_client
     @staticmethod
     def _import_exporter():
-        """Import ReflexMetricsExporter, works whether prometheus_client is
+        """Import SystemOneMetricsExporter, works whether prometheus_client is
         installed or not (installs a lightweight mock shim if missing)."""
         try:
             import prometheus_client  # noqa: F401
@@ -129,8 +129,8 @@ class TestReflexMetricsExporter:
             shim.start_http_server = lambda port, registry=None: None
             sys.modules["prometheus_client"] = shim
 
-        from system1.integrations.observability import ReflexMetricsExporter
-        return ReflexMetricsExporter
+        from system1.integrations.observability import SystemOneMetricsExporter
+        return SystemOneMetricsExporter
 
     @staticmethod
     def _get_metric_value(exporter, metric_name, labels=None):
@@ -166,12 +166,12 @@ class TestReflexMetricsExporter:
         else:
             # Mock fallback: navigate the fake metric
             metric = getattr(exporter, {
-                'reflex_decisions_total': 'decisions_total',
-                'reflex_escalations_total': 'escalations_total',
-                'reflex_decision_latency_seconds': 'decision_latency_seconds',
-                'reflex_conformal_set_size': 'conformal_set_size',
-                'reflex_cache_hit_ratio': 'cache_hit_ratio',
-                'reflex_ledger_entries_total': 'ledger_entries_total',
+                'system1_decisions_total': 'decisions_total',
+                'system1_escalations_total': 'escalations_total',
+                'system1_decision_latency_seconds': 'decision_latency_seconds',
+                'system1_conformal_set_size': 'conformal_set_size',
+                'system1_cache_hit_ratio': 'cache_hit_ratio',
+                'system1_ledger_entries_total': 'ledger_entries_total',
             }.get(metric_name, metric_name))
             if labels:
                 return metric.labels(**labels)._value
@@ -213,7 +213,7 @@ class TestReflexMetricsExporter:
         )
         val = self._get_metric_value(
             exporter,
-            'reflex_decisions_total',
+            'system1_decisions_total',
             labels={'schema': 'TestSchema', 'outcome': 'execute', 'cache_hit': 'false'},
         )
         assert val == 1.0
@@ -227,7 +227,7 @@ class TestReflexMetricsExporter:
         )
         val2 = self._get_metric_value(
             exporter,
-            'reflex_decisions_total',
+            'system1_decisions_total',
             labels={'schema': 'TestSchema', 'outcome': 'execute', 'cache_hit': 'false'},
         )
         assert val2 == 2.0
@@ -256,7 +256,7 @@ class TestReflexMetricsExporter:
         assert exporter._cache_hits == 1
         # Verify the Gauge value itself
         expected_ratio = 1.0 / 3.0
-        gauge_val = self._get_metric_value(exporter, 'reflex_cache_hit_ratio')
+        gauge_val = self._get_metric_value(exporter, 'system1_cache_hit_ratio')
         assert gauge_val is not None
         assert abs(gauge_val - expected_ratio) < 1e-9
 
@@ -277,7 +277,7 @@ class TestReflexMetricsExporter:
         # Check escalations_total was incremented with reason=ambiguous
         val = self._get_metric_value(
             exporter,
-            'reflex_escalations_total',
+            'system1_escalations_total',
             labels={'schema': 'TestSchema', 'reason': 'ambiguous'},
         )
         assert val == 1.0
@@ -298,7 +298,7 @@ class TestReflexMetricsExporter:
         # Check escalations_total was incremented with reason=low_margin
         val = self._get_metric_value(
             exporter,
-            'reflex_escalations_total',
+            'system1_escalations_total',
             labels={'schema': 'TestSchema', 'reason': 'low_margin'},
         )
         assert val == 1.0
@@ -321,7 +321,7 @@ class TestReflexMetricsExporter:
         if _HAS_PROMETHEUS:
             val = self._get_metric_value(
                 exporter,
-                'reflex_conformal_set_size_count',
+                'system1_conformal_set_size_count',
                 labels={'schema': 'TestSchema'},
             )
             # Two conformal sets were observed (sizes 2 and 1)
@@ -331,7 +331,7 @@ class TestReflexMetricsExporter:
         Cls = self._import_exporter()
         exporter = Cls()
         exporter.update_ledger_gauge(42)
-        val = self._get_metric_value(exporter, 'reflex_ledger_entries_total')
+        val = self._get_metric_value(exporter, 'system1_ledger_entries_total')
         assert val == 42.0
 
     def test_record_decision_empty_values(self):
@@ -349,7 +349,7 @@ class TestReflexMetricsExporter:
         # Outcome should be empty string
         val = self._get_metric_value(
             exporter,
-            'reflex_decisions_total',
+            'system1_decisions_total',
             labels={'schema': 'EmptySchema', 'outcome': '', 'cache_hit': 'false'},
         )
         assert val == 1.0
@@ -370,7 +370,7 @@ class TestReflexMetricsExporter:
         for name in ("SchemaA", "SchemaB", "SchemaC"):
             val = self._get_metric_value(
                 exporter,
-                'reflex_decisions_total',
+                'system1_decisions_total',
                 labels={'schema': name, 'outcome': 'execute', 'cache_hit': 'false'},
             )
             assert val == 1.0
@@ -421,7 +421,7 @@ class TestReflexMetricsExporter:
         # Verify the counter was incremented
         val = self._get_metric_value(
             exporter,
-            'reflex_decisions_total',
+            'system1_decisions_total',
             labels={'schema': 'FakeSchema', 'outcome': 'execute', 'cache_hit': 'false'},
         )
         assert val == 1.0
@@ -441,21 +441,21 @@ class TestReflexMetricsExporter:
             # The 0.005s bucket should have count 1
             val = self._get_metric_value(
                 exporter,
-                'reflex_decision_latency_seconds_bucket',
+                'system1_decision_latency_seconds_bucket',
                 labels={'schema': 'LatencyTest', 'le': '0.005'},
             )
             assert val == 1.0
             # The 0.001s bucket should have count 0 (5ms > 1ms)
             val2 = self._get_metric_value(
                 exporter,
-                'reflex_decision_latency_seconds_bucket',
+                'system1_decision_latency_seconds_bucket',
                 labels={'schema': 'LatencyTest', 'le': '0.001'},
             )
             assert val2 == 0.0
             # Sum should be 0.005
             sum_val = self._get_metric_value(
                 exporter,
-                'reflex_decision_latency_seconds_sum',
+                'system1_decision_latency_seconds_sum',
                 labels={'schema': 'LatencyTest'},
             )
             assert abs(sum_val - 0.005) < 1e-9
@@ -465,12 +465,12 @@ class TestReflexMetricsExporter:
 # OpenTelemetry Tests
 # ========================================================================
 
-class TestReflexOTelInstrumentor:
-    """Tests for :class:`ReflexOTelInstrumentor`."""
+class TestSystemOneOTelInstrumentor:
+    """Tests for :class:`SystemOneOTelInstrumentor`."""
 
     @staticmethod
     def _import_instrumentor():
-        """Import ReflexOTelInstrumentor, with a mock shim if opentelemetry is
+        """Import SystemOneOTelInstrumentor, with a mock shim if opentelemetry is
         not installed."""
         try:
             import opentelemetry  # noqa: F401
@@ -521,8 +521,8 @@ class TestReflexOTelInstrumentor:
             sys.modules["opentelemetry"] = otel
             sys.modules["opentelemetry.trace"] = otel_trace
 
-        from system1.integrations.otel import ReflexOTelInstrumentor
-        return ReflexOTelInstrumentor
+        from system1.integrations.otel import SystemOneOTelInstrumentor
+        return SystemOneOTelInstrumentor
 
     def test_instantiation(self):
         Cls = self._import_instrumentor()

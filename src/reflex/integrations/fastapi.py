@@ -1,4 +1,4 @@
-"""Reflex FastAPI Integration (re-export from system1.integrations.fastapi)."""
+"""System 1 FastAPI Integration (re-export from system1.integrations.fastapi)."""
 from __future__ import annotations
 
 from system1.integrations.fastapi import *

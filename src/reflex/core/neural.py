@@ -1,4 +1,4 @@
-"""Reflex Core Neural Module (re-export from system1.core.neural)."""
+"""System 1 Core Neural Module (re-export from system1.core.neural)."""
 from __future__ import annotations
 
 from system1.core.neural import *

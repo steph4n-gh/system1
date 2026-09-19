@@ -13,7 +13,7 @@ Validates:
   - pyproject.toml bounds: protobuf>=5.26.1, grpcio>=1.62.0, grpcio-tools>=1.62.0.
   - grpc_server.serve() default loopback host="127.0.0.1".
   - CLI serve subcommand --host flag support.
-  - ReflexServiceServicer.Guard() proposal evaluation with ActionProposal, PolicyEngine, signing_key, and ActionLedger.
+  - SystemOneServiceServicer.Guard() proposal evaluation with ActionProposal, PolicyEngine, signing_key, and ActionLedger.
 """
 
 import inspect
@@ -35,7 +35,7 @@ from system1.compat.typesafe import (
     compare,
     get_egress_audit_log,
 )
-from system1.grpc_server import ReflexServiceServicer, serve
+from system1.grpc_server import SystemOneServiceServicer, serve
 from system1.guard import DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
 from system1.ledger import ActionLedger
 from system1.receipt import verify_decision_witness_receipt
@@ -164,17 +164,17 @@ class TestPackagingAndProtobufAlignment:
     def test_twin_namespace_parity(self):
         """Feature F22: system1 and reflex namespaces export identical Gate E classes and functions."""
         import reflex
-        import reflex.compat.typesafe as reflex_typesafe
+        import reflex.compat.typesafe as system1_typesafe
         import system1
 
         # ZeroEgressViolationError
         assert system1.ZeroEgressViolationError is s1_typesafe.ZeroEgressViolationError
-        assert reflex.ZeroEgressViolationError is reflex_typesafe.ZeroEgressViolationError
+        assert reflex.ZeroEgressViolationError is system1_typesafe.ZeroEgressViolationError
         assert system1.ZeroEgressViolationError is reflex.ZeroEgressViolationError
 
         # Egress audit log helpers
-        assert s1_typesafe.get_egress_audit_log is reflex_typesafe.get_egress_audit_log
-        assert s1_typesafe.clear_egress_audit_log is reflex_typesafe.clear_egress_audit_log
+        assert s1_typesafe.get_egress_audit_log is system1_typesafe.get_egress_audit_log
+        assert s1_typesafe.clear_egress_audit_log is system1_typesafe.clear_egress_audit_log
 
     def test_pyproject_dependency_bounds(self):
         """Feature F22: pyproject.toml defines required minimum dependency bounds."""
@@ -199,7 +199,7 @@ class TestPackagingAndProtobufAlignment:
         assert args.port == 50051
 
     def test_grpc_guard_proposal_evaluation_with_policy_and_ledger(self):
-        """Feature F23: ReflexServiceServicer.Guard evaluates ActionProposal through PolicyEngine."""
+        """Feature F23: SystemOneServiceServicer.Guard evaluates ActionProposal through PolicyEngine."""
         signing_key = Ed25519PrivateKey.generate()
         public_key_hex = signing_key.public_key().public_bytes_raw().hex()
         ledger = ActionLedger(":memory:")
@@ -221,7 +221,7 @@ class TestPackagingAndProtobufAlignment:
             ),
         ])
 
-        servicer = ReflexServiceServicer(
+        servicer = SystemOneServiceServicer(
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,

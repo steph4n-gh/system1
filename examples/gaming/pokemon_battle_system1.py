@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pokémon Battle Reflex: Real-Time 60 FPS Autonomous Game Agent & Tactical Advisor.
+"""Pokémon Battle System 1: Real-Time 60 FPS Autonomous Game Agent & Tactical Advisor.
 
 A killer demonstration of System 1 + System 2 Dual-Process Cognitive Architecture:
 Playing Pokémon (Red/Blue running on a Game Boy emulator like PyBoy or our high-fidelity
@@ -13,12 +13,12 @@ Key Architecture Pillars:
      the game, dropping 20+ frames per input, and burning token budgets.
    - System 1 evaluates in ~0.5 - 1.2 ms on the metal ($0 cost, 0 egress), allowing up
      to 16 forward decisions within a single video frame!
-2. Typed Decision Schema (`PokemonBattleReflex`):
+2. Typed Decision Schema (`PokemonBattleSystemOne`):
    - Fast action selection: fight, use_item, switch_pokemon, run_away
    - Move selection based on Gen-1 type matchup matrix (Thunderbolt, Surf, Ice Beam, Thunder Wave)
    - Real-time threat scoring (0.0 to 10.0) and critical survival threshold
 3. The Dual-Process Gameplay Loop:
-   - System 1 (The Local Fast Reflex):
+   - System 1 (The Local Fast System 1):
      Runs at 60 FPS on-device, executing combat actions, super-effective strikes,
      and micro-navigation in ~1.0 ms.
    - Conformal Safety & The Anti-Faint Panic Button:
@@ -34,7 +34,7 @@ Key Architecture Pillars:
    - Reads real Game Boy ROM headers (Pokémon Red/Blue/Yellow).
    - Extracts live memory state from RAM addresses (Player HP 0xD015, Enemy HP 0xCFE6, etc.).
    - Seamless zero-dependency pure NumPy fallback if PyBoy is not installed.
-6. Zero-Dependency Distillation via Reflex Compiler (`ReflexCompiler`):
+6. Zero-Dependency Distillation via System 1 Compiler (`SystemOneCompiler`):
    - Compiles battle heuristics into a static <20KB `.s1m` binary model.
    - Executes purely in NumPy without torch, network calls, or cloud dependencies.
 7. TypeSafe AI SDK Drop-In Compatibility:
@@ -69,18 +69,18 @@ from system1 import (
     ChoiceField,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.compiler import CompiledSystemOneModel
 
 
 # ============================================================================
-# 1. Pokémon Battle Reflex Schema
+# 1. Pokémon Battle System 1 Schema
 # ============================================================================
 
-class PokemonBattleReflex(DecisionSchema):
+class PokemonBattleSystemOne(DecisionSchema):
     """Decision schema for real-time Pokémon battle reflex control."""
 
     # Primary combat or menu action
@@ -1523,7 +1523,7 @@ class System1BattleAgent:
 
     def __init__(
         self,
-        engine: Optional[ReflexEngine] = None,
+        engine: Optional[SystemOneEngine] = None,
         compiled_model: Optional[CompiledSystemOneModel] = None,
         alpha: float = 0.05,
     ) -> None:
@@ -1535,7 +1535,7 @@ class System1BattleAgent:
             self.compiled_model = compiled_model
             self.engine = None
         else:
-            self.engine = ReflexEngine(PokemonBattleReflex)
+            self.engine = SystemOneEngine(PokemonBattleSystemOne)
             self.compiled_model = None
 
         self.total_decisions: int = 0
@@ -1564,7 +1564,7 @@ class System1BattleAgent:
             move_set = [move_val] if move_conf >= (1.0 - self.alpha) else [move_val, "move_slot_1"]
             is_ambiguous = len(action_set) > 1 or len(move_set) > 1
         else:
-            # Full ReflexEngine path
+            # Full SystemOneEngine path
             res: DecisionResult = self.engine.decide(prompt, alpha=self.alpha, record_receipt=False)
             lat = (time.perf_counter() - t0) * 1000.0
 
@@ -1624,7 +1624,7 @@ class System1BattleAgent:
 
 
 # ============================================================================
-# 8. Reflex Compiler Integration (< 20 KB .s1m artifact)
+# 8. System 1 Compiler Integration (< 20 KB .s1m artifact)
 # ============================================================================
 
 def get_pokemon_battle_exemplars() -> Dict[str, List[Tuple[str, Any]]]:
@@ -1672,19 +1672,19 @@ def get_pokemon_battle_exemplars() -> Dict[str, List[Tuple[str, Any]]]:
     }
 
 
-def compile_pokemon_reflex_model(
+def compile_pokemon_system1_model(
     output_path: Optional[Union[str, Path]] = None,
     dimension: int = 128,
 ) -> Tuple[CompiledSystemOneModel, int]:
     """Compiles Pokémon battle heuristics into a static < 20 KB .s1m binary."""
-    compiler = ReflexCompiler(PokemonBattleReflex, dimension=dimension, regularization=0.5)
+    compiler = SystemOneCompiler(PokemonBattleSystemOne, dimension=dimension, regularization=0.5)
     exemplars = get_pokemon_battle_exemplars()
     compiled_model = compiler.compile(exemplars=exemplars, samples_per_choice=20)
 
     if output_path is None:
         dot_dir = REPO_ROOT / ".system1"
         dot_dir.mkdir(parents=True, exist_ok=True)
-        target = dot_dir / "pokemon_battle_reflex.s1m"
+        target = dot_dir / "pokemon_battle_system1.s1m"
     else:
         target = Path(output_path)
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -1705,7 +1705,7 @@ def compile_pokemon_reflex_model(
 # ============================================================================
 
 def get_typesafe_pokemon_questions() -> Dict[str, Any]:
-    """Returns TypeSafe AI question definitions matching PokemonBattleReflex."""
+    """Returns TypeSafe AI question definitions matching PokemonBattleSystemOne."""
     from system1.compat.typesafe import Choice, Noul, Score
 
     return {
@@ -1792,7 +1792,7 @@ def generate_performance_scorecard(system1_latencies: List[float]) -> str:
         "=" * 88,
         "             POKÉMON BATTLE AGENT: SYSTEM 1 vs CLOUD LLM (JEV / GPT-4)",
         "=" * 88,
-        f"{'Metric':<29} {'System 1 (Local Reflex)':<25} {'Cloud LLM / Jev (SaaS)':<23} {'Advantage / Moat':<15}",
+        f"{'Metric':<29} {'System 1 (Local System 1)':<25} {'Cloud LLM / Jev (SaaS)':<23} {'Advantage / Moat':<15}",
         "-" * 88,
         f"{'Forward Latency':<29} {mean_s1_ms:>6.2f} ms{' ' * 16} {cloud_lat_ms:>6.2f} ms{' ' * 14} {speedup:>6.1f}x FASTER",
         f"{'Effective Game Framerate':<29} {min(60.0, s1_fps):>6.1f} FPS (Real-Time){' ' * 4} {cloud_fps:>6.1f} FPS (Severe Lag){' ' * 2} 60 FPS Emulation",
@@ -1840,7 +1840,7 @@ def run_battle_simulation(
             time.sleep(delay)
 
     while not state.is_over and state.turn_count <= max_turns:
-        # 1. System 1 Reflex Evaluation
+        # 1. System 1 System 1 Evaluation
         telemetry, should_escalate, reason = agent.evaluate(state)
         latencies.append(telemetry["latency_ms"])
 
@@ -2070,7 +2070,7 @@ def find_default_pokemon_rom() -> Optional[Path]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Pokémon Battle Reflex: Real-Time 60 FPS Autonomous Agent & Advisor")
+    parser = argparse.ArgumentParser(description="Pokémon Battle System 1: Real-Time 60 FPS Autonomous Agent & Advisor")
     parser.add_argument(
         "--encounter",
         choices=["misty", "brock", "giovanni", "zubat", "rattata", "gyarados", "onix", "all"],
@@ -2154,11 +2154,11 @@ def main() -> None:
     elif args.rom:
         print(f"\n[Warning] ROM path not found: {args.rom}. Falling back to simulated engine.")
 
-    # 2. Reflex Compiler Showcase
+    # 2. System 1 Compiler Showcase
     active_agent = None
     if args.compile or args.encounter == "all":
-        print("\n[Compiling Reflex Battle Heuristics to Static .s1m Artifact...]")
-        loaded_model, file_size = compile_pokemon_reflex_model()
+        print("\n[Compiling System 1 Battle Heuristics to Static .s1m Artifact...]")
+        loaded_model, file_size = compile_pokemon_system1_model()
         print(f"  ✓ Compiled model successfully generated!")
         print(f"  ✓ Artifact size: {file_size} bytes ({file_size / 1024.0:.2f} KB) [< 20 KB requirement]")
         print(f"  ✓ Wire format magic: S1M (pure NumPy non-autoregressive execution)")

@@ -1,7 +1,7 @@
 """Tier 1.3: E2E Requirement Tests for Zero External Network Egress.
 
 Authoritative Invariants:
-1. Reflex / System 1 executes 100% on local metal with ZERO outbound socket connections.
+1. System 1 / System 1 executes 100% on local metal with ZERO outbound socket connections.
 2. Decision evaluation, conformal gating, cryptographic signing, SQLite ledger,
    TypeSafe client, calibration, and compilation MUST complete without attempting
    any remote network I/O or DNS lookups.
@@ -20,9 +20,9 @@ from reflex import (
     ActionProposal,
     Choice,
     DefaultGuardDecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneCompiler,
+    SystemOneEngine,
+    SystemOneGuardHook,
     TypeSafeClient,
 )
 from e2e.conftest import BlockedNetworkCallError
@@ -36,8 +36,8 @@ def test_socket_block_actually_traps_network(enforce_zero_network):
 
 
 def test_zero_network_engine_decision(enforce_zero_network, triage_schema):
-    """Verify ReflexEngine.decide executes completely locally under hard socket block."""
-    engine = ReflexEngine(triage_schema)
+    """Verify SystemOneEngine.decide executes completely locally under hard socket block."""
+    engine = SystemOneEngine(triage_schema)
     res = engine.decide("Perform local fast telemetry observation")
     assert res is not None
     assert "route" in res.values
@@ -45,8 +45,8 @@ def test_zero_network_engine_decision(enforce_zero_network, triage_schema):
 
 
 def test_zero_network_guard_hook_evaluation(enforce_zero_network, temp_ledger):
-    """Verify ReflexGuardHook proposal evaluation and ledger recording require zero network calls."""
-    guard = ReflexGuardHook(ledger=temp_ledger, auto_calibrate=False)
+    """Verify SystemOneGuardHook proposal evaluation and ledger recording require zero network calls."""
+    guard = SystemOneGuardHook(ledger=temp_ledger, auto_calibrate=False)
     proposal = ActionProposal.create(
         tenant_id="local_tenant",
         principal_id="local_agent",
@@ -85,15 +85,15 @@ def test_zero_network_typesafe_client_offline(enforce_zero_network):
 
 def test_zero_network_calibration_and_compilation(enforce_zero_network, triage_schema, tmp_path: Path):
     """Verify temperature calibration and binary compiler operate with zero network calls."""
-    engine = ReflexEngine(triage_schema)
+    engine = SystemOneEngine(triage_schema)
     dataset = [
-        ("Read local disk", {"route": "local_reflex", "is_safe": True, "confidence_score": 0.9}),
+        ("Read local disk", {"route": "local_system1", "is_safe": True, "confidence_score": 0.9}),
         ("Destroy partitions", {"route": "human_escalation", "is_safe": False, "confidence_score": 0.95}),
     ] * 4
     metrics = engine.calibrate(dataset, n_bins=3)
     assert len(metrics) > 0
 
     model_path = tmp_path / "offline_model.s1m"
-    compiler = ReflexCompiler(triage_schema)
+    compiler = SystemOneCompiler(triage_schema)
     compiler.compile_and_save(model_path, samples_per_choice=3)
     assert model_path.is_file()

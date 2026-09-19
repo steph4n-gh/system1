@@ -1,4 +1,4 @@
-"""Unit and integration tests for Universal Paperclips Playwright / Reflex Speedrun Engine."""
+"""Unit and integration tests for Universal Paperclips Playwright / System 1 Speedrun Engine."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from paperclips_speedrun import (
     MockPaperclipsBrowserController,
     Paperclips3PhasePolicy,
     PaperclipsObservation,
-    PaperclipsSpeedrunReflex,
+    PaperclipsSpeedrunSystemOne,
     PaperclipsSpeedrunRunner,
     PaperclipsSplitTimer,
     PlaywrightPaperclipsController,
@@ -76,9 +76,9 @@ def test_split_timer_board_rendering():
 # 2. DecisionSchema & Observation Tests
 # ============================================================================
 
-def test_speedrun_reflex_schema():
+def test_speedrun_system1_schema():
     """Verify DecisionSchema field definitions and choices."""
-    schema = PaperclipsSpeedrunReflex()
+    schema = PaperclipsSpeedrunSystemOne()
     assert "action" in schema._fields
     assert "conformal_risk" in schema._fields
     options = schema._fields["action"].options

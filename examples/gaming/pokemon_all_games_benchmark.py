@@ -13,7 +13,7 @@ Measures:
 1. Cartridge Header & Hardware Metadata (Title, Generation, Platform, ROM/RAM size, Header Checksum).
 2. Headless Frame Stepping Throughput (Hardware CPU/PPU frame rate in FPS via PyBoy).
 3. RAM Memory Bridge Extraction Integrity (HP, Max HP, Level, Moves, PP, Status, Species, Coordinates).
-4. System 1 Reflex Inference Performance (Forward pass & E2E latency in microseconds, QPS, Sub-1ms verification).
+4. System 1 System 1 Inference Performance (Forward pass & E2E latency in microseconds, QPS, Sub-1ms verification).
 5. Conformal Safety Evaluation (Conformal set size, ambiguity halt rate, System 2 cognitive escalations).
 """
 
@@ -48,11 +48,11 @@ def ensure_venv_reexec() -> None:
     if venv_py.is_file() and Path(sys.executable).resolve() != venv_py.resolve() and sys.version_info[:2] != (3, 13):
         os.execv(str(venv_py), [str(venv_py)] + sys.argv)
 
-from examples.gaming.pokemon_battle_reflex import (
+from examples.gaming.pokemon_battle_system1 import (
     BattleState,
     BattleType,
     Pokemon,
-    PokemonBattleReflex,
+    PokemonBattleSystemOne,
     PokemonMove,
     PyBoyMemoryBridge,
     System1BattleAgent,
@@ -60,7 +60,7 @@ from examples.gaming.pokemon_battle_reflex import (
     create_wild_encounter,
     read_rom_header,
 )
-from system1 import ReflexEngine
+from system1 import SystemOneEngine
 
 # Cartridge definitions
 ALL_POKEMON_GAMES = {
@@ -154,7 +154,7 @@ class LatencyMetrics:
 
 
 @dataclass
-class ReflexPerformance:
+class SystemOnePerformance:
     neural_forward: LatencyMetrics
     e2e_pipeline: LatencyMetrics
     sub_1ms_verified: bool
@@ -173,7 +173,7 @@ class SingleGameBenchmarkResult:
     frame_count: int
     frame_time_sec: float
     memory_integrity: MemoryBridgeIntegrity
-    reflex_performance: ReflexPerformance
+    system1_performance: SystemOnePerformance
     emulator_available: bool
     error: Optional[str] = None
 
@@ -411,12 +411,12 @@ def compute_latency_stats(times_us: Sequence[float]) -> LatencyMetrics:
     )
 
 
-def evaluate_system1_reflex_performance(
+def evaluate_system1_performance(
     battle_state: BattleState,
     agent: System1BattleAgent,
     num_decisions: int = 100,
-) -> ReflexPerformance:
-    """Evaluates System 1 Reflex inference latency (microseconds), QPS, and Conformal safety."""
+) -> SystemOnePerformance:
+    """Evaluates System 1 System 1 inference latency (microseconds), QPS, and Conformal safety."""
     # Warm up
     for _ in range(5):
         agent.evaluate(battle_state)
@@ -429,7 +429,7 @@ def evaluate_system1_reflex_performance(
 
     prompt = battle_state.to_prompt()
 
-    # If agent uses ReflexEngine, extract head projection for pure forward measurement
+    # If agent uses SystemOneEngine, extract head projection for pure forward measurement
     engine = getattr(agent, "engine", None)
     heads_dict = {}
     if engine is not None and hasattr(engine, "model"):
@@ -478,7 +478,7 @@ def evaluate_system1_reflex_performance(
     ambiguity_rate = (ambiguous_count / num_decisions) * 100.0
     esc_rate = (escalation_count / num_decisions) * 100.0
 
-    return ReflexPerformance(
+    return SystemOnePerformance(
         neural_forward=fwd_stats,
         e2e_pipeline=e2e_stats,
         sub_1ms_verified=sub_1ms,
@@ -512,7 +512,7 @@ def run_single_game_benchmark(
     # 3. RAM Memory Bridge Integrity
     mem_integrity = evaluate_memory_bridge_integrity(rom_path, cart_meta.game_variant)
 
-    # 4. System 1 Reflex Inference Performance
+    # 4. System 1 System 1 Inference Performance
     if agent is None:
         agent = System1BattleAgent()
 
@@ -522,7 +522,7 @@ def run_single_game_benchmark(
     else:
         test_state = create_gym_leader_battle("misty")
 
-    reflex_perf = evaluate_system1_reflex_performance(
+    system1_perf = evaluate_system1_performance(
         test_state,
         agent=agent,
         num_decisions=num_decisions,
@@ -535,7 +535,7 @@ def run_single_game_benchmark(
         frame_count=frame_count,
         frame_time_sec=round(frame_sec, 4),
         memory_integrity=mem_integrity,
-        reflex_performance=reflex_perf,
+        system1_performance=system1_perf,
         emulator_available=emulator_ok,
     )
 
@@ -565,7 +565,7 @@ def format_ansi_comparison_table(results: List[SingleGameBenchmarkResult]) -> st
     lines.append(f"{CYAN}{sep_top}{RESET}")
     title_text = "POKÉMON MULTI-CARTRIDGE HEADLESS BENCHMARK & SYSTEM 1 PERFORMANCE MATRIX"
     lines.append(f"{CYAN}│{RESET}{BOLD}{WHITE} {title_text:^{w - 4}} {RESET}{CYAN}│{RESET}")
-    lines.append(f"{CYAN}│{RESET}{DIM} {'Real Game Boy ROMs • PyBoy Headless 60+ FPS • Conformal Safety • Sub-1ms Reflex':^{w - 4}} {RESET}{CYAN}│{RESET}")
+    lines.append(f"{CYAN}│{RESET}{DIM} {'Real Game Boy ROMs • PyBoy Headless 60+ FPS • Conformal Safety • Sub-1ms System 1':^{w - 4}} {RESET}{CYAN}│{RESET}")
     lines.append(f"{CYAN}{sep_mid}{RESET}")
 
     # Column Headers
@@ -586,7 +586,7 @@ def format_ansi_comparison_table(results: List[SingleGameBenchmarkResult]) -> st
     for r in results:
         c = r.cartridge
         m = r.memory_integrity
-        rp = r.reflex_performance
+        rp = r.system1_performance
 
         # Formatting values
         game_display = f"{c.game_key.upper()} ({c.filename})"[:15]
@@ -644,7 +644,7 @@ def format_ansi_comparison_table(results: List[SingleGameBenchmarkResult]) -> st
         f"({verif_label} • ~{avg_fwd / 1000.0:.2f} ms)"
     )
     summary_3 = (
-        f"  • Reflex Decision Engine Throughput:  {BOLD}{YELLOW}{avg_qps:,.0f} Decisions/sec (QPS){RESET}"
+        f"  • System 1 Decision Engine Throughput:  {BOLD}{YELLOW}{avg_qps:,.0f} Decisions/sec (QPS){RESET}"
     )
     pct_integrity = (total_integrity_passed / n * 100.0) if n > 0 else 0.0
     summary_4 = (
@@ -676,7 +676,7 @@ def results_to_json_dict(results: List[SingleGameBenchmarkResult]) -> Dict[str, 
             "frame_count": r.frame_count,
             "frame_time_sec": r.frame_time_sec,
             "memory_integrity": asdict(r.memory_integrity),
-            "reflex_performance": asdict(r.reflex_performance),
+            "system1_performance": asdict(r.system1_performance),
             "emulator_available": r.emulator_available,
         })
 
@@ -686,10 +686,10 @@ def results_to_json_dict(results: List[SingleGameBenchmarkResult]) -> Dict[str, 
         "total_games_tested": n,
         "summary": {
             "avg_headless_fps": round(sum(r.headless_fps for r in results) / n, 2) if n else 0,
-            "avg_neural_forward_us": round(sum(r.reflex_performance.neural_forward.mean_us for r in results) / n, 2) if n else 0,
-            "avg_decision_qps": round(sum(r.reflex_performance.neural_forward.throughput_qps for r in results) / n, 2) if n else 0,
+            "avg_neural_forward_us": round(sum(r.system1_performance.neural_forward.mean_us for r in results) / n, 2) if n else 0,
+            "avg_decision_qps": round(sum(r.system1_performance.neural_forward.throughput_qps for r in results) / n, 2) if n else 0,
             "all_memory_bridges_passed": all(r.memory_integrity.passed for r in results),
-            "sub_1ms_verified": all(r.reflex_performance.sub_1ms_verified for r in results),
+            "sub_1ms_verified": all(r.system1_performance.sub_1ms_verified for r in results),
         },
         "games": games_data,
     }
@@ -725,7 +725,7 @@ def parse_benchmark_args(args_list: Optional[Sequence[str]] = None) -> argparse.
         "--decisions",
         type=int,
         default=100,
-        help="Number of decisions per game for System 1 Reflex latency benchmark (default: 100)",
+        help="Number of decisions per game for System 1 System 1 latency benchmark (default: 100)",
     )
     parser.add_argument(
         "--json",
@@ -800,7 +800,7 @@ def run_multi_game_benchmark(
         )
         results.append(res)
         if not quiet:
-            print(f" ✓ ({res.headless_fps:.0f} FPS, {res.reflex_performance.neural_forward.mean_us:.1f} µs)")
+            print(f" ✓ ({res.headless_fps:.0f} FPS, {res.system1_performance.neural_forward.mean_us:.1f} µs)")
 
     return results
 

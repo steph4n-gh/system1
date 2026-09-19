@@ -1,4 +1,4 @@
-"""Reflex Decision Engine Runtime.
+"""System 1 Decision Engine Runtime.
 
 Orchestrates non-autoregressive single-pass schema evaluation, calibrated
 confidence scoring, conformal prediction sets, cryptographic receipt generation,
@@ -44,7 +44,7 @@ from system1.core import (
     SystemOneModel,
 )
 from system1.core.model import _stable_sigmoid
-from system1.cache import SemanticReflexCache, _validate_cache_inputs
+from system1.cache import SemanticSystemOneCache, _validate_cache_inputs
 from system1.core.telemetry import TelemetryProjector
 from system1.ledger import ActionLedger, LedgerWriteError
 from system1.receipt import (
@@ -79,7 +79,7 @@ class BenchmarkReport:
 
 @dataclass(frozen=True)
 class DecisionResult:
-    """Strongly-typed outcome of a Reflex decision evaluation."""
+    """Strongly-typed outcome of a System 1 decision evaluation."""
 
     schema_name: str
     schema_digest: str
@@ -141,8 +141,8 @@ class DecisionResult:
         return json.dumps(self.to_dict(), indent=indent, default=str)
 
 
-class ReflexEngine:
-    """Production-grade Reflex Decision Engine.
+class SystemOneEngine:
+    """Production-grade System 1 Decision Engine.
 
     Beats Jev with:
     - Sub-2ms local execution (Apple Silicon Metal & vectorized CPU).
@@ -151,7 +151,7 @@ class ReflexEngine:
     - Temperature-scaled calibration & Brier proper scoring rule decomposition.
     - Split Conformal Prediction with finite-sample 1 - alpha coverage guarantee.
     - Ed25519 signed RunWitnessEnvelope receipts bound to ActionLedger.
-    - Lever 1: Tier 0 Semantic Reflex Cache (sub-0.05ms certified execution).
+    - Lever 1: Tier 0 Semantic System 1 Cache (sub-0.05ms certified execution).
     - Lever 2: Online Sherman-Morrison rank-1 distillation (learn_from_tier2 in <0.1ms).
     - Lever 3: Margin-based conformal dominance gating (suppresses false-positive escalations).
     - Lever 4: Continuous telemetry state vector fusion with sharp numeric boundaries.
@@ -196,7 +196,7 @@ class ReflexEngine:
         self.projector = projector
         self.contrastive_whitening = contrastive_whitening
         self.use_cache = bool(use_cache)
-        self.cache = SemanticReflexCache(
+        self.cache = SemanticSystemOneCache(
             capacity=cache_capacity,
             similarity_threshold=cache_threshold,
         )
@@ -617,7 +617,7 @@ class ReflexEngine:
         p_dig = self._projector_digest()
         c_dig = self._calibration_digest()
 
-        # 1. Tier 0 Semantic Reflex Cache fast-path (<0.05ms)
+        # 1. Tier 0 Semantic System 1 Cache fast-path (<0.05ms)
         if self.use_cache:
             cached = self.cache.get(
                 prompt,
@@ -1097,8 +1097,8 @@ class ReflexEngine:
     ) -> Dict[str, Any]:
         """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
 
-        Adapts the decision hyperplanes of ReflexEngine for resolved Tier 2 edge cases,
-        and certifies the resolution in the Tier 0 Semantic Reflex Cache.
+        Adapts the decision hyperplanes of SystemOneEngine for resolved Tier 2 edge cases,
+        and certifies the resolution in the Tier 0 Semantic System 1 Cache.
         """
         with self._lock:
             eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
@@ -1351,12 +1351,12 @@ class ReflexEngine:
 
 
 # Compatibility alias
-SystemOneEngine = ReflexEngine
+SystemOneEngine = SystemOneEngine
 
-System1Engine = ReflexEngine
+System1Engine = SystemOneEngine
 
 __all__ = [
-    "ReflexEngine",
+    "SystemOneEngine",
     "SystemOneEngine",
     "System1Engine",
     "DecisionResult",

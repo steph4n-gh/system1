@@ -1,4 +1,4 @@
-"""Tests for Reflex CLI commands."""
+"""Tests for System 1 CLI commands."""
 
 import json
 from pathlib import Path

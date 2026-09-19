@@ -43,7 +43,7 @@ Attacks Covered:
    - Query uncalibrated ConformalPredictor in strict mode; verify full label set, is_ambiguous=True,
      needs_escalation=True, q_hat=1.0, and margin gating is inactive.
    - Query uncalibrated RegressionConformalPredictor in strict mode; verify full feasible domain.
-   - Query ReflexEngine across ChoiceField, BooleanField, MultiChoiceField, and ScoreField
+   - Query SystemOneEngine across ChoiceField, BooleanField, MultiChoiceField, and ScoreField
      in strict mode while uncalibrated; verify complete ambiguity escalation.
 
 7. Decoupled Calibration Folds & Conformal Invariants:
@@ -82,7 +82,7 @@ import system1.engine as s1_eng
 
 from system1.cache import (
     CacheEntry,
-    SemanticReflexCache,
+    SemanticSystemOneCache,
     _digest_prompt,
     _digest_telemetry,
     _format_context,
@@ -96,7 +96,7 @@ from system1.calibration import (
     RegressionConformalInterval,
     RegressionConformalPredictor,
 )
-from system1.compiler import CompiledSystemOneModel, ReflexCompiler
+from system1.compiler import CompiledSystemOneModel, SystemOneCompiler
 from system1.core.schema import (
     BooleanField,
     ChoiceField,
@@ -104,7 +104,7 @@ from system1.core.schema import (
     MultiChoiceField,
     ScoreField,
 )
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 
 
 # ============================================================================
@@ -116,7 +116,7 @@ class TestAttack1InvalidParameterInjection:
 
     @pytest.mark.parametrize("bad_prompt", [123, None, ["query"], {"p": "q"}, b"bytes_prompt", 45.67])
     def test_inject_invalid_prompt_types(self, bad_prompt):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(TypeError, match="Prompt must be a string"):
             cache.get(bad_prompt)  # type: ignore
 
@@ -128,7 +128,7 @@ class TestAttack1InvalidParameterInjection:
 
     @pytest.mark.parametrize("bad_alpha", [0.0, 1.0, -0.01, -1.5, 1.0001, 100.0, float("nan"), float("inf"), float("-inf")])
     def test_inject_out_of_range_alpha_values(self, bad_alpha):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(ValueError, match="Significance level alpha must be in"):
             cache.get("valid prompt", alpha=bad_alpha)
 
@@ -140,13 +140,13 @@ class TestAttack1InvalidParameterInjection:
 
     @pytest.mark.parametrize("bad_alpha_type", ["invalid", [0.05], {"alpha": 0.05}])
     def test_inject_invalid_alpha_types(self, bad_alpha_type):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(TypeError, match="alpha must be a real number"):
             cache.get("valid prompt", alpha=bad_alpha_type)  # type: ignore
 
     @pytest.mark.parametrize("bad_margin", [-0.0001, -1.0, -99.9, float("nan"), float("-inf")])
     def test_inject_negative_margin_threshold(self, bad_margin):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(ValueError, match="margin_threshold must be non-negative"):
             cache.get("valid prompt", margin_threshold=bad_margin)
 
@@ -155,7 +155,7 @@ class TestAttack1InvalidParameterInjection:
 
     @pytest.mark.parametrize("bad_odds", [0.0, -0.001, -1.0, -50.0, float("nan"), float("-inf")])
     def test_inject_invalid_odds_ratios(self, bad_odds):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(ValueError, match="relative_odds_ratio must be positive"):
             cache.get("valid prompt", relative_odds_ratio=bad_odds)
 
@@ -167,7 +167,7 @@ class TestAttack1InvalidParameterInjection:
 
     @pytest.mark.parametrize("bad_floor", [-0.001, -0.5, -10.0, float("nan"), float("-inf")])
     def test_inject_invalid_confidence_floor(self, bad_floor):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(ValueError, match="confidence_floor_tau0 must be non-negative"):
             cache.get("valid prompt", confidence_floor_tau0=bad_floor)
 
@@ -175,7 +175,7 @@ class TestAttack1InvalidParameterInjection:
             cache.put("valid prompt", "res", confidence_floor_tau0=bad_floor)
 
     def test_inject_malformed_telemetry(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         # Invalid telemetry type (e.g. object, int)
         with pytest.raises(TypeError, match="telemetry must be a Mapping, Sequence, or ndarray"):
             cache.get("valid prompt", telemetry=object())
@@ -188,7 +188,7 @@ class TestAttack1InvalidParameterInjection:
             cache.get("valid prompt", telemetry=np.array([1.0, np.inf, 2.0]))
 
     def test_inject_malformed_embeddings(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         # 2D embedding matrix instead of 1D vector
         with pytest.raises(ValueError, match="embedding must be a 1D vector"):
             cache.get("valid prompt", embedding=np.zeros((3, 3)))
@@ -209,7 +209,7 @@ class TestAttack1InvalidParameterInjection:
 
     def test_engine_pre_lookup_validation_rejection(self):
         schema = DecisionSchema(schema_name="EngVal", fields={"act": ChoiceField(["allow", "deny"])})
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
 
         with pytest.raises(TypeError, match="Prompt must be a string"):
             engine.decide(99999)  # type: ignore
@@ -248,7 +248,7 @@ class TestAttack2CacheCollisionAndSensitivity:
 
     def test_all_individual_parameters_force_cache_miss(self):
         schema = DecisionSchema(schema_name="SensSchema", fields={"act": ChoiceField(["allow", "deny"])})
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True, enable_margin_gating=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True, enable_margin_gating=True)
 
         # Train to make unambiguous
         for _ in range(3):
@@ -341,7 +341,7 @@ class TestAttack2CacheCollisionAndSensitivity:
         assert _digest_telemetry(arr1) != _digest_telemetry(arr2)
 
     def test_model_version_and_digest_key_isolation(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         k1 = cache._make_key("query", model_version=1, model_digest="sha_v1")
         k2 = cache._make_key("query", model_version=2, model_digest="sha_v1")
         k3 = cache._make_key("query", model_version=1, model_digest="sha_v2")
@@ -365,7 +365,7 @@ class TestAttack3CacheHitAmbiguityMasking:
                 "risk_tag": MultiChoiceField(["pii", "financial", "malware"]),
             },
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         prompt = "Borderline anomalous transaction payload"
 
         res1 = engine.decide(prompt, alpha=0.05)
@@ -409,7 +409,7 @@ class TestAttack3CacheHitAmbiguityMasking:
             schema_name="UnambigPreservation",
             fields={"verdict": ChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         prompt = "Standard verified ping"
 
         res1 = engine.decide(prompt, alpha=0.05)
@@ -447,7 +447,7 @@ class TestAttack3CacheHitAmbiguityMasking:
 
     def test_defensive_copies_prevent_external_cache_corruption(self):
         schema = DecisionSchema(schema_name="DefCopy", fields={"decision": ChoiceField(["yes", "no"])})
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         engine.learn_from_tier2("probe prompt", target={"decision": "yes"})
 
         r1 = engine.decide("probe prompt")
@@ -480,7 +480,7 @@ class TestAttack4MultithreadedConcurrencyRace:
 
     def test_concurrent_online_updates_and_decide(self):
         schema = DecisionSchema(schema_name="ConcurrentRace", fields={"status": ChoiceField(["allow", "deny"])})
-        engine = ReflexEngine(schema=schema, dimension=16, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=16, use_cache=True)
 
         prompts = [f"network_flow_packet_{i}" for i in range(16)]
         for p in prompts:
@@ -524,7 +524,7 @@ class TestAttack4MultithreadedConcurrencyRace:
     def test_cache_invalidates_prior_versions_on_multiple_updates(self):
         # Invariant 8: Cache returns stale pre-update decision after 10 online updates
         schema = DecisionSchema(schema_name="Inv8Schema", fields={"action": ChoiceField(["fast", "slow"])})
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True, forgetting_factor=0.1)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True, forgetting_factor=0.1)
         prompt = "invariant 8 target prompt"
 
         # Initial seed
@@ -552,7 +552,7 @@ class TestAttack5StrictModeSemanticSearchEvasion:
     """Verifies that approximate semantic cosine search is strictly rejected in enforcement / strict modes."""
 
     def test_strict_mode_rejects_approximate_semantic_search(self):
-        cache = SemanticReflexCache(similarity_threshold=0.7)
+        cache = SemanticSystemOneCache(similarity_threshold=0.7)
         emb_a = np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32)
         emb_b = np.array([0.999, 0.001, 0.0, 0.0], dtype=np.float32)  # Cosine similarity > 0.9999
 
@@ -569,7 +569,7 @@ class TestAttack5StrictModeSemanticSearchEvasion:
         assert hit_strict is None
 
     def test_enforce_durability_rejects_approximate_semantic_search(self):
-        cache = SemanticReflexCache(similarity_threshold=0.7)
+        cache = SemanticSystemOneCache(similarity_threshold=0.7)
         emb_a = np.array([0.0, 1.0, 0.0], dtype=np.float32)
         emb_b = np.array([0.0, 0.999, 0.001], dtype=np.float32)
 
@@ -580,7 +580,7 @@ class TestAttack5StrictModeSemanticSearchEvasion:
         assert hit_durable is None
 
     def test_cross_strict_entry_isolation(self):
-        cache = SemanticReflexCache(similarity_threshold=0.7)
+        cache = SemanticSystemOneCache(similarity_threshold=0.7)
         emb = np.array([1.0, 0.0], dtype=np.float32)
 
         # Entry put under strict=True
@@ -645,7 +645,7 @@ class TestAttack6UncalibratedModelExploitation:
                 "s_field": ScoreField(min_value=0.0, max_value=10.0),
             },
         )
-        engine = ReflexEngine(schema=schema, dimension=8, strict_mode=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, strict_mode=True)
 
         res = engine.decide("uncalibrated prompt in strict mode")
         assert res.is_ambiguous is True
@@ -696,7 +696,7 @@ class TestAttack7DecoupledCalibrationAndInvariants:
             schema_name="DecoupledFolds",
             fields={"decision": ChoiceField(["class_0", "class_1", "class_2"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         dataset = [
             (f"calibration sample prompt {i}", {"decision": f"class_{i % 3}"})
             for i in range(40)
@@ -718,7 +718,7 @@ class TestAttack8TwinNamespaceParity:
     """Verifies 100% functional and structural parity across system1 and reflex namespaces."""
 
     def test_cache_namespace_parity(self):
-        assert s1_cache.SemanticReflexCache is rx_cache.SemanticReflexCache
+        assert s1_cache.SemanticSystemOneCache is rx_cache.SemanticSystemOneCache
         assert s1_cache.CacheEntry is rx_cache.CacheEntry
         assert s1_cache.validate_cache_inputs is rx_cache.validate_cache_inputs
 
@@ -730,9 +730,9 @@ class TestAttack8TwinNamespaceParity:
         assert s1_calib.RegressionConformalInterval is rx_calib.RegressionConformalInterval
 
     def test_compiler_namespace_parity(self):
-        assert s1_comp.ReflexCompiler is rx_comp.ReflexCompiler
+        assert s1_comp.SystemOneCompiler is rx_comp.SystemOneCompiler
         assert s1_comp.CompiledSystemOneModel is rx_comp.CompiledSystemOneModel
 
     def test_engine_namespace_parity(self):
-        assert s1_eng.ReflexEngine is rx_eng.ReflexEngine
+        assert s1_eng.SystemOneEngine is rx_eng.SystemOneEngine
         assert s1_eng.DecisionResult is rx_eng.DecisionResult

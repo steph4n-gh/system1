@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase.
+"""System 1 vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase.
 
 Comprehensive Enterprise Stress Showcase demonstrating:
 1. High-Stakes, Multi-Head Schema Complexity:
@@ -16,7 +16,7 @@ Comprehensive Enterprise Stress Showcase demonstrating:
 3. High-Stress Auto-Cutover Lifecycle:
    - Live stream crossing the cutover threshold.
    - Closed-form Ridge Regression hyperplanes dynamically solved for all 5 heads in ~10ms.
-   - Agreement verification and autonomous transition from Cloud SaaS to 100% Local On-Device Reflex.
+   - Agreement verification and autonomous transition from Cloud SaaS to 100% Local On-Device System 1.
    - Full 48-query latency cliff waterfall chart (~240ms cloud dropping to sub-2ms local Metal/NumPy).
    - Split Conformal Prediction set evaluation ((1 - α) coverage) and automated Human Escalation Gate.
 4. Multi-Threaded Concurrent Load Simulation:
@@ -799,7 +799,7 @@ def render_cutover_banner(event: Dict[str, Any]) -> None:
     print("╠" + "═" * 114 + "╣")
     print(f"║  Cutover Event:          {event.get('event', 'trojan_horse_cutover'):<87}║")
     print(f"║  Timestamp:              {timestamp_str:<87}║")
-    print(f"║  Exemplars Ingested:     {samples} multi-head query/decision tuples ingested into ReflexCompiler{' ':>24}║")
+    print(f"║  Exemplars Ingested:     {samples} multi-head query/decision tuples ingested into SystemOneCompiler{' ':>24}║")
     print(f"║  Multi-Head Closed Form: Ridge Regression solved across Choice, MultiChoice, Noul, Score heads in 11.2ms{' ':>9}║")
     print(f"║  Local Model Agreement:  {agreement:.1f}% (Required Verification Threshold: {threshold:.1f}%){' ':>43}║")
     print(f"║  New Execution Mode:     100% LOCAL ON-DEVICE EXECUTION ACTIVE ($0 cost, sub-2ms latency){' ':>22}║")
@@ -926,7 +926,7 @@ def render_summary_scorecard(results: List[Dict[str, Any]]) -> None:
     print("\n" + "┌" + "─" * 92 + "┐")
     print("│" + " " * 31 + "ENTERPRISE METRICS SCORECARD" + " " * 33 + "│")
     print("├" + "─" * 92 + "┤")
-    print(f"│  Metric                          │ Cloud SaaS Proxy Phase   │ 100% Local System 1 Reflex │")
+    print(f"│  Metric                          │ Cloud SaaS Proxy Phase   │ 100% Local System 1 System 1 │")
     print("├──────────────────────────────────┼──────────────────────────┼────────────────────────────┤")
     print(f"│  Average Decision Latency        │ {cloud_lat_str}   │ {local_lat_str}    │")
     print(f"│  Measured Latency Speedup        │ {'Baseline (1.0x)':<24} │ {speedup_str:>26} │")
@@ -1375,7 +1375,7 @@ def run_autonomous_firewall_showcase(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Reflex vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase",
+        description="System 1 vs TypeSafe AI: Autonomous AI Agent Firewall & Tool Execution Monitor Showcase",
     )
     parser.add_argument(
         "--threshold",

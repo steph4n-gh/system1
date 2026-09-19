@@ -16,13 +16,13 @@ if str(EXAMPLES_DIR) not in sys.path:
 if str(GAMING_DIR) not in sys.path:
     sys.path.insert(0, str(GAMING_DIR))
 
-from pokemon_showdown_reflex import (
+from pokemon_showdown_system1 import (
     GEN1_OU_MOVES,
     GEN1_OU_SPECIES,
     MockShowdownServer,
-    PokemonShowdownReflex,
+    PokemonShowdownSystemOne,
     ShermanMorrisonOpponentModel,
-    ShowdownBattleReflexAgent,
+    ShowdownBattleSystemOneAgent,
     ShowdownBattleState,
     ShowdownPokemon,
     ShowdownWebSocketClient,
@@ -153,12 +153,12 @@ def test_system2_yomi_planner_switch_anticipation():
 
 
 # ============================================================================
-# 4. DecisionSchema & Agent Reflex Tests
+# 4. DecisionSchema & Agent System 1 Tests
 # ============================================================================
 
-def test_pokemon_showdown_reflex_schema():
+def test_pokemon_showdown_system1_schema():
     """Verify DecisionSchema field attributes."""
-    schema = PokemonShowdownReflex()
+    schema = PokemonShowdownSystemOne()
     assert "action_type" in schema._fields
     assert "conformal_ambiguity" in schema._fields
     assert "risk_score" in schema._fields
@@ -166,7 +166,7 @@ def test_pokemon_showdown_reflex_schema():
 
 def test_agent_lethal_ko_decision():
     """Verify that when a lethal KO is available, the agent acts decisively without gating."""
-    agent = ShowdownBattleReflexAgent()
+    agent = ShowdownBattleSystemOneAgent()
     state = ShowdownBattleState()
     # Opponent is at 10 HP; Tauros Hyper Beam is an easy lethal kill
     state.opponent_active.current_hp = 10
@@ -180,7 +180,7 @@ def test_agent_lethal_ko_decision():
 
 def test_agent_conformal_safety_gate_trigger():
     """Verify that close 50/50 damage triggers the Conformal Safety Gate."""
-    agent = ShowdownBattleReflexAgent(conformal_threshold=0.50)
+    agent = ShowdownBattleSystemOneAgent(conformal_threshold=0.50)
     state = ShowdownBattleState()
     # Give Tauros two moves with identical power
     state.player_active.moves = ["Earthquake", "Earthquake"]
@@ -194,7 +194,7 @@ def test_agent_conformal_safety_gate_trigger():
 
 def test_agent_force_switch_handling():
     """Verify agent selects healthiest bench Pokémon when forced to switch."""
-    agent = ShowdownBattleReflexAgent()
+    agent = ShowdownBattleSystemOneAgent()
     state = ShowdownBattleState()
     state.force_switch = True
     state.player_team = [
@@ -227,7 +227,7 @@ def test_mock_showdown_server_exchange():
 @pytest.mark.asyncio
 async def test_showdown_client_mock_battle_end_to_end():
     """Verify full Showdown battle session executes in mock mode."""
-    client = ShowdownWebSocketClient(username="TestReflexBot", use_mock=True)
+    client = ShowdownWebSocketClient(username="TestSystemOneBot", use_mock=True)
     summary = await client.connect_and_battle(max_turns=10)
 
     assert summary["status"] == "completed"

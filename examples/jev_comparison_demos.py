@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex System 1 Decision Engine — Live Demos & Head-to-Head Comparison vs TypeSafe AI (Jev).
+"""System 1 System 1 Decision Engine — Live Demos & Head-to-Head Comparison vs TypeSafe AI (Jev).
 
 Showcases 4 canonical software automation decision workloads highlighted by TypeSafe AI:
 1. Model Gateway & Dynamic Router (Routing to fast vs frontier models)
@@ -26,7 +26,7 @@ from system1 import (
     ChoiceField,
     DecisionSchema,
     MultiChoiceField,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
     SystemOneEngine,
 )
@@ -69,7 +69,7 @@ def run_model_routing_demo():
             high_description="Extreme multi-step architectural or formal proof complexity",
         )
 
-    engine = ReflexEngine(ModelRouterSchema, backend="auto")
+    engine = SystemOneEngine(ModelRouterSchema, backend="auto")
 
     # Train / calibrate on canonical routing pairs: (prompt, target_dict)
     training_data = [
@@ -142,7 +142,7 @@ def run_support_triage_demo():
             high_description="Extremely frustrated or furious customer demanding executive attention",
         )
 
-    engine = ReflexEngine(SupportTicketSchema, backend="auto")
+    engine = SystemOneEngine(SupportTicketSchema, backend="auto")
 
     tickets = [
         "I was charged $499 twice on my corporate Visa for invoice #88219!",
@@ -166,7 +166,7 @@ def run_support_triage_demo():
 
 def run_agent_guard_demo():
     print("\n" + "=" * 76)
-    print("  DEMO 3: AGENT TOOL GUARD & INTERCEPTION (Reflex Unfair Advantage)")
+    print("  DEMO 3: AGENT TOOL GUARD & INTERCEPTION (System 1 Unfair Advantage)")
     print("=" * 76)
     print("Use Case: Inspect proposed actions with hardware-enforced reference monitor & tamper-evident ledger.")
 
@@ -201,7 +201,7 @@ def run_agent_guard_demo():
         )
 
     ledger = ActionLedger(":memory:")
-    engine = ReflexEngine(AgentGuardSchema, ledger=ledger, backend="auto")
+    engine = SystemOneEngine(AgentGuardSchema, ledger=ledger, backend="auto")
 
     proposals = [
         "cat /etc/os-release",
@@ -264,7 +264,7 @@ def run_content_moderation_demo():
             high_description="Extremely abusive, toxic, or hazardous payload",
         )
 
-    engine = ReflexEngine(ModerationSchema, backend="auto")
+    engine = SystemOneEngine(ModerationSchema, backend="auto")
 
     content_samples = [
         "Thank you for the quick and helpful answer! Have a great day.",
@@ -299,10 +299,10 @@ def print_comparison_matrix():
         ("Cryptographic Proof", "Ed25519 RunWitnessEnvelope + ActionLedger", "None (Vendor JSON response)", "REFLEX WINS (Verifiable proof)"),
         ("Action Enforcement", "macOS Seatbelt Sandbox + Reference Monitor", "Advisory only (Software caller must enforce)", "REFLEX WINS (Hard kernel firewall)"),
     ]
-    print(f"{'Feature':<22} | {'Reflex System 1':<36} | {'TypeSafe AI (Jev)':<34} | {'Outcome'}")
+    print(f"{'Feature':<22} | {'System 1 System 1':<36} | {'TypeSafe AI (Jev)':<34} | {'Outcome'}")
     print("-" * 115)
-    for feat, reflex_val, jev, outcome in matrix:
-        print(f"{feat:<22} | {reflex_val:<36} | {jev:<34} | {outcome}")
+    for feat, system1_val, jev, outcome in matrix:
+        print(f"{feat:<22} | {system1_val:<36} | {jev:<34} | {outcome}")
     print("=" * 76 + "\n")
 
 

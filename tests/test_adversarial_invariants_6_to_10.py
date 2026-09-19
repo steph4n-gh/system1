@@ -34,13 +34,13 @@ from system1 import (
     ConformalPredictor,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     RegressionConformalInterval,
     RegressionConformalPredictor,
     ScoreField,
 )
-from system1.cache import CacheEntry, SemanticReflexCache
+from system1.cache import CacheEntry, SemanticSystemOneCache
 from system1.compat.typesafe import (
     Choice,
     CutoverPartition,
@@ -320,7 +320,7 @@ class CacheTestSchema(DecisionSchema):
 
 
 @pytest.fixture
-def cache_engine() -> ReflexEngine:
+def cache_engine() -> SystemOneEngine:
     exemplars = {
         "action": [
             ("read system logs", "ALLOW"),
@@ -338,9 +338,9 @@ def cache_engine() -> ReflexEngine:
             ("modify user privileges", 0.5),
         ] * 10,
     }
-    compiler = ReflexCompiler(CacheTestSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(CacheTestSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=exemplars)
-    return ReflexEngine(
+    return SystemOneEngine(
         CacheTestSchema,
         model=model,
         use_cache=True,
@@ -352,7 +352,7 @@ def cache_engine() -> ReflexEngine:
 class TestInvariants8And9CacheLifecycleStress:
     """Adversarial stress tests for cache lifecycle, online learning, and context isolation."""
 
-    def test_invariant_8_rapid_fire_online_learning_updates(self, cache_engine: ReflexEngine):
+    def test_invariant_8_rapid_fire_online_learning_updates(self, cache_engine: SystemOneEngine):
         """Stress test multi-cycle online learning updates with cache invalidation on single prompt."""
         engine = cache_engine
         prompt = "execute privileged command on node"
@@ -395,7 +395,7 @@ class TestInvariants8And9CacheLifecycleStress:
             assert post_query.values["is_safe"] == is_safe_target
             assert post_query.is_cache_hit is True
 
-    def test_invariant_8_multi_prompt_batch_eviction(self, cache_engine: ReflexEngine):
+    def test_invariant_8_multi_prompt_batch_eviction(self, cache_engine: SystemOneEngine):
         """Stress test eviction and online updates across 20 distinct prompts."""
         engine = cache_engine
         prompts = [f"probe network port {port} on cluster" for port in range(20)]
@@ -416,7 +416,7 @@ class TestInvariants8And9CacheLifecycleStress:
             res = engine.decide(p)
             assert res.values["action"] == "DENY"
 
-    def test_invariant_9_cross_parameter_cache_bleeding_isolation(self, cache_engine: ReflexEngine):
+    def test_invariant_9_cross_parameter_cache_bleeding_isolation(self, cache_engine: SystemOneEngine):
         """Invariant 9: Parameter permutations must produce cache misses without context bleeding."""
         engine = cache_engine
         prompt = "read system logs"
@@ -450,7 +450,7 @@ class TestInvariants8And9CacheLifecycleStress:
         r_orig_again = engine.decide(prompt, alpha=0.05, margin_threshold=0.15, strict=False, policy_scope="default")
         assert r_orig_again.is_cache_hit is True
 
-    def test_cache_mutation_defense(self, cache_engine: ReflexEngine):
+    def test_cache_mutation_defense(self, cache_engine: SystemOneEngine):
         """Mutating returned DecisionResult dictionaries must NEVER corrupt internal cache memory."""
         engine = cache_engine
         prompt = "read system logs"
@@ -472,7 +472,7 @@ class TestInvariants8And9CacheLifecycleStress:
         assert res2.probabilities["action"]["ALLOW"] <= 1.0
         assert res2.margins["action"] >= 0.0
 
-    def test_multi_threaded_concurrency_stress(self, cache_engine: ReflexEngine):
+    def test_multi_threaded_concurrency_stress(self, cache_engine: SystemOneEngine):
         """Concurrent readers and writers must not cause deadlock or data corruption."""
         engine = cache_engine
         errors: List[Exception] = []
@@ -544,11 +544,11 @@ class TestInvariant10CutoverPromotionStress:
             for i in range(10)
         ]
 
-        compiler = ReflexCompiler(schema=schema, dimension=128)
+        compiler = SystemOneCompiler(schema=schema, dimension=128)
         exemplars = {"verdict": [(h["state"], h["answers"]["verdict"]) for h in train_hist]}
         compiled = compiler.compile(exemplars=exemplars)
 
-        engine = ReflexEngine(schema, dimension=128)
+        engine = SystemOneEngine(schema, dimension=128)
         for fname, ch in compiled.heads.items():
             engine.model.heads[fname].set_weights(ch.weights, ch.biases)
 

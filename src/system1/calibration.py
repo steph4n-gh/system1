@@ -1,4 +1,4 @@
-"""Reflex Calibration & Split Conformal Prediction Engine.
+"""System 1 Calibration & Split Conformal Prediction Engine.
 
 Implements:
 1. Temperature Scaling & Platt Scaling with numerical stability.

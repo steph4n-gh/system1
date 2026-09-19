@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package reflex.v1;
 
-// ReflexService exposes the Reflex decision engine over gRPC for polyglot
+// SystemOneService exposes the System 1 decision engine over gRPC for polyglot
 // agent stacks (TypeScript, Go, Rust, etc.).
-service ReflexService {
+service SystemOneService {
   // Evaluate a prompt against a typed decision schema.
   rpc Decide(DecideRequest) returns (DecideResponse);
 

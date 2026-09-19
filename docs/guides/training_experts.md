@@ -1,4 +1,4 @@
-# Training, Distilling, and Deploying Reflex Domain Experts
+# Training, Distilling, and Deploying System 1 Domain Experts
 
 **The Comprehensive Practitioner Guide to Machine-Native System 1 Models**
 
@@ -12,14 +12,14 @@ In modern agentic architectures, foundation models (such as **OpenAI Astra & GPT
 - **Data Sovereignty Violations:** Context and sensitive data egress over public WAN.
 - **Fragile Availability:** Network timeouts, rate limits, and external service downtime.
 
-**Reflex Domain Experts** provide the missing **System 1 (fast reflex)** layer:
+**System 1 Domain Experts** provide the missing **System 1 (fast reflex)** layer:
 - **Sub-1ms Latency:** P50 forward pass executed directly in host memory via pure NumPy BLAS or Apple Silicon Metal.
 - **Ultra-Compact Footprint:** Standalone compiled `.s1m` binaries weighing **< 20 KB**.
 - **Provable Safety:** Finite-sample **Split Conformal Prediction** ($\mathbb{P}(Y^* \in \mathcal{C}_{1-\alpha}) \ge 1 - \alpha$) that halts and escalates ambiguous edge cases fail-closed.
 - **Sub-50µs Online Adaptation:** Real-time Sherman-Morrison rank-1 updates that absorb System 2 feedback without GPU backpropagation.
 - **Zero Data Egress:** 100% on-device, air-gapped, zero external network sockets opened.
 
-This guide provides an end-to-end blueprint for engineering, distilling, fine-tuning, and deploying Reflex Domain Experts in enterprise production.
+This guide provides an end-to-end blueprint for engineering, distilling, fine-tuning, and deploying System 1 Domain Experts in enterprise production.
 
 ```
                            ┌───────────────────────────────┐
@@ -33,7 +33,7 @@ This guide provides an end-to-end blueprint for engineering, distilling, fine-tu
                                            │ Miss
                                            ▼
                            ┌───────────────────────────────┐
-                           │   Reflex Domain Expert (.s1m) │
+                           │   System 1 Domain Expert (.s1m) │
                            │   • Pure NumPy BLAS / Metal   │
                            │   • Latency: < 0.5 - 1.0 ms   │
                            └───────────────┬───────────────┘
@@ -63,9 +63,9 @@ This guide provides an end-to-end blueprint for engineering, distilling, fine-tu
 
 ---
 
-## 1. What is a "Reflex Expert"?
+## 1. What is a "System 1 Expert"?
 
-A **Reflex Expert** is a compiled, portable, non-autoregressive decision model encapsulated in a single binary file with the `.s1m` (*System 1 Model*) extension.
+A **System 1 Expert** is a compiled, portable, non-autoregressive decision model encapsulated in a single binary file with the `.s1m` (*System 1 Model*) extension.
 
 ### 1.1 Architecture of a `.s1m` Binary Container
 
@@ -105,7 +105,7 @@ A `.s1m` binary is self-contained and architecturally independent:
 
 ## 2. The 4 Training & Distillation Pathways
 
-Reflex supports four complementary distillation pathways depending on data availability, lifecycle maturity, and operational constraints:
+System 1 supports four complementary distillation pathways depending on data availability, lifecycle maturity, and operational constraints:
 
 ```
                             TRAINING PATHWAYS
@@ -131,14 +131,14 @@ Zero-Shot Seed Expert     Synthetic Teacher          Supervised Dataset
 
 ### Pathway 1: Zero-Shot Seed Expert (Schema & Descriptions)
 
-When cold-starting a domain with zero historical data, Reflex compiles directly from the natural language field definitions and option descriptions in your `DecisionSchema`.
+When cold-starting a domain with zero historical data, System 1 compiles directly from the natural language field definitions and option descriptions in your `DecisionSchema`.
 
 #### Mathematical Mechanics: Contrastive Centering & Whitening
 In natural language schemas, candidate choices often share repetitive syntactic boilerplates (e.g., `"Customer request for billing invoice"` vs. `"Customer request for technical bug"`). This causes candidate vectors to bunch together in an acute cone around a common background vector $\mathbf{b}$:
 
 $$\mathbf{w}_k = \mathbf{b} + \mathbf{v}_k, \quad k \in \{1, \dots, K\}$$
 
-Reflex applies **Contrastive Option Centering & Whitening**:
+System 1 applies **Contrastive Option Centering & Whitening**:
 1. Compute the empirical centroid:
    $$\boldsymbol{\mu} = \frac{1}{K} \sum_{k=1}^K \mathbf{w}_k$$
 2. Center to isolate discriminative features:
@@ -153,7 +153,7 @@ This strictly achieves the **Welch / Rankin lower bound**, widening decision mar
 
 #### Code Example
 ```python
-from reflex import DecisionSchema, ChoiceField, BooleanField, ReflexEngine
+from reflex import DecisionSchema, ChoiceField, BooleanField, SystemOneEngine
 
 class InfraIncidentSchema(DecisionSchema):
     severity = ChoiceField(
@@ -171,7 +171,7 @@ class InfraIncidentSchema(DecisionSchema):
     )
 
 # Instant zero-shot seed engine directly on the metal (< 1ms setup)
-seed_engine = ReflexEngine(InfraIncidentSchema, contrastive_whitening=True)
+seed_engine = SystemOneEngine(InfraIncidentSchema, contrastive_whitening=True)
 decision = seed_engine.decide("PostgreSQL primary node kernel panic and replica desync")
 
 print(f"Severity: {decision.severity} (Confidence: {decision.confidences['severity']:.1%})")
@@ -182,20 +182,20 @@ print(f"Page On-Call: {decision.notify_oncall}")
 
 ### Pathway 2: Synthetic Teacher Distillation (Bootstrapping via LLMs)
 
-When zero-shot accuracy is insufficient for subtle edge cases, bootstrap an expert using synthetic generation distilled from a frontier model (OpenAI Astra, Anthropic Claude 5, Gemini 3.1) or Reflex's built-in template synthesizer.
+When zero-shot accuracy is insufficient for subtle edge cases, bootstrap an expert using synthetic generation distilled from a frontier model (OpenAI Astra, Anthropic Claude 5, Gemini 3.1) or System 1's built-in template synthesizer.
 
 #### Distillation Mechanics: Closed-Form Ridge Regression
-Reflex encodes $N$ prompt embeddings $\mathbf{X} \in \mathbb{R}^{N \times D}$ and target labels $\mathbf{Y} \in \mathbb{R}^{N \times K}$, then computes the global empirical risk minimizer in closed form in pure NumPy:
+System 1 encodes $N$ prompt embeddings $\mathbf{X} \in \mathbb{R}^{N \times D}$ and target labels $\mathbf{Y} \in \mathbb{R}^{N \times K}$, then computes the global empirical risk minimizer in closed form in pure NumPy:
 
 $$\mathbf{W}^* = (\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I}_{D})^{-1} \mathbf{X}^T \mathbf{Y}$$
 
-Rather than slow matrix inversion, Reflex solves the normal equations using **Cholesky Factorization** ($\mathbf{A} = \mathbf{L} \mathbf{L}^T$) in $<10$ ms.
+Rather than slow matrix inversion, System 1 solves the normal equations using **Cholesky Factorization** ($\mathbf{A} = \mathbf{L} \mathbf{L}^T$) in $<10$ ms.
 
 ```python
-from reflex.compiler import ReflexCompiler
+from reflex.compiler import SystemOneCompiler
 
 # 1. Initialize compiler with schema and regularization hyperparameter
-compiler = ReflexCompiler(
+compiler = SystemOneCompiler(
     InfraIncidentSchema,
     dimension=384,
     regularization=1.0,
@@ -248,7 +248,7 @@ historical_data = {
     ],
 }
 
-compiler = ReflexCompiler(InfraIncidentSchema, dimension=384, regularization=0.5)
+compiler = SystemOneCompiler(InfraIncidentSchema, dimension=384, regularization=0.5)
 
 # Compiles in ~8 ms in pure NumPy
 expert = compiler.compile(exemplars=historical_data, samples_per_choice=20)
@@ -295,12 +295,12 @@ if response.get("auto_cutover_active"):
 
 In dynamic production environments, decision boundaries must evolve as new edge cases emerge. Re-training an entire model with backpropagation is too slow and risks catastrophic forgetting.
 
-Reflex implements **Sub-50µs Online Sherman-Morrison Updates** with **Exponential Forgetting ($\lambda_f$)** and **Regularized Covariance Bounding**.
+System 1 implements **Sub-50µs Online Sherman-Morrison Updates** with **Exponential Forgetting ($\lambda_f$)** and **Regularized Covariance Bounding**.
 
 ### 3.1 Mathematical Derivation
 Let $\mathbf{P}_t = (\mathbf{X}_t^T \mathbf{X}_t + \lambda \mathbf{I})^{-1} \in \mathbb{R}^{(D+1) \times (D+1)}$ denote the inverse regularized covariance matrix, and $\mathbf{B}_t = \mathbf{X}_t^T \mathbf{Y}_t \in \mathbb{R}^{(D+1) \times K}$ denote the cross-covariance.
 
-When System 2 provides a corrective label $(\mathbf{x}, \mathbf{y}^*)$ for a difficult edge case, Reflex updates the model in closed form:
+When System 2 provides a corrective label $(\mathbf{x}, \mathbf{y}^*)$ for a difficult edge case, System 1 updates the model in closed form:
 
 1. **Rank-1 Inverse Covariance Update:**
    $$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left[ \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x} \mathbf{x}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}^T \mathbf{P}_t \mathbf{x}} \right]$$
@@ -310,7 +310,7 @@ When System 2 provides a corrective label $(\mathbf{x}, \mathbf{y}^*)$ for a dif
    $$\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$$
 
 ### 3.2 Covariance Windup Protection
-To prevent eigenvalue divergence (covariance windup) along unexcited subspace directions during prolonged continuous learning, Reflex enforces a trace-preserving spectral bound:
+To prevent eigenvalue divergence (covariance windup) along unexcited subspace directions during prolonged continuous learning, System 1 enforces a trace-preserving spectral bound:
 
 $$p_{\max} = \frac{50.0}{\max(10^{-4}, \lambda)}$$
 
@@ -352,7 +352,7 @@ assert new_eval.fields["severity"].selected_value == "P1_CRITICAL"
 
 ## 4. Mixture of Experts (MoE) Architecture
 
-Rather than forcing a single monolithic model to handle every enterprise department, Reflex enables a **Hierarchical 2-Tier Mixture of Experts (MoE)**:
+Rather than forcing a single monolithic model to handle every enterprise department, System 1 enables a **Hierarchical 2-Tier Mixture of Experts (MoE)**:
 
 ```
                             Incoming Request
@@ -378,15 +378,15 @@ Rather than forcing a single monolithic model to handle every enterprise departm
                  Total MoE Pipeline Latency: < 0.7 ms
 ```
 
-### 4.1 Benefits of Reflex MoE
+### 4.1 Benefits of System 1 MoE
 1. **Isolated Lifecycles:** Security experts can be updated and re-compiled hourly without touching infrastructure models.
 2. **Sub-Millisecond Pipeline:** Both Router and Specialized Experts execute via in-memory BLAS. The total pipeline P50 latency remains **< 0.7 ms**.
-3. **Conformal Safety Across Tiers:** If the Router's conformal set is ambiguous ($|\mathcal{C}_{\text{route}}| > 1$), Reflex can dispatch queries to multiple experts in parallel or escalate directly to System 2.
+3. **Conformal Safety Across Tiers:** If the Router's conformal set is ambiguous ($|\mathcal{C}_{\text{route}}| > 1$), System 1 can dispatch queries to multiple experts in parallel or escalate directly to System 2.
 
 ### 4.2 MoE Implementation Pattern
 ```python
-from reflex import DecisionSchema, ChoiceField, ReflexEngine
-from reflex.compiler import ReflexCompiler, CompiledSystemOneModel
+from reflex import DecisionSchema, ChoiceField, SystemOneEngine
+from reflex.compiler import SystemOneCompiler, CompiledSystemOneModel
 
 # 1. Define Router Schema
 class MoERouterSchema(DecisionSchema):
@@ -399,7 +399,7 @@ class MoERouterSchema(DecisionSchema):
     )
 
 # 2. Compile or load Domain Experts (dimension=256)
-router = ReflexCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
+router = SystemOneCompiler(MoERouterSchema, dimension=256).compile(samples_per_choice=15)
 sec_expert = CompiledSystemOneModel.load("models/security_expert.s1m")
 inf_expert = CompiledSystemOneModel.load("models/infra_incident_expert.s1m")
 
@@ -430,7 +430,7 @@ def dispatch_moe(query: str):
 
 ## 5. Hyperparameter Tuning Guide
 
-The following table summarizes the key hyperparameters in Reflex, their theoretical foundation, and recommended tuning ranges:
+The following table summarizes the key hyperparameters in System 1, their theoretical foundation, and recommended tuning ranges:
 
 | Parameter | Symbol | Default | Recommended Range | Operational Impact & Tuning Advice |
 |---|---|---|---|---|
@@ -439,7 +439,7 @@ The following table summarizes the key hyperparameters in Reflex, their theoreti
 | **Forgetting Factor** | $\lambda_f$ | `0.995` | `0.980` – `1.000` | **Online adaptation decay**. $\lambda_f = 1.0$ treats all feedback equally (stationary domains). $\lambda_f = 0.995$ has an effective memory window of $\sim \frac{1}{1 - \lambda_f} = 200$ samples, ideal for tracking concept drift. |
 | **Relative Odds Ratio** | $\gamma$ | `1.5` | `1.2` – `2.5` | **Margin dominance**. A class is included in the conformal set only if $\frac{p_{(1)}}{p_k} \le \gamma$. Raising $\gamma$ increases safety by retaining plausible secondary candidates. |
 | **Confidence Floor** | $\tau_0$ | `0.15` | `0.05` – `0.25` | **Probability truncation**. Suppresses options whose probability is below $\tau_0$, pruning noise and false escalations in multi-class fields. |
-| **Safety Margin** | $\tau_{\text{margin}}$ | `0.20` | `0.10` – `0.35` | **Minimum margin**. Enforces $p_{(1)} - p_{(2)} \ge \tau_{\text{margin}}$. If margin is violated, Reflex halts fail-closed and escalates to System 2. |
+| **Safety Margin** | $\tau_{\text{margin}}$ | `0.20` | `0.10` – `0.35` | **Minimum margin**. Enforces $p_{(1)} - p_{(2)} \ge \tau_{\text{margin}}$. If margin is violated, System 1 halts fail-closed and escalates to System 2. |
 | **Significance Level** | $\alpha$ | `0.05` | `0.01` – `0.10` | **Conformal miscoverage budget**. Guarantees empirical coverage $\ge 1 - \alpha = 95\%$. Use $\alpha = 0.01$ for mission-critical medical or financial applications. |
 | **Calibration Split** | $k_{\text{calib}}$ | `0.25` | `0.15` – `0.35` | **Held-out calibration ratio**. Proportion of training data reserved strictly for split conformal non-conformity calibration. |
 
@@ -447,7 +447,7 @@ The following table summarizes the key hyperparameters in Reflex, their theoreti
 
 ## 6. Production Deployment & CLI Reference
 
-Reflex includes full command-line support for compiling, benchmarking, and verifying domain experts:
+System 1 includes full command-line support for compiling, benchmarking, and verifying domain experts:
 
 ### 6.1 CLI Compilation
 Compile any schema into a production `.s1m` file in one command:
@@ -473,7 +473,7 @@ reflex verify-receipt receipts/decision_a1b2c3.json
 ```
 
 ### 6.3 Docker & Air-Gapped Packaging
-Because Reflex depends solely on pure NumPy BLAS, compiled experts can be deployed in ultra-lean, air-gapped container images (< 35 MB) with zero external internet access:
+Because System 1 depends solely on pure NumPy BLAS, compiled experts can be deployed in ultra-lean, air-gapped container images (< 35 MB) with zero external internet access:
 
 ```dockerfile
 FROM python:3.12-slim
@@ -494,6 +494,6 @@ CMD ["python3", "app.py"]
 
 ## 7. Conclusion: The Dual-Process Future
 
-Reflex domain experts transform high-frequency agent architectures by eliminating the 500ms latency penalty and multi-dollar token billing of cloud foundation models. 
+System 1 domain experts transform high-frequency agent architectures by eliminating the 500ms latency penalty and multi-dollar token billing of cloud foundation models. 
 
-By grounding **System 1 (Reflex)** in closed-form Ridge Regression, contrastive whitening, and finite-sample split conformal prediction, developers achieve **deterministic, microsecond-grade local execution** while reserving frontier reasoning models (**System 2**) strictly for genuine edge cases.
+By grounding **System 1 (System 1)** in closed-form Ridge Regression, contrastive whitening, and finite-sample split conformal prediction, developers achieve **deterministic, microsecond-grade local execution** while reserving frontier reasoning models (**System 2**) strictly for genuine edge cases.

@@ -1,13 +1,13 @@
-# Project: Reflex / System 1 Runtime Hardening
+# Project: System 1 / System 1 Runtime Hardening
 
 ## Architecture
-Reflex / System 1 is a dual-process cognitive architecture providing ultra-low-latency, non-autoregressive decision making on local metal (System 1 fast reflex) coupled with conformal ambiguity gating and online distillation from strategic deliberative planners (System 2 deliberate governor).
+System 1 / System 1 is a dual-process cognitive architecture providing ultra-low-latency, non-autoregressive decision making on local metal (System 1 fast reflex) coupled with conformal ambiguity gating and online distillation from strategic deliberative planners (System 2 deliberate governor).
 
 Key Hardening Architecture Pillars:
 1. **Authorization & Tool Execution Gating (R1)**:
-   - JSON-RPC protocol gating in `ReflexMCPProxy`: strictly route `tools/call` to tool dispatch; handle protocol requests (`ping`, `initialize`) with protocol responses and 0 tool invocations.
+   - JSON-RPC protocol gating in `SystemOneMCPProxy`: strictly route `tools/call` to tool dispatch; handle protocol requests (`ping`, `initialize`) with protocol responses and 0 tool invocations.
    - Comprehensive argument binding in LangChain and MCP tool wrappers: inspect parameter signatures, bind defaults, unpack positional `_args`, evaluate nested arguments without character truncation.
-   - Deterministic policy enforcement in `ReflexGuardHook`: evaluate principal, tenant, scope, target, action, and limits with absolute veto before statistical inference and caching.
+   - Deterministic policy enforcement in `SystemOneGuardHook`: evaluate principal, tenant, scope, target, action, and limits with absolute veto before statistical inference and caching.
    - Harmless sentinel execution: zero side effects on any rejection, error, or unauthenticated request.
 2. **Cryptographic Attestation & Audit Ledger Integrity (R2)**:
    - Authenticated receipt verification: strictly reject missing/None signatures, profile downgrades, malformed keys, and unauthenticated key substitution in `verify_decision_witness_receipt`.
@@ -81,15 +81,15 @@ Key Hardening Architecture Pillars:
 
 ## Interface Contracts
 ### Authorization & Proxy Contract
-- `ReflexMCPProxy.handle_call(request, executor, ...)`: Only invokes `executor` when JSON-RPC method is `tools/call`. Other methods return protocol responses with 0 executor calls.
-- `ReflexGuardHook.evaluate_proposal(proposal)`: First evaluates deterministic policy engine (`PolicyEngine`). If denied, returns `DENY` with absolute priority.
+- `SystemOneMCPProxy.handle_call(request, executor, ...)`: Only invokes `executor` when JSON-RPC method is `tools/call`. Other methods return protocol responses with 0 executor calls.
+- `SystemOneGuardHook.evaluate_proposal(proposal)`: First evaluates deterministic policy engine (`PolicyEngine`). If denied, returns `DENY` with absolute priority.
 - Tool argument extraction: Positional arguments, default parameters, and nested arguments are fully preserved in `proposal.arguments` without string length limits.
 
 ### Cryptographic Attestation & Ledger Contract
 - `verify_decision_witness_receipt(receipt_dict, public_key=...)`: Fails (returns `False` or raises) if signature is missing/None for authenticated profiles.
 - `compute_receipt_digest(receipt_dict)` and `unsigned_payload()`: Strictly include canonical `probabilities`. Any alteration in `receipt["probabilities"]` invalidates digest and signature.
-- `ReflexEngine.decide(..., ledger=...)`: Raises `LedgerWriteError` in fail-closed mode if ledger write fails; never silently passes.
-- `ReflexGuardHook.evaluate_proposal`: Checks `receipt.ledger_record_id is not None` before returning `ALLOW`.
+- `SystemOneEngine.decide(..., ledger=...)`: Raises `LedgerWriteError` in fail-closed mode if ledger write fails; never silently passes.
+- `SystemOneGuardHook.evaluate_proposal`: Checks `receipt.ledger_record_id is not None` before returning `ALLOW`.
 
 ### Conformal Calibration & Prediction Set Contract
 - `ConformalPredictor.predict_set(probs)`: Computes APS cumulative sums up to $\hat{q}$; does NOT apply `min_top_prob = 1 - q_hat`. Guarantees non-empty prediction sets on in-distribution inputs.
@@ -99,7 +99,7 @@ Key Hardening Architecture Pillars:
 
 ### Cache Lifecycle Contract
 - `CacheKey`: Binds `(prompt, schema_digest, model_version, policy_scope, alpha, margin_threshold, strict, telemetry)`.
-- `ReflexEngine.learn_from_tier2`: Bumps `model_version`, evicts pre-existing cache entries for prompt and related representations.
+- `SystemOneEngine.learn_from_tier2`: Bumps `model_version`, evicts pre-existing cache entries for prompt and related representations.
 - Returned `DecisionResult.values`: Deep copy of internal values dictionary.
 
 ### Cutover Promotion Contract
@@ -141,8 +141,8 @@ src/
 │   │   └── typesafe.py
 │   ├── proto/
 │   │   ├── reflex.proto
-│   │   ├── reflex_pb2.py
-│   │   └── reflex_pb2_grpc.py
+│   │   ├── system1_pb2.py
+│   │   └── system1_pb2_grpc.py
 │   └── integrations/
 │       ├── langchain.py
 │       └── mcp.py

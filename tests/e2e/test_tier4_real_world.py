@@ -5,7 +5,7 @@ Scenarios:
    agent actions (read-only, mutating, destructive, exfiltration) with audit ledger chaining.
 2. Dynamic Gateway Model Router: High-throughput API gateway offloading 75%+ of deterministic
    traffic to sub-2ms local reflex while routing ambiguous requests to frontier planners.
-3. Auto-Cutover Migration Simulation: Phased transition from cloud LLM APIs to local Reflex
+3. Auto-Cutover Migration Simulation: Phased transition from cloud LLM APIs to local System 1
    runtime with agreement tracking, latency speedup verification, and zero egress.
 4. Kahneman Dual-Process Cognitive Cycle: Fast reflex execution -> conformal ambiguity halt ->
    System 2 resolution -> online Sherman-Morrison distillation -> sub-2ms cache execution.
@@ -27,9 +27,9 @@ from reflex import (
     DecisionOutcome,
     DecisionSchema,
     DefaultGuardDecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneCompiler,
+    SystemOneEngine,
+    SystemOneGuardHook,
     ScoreField,
     TypeSafeClient,
 )
@@ -37,7 +37,7 @@ from reflex import (
 
 def test_scenario_autonomous_ai_tool_guard_pipeline(temp_ledger):
     """Scenario 1: Autonomous AI agent tool execution reference monitor."""
-    guard = ReflexGuardHook(
+    guard = SystemOneGuardHook(
         ledger=temp_ledger,
         auto_calibrate=True,
         min_confidence=0.50,
@@ -106,9 +106,9 @@ def test_scenario_dynamic_gateway_model_router():
         ] * 4,
     }
 
-    compiler = ReflexCompiler(RouterSchema, dimension=64)
+    compiler = SystemOneCompiler(RouterSchema, dimension=64)
     model = compiler.compile(exemplars=exemplars)
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         RouterSchema,
         model=model,
         enable_margin_gating=True,
@@ -137,7 +137,7 @@ def test_scenario_dynamic_gateway_model_router():
 
 
 def test_scenario_auto_cutover_migration_simulation(enforce_zero_network):
-    """Scenario 3: Auto-cutover migration from cloud API to local Reflex runtime."""
+    """Scenario 3: Auto-cutover migration from cloud API to local System 1 runtime."""
     client = TypeSafeClient(api_key="local-cutover-test")
 
     criteria = {
@@ -182,9 +182,9 @@ def test_scenario_dual_process_cognitive_cycle():
             },
         )
 
-    compiler = ReflexCompiler(CognitiveTaskSchema, dimension=64)
+    compiler = SystemOneCompiler(CognitiveTaskSchema, dimension=64)
     model = compiler.compile(samples_per_choice=5)
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         CognitiveTaskSchema,
         model=model,
         use_cache=True,

@@ -1,4 +1,4 @@
-"""Reflex Proof-Carrying Cryptographic Decision Receipts.
+"""System 1 Proof-Carrying Cryptographic Decision Receipts.
 
 Self-contained cryptographic decision verification using Ed25519 signatures,
 deterministic canonical JSON hashing, and tamper-evident RunWitnessEnvelope structures.
@@ -751,7 +751,7 @@ def create_decision_receipt(
         mutation_intent=envelope_payload_mutation,
         guard_receipt=envelope_payload_guard,
         effect_observation={
-            "type": "reflex_decision_evaluation",
+            "type": "system1_decision_evaluation",
             **({"signer_public_key": signer_pub_hex} if signer_pub_hex else {}),
         },
         readback_observation={"evaluated": True},

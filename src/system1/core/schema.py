@@ -34,7 +34,7 @@ def _validate_field_name(name: str) -> str:
 
 
 class DecisionField(ABC):
-    """Abstract base class for typed Reflex decision schema fields."""
+    """Abstract base class for typed System 1 decision schema fields."""
 
     field_type: ClassVar[str]
 
@@ -393,7 +393,7 @@ class SchemaMeta(type):
 
 
 class DecisionSchema(metaclass=SchemaMeta):
-    """Declarative or programmatic container for Reflex decision schemas.
+    """Declarative or programmatic container for System 1 decision schemas.
 
     Subclassing example:
         class AgentTriageSchema(DecisionSchema):

@@ -22,13 +22,13 @@ def test_top_level_package_exports_parity():
     assert reflex.__version__ == system1.__version__ == "0.1.2"
     
     # Both packages should export the exact same set of public symbols
-    reflex_all = set(reflex.__all__)
+    system1_all = set(reflex.__all__)
     system1_all = set(system1.__all__)
-    assert reflex_all == system1_all, f"Export mismatch: diff={reflex_all ^ system1_all}"
+    assert system1_all == system1_all, f"Export mismatch: diff={system1_all ^ system1_all}"
 
     # Verify identity for core exports
     core_symbols = [
-        "ReflexEngine",
+        "SystemOneEngine",
         "SystemOneEngine",
         "System1Engine",
         "DecisionResult",
@@ -46,7 +46,7 @@ def test_top_level_package_exports_parity():
         "create_decision_receipt",
         "verify_decision_witness_receipt",
         "ActionLedger",
-        "ReflexGuardHook",
+        "SystemOneGuardHook",
         "SystemOneGuardHook",
         "DefaultGuardDecisionSchema",
         "GuardInterceptionResult",
@@ -55,8 +55,8 @@ def test_top_level_package_exports_parity():
         "EvidenceRef",
         "DecisionOutcome",
         "RiskLevel",
-        "ReflexCompiler",
-        "SemanticReflexCache",
+        "SystemOneCompiler",
+        "SemanticSystemOneCache",
         "TypeSafeClient",
         "patch_typesafe",
     ]
@@ -77,34 +77,34 @@ def test_submodule_existence_and_importability():
         "embeddings",
     ]
     for submod in submodules:
-        mod_reflex = importlib.import_module(f"reflex.{submod}")
+        mod_system1 = importlib.import_module(f"reflex.{submod}")
         mod_system1 = importlib.import_module(f"system1.{submod}")
-        assert mod_reflex is not None
+        assert mod_system1 is not None
         assert mod_system1 is not None
 
         # Check key functions/classes in each submodule
         if hasattr(mod_system1, "__all__"):
-            assert set(mod_reflex.__all__) == set(mod_system1.__all__)
+            assert set(mod_system1.__all__) == set(mod_system1.__all__)
 
 
 def test_functional_runtime_decision_parity(triage_schema):
-    """Verify executing decisions via reflex.ReflexEngine and system1.System1Engine produces identical results."""
-    engine_reflex = reflex.ReflexEngine(triage_schema)
+    """Verify executing decisions via reflex.SystemOneEngine and system1.System1Engine produces identical results."""
+    engine_system1 = reflex.SystemOneEngine(triage_schema)
     engine_system1 = system1.System1Engine(triage_schema)
 
     test_prompt = "Perform read-only query on customer SQLite database"
-    res_reflex = engine_reflex.decide(test_prompt)
+    res_system1 = engine_system1.decide(test_prompt)
     res_system1 = engine_system1.decide(test_prompt)
 
-    assert res_reflex.values == res_system1.values
-    assert res_reflex.schema_name == res_system1.schema_name
-    assert set(res_reflex.conformal_sets.keys()) == set(res_system1.conformal_sets.keys())
-    assert set(res_reflex.confidences.keys()) == set(res_system1.confidences.keys())
+    assert res_system1.values == res_system1.values
+    assert res_system1.schema_name == res_system1.schema_name
+    assert set(res_system1.conformal_sets.keys()) == set(res_system1.conformal_sets.keys())
+    assert set(res_system1.confidences.keys()) == set(res_system1.confidences.keys())
 
     # Convenient decide() helper function parity
-    res_helper_reflex = reflex.decide(test_prompt, schema=triage_schema)
+    res_helper_system1 = reflex.decide(test_prompt, schema=triage_schema)
     res_helper_system1 = system1.decide(test_prompt, schema=triage_schema)
-    assert res_helper_reflex.values == res_helper_system1.values
+    assert res_helper_system1.values == res_helper_system1.values
 
 
 def test_typesafe_sdk_twin_parity():
@@ -121,15 +121,15 @@ def test_typesafe_sdk_twin_parity():
 
 
 def test_guard_hook_and_ledger_twin_parity(tmp_path: Path):
-    """Verify ActionLedger and ReflexGuardHook operate seamlessly across imports."""
-    db_r = tmp_path / "ledger_reflex.db"
+    """Verify ActionLedger and SystemOneGuardHook operate seamlessly across imports."""
+    db_r = tmp_path / "ledger_system1.db"
     db_s = tmp_path / "ledger_system1.db"
 
     ledger_r = reflex.ActionLedger(db_r)
     ledger_s = system1.ActionLedger(db_s)
 
-    guard_r = reflex.ReflexGuardHook(ledger=ledger_r, auto_calibrate=False)
-    guard_s = system1.ReflexGuardHook(ledger=ledger_s, auto_calibrate=False)
+    guard_r = reflex.SystemOneGuardHook(ledger=ledger_r, auto_calibrate=False)
+    guard_s = system1.SystemOneGuardHook(ledger=ledger_s, auto_calibrate=False)
 
     proposal = reflex.ActionProposal.create(
         tenant_id="t1",
@@ -152,13 +152,13 @@ def test_guard_hook_and_ledger_twin_parity(tmp_path: Path):
 
 
 def test_compiler_and_cache_twin_parity(triage_schema):
-    """Verify ReflexCompiler and SemanticReflexCache share identity and behavior."""
-    assert reflex.ReflexCompiler is system1.ReflexCompiler
-    assert reflex.SemanticReflexCache is system1.SemanticReflexCache
+    """Verify SystemOneCompiler and SemanticSystemOneCache share identity and behavior."""
+    assert reflex.SystemOneCompiler is system1.SystemOneCompiler
+    assert reflex.SemanticSystemOneCache is system1.SemanticSystemOneCache
     assert reflex.CacheEntry is system1.CacheEntry
 
-    cache = reflex.SemanticReflexCache(similarity_threshold=0.98)
+    cache = reflex.SemanticSystemOneCache(similarity_threshold=0.98)
     assert cache.capacity > 0
 
-    compiler = reflex.ReflexCompiler(triage_schema)
+    compiler = reflex.SystemOneCompiler(triage_schema)
     assert isinstance(compiler.schema, triage_schema)

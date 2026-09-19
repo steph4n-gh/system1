@@ -1,6 +1,6 @@
-"""Reflex OpenTelemetry Tracing Integration.
+"""System 1 OpenTelemetry Tracing Integration.
 
-Creates OpenTelemetry spans for Reflex decision evaluations, recording
+Creates OpenTelemetry spans for System 1 decision evaluations, recording
 latency, outcome, schema name, and cache-hit status as span attributes.
 
 Requires the optional ``opentelemetry-api`` and ``opentelemetry-sdk`` packages::
@@ -16,22 +16,22 @@ from typing import Any, Optional, TYPE_CHECKING
 from opentelemetry import trace
 
 if TYPE_CHECKING:
-    from system1.engine import DecisionResult, ReflexEngine
+    from system1.engine import DecisionResult, SystemOneEngine
 
 
 _TRACER_NAME = "reflex.decision_engine"
 
 
-class ReflexOTelInstrumentor:
-    """OpenTelemetry instrumentor for :class:`ReflexEngine`.
+class SystemOneOTelInstrumentor:
+    """OpenTelemetry instrumentor for :class:`SystemOneEngine`.
 
     Usage::
 
-        from system1.engine import ReflexEngine
-        from system1.integrations.otel import ReflexOTelInstrumentor
+        from system1.engine import SystemOneEngine
+        from system1.integrations.otel import SystemOneOTelInstrumentor
 
-        engine = ReflexEngine(MySchema)
-        instrumentor = ReflexOTelInstrumentor()
+        engine = SystemOneEngine(MySchema)
+        instrumentor = SystemOneOTelInstrumentor()
         instrumentor.instrument(engine)
     """
 
@@ -50,7 +50,7 @@ class ReflexOTelInstrumentor:
     # Instrumentation
     # ------------------------------------------------------------------
 
-    def instrument(self, engine: "ReflexEngine") -> "ReflexEngine":
+    def instrument(self, engine: "SystemOneEngine") -> "SystemOneEngine":
         """Wrap *engine.decide* to emit an OpenTelemetry span per decision.
 
         Returns the same engine instance (mutated) for chaining convenience.
@@ -114,4 +114,4 @@ class ReflexOTelInstrumentor:
         return self._tracer
 
 
-__all__ = ["ReflexOTelInstrumentor"]
+__all__ = ["SystemOneOTelInstrumentor"]

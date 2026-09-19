@@ -1,6 +1,6 @@
-"""Reflex gRPC Server — language-agnostic sidecar deployment mode.
+"""System 1 gRPC Server — language-agnostic sidecar deployment mode.
 
-Exposes the Reflex decision engine over gRPC so polyglot agent stacks
+Exposes the System 1 decision engine over gRPC so polyglot agent stacks
 (TypeScript, Go, Rust) can call Decide, Guard, VerifyReceipt, and
 HealthCheck without embedding the Python runtime.
 
@@ -42,7 +42,7 @@ except ImportError:  # pragma: no cover
 # ---------------------------------------------------------------------------
 _STUBS_AVAILABLE = False
 try:
-    from system1.proto import reflex_pb2, reflex_pb2_grpc  # type: ignore[attr-defined]
+    from system1.proto import system1_pb2, system1_pb2_grpc  # type: ignore[attr-defined]
 
     _STUBS_AVAILABLE = True
 except Exception:
@@ -83,11 +83,11 @@ def _load_schema_by_name(name: str, custom_schemas: Optional[Dict[str, Any]] = N
 # Servicer implementation
 # ---------------------------------------------------------------------------
 
-_BaseServicer = reflex_pb2_grpc.ReflexServiceServicer if _STUBS_AVAILABLE else object
+_BaseServicer = system1_pb2_grpc.SystemOneServiceServicer if _STUBS_AVAILABLE else object
 
 
-class ReflexServiceServicer(_BaseServicer):
-    """Implements the four ReflexService RPCs on top of the in-process engine."""
+class SystemOneServiceServicer(_BaseServicer):
+    """Implements the four SystemOneService RPCs on top of the in-process engine."""
 
     def __init__(
         self,
@@ -96,19 +96,19 @@ class ReflexServiceServicer(_BaseServicer):
         ledger: Optional[Any] = None,
         policy_engine: Optional[Any] = None,
     ) -> None:
-        from system1.engine import ReflexEngine
-        from system1.guard import ReflexGuardHook
+        from system1.engine import SystemOneEngine
+        from system1.guard import SystemOneGuardHook
 
         self._custom_schemas = schemas or {}
         self._signing_key = signing_key
         self._ledger = ledger
         self._policy_engine = policy_engine
-        self._engines: Dict[str, ReflexEngine] = {}
-        self._guard_hooks: Dict[str, ReflexGuardHook] = {}
+        self._engines: Dict[str, SystemOneEngine] = {}
+        self._guard_hooks: Dict[str, SystemOneGuardHook] = {}
 
         # Pre-warm engines for explicitly registered schemas.
         for name, schema in self._custom_schemas.items():
-            self._engines[name] = ReflexEngine(
+            self._engines[name] = SystemOneEngine(
                 schema,
                 signing_key=self._signing_key,
                 ledger=self._ledger,
@@ -117,12 +117,12 @@ class ReflexServiceServicer(_BaseServicer):
     # -- helpers ----------------------------------------------------------
 
     def _get_engine(self, schema_name: str):
-        from system1.engine import ReflexEngine
+        from system1.engine import SystemOneEngine
 
         key = schema_name or "triage"
         if key not in self._engines:
             schema = _load_schema_by_name(key, self._custom_schemas)
-            self._engines[key] = ReflexEngine(
+            self._engines[key] = SystemOneEngine(
                 schema,
                 signing_key=self._signing_key,
                 ledger=self._ledger,
@@ -130,7 +130,7 @@ class ReflexServiceServicer(_BaseServicer):
         return self._engines[key]
 
     def _get_guard_hook(self, schema_name: str):
-        from system1.guard import ReflexGuardHook
+        from system1.guard import SystemOneGuardHook
 
         key = schema_name or "guard"
         if key not in self._guard_hooks:
@@ -138,7 +138,7 @@ class ReflexServiceServicer(_BaseServicer):
                 engine = self._get_engine(key)
             except Exception:
                 engine = self._get_engine("guard")
-            self._guard_hooks[key] = ReflexGuardHook(
+            self._guard_hooks[key] = SystemOneGuardHook(
                 engine=engine,
                 signing_key=self._signing_key,
                 ledger=self._ledger,
@@ -313,7 +313,7 @@ class ReflexServiceServicer(_BaseServicer):
 
 
 # ---------------------------------------------------------------------------
-# Guard logic (mirrors ReflexGuardHook.evaluate_proposal without needing
+# Guard logic (mirrors SystemOneGuardHook.evaluate_proposal without needing
 # a full ActionProposal object)
 # ---------------------------------------------------------------------------
 
@@ -324,13 +324,13 @@ _GUARD_OUTCOME_REQUIRE_APPROVAL = "REQUIRE_APPROVAL"
 
 def _apply_guard_logic(decision, min_confidence: float, alpha: float):
     """Return (outcome_str, reason) applying the same fail-closed rules as
-    ``ReflexGuardHook.evaluate_proposal``."""
+    ``SystemOneGuardHook.evaluate_proposal``."""
     from system1.core import BooleanField, ChoiceField
 
     # 1. Safety boolean
     if "is_safe" in decision.values and not decision.values["is_safe"]:
         conf = decision.confidences.get("is_safe", 0.0)
-        return _GUARD_OUTCOME_DENY, f"Reflex classified action as unsafe (confidence: {conf:.3f})"
+        return _GUARD_OUTCOME_DENY, f"System 1 classified action as unsafe (confidence: {conf:.3f})"
 
     # 2. Conformal ambiguity / OOD
     engine_schema = None
@@ -343,22 +343,22 @@ def _apply_guard_logic(decision, min_confidence: float, alpha: float):
     for field_name, cset in decision.conformal_sets.items():
         if len(cset) == 0:
             return _GUARD_OUTCOME_REQUIRE_APPROVAL, (
-                f"Reflex detected out-of-distribution input for field {field_name!r} (empty conformal set)"
+                f"System 1 detected out-of-distribution input for field {field_name!r} (empty conformal set)"
             )
         if len(cset) > 1:
             return _GUARD_OUTCOME_REQUIRE_APPROVAL, (
-                f"Reflex conformal ambiguity for {field_name!r}: set {cset} has {len(cset)} candidates at 1-alpha={1.0 - alpha:.2f}"
+                f"System 1 conformal ambiguity for {field_name!r}: set {cset} has {len(cset)} candidates at 1-alpha={1.0 - alpha:.2f}"
             )
 
     # 3. Minimum confidence
     for field_name, conf in decision.confidences.items():
         if conf < min_confidence:
             return _GUARD_OUTCOME_REQUIRE_APPROVAL, (
-                f"Reflex calibrated confidence {conf:.3f} for {field_name!r} below required threshold {min_confidence:.3f}"
+                f"System 1 calibrated confidence {conf:.3f} for {field_name!r} below required threshold {min_confidence:.3f}"
             )
 
     # 4. All clear
-    return _GUARD_OUTCOME_ALLOW, f"Reflex verified action with full conformal confidence in {decision.latency_ms:.2f}ms"
+    return _GUARD_OUTCOME_ALLOW, f"System 1 verified action with full conformal confidence in {decision.latency_ms:.2f}ms"
 
 
 # ---------------------------------------------------------------------------
@@ -389,10 +389,10 @@ def _is_proto_call(request, context) -> bool:
     if hasattr(request, "DESCRIPTOR"):
         return True
     req_types = (
-        getattr(reflex_pb2, "DecideRequest", type(None)),
-        getattr(reflex_pb2, "GuardRequest", type(None)),
-        getattr(reflex_pb2, "VerifyReceiptRequest", type(None)),
-        getattr(reflex_pb2, "HealthCheckRequest", type(None)),
+        getattr(system1_pb2, "DecideRequest", type(None)),
+        getattr(system1_pb2, "GuardRequest", type(None)),
+        getattr(system1_pb2, "VerifyReceiptRequest", type(None)),
+        getattr(system1_pb2, "HealthCheckRequest", type(None)),
     )
     if isinstance(request, req_types):
         return True
@@ -407,7 +407,7 @@ def _is_proto_call(request, context) -> bool:
 
 def _empty_decide_response(as_protobuf: bool = False):
     if as_protobuf and _STUBS_AVAILABLE:
-        return reflex_pb2.DecideResponse()
+        return system1_pb2.DecideResponse()
     return _SimpleNamespace(
         schema_name="",
         schema_digest="",
@@ -438,8 +438,8 @@ def _build_decide_response(result, as_protobuf: bool = False):
         csets = {}
         for k, v in result.conformal_sets.items():
             members = [str(m) for m in v] if isinstance(v, (list, tuple, set)) else [str(v)]
-            csets[k] = reflex_pb2.ConformalSet(members=members)
-        return reflex_pb2.DecideResponse(
+            csets[k] = system1_pb2.ConformalSet(members=members)
+        return system1_pb2.DecideResponse(
             schema_name=result.schema_name or "",
             schema_digest=result.schema_digest or "",
             prompt=result.prompt or "",
@@ -474,7 +474,7 @@ def _build_decide_response(result, as_protobuf: bool = False):
 
 def _empty_guard_response(as_protobuf: bool = False):
     if as_protobuf and _STUBS_AVAILABLE:
-        return reflex_pb2.GuardResponse()
+        return system1_pb2.GuardResponse()
     return _SimpleNamespace(
         outcome=0,
         reason="",
@@ -510,8 +510,8 @@ def _build_guard_response(outcome_str, reason, decision, as_protobuf: bool = Fal
         csets = {}
         for k, v in decision.conformal_sets.items():
             members = [str(m) for m in v] if isinstance(v, (list, tuple, set)) else [str(v)]
-            csets[k] = reflex_pb2.ConformalSet(members=members)
-        return reflex_pb2.GuardResponse(
+            csets[k] = system1_pb2.ConformalSet(members=members)
+        return system1_pb2.GuardResponse(
             outcome=outcome_int,
             reason=reason or "",
             values=values,
@@ -538,7 +538,7 @@ def _build_guard_response(outcome_str, reason, decision, as_protobuf: bool = Fal
 
 def _build_verify_response(verified: bool, decision_id: str = "", receipt_digest: str = "", error: str = "", as_protobuf: bool = False):
     if as_protobuf and _STUBS_AVAILABLE:
-        return reflex_pb2.VerifyReceiptResponse(
+        return system1_pb2.VerifyReceiptResponse(
             verified=bool(verified),
             decision_id=decision_id or "",
             receipt_digest=receipt_digest or "",
@@ -558,8 +558,8 @@ def _build_health_response(schemas: List[str], as_protobuf: bool = False):
     except ImportError:
         _ver = "0.1.1"
     if as_protobuf and _STUBS_AVAILABLE:
-        return reflex_pb2.HealthCheckResponse(
-            status=reflex_pb2.HealthCheckResponse.SERVING,
+        return system1_pb2.HealthCheckResponse(
+            status=system1_pb2.HealthCheckResponse.SERVING,
             loaded_schemas=schemas or [],
             version=_ver,
         )
@@ -714,7 +714,7 @@ def serve(
             "pip install 'system1[grpc]'"
         )
 
-    servicer = ReflexServiceServicer(
+    servicer = SystemOneServiceServicer(
         schemas=schemas,
         signing_key=signing_key,
         ledger=ledger,
@@ -723,7 +723,7 @@ def serve(
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
 
     if _STUBS_AVAILABLE:
-        reflex_pb2_grpc.add_ReflexServiceServicer_to_server(servicer, server)
+        system1_pb2_grpc.add_SystemOneServiceServicer_to_server(servicer, server)
     else:
         handler = _make_generic_handler(servicer)
         server.add_generic_rpc_handlers([handler])
@@ -733,24 +733,24 @@ def serve(
     server.port = bound_port
     server.start()
 
-    logger.info("Reflex gRPC server listening on %s", listen_addr)
+    logger.info("System 1 gRPC server listening on %s", listen_addr)
     loaded = list((schemas or {}).keys()) or ["triage (default)"]
     logger.info("Loaded schemas: %s", ", ".join(loaded))
-    print(f"Reflex gRPC server started on {listen_addr}")
+    print(f"System 1 gRPC server started on {listen_addr}")
     print(f"Loaded schemas: {', '.join(loaded)}")
 
     if block:
         try:
             server.wait_for_termination()
         except KeyboardInterrupt:
-            print("\nShutting down Reflex gRPC server…")
+            print("\nShutting down System 1 gRPC server…")
             server.stop(grace=5)
 
     return server
 
 
 __all__ = [
-    "ReflexServiceServicer",
+    "SystemOneServiceServicer",
     "grpc_available",
     "serve",
 ]

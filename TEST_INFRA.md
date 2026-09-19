@@ -1,8 +1,8 @@
-# Test Infrastructure Specification: Reflex / System 1
+# Test Infrastructure Specification: System 1 / System 1
 
 ## 1. Philosophy: Opaque-Box, Requirement-Driven Verification
 
-The test infrastructure for Reflex / System 1 is engineered strictly around **opaque-box, requirement-driven verification**, directly anchored in the specifications set forth in `ORIGINAL_REQUEST.md` and `PROJECT.md`.
+The test infrastructure for System 1 / System 1 is engineered strictly around **opaque-box, requirement-driven verification**, directly anchored in the specifications set forth in `ORIGINAL_REQUEST.md` and `PROJECT.md`.
 
 In an opaque-box regime:
 - **No Reliance on Implementation Details**: Tests evaluate observable system behavior, input-output invariants, interface contracts, performance bounds, and security properties rather than private internal method signatures.
@@ -41,7 +41,7 @@ Interaction faults often manifest at the intersection of two distinct features:
 Realistic mission-critical operational patterns representing actual production deployments:
 1. **Autonomous AI Tool Guard Pipeline**: High-frequency interceptor of agent action proposals (file system reads, git commands, database transactions, destructive rm -rf, credential leakage) enforcing fail-closed protection.
 2. **Dynamic Gateway Model Router**: Real-time triage classifier routing requests between local sub-2ms reflex execution and cloud LLM escalations based on conformal ambiguity sets.
-3. **Auto-Cutover Migration Simulation**: Shadow evaluation and progressive traffic cutover from external LLM APIs to local Reflex runtime, measuring agreement rate, latency drop, and zero data egress.
+3. **Auto-Cutover Migration Simulation**: Shadow evaluation and progressive traffic cutover from external LLM APIs to local System 1 runtime, measuring agreement rate, latency drop, and zero data egress.
 
 ---
 

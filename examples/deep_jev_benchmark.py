@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reflex vs TypeSafe AI (Jev) Comprehensive Moat Benchmark Suite.
+"""System 1 vs TypeSafe AI (Jev) Comprehensive Moat Benchmark Suite.
 
 Executes real-world multi-scenario head-to-head testing comparing:
 1. Real HTTP WAN socket latency vs On-device Metal/BLAS execution latency
@@ -36,7 +36,7 @@ from system1 import (
     ChoiceField,
     DecisionSchema,
     MultiChoiceField,
-    ReflexEngine,
+    SystemOneEngine,
     ScoreField,
 )
 from system1.ledger import ActionLedger
@@ -132,7 +132,7 @@ def call_jev_api(
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "User-Agent": "Reflex-Moat-Benchmark/1.0",
+            "User-Agent": "System 1-Moat-Benchmark/1.0",
         },
     )
 
@@ -157,7 +157,7 @@ def run_benchmark(api_key: str):
     print("      REFLEX SYSTEM 1 vs. TYPESAFE AI (JEV): DEEP MOAT BENCHMARK")
     print("=" * 80)
     print(f"API Target:     https://api.typesafe.ai/v1/systemone (jev-latest)")
-    print(f"Reflex Target:  Local On-Device Engine (Apple Silicon Metal / NumPy BLAS)")
+    print(f"System 1 Target:  Local On-Device Engine (Apple Silicon Metal / NumPy BLAS)")
     print(f"Test Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime())}")
     print("=" * 80 + "\n")
 
@@ -298,7 +298,7 @@ def run_benchmark(api_key: str):
     ledger = ActionLedger(":memory:")
 
     jev_latencies: List[float] = []
-    reflex_latencies: List[float] = []
+    system1_latencies: List[float] = []
     total_egress_bytes = 0
     total_tokens_billed = 0
 
@@ -327,73 +327,73 @@ def run_benchmark(api_key: str):
         else:
             jev_answers_summary = {"status": "error_or_timeout"}
 
-        # 2. Evaluate on Reflex System 1
-        engine = ReflexEngine(case["schema_cls"], signing_key=signing_key, ledger=ledger, backend="auto")
+        # 2. Evaluate on System 1 System 1
+        engine = SystemOneEngine(case["schema_cls"], signing_key=signing_key, ledger=ledger, backend="auto")
         # Warmup
         _ = engine.decide(case["prompt"], record_receipt=False)
 
         t0 = time.perf_counter()
-        reflex_res = engine.decide(case["prompt"], alpha=0.05, record_receipt=True)
-        reflex_lat = (time.perf_counter() - t0) * 1000.0
-        reflex_latencies.append(reflex_lat)
+        system1_res = engine.decide(case["prompt"], alpha=0.05, record_receipt=True)
+        system1_lat = (time.perf_counter() - t0) * 1000.0
+        system1_latencies.append(system1_lat)
 
-        # 3. Verify Reflex Cryptographic Receipt
-        receipt_dict = reflex_res.receipt.to_dict()
+        # 3. Verify System 1 Cryptographic Receipt
+        receipt_dict = system1_res.receipt.to_dict()
         receipt_valid = verify_decision_witness_receipt(receipt_dict, public_key=signing_key.public_key())
 
-        speedup = jev_lat / reflex_lat if reflex_lat > 0 else 0.0
+        speedup = jev_lat / system1_lat if system1_lat > 0 else 0.0
 
         results_table.append({
             "id": case["id"],
             "name": case["name"],
             "jev_latency": jev_lat,
-            "reflex_latency": reflex_lat,
+            "system1_latency": system1_lat,
             "speedup": speedup,
             "egress_bytes": egress,
             "receipt_valid": receipt_valid,
-            "conformal_sets": reflex_res.conformal_sets,
+            "conformal_sets": system1_res.conformal_sets,
             "jev_answers": jev_answers_summary,
-            "reflex_answers": reflex_res.values,
+            "system1_answers": system1_res.values,
         })
 
     # Print Summary Table
     print("\n" + "=" * 92)
-    print(f"{'Test Case ID':<10} | {'Jev Cloud (ms)':<15} | {'Reflex Metal (ms)':<18} | {'Speedup Factor':<16} | {'Receipt Verified'}")
+    print(f"{'Test Case ID':<10} | {'Jev Cloud (ms)':<15} | {'System 1 Metal (ms)':<18} | {'Speedup Factor':<16} | {'Receipt Verified'}")
     print("-" * 92)
     for row in results_table:
-        print(f"{row['id']:<10} | {row['jev_latency']:>10.2f} ms   | {row['reflex_latency']:>12.3f} ms    | {row['speedup']:>12.1f}x     | {str(row['receipt_valid']):<15}")
+        print(f"{row['id']:<10} | {row['jev_latency']:>10.2f} ms   | {row['system1_latency']:>12.3f} ms    | {row['speedup']:>12.1f}x     | {str(row['receipt_valid']):<15}")
     print("=" * 92)
 
     # Throughput Burst Test
-    print("\n[*] Running 200-iteration Throughput Burst Benchmark on Reflex System 1...")
+    print("\n[*] Running 200-iteration Throughput Burst Benchmark on System 1 System 1...")
     t_bench = engine.benchmark(iterations=200)
-    print(f"    -> Reflex P50 Latency:    {t_bench.p50_latency_ms:.3f} ms")
-    print(f"    -> Reflex P95 Latency:    {t_bench.p95_latency_ms:.3f} ms")
-    print(f"    -> Reflex Throughput:     {t_bench.throughput_decisions_per_sec:.1f} decisions/sec per core")
+    print(f"    -> System 1 P50 Latency:    {t_bench.p50_latency_ms:.3f} ms")
+    print(f"    -> System 1 P95 Latency:    {t_bench.p95_latency_ms:.3f} ms")
+    print(f"    -> System 1 Throughput:     {t_bench.throughput_decisions_per_sec:.1f} decisions/sec per core")
 
     # Final Moat Summary
     mean_jev = float(np.mean(jev_latencies))
-    mean_reflex = float(np.mean(reflex_latencies))
-    overall_speedup = mean_jev / mean_reflex if mean_reflex > 0 else 0.0
+    mean_system1 = float(np.mean(system1_latencies))
+    overall_speedup = mean_jev / mean_system1 if mean_system1 > 0 else 0.0
 
     print("\n" + "#" * 80)
     print("                          REFLEX MOAT AUDIT SUMMARY")
     print("#" * 80)
-    print(f"1. LATENCY ADVANTAGE:      Reflex is {overall_speedup:.1f}x FASTER than Jev on average")
-    print(f"                           (Reflex Mean: {mean_reflex:.3f} ms vs Jev Mean: {mean_jev:.2f} ms)")
-    print(f"2. DATA EGRESS / PRIVACY:  Reflex: 0 BYTES sent over internet (100% on-device)")
+    print(f"1. LATENCY ADVANTAGE:      System 1 is {overall_speedup:.1f}x FASTER than Jev on average")
+    print(f"                           (System 1 Mean: {mean_system1:.3f} ms vs Jev Mean: {mean_jev:.2f} ms)")
+    print(f"2. DATA EGRESS / PRIVACY:  System 1: 0 BYTES sent over internet (100% on-device)")
     print(f"                           Jev:    {total_egress_bytes} BYTES of sensitive prompt text sent to cloud")
-    print(f"3. RUNTIME COST:           Reflex: $0.00 marginal cost")
+    print(f"3. RUNTIME COST:           System 1: $0.00 marginal cost")
     print(f"                           Jev:    {total_tokens_billed} tokens billed for 5 requests")
-    print(f"4. AUDIT & REPUTATION:     Reflex: 100% Cryptographically signed (Ed25519) + SQLite Hash Chain")
+    print(f"4. AUDIT & REPUTATION:     System 1: 100% Cryptographically signed (Ed25519) + SQLite Hash Chain")
     print(f"                           Jev:    0% Cryptographic evidence (ephemeral HTTP JSON)")
-    print(f"5. SAFETY CONFINEMENT:     Reflex: Fail-closed Reference Monitor with Split Conformal Bounds")
+    print(f"5. SAFETY CONFINEMENT:     System 1: Fail-closed Reference Monitor with Split Conformal Bounds")
     print(f"                           Jev:    Advisory caller-side JSON recommendation")
     print("#" * 80 + "\n")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Deep Moat Benchmark: Reflex vs TypeSafe AI (Jev)")
+    parser = argparse.ArgumentParser(description="Deep Moat Benchmark: System 1 vs TypeSafe AI (Jev)")
     parser.add_argument(
         "--api-key",
         default=os.environ.get("TYPESAFE_API_KEY", ""),

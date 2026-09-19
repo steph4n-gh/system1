@@ -24,9 +24,9 @@ from reflex import (
     DecisionSchema,
     DefaultGuardDecisionSchema,
     Noul,
-    ReflexCompiler,
-    ReflexEngine,
-    ReflexGuardHook,
+    SystemOneCompiler,
+    SystemOneEngine,
+    SystemOneGuardHook,
     Score,
     TypeSafeClient,
     verify_decision_witness_receipt,
@@ -38,7 +38,7 @@ def test_combo_conformal_gate_ed25519_receipt_and_ledger(temp_ledger, triage_sch
     signing_key = Ed25519PrivateKey.generate()
     pub_key = signing_key.public_key()
 
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         triage_schema,
         signing_key=signing_key,
         ledger=temp_ledger,
@@ -66,7 +66,7 @@ def test_combo_conformal_gate_ed25519_receipt_and_ledger(temp_ledger, triage_sch
 def test_combo_concurrent_multithread_ledger_chaining(temp_ledger, triage_schema):
     """Verify concurrent multi-threaded engine evaluations maintain unbroken hash chain."""
     signing_key = Ed25519PrivateKey.generate()
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         triage_schema,
         signing_key=signing_key,
         ledger=temp_ledger,
@@ -119,9 +119,9 @@ def test_combo_compiler_sherman_morrison_and_l1_cache():
         "is_safe": [(p, d["is_safe"]) for p, d in _DEFAULT_GUARD_CALIBRATION],
         "risk_category": [(p, d["risk_category"]) for p, d in _DEFAULT_GUARD_CALIBRATION],
     }
-    compiler = ReflexCompiler(DefaultGuardDecisionSchema, dimension=64)
+    compiler = SystemOneCompiler(DefaultGuardDecisionSchema, dimension=64)
     model = compiler.compile(exemplars=exemplars)
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         DefaultGuardDecisionSchema,
         model=model,
         use_cache=True,
@@ -151,7 +151,7 @@ def test_combo_compiler_sherman_morrison_and_l1_cache():
 
 def test_combo_guard_hook_interception_denial_and_ledger_audit(temp_ledger):
     """Verify Reference Monitor intercepts unsafe actions and logs verifiable denials in the ledger."""
-    guard = ReflexGuardHook(ledger=temp_ledger, auto_calibrate=True, min_confidence=0.50, alpha=0.10)
+    guard = SystemOneGuardHook(ledger=temp_ledger, auto_calibrate=True, min_confidence=0.50, alpha=0.10)
 
     # 1. Allowed safe proposal
     safe_prop = ActionProposal.create(

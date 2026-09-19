@@ -31,8 +31,8 @@ from system1 import (
     DecisionCalibrator,
     DecisionResult,
     DecisionSchema,
-    ReflexCompiler,
-    ReflexEngine,
+    SystemOneCompiler,
+    SystemOneEngine,
     RegressionConformalInterval,
     RegressionConformalPredictor,
     ScoreField,
@@ -124,7 +124,7 @@ def test_invariant_7_valid_order_statistic_within_n_returns_calibrated_margin():
 
 
 def test_score_and_serialization_harmonization_roundtrip(tmp_path: Path):
-    """Verify {name}_calib_scores are serialized in .s1m and restored identically in ReflexEngine."""
+    """Verify {name}_calib_scores are serialized in .s1m and restored identically in SystemOneEngine."""
     exemplars = {
         "severity": [
             ("Core database server corrupted disk failure", "P1"),
@@ -152,7 +152,7 @@ def test_score_and_serialization_harmonization_roundtrip(tmp_path: Path):
         ] * 5,
     }
 
-    compiler = ReflexCompiler(IncidentClassificationSchema, dimension=64, regularization=0.5)
+    compiler = SystemOneCompiler(IncidentClassificationSchema, dimension=64, regularization=0.5)
     model = compiler.compile(exemplars=exemplars)
 
     # Check that compiler populated calibration_scores on each head
@@ -179,8 +179,8 @@ def test_score_and_serialization_harmonization_roundtrip(tmp_path: Path):
     assert np.allclose(orig_scores, disk_scores)
 
     # Initialize engines with original and reloaded models
-    engine_orig = ReflexEngine(IncidentClassificationSchema, model=model)
-    engine_reloaded = ReflexEngine(IncidentClassificationSchema, model=reloaded_from_bytes)
+    engine_orig = SystemOneEngine(IncidentClassificationSchema, model=model)
+    engine_reloaded = SystemOneEngine(IncidentClassificationSchema, model=reloaded_from_bytes)
 
     # Verify conformal predictors in engine received calibration scores
     assert len(engine_reloaded.conformal_predictors["severity"].calibration_scores) == len(orig_scores)
@@ -240,9 +240,9 @@ def test_prediction_set_cardinality_escalation_in_strict_mode():
 
 
 def test_engine_strict_mode_cardinality_escalation():
-    """Verify ReflexEngine.decide(strict=True) escalates whenever cardinality != 1."""
+    """Verify SystemOneEngine.decide(strict=True) escalates whenever cardinality != 1."""
     schema = IncidentClassificationSchema()
-    engine = ReflexEngine(schema, strict_mode=False, enable_margin_gating=True)
+    engine = SystemOneEngine(schema, strict_mode=False, enable_margin_gating=True)
 
     # Mock conformal predictor to return 2 candidates
     cp = engine.conformal_predictors["severity"]
@@ -268,4 +268,4 @@ def test_twin_namespace_parity_for_conformal_components():
     assert system1.RegressionConformalPredictor is reflex.RegressionConformalPredictor
     assert system1.RegressionConformalInterval is reflex.RegressionConformalInterval
     assert system1.DecisionCalibrator is reflex.DecisionCalibrator
-    assert system1.ReflexEngine is reflex.ReflexEngine
+    assert system1.SystemOneEngine is reflex.SystemOneEngine

@@ -27,7 +27,7 @@ venv_python = REPO_ROOT / ".venv" / "bin" / "python"
 if venv_python.is_file() and sys.executable != str(venv_python):
     os.execv(str(venv_python), [str(venv_python)] + sys.argv)
 
-from pokemon_showdown_reflex import main
+from pokemon_showdown_system1 import main
 
 if __name__ == "__main__":
     main()

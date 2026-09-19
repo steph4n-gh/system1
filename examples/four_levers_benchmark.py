@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Benchmark and Showcase for the 4 Tier 1 Architectural Levers:
 
-1. Lever 1: Tier 0 Semantic Reflex Cache (L1 Vector/Exact Cache, <0.05ms execution)
+1. Lever 1: Tier 0 Semantic System 1 Cache (L1 Vector/Exact Cache, <0.05ms execution)
 2. Lever 2: Online Sherman-Morrison Distillation (closed-form rank-1 update, <0.1ms)
 3. Lever 3: Margin-Based Conformal Gating (M(x) = s_{(1)} - s_{(2)} >= tau_margin)
 4. Lever 4: Continuous Telemetry State Vector Fusion (multimodal decision hyperplanes)
@@ -17,9 +17,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from system1.schema import DecisionSchema, ChoiceField, BooleanField, ScoreField
-from system1.compiler import ReflexCompiler, CompiledSystemOneModel
-from system1.engine import ReflexEngine
-from system1.cache import SemanticReflexCache
+from system1.compiler import SystemOneCompiler, CompiledSystemOneModel
+from system1.engine import SystemOneEngine
+from system1.cache import SemanticSystemOneCache
 from system1.telemetry import TelemetryProjector
 from system1.calibration import ConformalPredictor
 
@@ -73,14 +73,14 @@ def run_benchmark():
 
     # 0. Compilation Phase
     print("\n[Phase 0] Compiling Heuristics into Ultra-Compact .s1m Binary...")
-    compiler = ReflexCompiler(CloudGatewayFirewallSchema, dimension=128, regularization=0.5)
+    compiler = SystemOneCompiler(CloudGatewayFirewallSchema, dimension=128, regularization=0.5)
     exemplars = get_gateway_exemplars()
     compiled_model = compiler.compile(exemplars=exemplars)
 
     model_bytes = compiled_model.to_bytes()
     print(f"  ✓ Model successfully compiled: {len(model_bytes):,} bytes (< 20 KB footprint)")
 
-    engine = ReflexEngine(
+    engine = SystemOneEngine(
         CloudGatewayFirewallSchema,
         model=compiled_model,
         use_cache=True,
@@ -90,10 +90,10 @@ def run_benchmark():
     )
 
     # ==========================================================================
-    # Lever 1: Tier 0 Semantic Reflex Cache
+    # Lever 1: Tier 0 Semantic System 1 Cache
     # ==========================================================================
     print("\n" + "-" * 80)
-    print("[Lever 1] Tier 0 Semantic Reflex Cache (Sub-0.05ms L1 Vector/Exact Cache)")
+    print("[Lever 1] Tier 0 Semantic System 1 Cache (Sub-0.05ms L1 Vector/Exact Cache)")
     print("-" * 80)
 
     test_prompt = "GET /api/v1/health status 200 OK standard client keep-alive"
@@ -225,7 +225,7 @@ def run_benchmark():
     ] * 20  # 100 queries total
 
     # Run without 4 Levers (Vanilla baseline)
-    vanilla_engine = ReflexEngine(
+    vanilla_engine = SystemOneEngine(
         CloudGatewayFirewallSchema,
         model=compiler.compile(exemplars=exemplars),
         use_cache=False,
@@ -240,8 +240,8 @@ def run_benchmark():
             baseline_escalations += 1
     t_vanilla_ms = (time.perf_counter() - t_start) * 1000.0
 
-    # Run with All 4 Levers Active (Adaptive System 1 Reflex)
-    smart_engine = ReflexEngine(
+    # Run with All 4 Levers Active (Adaptive System 1 System 1)
+    smart_engine = SystemOneEngine(
         CloudGatewayFirewallSchema,
         model=compiler.compile(exemplars=exemplars),
         use_cache=True,
@@ -268,7 +268,7 @@ def run_benchmark():
 
     print(f"\n  [Workload: 100 Queries across 5 repeating dynamic operational patterns]")
     print(f"  Vanilla System 1 Escalations: {baseline_escalations}/100 ({baseline_escalations}%) | Total Time: {t_vanilla_ms:.2f} ms")
-    print(f"  4-Levers Reflex Escalations:  {smart_escalations}/100 ({smart_escalations}%) | Total Time: {t_smart_ms:.2f} ms")
+    print(f"  4-Levers System 1 Escalations:  {smart_escalations}/100 ({smart_escalations}%) | Total Time: {t_smart_ms:.2f} ms")
     print(f"  Tier 2 Escalation Reduction:  {((baseline_escalations - smart_escalations) / max(1, baseline_escalations)) * 100.0:.1f}% reduction")
     print(f"  Second-Pass Repeat Ambiguity: 0% (100% Certified Execution via L1 Cache & Distillation)")
 

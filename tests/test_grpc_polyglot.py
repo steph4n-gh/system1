@@ -1,7 +1,7 @@
 """Tests for Polyglot gRPC / Protobuf Packaging, Wire Serialization, and Twin-Namespace Symmetry.
 
 Verifies:
-1. Live gRPC server communication with compiled ReflexServiceStub over binary wire.
+1. Live gRPC server communication with compiled SystemOneServiceStub over binary wire.
 2. All 4 gRPC RPCs: Decide, Guard, VerifyReceipt, HealthCheck.
 3. Binary protobuf serialization/deserialization fidelity (SerializeToString / ParseFromString).
 4. Twin-namespace packaging symmetry:
@@ -18,8 +18,8 @@ from typing import Any, Dict
 import pytest
 try:
     import grpc
-    from system1.proto import reflex_pb2, reflex_pb2_grpc, reflex_proto_path as s1_proto_path
-    from reflex.proto import reflex_pb2 as r_pb2, reflex_pb2_grpc as r_pb2_grpc, reflex_proto_path as reflex_proto_path
+    from system1.proto import system1_pb2, system1_pb2_grpc, system1_proto_path as s1_proto_path
+    from reflex.proto import system1_pb2 as r_pb2, system1_pb2_grpc as r_pb2_grpc, system1_proto_path as system1_proto_path
     _GRPC_AVAILABLE = True
 except ImportError:
     _GRPC_AVAILABLE = False
@@ -28,8 +28,8 @@ if not _GRPC_AVAILABLE:
     pytest.skip("grpcio not installed", allow_module_level=True)
 
 from system1.core import BooleanField, ChoiceField, DecisionSchema
-from system1.engine import ReflexEngine
-from system1.grpc_server import ReflexServiceServicer
+from system1.engine import SystemOneEngine
+from system1.grpc_server import SystemOneServiceServicer
 
 
 @pytest.fixture(scope="module")
@@ -41,17 +41,17 @@ def simple_engine():
         },
         schema_name="auth_policy",
     )
-    return ReflexEngine(schema, dimension=64)
+    return SystemOneEngine(schema, dimension=64)
 
 
 @pytest.fixture(scope="module")
 def live_grpc_server(simple_engine):
     """Spawns an in-process live gRPC server on a dynamic local port."""
     server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=2))
-    from system1.grpc_server import ReflexServiceServicer
-    servicer = ReflexServiceServicer(schemas={"auth_policy": simple_engine.schema})
+    from system1.grpc_server import SystemOneServiceServicer
+    servicer = SystemOneServiceServicer(schemas={"auth_policy": simple_engine.schema})
     servicer._engines["auth_policy"] = simple_engine
-    reflex_pb2_grpc.add_ReflexServiceServicer_to_server(servicer, server)
+    system1_pb2_grpc.add_SystemOneServiceServicer_to_server(servicer, server)
 
     port = server.add_insecure_port("127.0.0.1:0")
     server.start()
@@ -63,9 +63,9 @@ def test_grpc_decide_wire_call(live_grpc_server):
     """Verify Decide RPC receives protobuf request and returns compiled protobuf response."""
     addr, servicer = live_grpc_server
     channel = grpc.insecure_channel(addr)
-    stub = reflex_pb2_grpc.ReflexServiceStub(channel)
+    stub = system1_pb2_grpc.SystemOneServiceStub(channel)
 
-    req = reflex_pb2.DecideRequest(
+    req = system1_pb2.DecideRequest(
         prompt="Authorization request from user bob",
         schema_name="auth_policy",
         alpha=0.05,
@@ -74,7 +74,7 @@ def test_grpc_decide_wire_call(live_grpc_server):
     resp = stub.Decide(req)
     channel.close()
 
-    assert isinstance(resp, reflex_pb2.DecideResponse)
+    assert isinstance(resp, system1_pb2.DecideResponse)
     assert resp.schema_name == "auth_policy"
     assert resp.prompt == "Authorization request from user bob"
     assert "action" in resp.values
@@ -88,9 +88,9 @@ def test_grpc_guard_wire_call(live_grpc_server):
     """Verify Guard RPC executes policy evaluation over binary gRPC."""
     addr, servicer = live_grpc_server
     channel = grpc.insecure_channel(addr)
-    stub = reflex_pb2_grpc.ReflexServiceStub(channel)
+    stub = system1_pb2_grpc.SystemOneServiceStub(channel)
 
-    req = reflex_pb2.GuardRequest(
+    req = system1_pb2.GuardRequest(
         prompt="Safe health inspection probe",
         schema_name="auth_policy",
         alpha=0.05,
@@ -99,11 +99,11 @@ def test_grpc_guard_wire_call(live_grpc_server):
     resp = stub.Guard(req)
     channel.close()
 
-    assert isinstance(resp, reflex_pb2.GuardResponse)
+    assert isinstance(resp, system1_pb2.GuardResponse)
     assert resp.outcome in (
-        reflex_pb2.ALLOW,
-        reflex_pb2.DENY,
-        reflex_pb2.REQUIRE_APPROVAL,
+        system1_pb2.ALLOW,
+        system1_pb2.DENY,
+        system1_pb2.REQUIRE_APPROVAL,
     )
     assert "action" in resp.values
     assert len(resp.receipt_json) > 0
@@ -113,7 +113,7 @@ def test_grpc_verify_receipt_wire_call(live_grpc_server, simple_engine):
     """Verify VerifyReceipt RPC validates cryptographic receipts over gRPC."""
     addr, servicer = live_grpc_server
     channel = grpc.insecure_channel(addr)
-    stub = reflex_pb2_grpc.ReflexServiceStub(channel)
+    stub = system1_pb2_grpc.SystemOneServiceStub(channel)
 
     # Generate a genuine signed receipt from engine
     import json
@@ -121,7 +121,7 @@ def test_grpc_verify_receipt_wire_call(live_grpc_server, simple_engine):
     assert res.receipt is not None
     receipt_bytes = json.dumps(res.receipt.to_dict()).encode("utf-8")
 
-    req = reflex_pb2.VerifyReceiptRequest(
+    req = system1_pb2.VerifyReceiptRequest(
         receipt_json=receipt_bytes,
         public_key_hex="",
     )
@@ -129,7 +129,7 @@ def test_grpc_verify_receipt_wire_call(live_grpc_server, simple_engine):
     resp = stub.VerifyReceipt(req)
     channel.close()
 
-    assert isinstance(resp, reflex_pb2.VerifyReceiptResponse)
+    assert isinstance(resp, system1_pb2.VerifyReceiptResponse)
     assert resp.verified is True
     assert resp.decision_id == res.receipt.decision_id
     assert resp.receipt_digest == res.receipt.digest
@@ -139,21 +139,21 @@ def test_grpc_health_check_wire_call(live_grpc_server):
     """Verify HealthCheck RPC returns serving status and loaded schemas."""
     addr, servicer = live_grpc_server
     channel = grpc.insecure_channel(addr)
-    stub = reflex_pb2_grpc.ReflexServiceStub(channel)
+    stub = system1_pb2_grpc.SystemOneServiceStub(channel)
 
-    req = reflex_pb2.HealthCheckRequest()
+    req = system1_pb2.HealthCheckRequest()
     resp = stub.HealthCheck(req)
     channel.close()
 
-    assert isinstance(resp, reflex_pb2.HealthCheckResponse)
-    assert resp.status == reflex_pb2.HealthCheckResponse.SERVING
+    assert isinstance(resp, system1_pb2.HealthCheckResponse)
+    assert resp.status == system1_pb2.HealthCheckResponse.SERVING
     assert "auth_policy" in resp.loaded_schemas
     assert resp.version in ("0.1.0", "0.1.2", "1.0.0")
 
 
 def test_protobuf_binary_serialization_round_trip():
     """Verify exact binary serialization and deserialization of protobuf messages."""
-    original_req = reflex_pb2.DecideRequest(
+    original_req = system1_pb2.DecideRequest(
         prompt="Binary wire test prompt with special characters: ⚡ α = 0.05",
         schema_name="enterprise_policy_v2",
         alpha=0.01,
@@ -166,7 +166,7 @@ def test_protobuf_binary_serialization_round_trip():
     assert len(wire_bytes) > 0
 
     # Deserialize back
-    parsed_req = reflex_pb2.DecideRequest()
+    parsed_req = system1_pb2.DecideRequest()
     parsed_req.ParseFromString(wire_bytes)
 
     assert parsed_req.prompt == original_req.prompt
@@ -251,13 +251,13 @@ def test_twin_namespace_observability_mirrors():
         import system1.integrations.observability as s_obs
         import system1.integrations.otel as s_otel
 
-        assert hasattr(r_obs, "ReflexMetricsExporter")
-        assert hasattr(s_obs, "ReflexMetricsExporter")
-        assert r_obs.ReflexMetricsExporter is s_obs.ReflexMetricsExporter
+        assert hasattr(r_obs, "SystemOneMetricsExporter")
+        assert hasattr(s_obs, "SystemOneMetricsExporter")
+        assert r_obs.SystemOneMetricsExporter is s_obs.SystemOneMetricsExporter
 
-        assert hasattr(r_otel, "ReflexOTelInstrumentor")
-        assert hasattr(s_otel, "ReflexOTelInstrumentor")
-        assert r_otel.ReflexOTelInstrumentor is s_otel.ReflexOTelInstrumentor
+        assert hasattr(r_otel, "SystemOneOTelInstrumentor")
+        assert hasattr(s_otel, "SystemOneOTelInstrumentor")
+        assert r_otel.SystemOneOTelInstrumentor is s_otel.SystemOneOTelInstrumentor
     finally:
         # Restore sys.modules so downstream test files are not contaminated
         if orig_prom is None:
@@ -281,7 +281,7 @@ def test_twin_namespace_observability_mirrors():
 def test_twin_namespace_proto_assets():
     """Verify that .proto files exist in both namespaces and are identical."""
     s1_path = Path(s1_proto_path())
-    r_path = Path(reflex_proto_path())
+    r_path = Path(system1_proto_path())
 
     assert s1_path.is_file(), f"Proto file missing at {s1_path}"
     assert r_path.is_file(), f"Proto file missing at {r_path}"
@@ -291,7 +291,7 @@ def test_twin_namespace_proto_assets():
 
     assert s1_content == r_content
     assert 'syntax = "proto3";' in s1_content
-    assert "service ReflexService" in s1_content
+    assert "service SystemOneService" in s1_content
     # Confirm deprecated option is removed
     assert "python_generic_services" not in s1_content
 

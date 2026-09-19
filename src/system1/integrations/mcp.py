@@ -1,4 +1,4 @@
-"""Reflex MCP (Model Context Protocol) Safety Proxy.
+"""System 1 MCP (Model Context Protocol) Safety Proxy.
 
 Intercepts MCP JSON-RPC tool calls on local metal in < 1ms with fail-closed
 conformal gating and Ed25519 digital witness receipts.
@@ -11,29 +11,29 @@ import inspect
 import json
 from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 from system1.guard import (
     ActionProposal,
     DecisionOutcome,
     GuardInterceptionResult,
     PolicyDecision,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     RiskLevel,
 )
 from system1.ledger import ActionLedger
 from system1.receipt import DecisionWitnessReceipt, create_decision_receipt
-from system1.integrations.langchain import ReflexIndeterminateExecutionError
+from system1.integrations.langchain import SystemOneIndeterminateExecutionError
 
 
-class ReflexMCPBlockedError(PermissionError):
-    """Raised when an MCP tool call fails Reflex safety or conformal ambiguity checks."""
+class SystemOneMCPBlockedError(PermissionError):
+    """Raised when an MCP tool call fails System 1 safety or conformal ambiguity checks."""
 
     def __init__(self, interception: GuardInterceptionResult):
         self.interception = interception
         self.outcome = interception.outcome
         self.reason = interception.reason
         self.policy_decision = interception.policy_decision
-        super().__init__(f"Reflex MCP Security Interception: {self.outcome.value} - {self.reason}")
+        super().__init__(f"System 1 MCP Security Interception: {self.outcome.value} - {self.reason}")
 
     def to_jsonrpc_error(self, request_id: Any = None) -> Dict[str, Any]:
         """Formats into standard JSON-RPC 2.0 error response with audit proof."""
@@ -42,7 +42,7 @@ class ReflexMCPBlockedError(PermissionError):
             "id": request_id,
             "error": {
                 "code": -32000,
-                "message": f"Reflex Safety Gate: {self.outcome.value} - {self.reason}",
+                "message": f"System 1 Safety Gate: {self.outcome.value} - {self.reason}",
                 "data": {
                     "outcome": self.outcome.value,
                     "reason": self.reason,
@@ -58,7 +58,7 @@ class ReflexMCPBlockedError(PermissionError):
         }
 
 
-class ReflexMCPProxy:
+class SystemOneMCPProxy:
     """Fail-closed Reference Monitor for Model Context Protocol (MCP) tool execution.
     
     Evaluates MCP `tools/call` JSON-RPC requests on local metal in < 1ms.
@@ -67,7 +67,7 @@ class ReflexMCPProxy:
 
     def __init__(
         self,
-        guard: Optional[ReflexGuardHook] = None,
+        guard: Optional[SystemOneGuardHook] = None,
         *,
         ledger: Optional[ActionLedger] = None,
         alpha: float = 0.10,
@@ -75,7 +75,7 @@ class ReflexMCPProxy:
         tenant_id: str = "tenant_mcp_default",
         principal_id: str = "agent_mcp_client",
     ):
-        self.guard = guard or ReflexGuardHook(
+        self.guard = guard or SystemOneGuardHook(
             ledger=ledger,
             alpha=alpha,
             min_confidence=min_confidence,
@@ -92,7 +92,7 @@ class ReflexMCPProxy:
         client_session_id: Optional[str] = None,
         context_prompt: Optional[str] = None,
     ) -> GuardInterceptionResult:
-        """Evaluates an MCP tool call proposal against Reflex fail-closed gates."""
+        """Evaluates an MCP tool call proposal against System 1 fail-closed gates."""
         if executor is not None and inspect.iscoroutinefunction(executor):
             raise TypeError("evaluate_mcp_call cannot execute an async coroutine. Use async_handle_call instead.")
             
@@ -208,7 +208,7 @@ class ReflexMCPProxy:
         if interception.outcome == DecisionOutcome.ALLOW:
             return True, None, interception
         else:
-            err = ReflexMCPBlockedError(interception)
+            err = SystemOneMCPBlockedError(interception)
             return False, err.to_jsonrpc_error(request_id=req_id), interception
 
     def handle_call(
@@ -500,17 +500,17 @@ class ReflexMCPProxy:
 def wrap_mcp_tool(
     func: Optional[Any] = None,
     *,
-    guard: Optional[ReflexGuardHook] = None,
-    proxy: Optional[ReflexMCPProxy] = None,
+    guard: Optional[SystemOneGuardHook] = None,
+    proxy: Optional[SystemOneMCPProxy] = None,
     alpha: float = 0.20,
     min_confidence: float = 0.50,
     tool_name: Optional[str] = None,
 ) -> Callable:
-    """Decorator to protect any Python function exposed as an MCP tool with Reflex fail-closed safety."""
-    if isinstance(func, ReflexMCPProxy):
+    """Decorator to protect any Python function exposed as an MCP tool with System 1 fail-closed safety."""
+    if isinstance(func, SystemOneMCPProxy):
         proxy = func
         func = None
-    resolved_proxy = proxy or ReflexMCPProxy(guard=guard, alpha=alpha, min_confidence=min_confidence)
+    resolved_proxy = proxy or SystemOneMCPProxy(guard=guard, alpha=alpha, min_confidence=min_confidence)
 
     def decorator(fn: Callable) -> Callable:
         resolved_name = tool_name or getattr(fn, "__name__", "tool")
@@ -547,7 +547,7 @@ def wrap_mcp_tool(
                 )
 
                 if interception.outcome != DecisionOutcome.ALLOW:
-                    raise ReflexMCPBlockedError(interception)
+                    raise SystemOneMCPBlockedError(interception)
 
                 prop = getattr(interception, "proposal", None)
                 if isinstance(prop, ActionProposal):
@@ -604,7 +604,7 @@ def wrap_mcp_tool(
                             trusted_public_key=pub_key,
                         )
                     except Exception as le:
-                        raise ReflexIndeterminateExecutionError(
+                        raise SystemOneIndeterminateExecutionError(
                             f"MCP wrapped tool executed but outcome recording failed (status: INDETERMINATE): {le}",
                             action_id=action_id,
                             receipt_digest=receipt_digest,
@@ -645,7 +645,7 @@ def wrap_mcp_tool(
                 )
 
                 if interception.outcome != DecisionOutcome.ALLOW:
-                    raise ReflexMCPBlockedError(interception)
+                    raise SystemOneMCPBlockedError(interception)
 
                 prop = getattr(interception, "proposal", None)
                 if isinstance(prop, ActionProposal):
@@ -704,7 +704,7 @@ def wrap_mcp_tool(
                                 trusted_public_key=pub_key,
                             )
                         except Exception as le:
-                            raise ReflexIndeterminateExecutionError(
+                            raise SystemOneIndeterminateExecutionError(
                                 f"MCP wrapped tool executed but outcome recording failed (status: INDETERMINATE): {le}",
                                 action_id=action_id,
                                 receipt_digest=receipt_digest,
@@ -734,7 +734,7 @@ def wrap_mcp_tool(
 
         wrapper.__name__ = getattr(fn, "__name__", "wrapper")
         wrapper.__doc__ = getattr(fn, "__doc__", "")
-        wrapper.__reflex_proxy__ = resolved_proxy  # type: ignore[attr-defined]
+        wrapper.__system1_proxy__ = resolved_proxy  # type: ignore[attr-defined]
         return wrapper
 
     if func is not None:
@@ -743,8 +743,8 @@ def wrap_mcp_tool(
 
 
 __all__ = [
-    "ReflexIndeterminateExecutionError",
-    "ReflexMCPBlockedError",
-    "ReflexMCPProxy",
+    "SystemOneIndeterminateExecutionError",
+    "SystemOneMCPBlockedError",
+    "SystemOneMCPProxy",
     "wrap_mcp_tool",
 ]

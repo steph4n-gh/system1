@@ -54,12 +54,12 @@ from system1.core.schema import (
 )
 
 SingleChoiceField = ChoiceField
-ReflexSchema = DecisionSchema
+SystemOneSchema = DecisionSchema
 
-from system1.engine import DecisionResult, ReflexEngine
-from system1.cache import CacheEntry, SemanticReflexCache, validate_cache_inputs
+from system1.engine import DecisionResult, SystemOneEngine
+from system1.cache import CacheEntry, SemanticSystemOneCache, validate_cache_inputs
 from system1.calibration import ConformalPredictor, RegressionConformalPredictor
-from system1.compiler import ReflexCompiler
+from system1.compiler import SystemOneCompiler
 from system1.compat.typesafe import (
     CutoverPartition,
     PromotionPolicy,
@@ -79,13 +79,13 @@ class TestPreLookupInputValidation:
     """Tests input validation before cache key formatting or index traversal."""
 
     def test_cache_validate_prompt(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         for invalid_prompt in [123, None, ["query"], {"q": "val"}]:
             with pytest.raises(TypeError, match="Prompt must be a string"):
                 cache.get(invalid_prompt)  # type: ignore
 
     def test_cache_validate_alpha(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         for invalid_alpha in [0.0, 1.0, -0.05, 1.5, float("nan")]:
             with pytest.raises(ValueError, match="Significance level alpha must be in"):
                 cache.get("test prompt", alpha=invalid_alpha)
@@ -94,25 +94,25 @@ class TestPreLookupInputValidation:
             cache.get("test prompt", alpha="invalid")  # type: ignore
 
     def test_cache_validate_margin_threshold(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         for invalid_m in [-0.01, -1.0, float("nan")]:
             with pytest.raises(ValueError, match="margin_threshold must be non-negative"):
                 cache.get("test prompt", margin_threshold=invalid_m)
 
     def test_cache_validate_odds_ratio(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         for invalid_odds in [0.0, -0.5, float("nan")]:
             with pytest.raises(ValueError, match="relative_odds_ratio must be positive"):
                 cache.get("test prompt", relative_odds_ratio=invalid_odds)
 
     def test_cache_validate_confidence_floor(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         for invalid_floor in [-0.1, -10.0, float("nan")]:
             with pytest.raises(ValueError, match="confidence_floor_tau0 must be non-negative"):
                 cache.get("test prompt", confidence_floor_tau0=invalid_floor)
 
     def test_cache_validate_telemetry(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(TypeError, match="telemetry must be a Mapping, Sequence, or ndarray"):
             cache.get("test prompt", telemetry=object())
 
@@ -120,7 +120,7 @@ class TestPreLookupInputValidation:
             cache.get("test prompt", telemetry=np.array([1.0, np.nan, 2.0]))
 
     def test_cache_validate_embedding(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         with pytest.raises(ValueError, match="embedding contains NaN or infinite values"):
             cache.get("test prompt", embedding=np.array([1.0, np.inf, 2.0]))
 
@@ -128,11 +128,11 @@ class TestPreLookupInputValidation:
             cache.get("test prompt", embedding=np.zeros((2, 2)))
 
     def test_engine_decide_pre_lookup_validation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestValidation",
             fields={"decision": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         # Invalid prompt
         with pytest.raises(TypeError, match="Prompt must be a string"):
@@ -167,13 +167,13 @@ class TestCacheAmbiguityPreservation:
     """Verifies that cache hits preserve evaluated ambiguity and escalated fields."""
 
     def test_cache_hit_preserves_ambiguous_evaluation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestAmbiguity",
             fields={
                 "action": SingleChoiceField(["allow", "review", "block"]),
             },
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         prompt = "Suspicious financial transfer exceeding standard thresholds"
 
         res1 = engine.decide(prompt, alpha=0.05)
@@ -210,11 +210,11 @@ class TestCacheAmbiguityPreservation:
         assert hit_res.escalated_fields == ["action"]
 
     def test_cache_hit_preserves_unambiguous_evaluation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestUnambiguous",
             fields={"status": SingleChoiceField(["ok", "fail"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         prompt = "Routine benign ping"
 
         res1 = engine.decide(prompt, alpha=0.05)
@@ -257,7 +257,7 @@ class TestCacheKeyBindingAndStrictMode:
     """Verifies full 64-hex SHA-256 telemetry digest binding and strict mode semantics."""
 
     def test_full_64_hex_telemetry_digest(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         telemetry = {"user_id": "usr_99", "risk": 0.88, "context": "us-east"}
         telem_dig = s1_cache._digest_telemetry(telemetry)
 
@@ -270,7 +270,7 @@ class TestCacheKeyBindingAndStrictMode:
         assert telem_dig in key
 
     def test_cache_key_binds_all_policy_parameters(self):
-        cache = SemanticReflexCache()
+        cache = SemanticSystemOneCache()
         base_kwargs = {
             "prompt": "test query",
             "telemetry": {"device": "mobile"},
@@ -312,7 +312,7 @@ class TestCacheKeyBindingAndStrictMode:
             assert new_key != base_key, f"Key failed to vary on param {param}"
 
     def test_strict_mode_suppresses_approximate_semantic_search(self):
-        cache = SemanticReflexCache(similarity_threshold=0.8)
+        cache = SemanticSystemOneCache(similarity_threshold=0.8)
         emb1 = np.array([1.0, 0.0, 0.0], dtype=np.float32)
         emb2 = np.array([0.99, 0.05, 0.0], dtype=np.float32)  # High cosine similarity > 0.99
 
@@ -341,11 +341,11 @@ class TestAtomicVersioningAndConcurrency:
     """Verifies thread-safe atomic updates under RLock during online learning."""
 
     def test_atomic_learn_from_tier2_version_and_invalidation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestAtomic",
             fields={"decision": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
         prompt = "User login attempt from anomalous ASN"
 
         initial_v = engine.model_version
@@ -369,11 +369,11 @@ class TestAtomicVersioningAndConcurrency:
         assert res_after.values["decision"] == "deny"
 
     def test_concurrent_decide_and_learn_under_rlock(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestConcurrency",
             fields={"status": SingleChoiceField(["pass", "fail"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8, use_cache=True)
+        engine = SystemOneEngine(schema=schema, dimension=8, use_cache=True)
 
         prompts = [f"System health check probe {i}" for i in range(20)]
         stop_flag = False
@@ -413,11 +413,11 @@ class TestDecoupledCalibrationFolds:
     """Verifies temperature scaling and conformal prediction use independent folds."""
 
     def test_engine_calibrate_splits_folds_deterministically(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestDecoupledFolds",
             fields={"decision": SingleChoiceField(["low", "medium", "high"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         # Create distinct calibration observations
         dataset = [
@@ -433,11 +433,11 @@ class TestDecoupledCalibrationFolds:
         assert len(pred.calibration_scores) > 0
 
     def test_compiler_calibration_split_disjoint(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestCompilerFolds",
             fields={"category": SingleChoiceField(["cat_a", "cat_b", "cat_c"])},
         )
-        compiler = ReflexCompiler(schema=schema)
+        compiler = SystemOneCompiler(schema=schema)
         # Synthetic exemplars
         exemplars = compiler.generate_synthetic_exemplars(samples_per_choice=6)
         assert len(exemplars["category"]) >= 18
@@ -482,11 +482,11 @@ class TestMultilabelAndRegressionUncertaintyGating:
     """Verifies conformal uncertainty escalation for MultiChoiceField and ScoreField."""
 
     def test_multichoice_field_uncertainty_escalation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestMultiChoiceGating",
             fields={"tags": MultiChoiceField(["pii", "financial", "confidential", "public"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         res = engine.decide("Unseen prompt with high entropy across multi-choice tags")
         assert "tags" in res.values
@@ -494,11 +494,11 @@ class TestMultilabelAndRegressionUncertaintyGating:
         assert "tags" in res.conformal_sets
 
     def test_score_field_uncertainty_escalation(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestScoreFieldGating",
             fields={"risk_score": ScoreField(min_value=0.0, max_value=10.0)},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         res = engine.decide("Prompt requesting credit increase")
         assert "risk_score" in res.values
@@ -557,11 +557,11 @@ class TestSmallSampleEliminationAndZeroChecks:
     """Verifies total_checks == 0 is rejected and small-sample threshold is not relaxed."""
 
     def test_reject_zero_scored_checks(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestGateDZero",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(min_agreement_threshold=0.80)
 
         report = evaluate_promotion_eligibility(engine, [], schema=schema, policy=policy)
@@ -570,11 +570,11 @@ class TestSmallSampleEliminationAndZeroChecks:
         assert report.total_validation_checks == 0
 
     def test_no_relaxation_for_small_samples(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestGateDSmall",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
         policy = PromotionPolicy(
             min_agreement_threshold=0.80,
             require_statistical_bound=False,
@@ -664,11 +664,11 @@ class TestMandatoryStatisticalAcceptance:
         assert low_100 > 0.96
 
     def test_rejection_on_critical_false_allow(self):
-        schema = ReflexSchema(
+        schema = SystemOneSchema(
             schema_name="TestGateDCritical",
             fields={"action": SingleChoiceField(["allow", "deny"])},
         )
-        engine = ReflexEngine(schema=schema, dimension=8)
+        engine = SystemOneEngine(schema=schema, dimension=8)
 
         # Force engine to predict "allow"
         policy = PromotionPolicy(
@@ -730,12 +730,12 @@ class TestTwinNamespaceParity:
     """Verifies that all classes and methods in system1 and reflex are identical and aligned."""
 
     def test_cache_namespace_parity(self):
-        assert rx_cache.SemanticReflexCache is s1_cache.SemanticReflexCache
+        assert rx_cache.SemanticSystemOneCache is s1_cache.SemanticSystemOneCache
         assert rx_cache.CacheEntry is s1_cache.CacheEntry
         assert rx_cache.validate_cache_inputs is s1_cache.validate_cache_inputs
 
     def test_engine_namespace_parity(self):
-        assert rx_eng.ReflexEngine is s1_eng.ReflexEngine
+        assert rx_eng.SystemOneEngine is s1_eng.SystemOneEngine
         assert rx_eng.DecisionResult is s1_eng.DecisionResult
 
     def test_calibration_namespace_parity(self):

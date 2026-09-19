@@ -1,4 +1,4 @@
-"""Reflex Core Telemetry Module (re-export from system1.core.telemetry)."""
+"""System 1 Core Telemetry Module (re-export from system1.core.telemetry)."""
 from __future__ import annotations
 
 from system1.core.telemetry import *

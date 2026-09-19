@@ -1,4 +1,4 @@
-"""System 1: Machine-Native Decision Runtime (Reflex).
+"""System 1: Machine-Native Decision Runtime (System 1).
 
 High-performance, non-autoregressive decision engine implementing Daniel Kahneman's System 1
 fast cognitive layer, designed to pair with deliberate System 2 governors (Astra, Fable, Gemini, or Grok).
@@ -83,8 +83,8 @@ def decide(
     """
     if not isinstance(prompt, str):
         raise TypeError(f"Prompt must be a string, got {type(prompt).__name__}")
-    from system1.engine import ReflexEngine
-    engine_instance = ReflexEngine(
+    from system1.engine import SystemOneEngine
+    engine_instance = SystemOneEngine(
         schema,
         dimension=dimension,
         backend=backend,
@@ -146,12 +146,12 @@ _MODULE_MAP = {
     "schema": "system1.schema",
     "telemetry": "system1.telemetry",
     # cache (Lever 1)
-    "SemanticReflexCache": "system1.cache",
+    "SemanticSystemOneCache": "system1.cache",
     "CacheEntry": "system1.cache",
     # telemetry (Lever 4)
     "TelemetryProjector": "system1.telemetry",
     # engine
-    "ReflexEngine": "system1.engine",
+    "SystemOneEngine": "system1.engine",
     "SystemOneEngine": "system1.engine",
     "System1Engine": "system1.engine",
     "DecisionResult": "system1.engine",
@@ -184,8 +184,8 @@ _MODULE_MAP = {
     "LedgerWriteError": "system1.ledger",
     "IntegrityError": "system1.ledger",
     # guard
-    "ReflexGuard": "system1.guard",
-    "ReflexGuardHook": "system1.guard",
+    "SystemOneGuard": "system1.guard",
+    "SystemOneGuardHook": "system1.guard",
     "SystemOneGuard": "system1.guard",
     "SystemOneGuardHook": "system1.guard",
     "PolicyRule": "system1.guard",
@@ -224,17 +224,17 @@ _MODULE_MAP = {
     "DotDict": "system1.compat.typesafe",
     "ZeroEgressViolationError": "system1.compat.typesafe",
     # compiler
-    "ReflexCompiler": "system1.compiler",
+    "SystemOneCompiler": "system1.compiler",
     "CompiledSystemOneModel": "system1.compiler",
     # integrations
-    "ReflexMCPProxy": "system1.integrations",
-    "ReflexMCPBlockedError": "system1.integrations",
+    "SystemOneMCPProxy": "system1.integrations",
+    "SystemOneMCPBlockedError": "system1.integrations",
     "wrap_mcp_tool": "system1.integrations",
-    "ReflexGatewayMiddleware": "system1.integrations",
-    "add_reflex_gateway": "system1.integrations",
-    "ReflexGuardCallbackHandler": "system1.integrations",
-    "ReflexToolInterceptor": "system1.integrations",
-    "ReflexGuardBlockedException": "system1.integrations",
+    "SystemOneGatewayMiddleware": "system1.integrations",
+    "add_system1_gateway": "system1.integrations",
+    "SystemOneGuardCallbackHandler": "system1.integrations",
+    "SystemOneToolInterceptor": "system1.integrations",
+    "SystemOneGuardBlockedException": "system1.integrations",
     "wrap_langchain_tool": "system1.integrations",
 }
 
@@ -261,7 +261,7 @@ __all__ = [
     # Version
     "__version__",
     # Engine & Core Results
-    "ReflexEngine",
+    "SystemOneEngine",
     "SystemOneEngine",
     "System1Engine",
     "DecisionResult",
@@ -312,8 +312,8 @@ __all__ = [
     "LedgerWriteError",
     "IntegrityError",
     # Reference Monitor & Guard
-    "ReflexGuard",
-    "ReflexGuardHook",
+    "SystemOneGuard",
+    "SystemOneGuardHook",
     "SystemOneGuard",
     "SystemOneGuardHook",
     "PolicyRule",
@@ -362,21 +362,21 @@ __all__ = [
     "DotDict",
     "ZeroEgressViolationError",
     # Compiler
-    "ReflexCompiler",
+    "SystemOneCompiler",
     "CompiledSystemOneModel",
     # 4 Levers (Cache, Telemetry, Online Update, Margin Gating)
-    "SemanticReflexCache",
+    "SemanticSystemOneCache",
     "CacheEntry",
     "TelemetryProjector",
     "evaluate",
     # Framework Integrations (MCP, FastAPI, LangChain)
-    "ReflexMCPProxy",
-    "ReflexMCPBlockedError",
+    "SystemOneMCPProxy",
+    "SystemOneMCPBlockedError",
     "wrap_mcp_tool",
-    "ReflexGatewayMiddleware",
-    "add_reflex_gateway",
-    "ReflexGuardCallbackHandler",
-    "ReflexToolInterceptor",
-    "ReflexGuardBlockedException",
+    "SystemOneGatewayMiddleware",
+    "add_system1_gateway",
+    "SystemOneGuardCallbackHandler",
+    "SystemOneToolInterceptor",
+    "SystemOneGuardBlockedException",
     "wrap_langchain_tool",
 ]

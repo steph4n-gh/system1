@@ -25,7 +25,7 @@ from unittest.mock import MagicMock
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-from system1.engine import DecisionResult, ReflexEngine
+from system1.engine import DecisionResult, SystemOneEngine
 from system1.guard import (
     ActionProposal,
     ActionState,
@@ -40,19 +40,19 @@ from system1.guard import (
     PolicyDecision,
     PolicyEngine,
     PolicyRule,
-    ReflexGuardHook,
+    SystemOneGuardHook,
     RiskLevel,
 )
 from system1.integrations.langchain import (
-    ReflexGuardBlockedException,
-    ReflexGuardCallbackHandler,
-    ReflexIndeterminateExecutionError,
-    ReflexToolInterceptor,
+    SystemOneGuardBlockedException,
+    SystemOneGuardCallbackHandler,
+    SystemOneIndeterminateExecutionError,
+    SystemOneToolInterceptor,
     wrap_langchain_tool,
 )
 from system1.integrations.mcp import (
-    ReflexMCPBlockedError,
-    ReflexMCPProxy,
+    SystemOneMCPBlockedError,
+    SystemOneMCPProxy,
     wrap_mcp_tool,
 )
 from system1.ledger import ActionLedger, LedgerError, LedgerWriteError
@@ -115,7 +115,7 @@ class AdversarialSentinel:
 def test_attack1_permissive_allow_before_restrictive_deny_permutation():
     """Attack 1.1: Register multiple permissive ALLOW rules BEFORE restrictive DENY rules.
     
-    Verifies that PolicyEngine and ReflexGuardHook evaluate compositional precedence deterministically:
+    Verifies that PolicyEngine and SystemOneGuardHook evaluate compositional precedence deterministically:
     DENY strictly overrides ALLOW regardless of rule registration order.
     """
     allow_rule_broad = PolicyRule(
@@ -465,8 +465,8 @@ def test_attack2_target_hashing_boundary_investigation():
         reason="Allow general actions",
     )
     engine = PolicyEngine(rules=[deny_rule, allow_rule])
-    hook = ReflexGuardHook(policy_engine=engine)
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=engine)
+    proxy = SystemOneMCPProxy(guard=hook)
 
     # 1. Normal length confidential target -> caught by regex
     res_normal = proxy.evaluate_mcp_call("read_file", {"path": "/data/confidential_data.txt"})
@@ -504,7 +504,7 @@ def test_attack3_unconstrained_allow_generates_signed_receipt_and_ledger_record(
         reason="Unconstrained allow rule",
     )
     engine = PolicyEngine(rules=[allow_all_rule])
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=engine,
         ledger=ledger,
         signing_key=signing_key,
@@ -558,7 +558,7 @@ def test_attack3_unconstrained_allow_fails_closed_when_ledger_write_fails(tmp_pa
     ledger.record_decision_receipt = broken_record
 
     allow_rule = PolicyRule(rule_id="allow_rule", effect=DecisionOutcome.ALLOW, target_pattern=r".*")
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=PolicyEngine(rules=[allow_rule]),
         ledger=ledger,
         fail_closed_ledger=True,
@@ -574,7 +574,7 @@ def test_attack3_unconstrained_allow_fails_closed_when_ledger_write_fails(tmp_pa
     assert interception.outcome == DecisionOutcome.DENY
     assert interception.allowed is False
     assert "ActionLedger write failed" in interception.reason
-    assert interception.policy_decision.rule_id == "reflex_ledger_failure"
+    assert interception.policy_decision.rule_id == "system1_ledger_failure"
 
 
 def test_attack3_mcp_proxy_executes_and_chains_outcome_under_allow(tmp_path):
@@ -584,13 +584,13 @@ def test_attack3_mcp_proxy_executes_and_chains_outcome_under_allow(tmp_path):
     signing_key = Ed25519PrivateKey.generate()
 
     allow_rule = PolicyRule(rule_id="allow_mcp", effect=DecisionOutcome.ALLOW, target_pattern=r".*")
-    hook = ReflexGuardHook(
+    hook = SystemOneGuardHook(
         policy_engine=PolicyEngine(rules=[allow_rule]),
         ledger=ledger,
         signing_key=signing_key,
         fail_closed_ledger=True,
     )
-    proxy = ReflexMCPProxy(guard=hook)
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     request = {
@@ -621,8 +621,8 @@ def test_attack3_mcp_proxy_executes_and_chains_outcome_under_allow(tmp_path):
 def test_attack4_mcp_proxy_request_dict_mutation_resilience():
     """Attack 4.1: Mutating request dictionary after policy evaluation does not alter dispatched tool arguments."""
     allow_rule = PolicyRule(rule_id="allow_rule", effect=DecisionOutcome.ALLOW, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     # Nested mutable dictionary
@@ -687,8 +687,8 @@ def test_attack4_action_proposal_arguments_immutability():
 def test_attack4_wrap_mcp_tool_immutable_dispatch():
     """Attack 4.3: @wrap_mcp_tool dispatches canonicalized arguments ignoring external mutation."""
     allow_rule = PolicyRule(rule_id="allow_rule", effect=DecisionOutcome.ALLOW, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     wrapped = wrap_mcp_tool(proxy=proxy, tool_name="sync_tool")(sentinel.sync_tool)
@@ -705,17 +705,17 @@ def test_attack4_wrap_mcp_tool_immutable_dispatch():
 
 @pytest.mark.asyncio
 async def test_attack4_langchain_interceptor_sync_and_async_immutable_dispatch():
-    """Attack 4.4: ReflexToolInterceptor dispatches frozen canonical arguments for sync and async invocations."""
+    """Attack 4.4: SystemOneToolInterceptor dispatches frozen canonical arguments for sync and async invocations."""
     allow_rule = PolicyRule(rule_id="allow_rule", effect=DecisionOutcome.ALLOW, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[allow_rule]))
     sentinel = AdversarialSentinel()
 
-    interceptor_sync = ReflexToolInterceptor(tool=sentinel.sync_tool, guard=hook, tool_name="sync_tool")
+    interceptor_sync = SystemOneToolInterceptor(tool=sentinel.sync_tool, guard=hook, tool_name="sync_tool")
     res_sync = interceptor_sync("/path/data.json", mode="read", count=5)
     assert "sync_tool:/path/data.json:read:5" in res_sync
     assert sentinel.call_count == 1
 
-    interceptor_async = ReflexToolInterceptor(tool=sentinel.async_tool, guard=hook, tool_name="async_tool")
+    interceptor_async = SystemOneToolInterceptor(tool=sentinel.async_tool, guard=hook, tool_name="async_tool")
     res_async = await interceptor_async.ainvoke("/path/async_data.json", mode="stream", count=10)
     assert "async_tool:/path/async_data.json:stream:10" in res_async
     assert sentinel.call_count == 2
@@ -729,8 +729,8 @@ async def test_attack4_langchain_interceptor_sync_and_async_immutable_dispatch()
 def test_attack5_sentinel_zero_executions_on_policy_denial():
     """Attack 5.1: Sentinel executes exactly 0 times on deterministic policy DENY."""
     deny_rule = PolicyRule(rule_id="strict_deny", effect=DecisionOutcome.DENY, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     req = {
@@ -753,8 +753,8 @@ def test_attack5_sentinel_zero_executions_on_policy_require_approval():
         effect=DecisionOutcome.REQUIRE_APPROVAL,
         target_pattern=r".*",
     )
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[approval_rule]))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[approval_rule]))
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     req = {
@@ -779,8 +779,8 @@ def test_attack5_sentinel_zero_executions_on_constraint_violations():
         allowed_tenants=["tenant_corp"],
         argument_limits={"max_retries": 5},
     )
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[rule]))
-    proxy = ReflexMCPProxy(guard=hook, tenant_id="tenant_corp", principal_id="unauthorized_agent")
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[rule]))
+    proxy = SystemOneMCPProxy(guard=hook, tenant_id="tenant_corp", principal_id="unauthorized_agent")
     sentinel = AdversarialSentinel()
 
     # 1. Unauthorized principal
@@ -820,8 +820,8 @@ def test_attack5_sentinel_zero_executions_on_constraint_violations():
 
 def test_attack5_sentinel_zero_executions_on_model_safety_denial():
     """Attack 5.4: Sentinel executes exactly 0 times when model classifies action as unsafe."""
-    hook = ReflexGuardHook(min_confidence=0.50, alpha=0.10)
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(min_confidence=0.50, alpha=0.10)
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     req = {
@@ -845,8 +845,8 @@ def test_attack5_sentinel_zero_executions_on_model_safety_denial():
 
 def test_attack5_sentinel_zero_executions_on_conformal_ambiguity_and_ood():
     """Attack 5.5: Sentinel executes exactly 0 times on conformal ambiguity and OOD empty-set."""
-    hook = ReflexGuardHook(min_confidence=0.999, alpha=0.01)  # High confidence threshold
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(min_confidence=0.999, alpha=0.01)  # High confidence threshold
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     req = {
@@ -868,7 +868,7 @@ def test_attack5_sentinel_zero_executions_on_conformal_ambiguity_and_ood():
         is_safe = BooleanField(true_description="read inspect view check log safe", false_description="wipe destroy rm")
         choice = ChoiceField(options=["option_a", "option_b"])
 
-    engine = ReflexEngine(AmbiguousSchema)
+    engine = SystemOneEngine(AmbiguousSchema)
     engine.calibrate([
         ("read doc", {"is_safe": True, "choice": "option_a"}),
         ("view file", {"is_safe": True, "choice": "option_b"}),
@@ -883,8 +883,8 @@ def test_attack5_sentinel_zero_executions_on_conformal_ambiguity_and_ood():
         }
     )()
 
-    ambiguous_hook = ReflexGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
-    ambiguous_proxy = ReflexMCPProxy(guard=ambiguous_hook)
+    ambiguous_hook = SystemOneGuardHook(engine=engine, min_confidence=0.50, alpha=0.05)
+    ambiguous_proxy = SystemOneMCPProxy(guard=ambiguous_hook)
     resp_amb = ambiguous_proxy.handle_call(
         {
             "jsonrpc": "2.0",
@@ -904,7 +904,7 @@ def test_attack5_sentinel_zero_executions_on_conformal_ambiguity_and_ood():
 
 def test_attack5_sentinel_zero_executions_on_mcp_non_tool_methods():
     """Attack 5.6: Sentinel executes exactly 0 times on non-tool MCP methods (ping, initialize, tools/list)."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = AdversarialSentinel()
 
     # 1. ping with suspicious tool arguments
@@ -959,7 +959,7 @@ def test_attack5_sentinel_zero_executions_on_mcp_non_tool_methods():
 )
 def test_attack5_sentinel_zero_executions_on_malformed_mcp_requests(malformed_payload: str):
     """Attack 5.7: Sentinel executes exactly 0 times on malformed JSON-RPC payloads."""
-    proxy = ReflexMCPProxy()
+    proxy = SystemOneMCPProxy()
     sentinel = AdversarialSentinel()
 
     resp = proxy.handle_call(malformed_payload, sentinel.mcp_executor)
@@ -970,13 +970,13 @@ def test_attack5_sentinel_zero_executions_on_malformed_mcp_requests(malformed_pa
 def test_attack5_sentinel_zero_executions_on_wrap_mcp_tool_denial():
     """Attack 5.8: @wrap_mcp_tool guarantees exactly 0 executions when blocked."""
     deny_rule = PolicyRule(rule_id="deny_rule", effect=DecisionOutcome.DENY, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
-    proxy = ReflexMCPProxy(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
+    proxy = SystemOneMCPProxy(guard=hook)
     sentinel = AdversarialSentinel()
 
     wrapped = wrap_mcp_tool(proxy=proxy, tool_name="sentinel_sync")(sentinel.sync_tool)
 
-    with pytest.raises(ReflexMCPBlockedError):
+    with pytest.raises(SystemOneMCPBlockedError):
         wrapped("/path/file.txt", mode="write", count=1)
 
     assert sentinel.call_count == 0
@@ -984,31 +984,31 @@ def test_attack5_sentinel_zero_executions_on_wrap_mcp_tool_denial():
 
 @pytest.mark.asyncio
 async def test_attack5_sentinel_zero_executions_on_langchain_interceptor_denial():
-    """Attack 5.9: ReflexToolInterceptor guarantees 0 executions for sync and async on denial."""
+    """Attack 5.9: SystemOneToolInterceptor guarantees 0 executions for sync and async on denial."""
     deny_rule = PolicyRule(rule_id="deny_rule", effect=DecisionOutcome.DENY, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
     sentinel = AdversarialSentinel()
 
     # Sync
-    interceptor_sync = ReflexToolInterceptor(tool=sentinel.sync_tool, guard=hook, tool_name="sync_tool")
-    with pytest.raises(ReflexGuardBlockedException):
+    interceptor_sync = SystemOneToolInterceptor(tool=sentinel.sync_tool, guard=hook, tool_name="sync_tool")
+    with pytest.raises(SystemOneGuardBlockedException):
         interceptor_sync("/path/data.txt")
     assert sentinel.call_count == 0
 
     # Async
-    interceptor_async = ReflexToolInterceptor(tool=sentinel.async_tool, guard=hook, tool_name="async_tool")
-    with pytest.raises(ReflexGuardBlockedException):
+    interceptor_async = SystemOneToolInterceptor(tool=sentinel.async_tool, guard=hook, tool_name="async_tool")
+    with pytest.raises(SystemOneGuardBlockedException):
         await interceptor_async.ainvoke("/path/data.txt")
     assert sentinel.call_count == 0
 
 
 def test_attack5_sentinel_zero_executions_on_langchain_callback_handler_denial():
-    """Attack 5.10: ReflexGuardCallbackHandler raises exception on on_tool_start when blocked."""
+    """Attack 5.10: SystemOneGuardCallbackHandler raises exception on on_tool_start when blocked."""
     deny_rule = PolicyRule(rule_id="deny_rule", effect=DecisionOutcome.DENY, target_pattern=r".*")
-    hook = ReflexGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
-    handler = ReflexGuardCallbackHandler(guard=hook)
+    hook = SystemOneGuardHook(policy_engine=PolicyEngine(rules=[deny_rule]))
+    handler = SystemOneGuardCallbackHandler(guard=hook)
 
-    with pytest.raises(ReflexGuardBlockedException):
+    with pytest.raises(SystemOneGuardBlockedException):
         handler.on_tool_start(
             serialized={"name": "destructive_tool", "description": "Destructive bash action"},
             input_str="rm -rf /",

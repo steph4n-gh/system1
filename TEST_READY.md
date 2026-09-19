@@ -1,4 +1,4 @@
-# Test Readiness Report: Reflex / System 1 E2E Suite
+# Test Readiness Report: System 1 / System 1 E2E Suite
 
 **Status**: READY FOR VERIFICATION & RELEASE GATE  
 **Date**: 2026-09-17  
@@ -10,14 +10,14 @@
 
 ## 1. Test Suite Summary
 
-The end-to-end requirement-driven opaque-box test suite for Reflex / System 1 is fully implemented in `tests/e2e/`. The suite verifies system-level behavior against the authoritative specifications in `ORIGINAL_REQUEST.md` and `PROJECT.md`, organized into four tiers:
+The end-to-end requirement-driven opaque-box test suite for System 1 / System 1 is fully implemented in `tests/e2e/`. The suite verifies system-level behavior against the authoritative specifications in `ORIGINAL_REQUEST.md` and `PROJECT.md`, organized into four tiers:
 
 ### Tier 1: Feature Coverage (43 Tests)
 1. **Tier 1.1 — Dual Namespace Imports (`test_tier1_dual_imports.py`, 6 tests)**:
    - Module export parity (`__version__ == '0.1.0'`, `__all__`, 92 public symbols).
    - Object identity: `reflex.<Class> is system1.<Class>`.
    - Submodule resolution (`engine`, `guard`, `ledger`, `receipt`, `schema`, `cli`, `compiler`, `cache`, `telemetry`, `embeddings`).
-   - Twin functional equivalence: `reflex.ReflexEngine` vs `system1.System1Engine`.
+   - Twin functional equivalence: `reflex.SystemOneEngine` vs `system1.System1Engine`.
    - TypeSafe drop-in SDK twin parity (`reflex.TypeSafeClient is system1.TypeSafeClient`).
    - Reference Monitor & Ledger parity across imports.
 
@@ -41,7 +41,7 @@ The end-to-end requirement-driven opaque-box test suite for Reflex / System 1 is
 
 4. **Tier 1.4 — Sub-2ms Local Latency Assertions (`test_tier1_latency.py`, 6 tests)**:
    - Empirical warm decision latency: p50 < 2.0 ms.
-   - Tier 0 L1 Reflex Cache lookup latency: mean < 100 µs (< 0.10 ms), typically ~5 µs.
+   - Tier 0 L1 System 1 Cache lookup latency: mean < 100 µs (< 0.10 ms), typically ~5 µs.
    - Online Sherman-Morrison rank-1 distillation update: < 200 µs (< 0.20 ms).
    - Amortized batch throughput < 2.0 ms per decision item.
    - Reference Monitor guard proposal interception < 3.0 ms reported decision time.
@@ -95,7 +95,7 @@ The end-to-end requirement-driven opaque-box test suite for Reflex / System 1 is
 ### Tier 4: Real-World Production Scenarios (`test_tier4_real_world.py`, 4 Tests)
 - **Scenario 1 — Autonomous AI Tool Guard Pipeline**: Reference monitor intercepting read-only, mutating, and destructive agent tool proposals with fail-closed safety and ledger verification.
 - **Scenario 2 — Dynamic Gateway Model Router**: High-throughput API gateway routing 80% of deterministic traffic to local sub-2ms reflex while escalating ambiguous tasks to frontier planners.
-- **Scenario 3 — Auto-Cutover Migration Simulation**: Phased migration from cloud LLM APIs to local Reflex runtime, demonstrating sub-25ms latency and zero egress.
+- **Scenario 3 — Auto-Cutover Migration Simulation**: Phased migration from cloud LLM APIs to local System 1 runtime, demonstrating sub-25ms latency and zero egress.
 - **Scenario 4 — Kahneman Dual-Process Cognitive Cycle**: System 1 fast evaluation -> ambiguity detection -> System 2 strategic resolution -> Sherman-Morrison distillation update -> fast cache execution.
 
 ---
