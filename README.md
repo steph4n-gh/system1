@@ -66,6 +66,13 @@ The default teacher is a rule over a small structured-ticket vocabulary. `--teac
 
 Promotion depends on evidence, not a fixed turn count. Insufficient evidence keeps the teacher active, and uncertain local responses still request review.
 
+On a separate public six-intent assistant workload, actual **Jev and Gemini 2.5 Flash**
+each enabled takeover after **358 observations**. Each resulting skill accepted
+**171/180** unseen official test requests locally, with **167/171 correct (97.7%)**,
+and made no further teacher calls. The [three-workload comparison](benchmarks/quality/workloads/README.md)
+includes a classical baseline and unsuccessful takeover results. Its recorded
+teacher responses can be replayed without credentials.
+
 ## Teach a skill
 
 Give System 1 labeled examples of one task, save the resulting `.s1m` skill, and reuse it locally. A person or System 2 can supply the examples; teaching does not require an LLM. The existing compiler fits a small decision head using NumPy.

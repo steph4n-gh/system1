@@ -1,5 +1,14 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## Three public workloads and two live teachers
+
+The [workload evidence](workloads/README.md) measures banking support, six assistant
+commands, and SMS spam triage against a TF-IDF/logistic-regression baseline.
+It also records actual Jev and Gemini observation-to-local takeover, preserving
+unsuccessful promotions and the SMS case that misses the independent quality
+target. The protocol was committed before the new evaluations; recorded teacher
+responses replay offline without API keys.
+
 ## Confidence and external banking data
 
 ```bash

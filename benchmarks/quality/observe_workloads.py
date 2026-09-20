@@ -11,6 +11,7 @@ import statistics
 import sys
 import time
 import urllib.request
+import urllib.error
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -59,7 +60,7 @@ def load_workload(name):
     return protocol, data, descriptions
 
 
-def observe(name, teacher, output_dir):
+def observe(name, teacher, output_dir, *, offline=False):
     protocol, data, descriptions = load_workload(name)
     settings = protocol['takeover']
     stream = sorted(data['teach'] + data['calibration'], key=lambda r:
@@ -70,7 +71,11 @@ def observe(name, teacher, output_dir):
                             'instructions': 'Classify this request into exactly one of the supplied categories.'}}
     output_dir.mkdir(parents=True, exist_ok=True)
     cache_path = output_dir / 'teacher_responses.json'
-    cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
+    recorded_path = ROOT / 'benchmarks/quality/workloads/records' / f'{name}-{teacher}.json'
+    source_path = cache_path if cache_path.exists() else recorded_path
+    cache = json.loads(source_path.read_text()) if source_path.exists() else {}
+    failures_path = output_dir / 'teacher_failures.json'
+    failures = json.loads(failures_path.read_text()) if failures_path.exists() else []
     original_labels = {r['prompt']: r['label'] for r in stream}
     calls = 0
     observations = []
@@ -83,12 +88,23 @@ def observe(name, teacher, output_dir):
         else:
             digest = hashlib.sha256(json.dumps({'state': state, 'questions': supplied_questions}, sort_keys=True).encode()).hexdigest()
             if digest not in cache:
-                if teacher == 'jev':
-                    response, latency, _ = call_real_typesafe_api(
-                        state, supplied_questions, api_key=os.environ['TYPESAFE_API_KEY'],
-                        zero_egress=False, fallback_baseline=False, timeout=30)
-                else:
-                    response, latency, _ = gemini_answer(state, supplied_questions)
+                if offline:
+                    raise ValueError('A required teacher response is not recorded; offline replay cannot call a teacher')
+                for attempt in range(3):
+                    try:
+                        if teacher == 'jev':
+                            response, latency, _ = call_real_typesafe_api(
+                                state, supplied_questions, api_key=os.environ['TYPESAFE_API_KEY'],
+                                zero_egress=False, fallback_baseline=False, timeout=30)
+                        else:
+                            response, latency, _ = gemini_answer(state, supplied_questions)
+                        break
+                    except urllib.error.HTTPError as exc:
+                        failures.append({'request_digest': digest, 'http_status': exc.code, 'recorded_at': time.time()})
+                        failures_path.write_text(json.dumps(failures, indent=2) + '\n')
+                        if exc.code not in (429, 500, 502, 503, 504) or attempt == 2:
+                            raise
+                        time.sleep(attempt + 1)
                 calls += 1
                 # Store only response evidence, never request headers or credentials.
                 cache[digest] = {'response': {k: response[k] for k in ('model', 'answers', 'usage')},
@@ -122,6 +138,7 @@ def observe(name, teacher, output_dir):
               'promotion': asdict(client.last_promotion_report) if client.last_promotion_report else None,
               'teacher_calls_during_test': 0, 'network_calls_during_test': 0,
               'teacher_observations': observations}
+    report['recorded_http_failures'] = failures
     if used_records:
         report['teacher_models'] = sorted({r['response']['model'] for r in used_records})
         report['teacher_latency_median_ms'] = statistics.median(r['latency_ms'] for r in used_records)
@@ -165,5 +182,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('workload', choices=['banking_support', 'assistant_commands', 'sms_triage'])
     parser.add_argument('--teacher', choices=['dataset', 'jev', 'gemini'], default='dataset')
+    parser.add_argument('--offline', action='store_true', help='Replay recorded answers with network connections blocked')
     args = parser.parse_args()
-    observe(args.workload, args.teacher, ROOT / '.system1/workloads' / args.workload / args.teacher)
+    output = ROOT / '.system1/workloads' / args.workload / args.teacher
+    if args.offline:
+        with patch.object(socket.socket, 'connect', side_effect=AssertionError('Offline replay contacted a network')), \
+             patch.object(socket, 'create_connection', side_effect=AssertionError('Offline replay contacted a network')):
+            observe(args.workload, args.teacher, output, offline=True)
+    else:
+        observe(args.workload, args.teacher, output)
