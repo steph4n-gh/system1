@@ -1,0 +1,851 @@
+{
+  "protocol": {
+    "candidate": "initial-seven-category-skill",
+    "upstream_commit": "2571ce4970aa5d024bb664a6739bd91b1172c367",
+    "evaluation": "35 public maintainer-authored Inbox Zero regression cases, never used to fit or calibrate. Compatibility evidence, not production mailbox accuracy. Reviewed source during integration development; not a blind benchmark.",
+    "teaching": "140 independently authored English examples, no synthetic expansion or teacher API",
+    "calibration": "56 separate authored examples, split by the compiler into temperature and conformal halves",
+    "system1": {
+      "dimension": 2048,
+      "regularization": 0.1,
+      "backend": "numpy",
+      "alpha": 0.05,
+      "cache": false,
+      "receipts": false
+    },
+    "baseline": "TF-IDF word unigrams/bigrams, sublinear TF, logistic regression C=1.0; identical fit rows and conformal half, LAC scoring at alpha=0.05",
+    "targets": {
+      "accepted_accuracy": 0.95,
+      "acceptance_rate": 0.8
+    },
+    "decision": "A multi-class or empty prediction set requires review. A point estimate meeting targets on 35 examples still requires mailbox-specific validation before automatic actions.",
+    "retuning": "Preserve this candidate and its results. Subsequent teaching based on these errors makes this set a regression set and requires fresh independent evaluation."
+  },
+  "protocol_sha256": "9f8cfe5e36dff9a1c8d881f3c625ecbc7f98420fccdac5113869935894f77186",
+  "lessons_sha256": "faf0c706685c760d793210efacff0f2356eeb60637d26b8ca9fe11aea1b92090",
+  "upstream": {
+    "repository": "elie222/inbox-zero",
+    "commit": "2571ce4970aa5d024bb664a6739bd91b1172c367",
+    "file_sha256": {
+      "apps/web/utils/rule/consts.ts": "8e263aa75275afaad88c9a83b9662ce955b6b993d8fbc4fc0ab1f7a772112186",
+      "apps/web/utils/ai/choose-rule/run-rules.ts": "8eb8a93cdd0b41f19405c747b8952329fa5165c2009ff4faad5e6a84191b0a91",
+      "apps/web/utils/ai/choose-rule/classifier-choose-rule.ts": "53ea52b8411a15599c0c089e884becaeec320061d064d7bebd4192bc88f99b25",
+      "apps/web/__tests__/eval/choose-rule.test.ts": "2064b51c6cac22c0523251809185b24d2a54e8085b8c186bca3908dd3fd34ae9"
+    }
+  },
+  "environment": {
+    "system1": "1.0.3",
+    "python": "3.13.5",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "sklearn": "1.9.1"
+  },
+  "teacher_calls": 0,
+  "external_network_calls": 0,
+  "system1": {
+    "teaching_ms": 358.08600002201274,
+    "skill_bytes": 57112,
+    "counts": {
+      "teach": 140,
+      "calibration": 56
+    },
+    "teacher_calls": 0,
+    "load_ms": 11.504875030368567,
+    "reload_identical": true,
+    "quality": {
+      "cases": 35,
+      "raw_correct": 28,
+      "raw_accuracy": 0.8,
+      "accepted": 5,
+      "accepted_correct": 5,
+      "accepted_errors": 0,
+      "accepted_accuracy": 1.0,
+      "reviewed": 30,
+      "acceptance_rate": 0.14285714285714285,
+      "accepted_accuracy_interval_95": [
+        0.5655175352168252,
+        1.0
+      ],
+      "meets_targets": false,
+      "latency_median_ms": 2.019542036578059,
+      "latency_p95_ms": 6.100312684429809
+    },
+    "predictions": [
+      {
+        "id": "testCases:0",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.9702500430867076
+      },
+      {
+        "id": "testCases:1",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 1.6481250058859587
+      },
+      {
+        "id": "testCases:2",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.7446249732747674
+      },
+      {
+        "id": "testCases:3",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.019542036578059
+      },
+      {
+        "id": "testCases:4",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 1.421834051143378
+      },
+      {
+        "id": "testCases:5",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.442041015252471
+      },
+      {
+        "id": "testCases:6",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.330874965991825
+      },
+      {
+        "id": "testCases:7",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.3306660004891455
+      },
+      {
+        "id": "testCases:8",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.126833027228713
+      },
+      {
+        "id": "testCases:9",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 1.9795839907601476
+      },
+      {
+        "id": "testCases:10",
+        "acceptable": [
+          "Calendar",
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.446166006848216
+      },
+      {
+        "id": "testCases:11",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.7704170206561685
+      },
+      {
+        "id": "testCases:12",
+        "acceptable": [
+          "Newsletter",
+          "Marketing"
+        ],
+        "prediction": "Calendar",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 3.0503750313073397
+      },
+      {
+        "id": "testCases:13",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.223249990493059
+      },
+      {
+        "id": "testCases:14",
+        "acceptable": [
+          "Receipt",
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.2598339710384607
+      },
+      {
+        "id": "testCases:15",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.8581659533083439
+      },
+      {
+        "id": "testCases:16",
+        "acceptable": [
+          "Newsletter",
+          "Notification"
+        ],
+        "prediction": "Receipt",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.893749984446913
+      },
+      {
+        "id": "testCases:17",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.9146669656038284
+      },
+      {
+        "id": "testCases:18",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.323833992704749
+      },
+      {
+        "id": "testCases:19",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 1.6612909967079759
+      },
+      {
+        "id": "testCases:20",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.7241670284420252
+      },
+      {
+        "id": "testCases:21",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.793458010070026
+      },
+      {
+        "id": "testCases:22",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.7607079935260117
+      },
+      {
+        "id": "testCases:23",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 1.6053750296123326
+      },
+      {
+        "id": "testCases:24",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 6.379208993166685
+      },
+      {
+        "id": "testCases:25",
+        "acceptable": [
+          "Marketing",
+          "Notification",
+          "Conversations"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 5.98849996458739
+      },
+      {
+        "id": "testCases:26",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 6.361209030728787
+      },
+      {
+        "id": "promotionalBoundaryCases:0",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.2570000146515667
+      },
+      {
+        "id": "promotionalBoundaryCases:1",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.1143340272828937
+      },
+      {
+        "id": "promotionalBoundaryCases:2",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.3718749871477485
+      },
+      {
+        "id": "promotionalBoundaryCases:3",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.33633304014802
+      },
+      {
+        "id": "promotionalBoundaryCases:4",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.5873749507591128
+      },
+      {
+        "id": "promotionalBoundaryCases:5",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.906708988826722
+      },
+      {
+        "id": "promotionalBoundaryCases:6",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 2.305292000528425
+      },
+      {
+        "id": "promotionalBoundaryCases:7",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 1.7205839976668358
+      }
+    ]
+  },
+  "tfidf_logistic": {
+    "teaching_ms": 29.988541966304183,
+    "quality": {
+      "cases": 35,
+      "raw_correct": 35,
+      "raw_accuracy": 1.0,
+      "accepted": 11,
+      "accepted_correct": 11,
+      "accepted_errors": 0,
+      "accepted_accuracy": 1.0,
+      "reviewed": 24,
+      "acceptance_rate": 0.3142857142857143,
+      "accepted_accuracy_interval_95": [
+        0.7411670330319683,
+        1.0
+      ],
+      "meets_targets": false,
+      "latency_median_ms": 0.22079201880842447,
+      "latency_p95_ms": 0.31914641149342043
+    },
+    "predictions": [
+      {
+        "id": "testCases:0",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3551670233719051
+      },
+      {
+        "id": "testCases:1",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2930409973487258
+      },
+      {
+        "id": "testCases:2",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.27545803459361196
+      },
+      {
+        "id": "testCases:3",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.24316704366356134
+      },
+      {
+        "id": "testCases:4",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.23783399956300855
+      },
+      {
+        "id": "testCases:5",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.23545802105218172
+      },
+      {
+        "id": "testCases:6",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.25525002274662256
+      },
+      {
+        "id": "testCases:7",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.43308298336341977
+      },
+      {
+        "id": "testCases:8",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.30370900640264153
+      },
+      {
+        "id": "testCases:9",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.26050000451505184
+      },
+      {
+        "id": "testCases:10",
+        "acceptable": [
+          "Calendar",
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.26120798429474235
+      },
+      {
+        "id": "testCases:11",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.2518750261515379
+      },
+      {
+        "id": "testCases:12",
+        "acceptable": [
+          "Newsletter",
+          "Marketing"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.25162502424791455
+      },
+      {
+        "id": "testCases:13",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.22595800692215562
+      },
+      {
+        "id": "testCases:14",
+        "acceptable": [
+          "Receipt",
+          "Notification"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.21070800721645355
+      },
+      {
+        "id": "testCases:15",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.203415984287858
+      },
+      {
+        "id": "testCases:16",
+        "acceptable": [
+          "Newsletter",
+          "Notification"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20966597367078066
+      },
+      {
+        "id": "testCases:17",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.2095420495606959
+      },
+      {
+        "id": "testCases:18",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20054198103025556
+      },
+      {
+        "id": "testCases:19",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20304200006648898
+      },
+      {
+        "id": "testCases:20",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1985830022022128
+      },
+      {
+        "id": "testCases:21",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.1967080170288682
+      },
+      {
+        "id": "testCases:22",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20041700918227434
+      },
+      {
+        "id": "testCases:23",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19762502051889896
+      },
+      {
+        "id": "testCases:24",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.29795896261930466
+      },
+      {
+        "id": "testCases:25",
+        "acceptable": [
+          "Marketing",
+          "Notification",
+          "Conversations"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.2732080174610019
+      },
+      {
+        "id": "testCases:26",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.25820796145126224
+      },
+      {
+        "id": "promotionalBoundaryCases:0",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20629202481359243
+      },
+      {
+        "id": "promotionalBoundaryCases:1",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.22079201880842447
+      },
+      {
+        "id": "promotionalBoundaryCases:2",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.21491700317710638
+      },
+      {
+        "id": "promotionalBoundaryCases:3",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.2009579911828041
+      },
+      {
+        "id": "promotionalBoundaryCases:4",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21558301523327827
+      },
+      {
+        "id": "promotionalBoundaryCases:5",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20549999317154288
+      },
+      {
+        "id": "promotionalBoundaryCases:6",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20808400586247444
+      },
+      {
+        "id": "promotionalBoundaryCases:7",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21070800721645355
+      }
+    ]
+  },
+  "adapter_http": {
+    "requests": 175,
+    "responses_match_direct": true,
+    "first_request_ms": 17.554749999999984,
+    "median_ms": 2.6600839999999835,
+    "p95_ms": 6.721333799999988,
+    "external_fetches": 0
+  }
+}

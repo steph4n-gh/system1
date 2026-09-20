@@ -1,0 +1,2164 @@
+{
+  "name": "Inbox Zero standard categories",
+  "provenance": "Authored synthetic teaching and calibration examples created for this integration. Not private mailbox data. No upstream evaluation text is copied into these lessons. Each row is an editable labeled email. No external teacher API was called.",
+  "teach": [
+    {
+      "id": "teach:Newsletter:0",
+      "group": "authored:Newsletter:teach:0",
+      "email": {
+        "from": "editor@provider0.example",
+        "subject": "This month's reading list",
+        "content": "Our editors recommend five essays on science and culture. Here are the key ideas from each article and links to the full stories. This is your monthly subscriber edition.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:1",
+      "group": "authored:Newsletter:teach:1",
+      "email": {
+        "from": "editor@provider1.example",
+        "subject": "A week in renewable energy",
+        "content": "In this issue we examine falling battery prices, a new offshore wind project, and research on grid storage. Read our reporting and interviews in the weekly digest.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:2",
+      "group": "authored:Newsletter:teach:2",
+      "email": {
+        "from": "editor@provider2.example",
+        "subject": "The gardening journal",
+        "content": "Our regular column covers pruning fruit trees, preparing compost, and choosing plants for shade. We have included photos from readers and a guest horticulturist's advice.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:3",
+      "group": "authored:Newsletter:teach:3",
+      "email": {
+        "from": "editor@provider3.example",
+        "subject": "Research roundup for subscribers",
+        "content": "Three studies caught our attention this week. We explain the findings, their limitations, and what the authors plan to investigate next. Read the full papers here.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:4",
+      "group": "authored:Newsletter:teach:4",
+      "email": {
+        "from": "editor@provider4.example",
+        "subject": "Your Friday technology briefing",
+        "content": "A summary of the week's developments in software and hardware, followed by an interview with a developer. Our sponsor supports this free publication.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:5",
+      "group": "authored:Newsletter:teach:5",
+      "email": {
+        "from": "editor@provider5.example",
+        "subject": "A new essay from our publication",
+        "content": "Today I write about managing a growing team and the mistakes I made along the way. What has worked for you? Reply with your experience for a future reader column.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:6",
+      "group": "authored:Newsletter:teach:6",
+      "email": {
+        "from": "editor@provider6.example",
+        "subject": "The history digest, issue 83",
+        "content": "This edition explores early ocean navigation, a recently opened museum exhibit, and a historian's new book. Subscribe to receive the next installment.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:7",
+      "group": "authored:Newsletter:teach:7",
+      "email": {
+        "from": "editor@provider7.example",
+        "subject": "Community bulletin for April",
+        "content": "Read the latest neighborhood stories, volunteer interviews, and photographs from the community garden. This bulletin goes to all readers each month.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:8",
+      "group": "authored:Newsletter:teach:8",
+      "email": {
+        "from": "editor@provider8.example",
+        "subject": "Inside the laboratory",
+        "content": "Our weekly science newsletter explains a recent telescope discovery and introduces the scientists behind it. Continue reading the feature on our website.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:9",
+      "group": "authored:Newsletter:teach:9",
+      "email": {
+        "from": "editor@provider9.example",
+        "subject": "The economics letter",
+        "content": "This week's analysis covers inflation and household saving. We compare the latest data with previous decades and link to the underlying reports.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:10",
+      "group": "authored:Newsletter:teach:10",
+      "email": {
+        "from": "editor@provider10.example",
+        "subject": "Ideas worth reading this weekend",
+        "content": "Here is our curated collection of useful articles, podcasts, and essays. We selected each item for subscribers interested in design and engineering.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:11",
+      "group": "authored:Newsletter:teach:11",
+      "email": {
+        "from": "editor@provider0.example",
+        "subject": "The cooking column",
+        "content": "In this edition: a guide to seasonal vegetables, an interview with a baker, and three recipes selected by our editors. Sent to subscribers every Sunday.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:12",
+      "group": "authored:Newsletter:teach:12",
+      "email": {
+        "from": "editor@provider1.example",
+        "subject": "The artist's dispatch",
+        "content": "Welcome to the latest issue of our creative practice journal. We discuss drawing exercises and profile an illustrator. A short sponsor message follows the feature.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:13",
+      "group": "authored:Newsletter:teach:13",
+      "email": {
+        "from": "editor@provider2.example",
+        "subject": "News from the cycling world",
+        "content": "Race results, rider interviews, and equipment analysis from our newsroom. This email summarizes the stories published this week for our subscribers.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:14",
+      "group": "authored:Newsletter:teach:14",
+      "email": {
+        "from": "editor@provider3.example",
+        "subject": "A guide from our weekly letter",
+        "content": "This week's long read explains how small organizations can improve documentation. You can read it free, share it, or reply with a question for next week's edition.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:15",
+      "group": "authored:Newsletter:teach:15",
+      "email": {
+        "from": "editor@provider4.example",
+        "subject": "This week in open source",
+        "content": "Our editorial team selected notable releases and projects to explore. Each entry includes a short explanation and a link. Thanks to the sponsor who funds this digest.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:16",
+      "group": "authored:Newsletter:teach:16",
+      "email": {
+        "from": "editor@provider5.example",
+        "subject": "Five essays on urban planning",
+        "content": "Your subscriber reading list includes housing research, a transit interview, and new architecture criticism. Find the full articles in this week's issue.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:17",
+      "group": "authored:Newsletter:teach:17",
+      "email": {
+        "from": "editor@provider6.example",
+        "subject": "The education review",
+        "content": "Our monthly publication examines classroom research, teaching methods, and interviews with educators. Here is the latest edition for our readers.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:18",
+      "group": "authored:Newsletter:teach:18",
+      "email": {
+        "from": "editor@provider7.example",
+        "subject": "Sports analysis delivered weekly",
+        "content": "A review of the weekend's games, analysis of team performance, and an interview with a coach. This is the briefing you subscribed to.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Newsletter:19",
+      "group": "authored:Newsletter:teach:19",
+      "email": {
+        "from": "editor@provider8.example",
+        "subject": "Readers' questions answered",
+        "content": "In this week's edition we answer three questions from subscribers about building healthy habits. Send us a question and we may feature it in the next issue.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "teach:Marketing:0",
+      "group": "authored:Marketing:teach:0",
+      "email": {
+        "from": "hello@provider0.example",
+        "subject": "An offer for your next purchase",
+        "content": "Save twenty percent on any new order this weekend. Browse our latest collection and enter the coupon at checkout. Unsubscribe from promotional messages below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:1",
+      "group": "authored:Marketing:teach:1",
+      "email": {
+        "from": "hello@provider1.example",
+        "subject": "Discover our newest plan",
+        "content": "Upgrade to our optional premium subscription for more storage and exclusive features. Your current plan is unchanged if you choose not to upgrade. Explore the offer today.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:2",
+      "group": "authored:Marketing:teach:2",
+      "email": {
+        "from": "hello@provider2.example",
+        "subject": "A gift for returning customers",
+        "content": "We would love to see you again. Here is a discount on your next visit, valid until Friday. Choose your favorite products and shop the sale.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:3",
+      "group": "authored:Marketing:teach:3",
+      "email": {
+        "from": "hello@provider3.example",
+        "subject": "Try the new collection",
+        "content": "Our new designs are available now. Browse the catalog and get free delivery on your first order. This message announces an optional purchase, not an existing order.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:4",
+      "group": "authored:Marketing:teach:4",
+      "email": {
+        "from": "hello@provider4.example",
+        "subject": "Your exclusive early access",
+        "content": "Subscribers can buy tickets before the public sale starts. See the lineup, choose your seats, and reserve an optional experience. Manage promotional preferences below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:5",
+      "group": "authored:Marketing:teach:5",
+      "email": {
+        "from": "hello@provider5.example",
+        "subject": "Tell us what you think and get a reward",
+        "content": "Our customer research team is inviting members to a short survey. Complete it to receive a shopping voucher for your next order. Participation is optional.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:6",
+      "group": "authored:Marketing:teach:6",
+      "email": {
+        "from": "hello@provider6.example",
+        "subject": "A personal invitation from our research team",
+        "content": "Hi, I work on product research and would love to hear about your experience. Book an optional interview through our link and receive a gift card. Unsubscribe from research invitations below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:7",
+      "group": "authored:Marketing:teach:7",
+      "email": {
+        "from": "hello@provider7.example",
+        "subject": "Save on your next holiday",
+        "content": "Explore discounted hotel packages and optional flight offers. These are new travel deals, not confirmation of a reservation you have already made.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:8",
+      "group": "authored:Marketing:teach:8",
+      "email": {
+        "from": "hello@provider8.example",
+        "subject": "A better way to work",
+        "content": "Meet our new collaboration software. Start a free trial and discover how it could help your team. This promotional invitation was sent to subscribers of our product updates.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:9",
+      "group": "authored:Marketing:teach:9",
+      "email": {
+        "from": "hello@provider9.example",
+        "subject": "A limited offer ends soon",
+        "content": "Your optional discount expires tonight. Buy an annual membership at a lower price. Nothing changes about your existing account if you ignore this offer.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:10",
+      "group": "authored:Marketing:teach:10",
+      "email": {
+        "from": "hello@provider10.example",
+        "subject": "New features to explore",
+        "content": "We have launched an optional add-on for advanced reporting. View examples and upgrade if you would like access. Your current service continues as usual.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:11",
+      "group": "authored:Marketing:teach:11",
+      "email": {
+        "from": "hello@provider0.example",
+        "subject": "A thank-you discount",
+        "content": "As a member of our community, you can claim a voucher toward a future purchase. Visit the shop to browse eligible items. You have not been charged.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:12",
+      "group": "authored:Marketing:teach:12",
+      "email": {
+        "from": "hello@provider1.example",
+        "subject": "Could we show you our product",
+        "content": "We are inviting interested teams to an optional sales demonstration of our platform. Schedule a demo or learn more on our website. You can unsubscribe below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:13",
+      "group": "authored:Marketing:teach:13",
+      "email": {
+        "from": "hello@provider2.example",
+        "subject": "Get more from your membership",
+        "content": "Explore optional partner offers included with your subscription. Try a design app or a writing service at no extra cost. This is not a sign-in or verification email.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:14",
+      "group": "authored:Marketing:teach:14",
+      "email": {
+        "from": "hello@provider3.example",
+        "subject": "Your feedback could shape our next release",
+        "content": "Join our optional customer survey and receive a coupon. We are asking a selection of customers about their preferences. The survey is not required to use the product.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:15",
+      "group": "authored:Marketing:teach:15",
+      "email": {
+        "from": "hello@provider4.example",
+        "subject": "Introducing our spring range",
+        "content": "Find new colors, materials, and limited edition items in our online store. Use the launch promotion to save on your first order from this collection.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:16",
+      "group": "authored:Marketing:teach:16",
+      "email": {
+        "from": "hello@provider5.example",
+        "subject": "Still thinking about an upgrade",
+        "content": "Unlock more features with our premium plan. Compare options and choose the package that suits you. No action is needed to keep your existing subscription.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:17",
+      "group": "authored:Marketing:teach:17",
+      "email": {
+        "from": "hello@provider6.example",
+        "subject": "An invitation to our sales event",
+        "content": "Shop special offers during our promotional weekend. Register to hear about discounts and product launches. This is an advertising invitation, not an appointment confirmation.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:18",
+      "group": "authored:Marketing:teach:18",
+      "email": {
+        "from": "hello@provider7.example",
+        "subject": "A free trial for your team",
+        "content": "Try our business service for thirty days. Visit the signup page to start an optional trial. This message is a sales offer, not an account access request.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Marketing:19",
+      "group": "authored:Marketing:teach:19",
+      "email": {
+        "from": "hello@provider8.example",
+        "subject": "We would love your opinion",
+        "content": "Please consider a short feedback call with our research team. We will send a voucher as a thank-you. This is optional outreach to many customers, with an unsubscribe link.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "teach:Calendar:0",
+      "group": "authored:Calendar:teach:0",
+      "email": {
+        "from": "calendar@provider0.example",
+        "subject": "Invitation: operations planning",
+        "content": "You are invited to an operations planning meeting on Wednesday at 11. Accept or decline the calendar invitation. The video meeting link and organizer details are attached.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:1",
+      "group": "authored:Calendar:teach:1",
+      "email": {
+        "from": "calendar@provider1.example",
+        "subject": "The meeting time has changed",
+        "content": "The project review has moved from Tuesday morning to Thursday afternoon. Your calendar event has been updated. Please confirm your attendance.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:2",
+      "group": "authored:Calendar:teach:2",
+      "email": {
+        "from": "calendar@provider2.example",
+        "subject": "Reminder for your appointment",
+        "content": "Your scheduled appointment begins tomorrow at 9:30. The location and arrival instructions are included in this calendar reminder.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:3",
+      "group": "authored:Calendar:teach:3",
+      "email": {
+        "from": "calendar@provider3.example",
+        "subject": "Weekly team sync canceled",
+        "content": "The organizer has canceled this week's recurring meeting. Remove the event from your calendar. The next occurrence is still scheduled.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:4",
+      "group": "authored:Calendar:teach:4",
+      "email": {
+        "from": "calendar@provider4.example",
+        "subject": "Please choose a time for our meeting",
+        "content": "Could you select a slot for our project discussion using the scheduling link? I am available Monday afternoon or Wednesday morning.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:5",
+      "group": "authored:Calendar:teach:5",
+      "email": {
+        "from": "calendar@provider5.example",
+        "subject": "Accepted: project handoff",
+        "content": "The invitee has accepted your calendar invitation for the project handoff. The meeting is scheduled for Friday at 10, with the joining link in the event.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:6",
+      "group": "authored:Calendar:teach:6",
+      "email": {
+        "from": "calendar@provider6.example",
+        "subject": "Declined: planning session",
+        "content": "A participant has declined the invitation to the planning meeting. Review the guest list and choose another time if needed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:7",
+      "group": "authored:Calendar:teach:7",
+      "email": {
+        "from": "calendar@provider7.example",
+        "subject": "Room reservation confirmed",
+        "content": "Your conference room reservation for the design review is confirmed for two hours on Tuesday. The booking appears in the shared calendar.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:8",
+      "group": "authored:Calendar:teach:8",
+      "email": {
+        "from": "calendar@provider8.example",
+        "subject": "Event agenda updated",
+        "content": "The organizer added an agenda and new joining instructions to tomorrow's scheduled workshop. Open the calendar event to see the updated details.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:9",
+      "group": "authored:Calendar:teach:9",
+      "email": {
+        "from": "calendar@provider9.example",
+        "subject": "Your call starts in fifteen minutes",
+        "content": "This is a reminder for your scheduled consultation. Join using the video link in your calendar invitation. The host will admit participants at the start time.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:10",
+      "group": "authored:Calendar:teach:10",
+      "email": {
+        "from": "calendar@provider10.example",
+        "subject": "Schedule our interview",
+        "content": "Please select a time for the interview we discussed. The scheduling page shows my available slots. A calendar invitation will follow your selection.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:11",
+      "group": "authored:Calendar:teach:11",
+      "email": {
+        "from": "calendar@provider0.example",
+        "subject": "Invitation: annual planning workshop",
+        "content": "The workshop is scheduled for next Monday from 9 to 12. Please respond to the meeting invitation so the organizer can plan seating.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:12",
+      "group": "authored:Calendar:teach:12",
+      "email": {
+        "from": "calendar@provider1.example",
+        "subject": "A new time has been proposed",
+        "content": "A guest proposed moving your appointment to 3:30. Accept the proposed time or keep the original schedule using the calendar controls.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:13",
+      "group": "authored:Calendar:teach:13",
+      "email": {
+        "from": "calendar@provider2.example",
+        "subject": "Your booking has been rescheduled",
+        "content": "Your appointment was moved to the following week at the same time. The revised calendar event includes directions and the contact number.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:14",
+      "group": "authored:Calendar:teach:14",
+      "email": {
+        "from": "calendar@provider3.example",
+        "subject": "Updated recurring event",
+        "content": "The monthly check-in will now take place on the first Thursday. All future occurrences of this calendar series have been updated.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:15",
+      "group": "authored:Calendar:teach:15",
+      "email": {
+        "from": "calendar@provider4.example",
+        "subject": "Can we find a time to meet",
+        "content": "I would like to schedule our review call. Are you available Tuesday at 2 or Friday at 11? Please confirm and I will send the invitation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:16",
+      "group": "authored:Calendar:teach:16",
+      "email": {
+        "from": "calendar@provider5.example",
+        "subject": "Reminder: training session",
+        "content": "Your registered training session begins this afternoon. The event location, start time, and video link are included in this calendar reminder.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:17",
+      "group": "authored:Calendar:teach:17",
+      "email": {
+        "from": "calendar@provider6.example",
+        "subject": "Guest added to tomorrow's meeting",
+        "content": "The organizer added another participant to your scheduled project review. Open the meeting invitation to see the updated guest list.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:18",
+      "group": "authored:Calendar:teach:18",
+      "email": {
+        "from": "calendar@provider7.example",
+        "subject": "Your consultation is confirmed",
+        "content": "Your appointment is booked for Thursday at 4. Add it to your calendar and use the reschedule link if you need another time.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Calendar:19",
+      "group": "authored:Calendar:teach:19",
+      "email": {
+        "from": "calendar@provider8.example",
+        "subject": "Calendar invitation updated",
+        "content": "The location of your scheduled meeting has changed to the second-floor room. The meeting time remains the same. Please see the updated invitation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "teach:Receipt:0",
+      "group": "authored:Receipt:teach:0",
+      "email": {
+        "from": "billing@provider0.example",
+        "subject": "Your payment receipt",
+        "content": "We received your payment of $42. The transaction was completed using your saved card. Download the receipt for your records.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:1",
+      "group": "authored:Receipt:teach:1",
+      "email": {
+        "from": "billing@provider1.example",
+        "subject": "Invoice available for your subscription",
+        "content": "Your invoice for this billing period is ready. It includes your plan charges, tax, and the total paid. View or download the invoice in your billing account.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:2",
+      "group": "authored:Receipt:teach:2",
+      "email": {
+        "from": "billing@provider2.example",
+        "subject": "Order confirmation",
+        "content": "Thank you for your purchase. Your order contains the items listed below. The total charge has been processed and your order number is provided for reference.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:3",
+      "group": "authored:Receipt:teach:3",
+      "email": {
+        "from": "billing@provider3.example",
+        "subject": "Refund processed",
+        "content": "Your refund has been issued to the original payment method. The refunded amount and transaction reference appear below. Keep this confirmation for your records.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:4",
+      "group": "authored:Receipt:teach:4",
+      "email": {
+        "from": "billing@provider4.example",
+        "subject": "Your annual renewal receipt",
+        "content": "Your annual subscription renewal payment succeeded. This receipt shows the covered dates, paid amount, and card used.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:5",
+      "group": "authored:Receipt:teach:5",
+      "email": {
+        "from": "billing@provider5.example",
+        "subject": "Receipt for your journey",
+        "content": "Thank you for traveling with us. The completed journey cost $18.50 and was paid with your saved card. Download the detailed trip receipt here.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:6",
+      "group": "authored:Receipt:teach:6",
+      "email": {
+        "from": "billing@provider6.example",
+        "subject": "Your license purchase is complete",
+        "content": "We processed your purchase of three software licenses. This email includes the order total and invoice download link. You can manage the purchased seats in your account.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:7",
+      "group": "authored:Receipt:teach:7",
+      "email": {
+        "from": "billing@provider7.example",
+        "subject": "Invoice for consulting services",
+        "content": "Attached is the invoice for the work completed last month. It lists the services, agreed fees, payment instructions, and invoice number.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:8",
+      "group": "authored:Receipt:teach:8",
+      "email": {
+        "from": "billing@provider8.example",
+        "subject": "Confirmation of your donation",
+        "content": "Thank you for your donation. This receipt confirms the amount received and the date of the transaction. Please retain it for your records.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:9",
+      "group": "authored:Receipt:teach:9",
+      "email": {
+        "from": "billing@provider9.example",
+        "subject": "Your hotel payment confirmation",
+        "content": "The payment for your reservation has been received. The invoice lists the room charges, taxes, and total paid for the booking.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:10",
+      "group": "authored:Receipt:teach:10",
+      "email": {
+        "from": "billing@provider10.example",
+        "subject": "Purchase summary",
+        "content": "Your order has been successfully placed and paid. Here is the itemized summary with quantities, unit prices, tax, and total.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:11",
+      "group": "authored:Receipt:teach:11",
+      "email": {
+        "from": "billing@provider0.example",
+        "subject": "Your membership payment succeeded",
+        "content": "We charged your card for this month's membership. Download your receipt using the link below. No further payment is needed for this period.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:12",
+      "group": "authored:Receipt:teach:12",
+      "email": {
+        "from": "billing@provider1.example",
+        "subject": "A receipt for your account",
+        "content": "The attached document records a completed payment. It includes the transaction identifier, billing date, and amount paid.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:13",
+      "group": "authored:Receipt:teach:13",
+      "email": {
+        "from": "billing@provider2.example",
+        "subject": "Your refund confirmation",
+        "content": "The returned items have been refunded. The credit has been sent to your card and may take several days to appear. Here is the refund reference.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:14",
+      "group": "authored:Receipt:teach:14",
+      "email": {
+        "from": "billing@provider3.example",
+        "subject": "Billing statement ready",
+        "content": "Your billing statement for the last month is available. It itemizes usage charges and successful payments, and includes a downloadable invoice.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:15",
+      "group": "authored:Receipt:teach:15",
+      "email": {
+        "from": "billing@provider4.example",
+        "subject": "Thank you for your order",
+        "content": "Your purchase has been confirmed. We charged the listed total to your selected payment method. Keep the order confirmation and receipt for reference.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:16",
+      "group": "authored:Receipt:teach:16",
+      "email": {
+        "from": "billing@provider5.example",
+        "subject": "Payment received for your invoice",
+        "content": "We have recorded payment against your outstanding invoice. Your balance for that invoice is now zero. Attached is your payment receipt.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:17",
+      "group": "authored:Receipt:teach:17",
+      "email": {
+        "from": "billing@provider6.example",
+        "subject": "Your restaurant receipt",
+        "content": "Here is the itemized receipt for your completed meal purchase, including service charge and tax. The total was paid using your card.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:18",
+      "group": "authored:Receipt:teach:18",
+      "email": {
+        "from": "billing@provider7.example",
+        "subject": "A copy of your invoice",
+        "content": "You requested a copy of the invoice for your recent purchase. The attached invoice shows the items ordered, payment date, and billing details.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Receipt:19",
+      "group": "authored:Receipt:teach:19",
+      "email": {
+        "from": "billing@provider8.example",
+        "subject": "Successful subscription charge",
+        "content": "Your subscription payment was processed successfully. The receipt below shows the paid amount and service period. Optional upgrades are available in the account portal.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "teach:Notification:0",
+      "group": "authored:Notification:teach:0",
+      "email": {
+        "from": "alerts@provider0.example",
+        "subject": "Backup job failed",
+        "content": "Your nightly backup did not complete because the storage destination was unreachable. Review the failure details in the dashboard and retry the job.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:1",
+      "group": "authored:Notification:teach:1",
+      "email": {
+        "from": "alerts@provider1.example",
+        "subject": "New sign-in detected",
+        "content": "We detected access to your account from a new device. If this was you, no action is needed. Otherwise review your security settings and active sessions.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:2",
+      "group": "authored:Notification:teach:2",
+      "email": {
+        "from": "alerts@provider2.example",
+        "subject": "A comment on your issue",
+        "content": "A contributor commented on the issue you follow. Open the project page to read the discussion and reply there. This is an automated notification.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:3",
+      "group": "authored:Notification:teach:3",
+      "email": {
+        "from": "alerts@provider3.example",
+        "subject": "Service interruption update",
+        "content": "We are investigating elevated errors in the storage service. Affected requests may be delayed. Further incident updates will appear on our status page.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:4",
+      "group": "authored:Notification:teach:4",
+      "email": {
+        "from": "alerts@provider4.example",
+        "subject": "Your shipment is on the way",
+        "content": "The carrier has collected your package. Track its progress using the tracking number below. This message provides a delivery update, not an invoice.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:5",
+      "group": "authored:Notification:teach:5",
+      "email": {
+        "from": "alerts@provider5.example",
+        "subject": "Account storage nearly full",
+        "content": "Your account is approaching its storage quota. Review usage and remove unneeded files. This automated alert reflects the current state of your account.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:6",
+      "group": "authored:Notification:teach:6",
+      "email": {
+        "from": "alerts@provider6.example",
+        "subject": "A payment attempt failed",
+        "content": "We could not charge your saved payment method. Review the account billing settings to avoid interruption. No successful payment receipt was issued.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:7",
+      "group": "authored:Notification:teach:7",
+      "email": {
+        "from": "alerts@provider7.example",
+        "subject": "Your deployment completed",
+        "content": "The new application version has been deployed successfully. View build logs and deployment details in the project dashboard.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:8",
+      "group": "authored:Notification:teach:8",
+      "email": {
+        "from": "alerts@provider8.example",
+        "subject": "You were mentioned in a discussion",
+        "content": "A colleague mentioned your username in a team discussion. Open the collaboration app to see the message. This email was generated automatically.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:9",
+      "group": "authored:Notification:teach:9",
+      "email": {
+        "from": "alerts@provider9.example",
+        "subject": "Your document was shared",
+        "content": "A collaborator granted you access to a document. Open the link to view it. This is an automatic sharing notification.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:10",
+      "group": "authored:Notification:teach:10",
+      "email": {
+        "from": "alerts@provider10.example",
+        "subject": "The export is ready",
+        "content": "Your requested data export has finished. Download the archive from your account. The file will be available for seven days.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:11",
+      "group": "authored:Notification:teach:11",
+      "email": {
+        "from": "alerts@provider0.example",
+        "subject": "Account policy update",
+        "content": "We updated the terms that apply to your existing service. Read the notice to understand what changed. This is an account announcement rather than an optional sales offer.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:12",
+      "group": "authored:Notification:teach:12",
+      "email": {
+        "from": "alerts@provider1.example",
+        "subject": "Job processing completed with warnings",
+        "content": "The scheduled processing task finished but some records could not be imported. Review the error report for details and affected items.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:13",
+      "group": "authored:Notification:teach:13",
+      "email": {
+        "from": "alerts@provider2.example",
+        "subject": "Your delivery was delayed",
+        "content": "The carrier reported a delay to your package. A new estimated delivery date is shown on the tracking page. We will send another update when its status changes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:14",
+      "group": "authored:Notification:teach:14",
+      "email": {
+        "from": "alerts@provider3.example",
+        "subject": "A new message in the app",
+        "content": "You received a message on the community platform. The sender's text is quoted below. Open the app to read or respond; this email is an automated notification.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:15",
+      "group": "authored:Notification:teach:15",
+      "email": {
+        "from": "alerts@provider4.example",
+        "subject": "Build pipeline needs attention",
+        "content": "The latest automated build failed its checks. Open the job logs to review the failed steps and rerun the pipeline after correcting the issue.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:16",
+      "group": "authored:Notification:teach:16",
+      "email": {
+        "from": "alerts@provider5.example",
+        "subject": "Subscription status changed",
+        "content": "Your subscription is scheduled to end at the close of the current billing period. Review the account page for details. This is a service status notice.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:17",
+      "group": "authored:Notification:teach:17",
+      "email": {
+        "from": "alerts@provider6.example",
+        "subject": "Security settings changed",
+        "content": "Two-factor authentication was updated on your account. If you made this change, no action is needed. Otherwise contact account support.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:18",
+      "group": "authored:Notification:teach:18",
+      "email": {
+        "from": "alerts@provider7.example",
+        "subject": "Maintenance starts tomorrow",
+        "content": "Scheduled maintenance may temporarily affect access to the service. The maintenance window and expected impact are described on the status page.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:Notification:19",
+      "group": "authored:Notification:teach:19",
+      "email": {
+        "from": "alerts@provider8.example",
+        "subject": "Someone reacted to your post",
+        "content": "A user liked your post on the social platform. View the activity in the app. This is an automatically generated social notification.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "teach:OTP:0",
+      "group": "authored:OTP:teach:0",
+      "email": {
+        "from": "accounts@provider0.example",
+        "subject": "Your access code",
+        "content": "Enter 583204 to finish signing in. This one-time code expires in ten minutes. Do not share it with anyone.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:1",
+      "group": "authored:OTP:teach:1",
+      "email": {
+        "from": "accounts@provider1.example",
+        "subject": "Confirm your email address",
+        "content": "Use the verification link below to confirm ownership of your email address. The link is valid for thirty minutes and can be used only once.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:2",
+      "group": "authored:OTP:teach:2",
+      "email": {
+        "from": "accounts@provider2.example",
+        "subject": "Reset your password",
+        "content": "We received your password reset request. Follow the secure link to choose a new password. If you did not request it, you may ignore this message.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:3",
+      "group": "authored:OTP:teach:3",
+      "email": {
+        "from": "accounts@provider3.example",
+        "subject": "Your sign-in link",
+        "content": "Click the secure link below to sign in without a password. This magic link expires shortly and should not be forwarded.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:4",
+      "group": "authored:OTP:teach:4",
+      "email": {
+        "from": "accounts@provider4.example",
+        "subject": "Verify your device",
+        "content": "Enter the supplied verification code to approve this device. The code is temporary and is required to complete the sign-in attempt.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:5",
+      "group": "authored:OTP:teach:5",
+      "email": {
+        "from": "accounts@provider5.example",
+        "subject": "Finish creating your account",
+        "content": "Please verify your email address with the code below. After verification you can access your account. We also offer an optional premium plan.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:6",
+      "group": "authored:OTP:teach:6",
+      "email": {
+        "from": "accounts@provider6.example",
+        "subject": "Your two-step verification code",
+        "content": "Use this temporary code as the second step of authentication. It expires in five minutes. Support will never ask you to disclose the code.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:7",
+      "group": "authored:OTP:teach:7",
+      "email": {
+        "from": "accounts@provider7.example",
+        "subject": "Account recovery link",
+        "content": "Continue your requested account recovery using the link below. It will expire in fifteen minutes and becomes invalid after use.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:8",
+      "group": "authored:OTP:teach:8",
+      "email": {
+        "from": "accounts@provider8.example",
+        "subject": "Approve this login",
+        "content": "To finish the sign-in you requested, enter the authentication code shown below. Do not approve it if you did not initiate the request.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:9",
+      "group": "authored:OTP:teach:9",
+      "email": {
+        "from": "accounts@provider9.example",
+        "subject": "A secure link to your dashboard",
+        "content": "Here is the one-time link you requested to open your member dashboard. Use it before it expires. It grants access to your account and should stay private.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:10",
+      "group": "authored:OTP:teach:10",
+      "email": {
+        "from": "accounts@provider10.example",
+        "subject": "Verify your new address",
+        "content": "Enter this confirmation code to finish changing the email address on your account. The change will not take effect until verification completes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:11",
+      "group": "authored:OTP:teach:11",
+      "email": {
+        "from": "accounts@provider0.example",
+        "subject": "Your temporary password",
+        "content": "Use the temporary password below to access your account and choose a new password. This credential expires after its first use.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:12",
+      "group": "authored:OTP:teach:12",
+      "email": {
+        "from": "accounts@provider1.example",
+        "subject": "Confirm your registration",
+        "content": "Activate the account you just registered by following this email verification link. Ignore the message if you did not create the account.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:13",
+      "group": "authored:OTP:teach:13",
+      "email": {
+        "from": "accounts@provider2.example",
+        "subject": "A code for your login",
+        "content": "Your authentication code is 739182. Enter it in the sign-in screen to continue. Never send it to anyone claiming to offer support.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:14",
+      "group": "authored:OTP:teach:14",
+      "email": {
+        "from": "accounts@provider3.example",
+        "subject": "Secure account access",
+        "content": "Use the requested magic sign-in link to open your account. The link is for your personal use and expires after ten minutes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:15",
+      "group": "authored:OTP:teach:15",
+      "email": {
+        "from": "accounts@provider4.example",
+        "subject": "Password assistance",
+        "content": "You asked to reset your password. The reset link below lets you create a replacement. It will stop working after the expiration time.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:16",
+      "group": "authored:OTP:teach:16",
+      "email": {
+        "from": "accounts@provider5.example",
+        "subject": "Complete identity verification",
+        "content": "Use this email verification code to finish authenticating. The code is valid for a single attempt and expires shortly.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:17",
+      "group": "authored:OTP:teach:17",
+      "email": {
+        "from": "accounts@provider6.example",
+        "subject": "Confirm the email on your profile",
+        "content": "Click this verification link to prove you control the address attached to your profile. This is a confirmation step for the change you requested.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:18",
+      "group": "authored:OTP:teach:18",
+      "email": {
+        "from": "accounts@provider7.example",
+        "subject": "A fresh sign-in code",
+        "content": "Here is the replacement one-time code you requested because the previous code expired. Use the new code to finish signing in.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:OTP:19",
+      "group": "authored:OTP:teach:19",
+      "email": {
+        "from": "accounts@provider8.example",
+        "subject": "Access your member benefits",
+        "content": "Sign in with this one-time magic link to open your member benefits dashboard. The link contains a temporary authentication token, not a promotional discount.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "teach:Conversations:0",
+      "group": "authored:Conversations:teach:0",
+      "email": {
+        "from": "sam@provider0.example",
+        "subject": "Could you review my draft",
+        "content": "Hi, I finished the first draft of our proposal. Please read it and tell me whether the scope makes sense before I send it to the client. Your feedback would help.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:1",
+      "group": "authored:Conversations:teach:1",
+      "email": {
+        "from": "sam@provider1.example",
+        "subject": "A question about the report",
+        "content": "I was looking at the report you sent and could not reconcile two figures. Could you explain which period the comparison uses? Thanks for helping me understand it.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:2",
+      "group": "authored:Conversations:teach:2",
+      "email": {
+        "from": "sam@provider2.example",
+        "subject": "Your advice on the project",
+        "content": "We need to choose between two approaches for the project. I would value your opinion on the tradeoffs before we make a decision. What do you think?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:3",
+      "group": "authored:Conversations:teach:3",
+      "email": {
+        "from": "sam@provider3.example",
+        "subject": "An update from our team",
+        "content": "I wanted to let you know that we finished the field work. There were a few surprises, but we can discuss them later. Thanks again for your help with the preparation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:4",
+      "group": "authored:Conversations:teach:4",
+      "email": {
+        "from": "sam@provider4.example",
+        "subject": "Following up on our discussion",
+        "content": "Did you have a chance to consider the question I raised? I would appreciate your answer before we finalize the document. Let me know if you need more information.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:5",
+      "group": "authored:Conversations:teach:5",
+      "email": {
+        "from": "sam@provider5.example",
+        "subject": "Could you approve these changes",
+        "content": "I revised the proposal based on your comments. Please confirm that the changes are acceptable so I can send the final version. This is a direct request from a colleague.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:6",
+      "group": "authored:Conversations:teach:6",
+      "email": {
+        "from": "sam@provider6.example",
+        "subject": "A note from home",
+        "content": "Hope your week is going well. We tried the recipe you recommended and everyone loved it. How are things with you? Write when you have a moment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:7",
+      "group": "authored:Conversations:teach:7",
+      "email": {
+        "from": "sam@provider7.example",
+        "subject": "Help with our launch copy",
+        "content": "I drafted the advertisements for the launch you hired us to run. Could you review the wording and approve the campaign before we publish it? We need your decision.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:8",
+      "group": "authored:Conversations:teach:8",
+      "email": {
+        "from": "sam@provider8.example",
+        "subject": "Question about my purchase",
+        "content": "Hello, I am a customer and the product I received has a problem. Could someone help me understand how to resolve it? I can send photos if needed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:9",
+      "group": "authored:Conversations:teach:9",
+      "email": {
+        "from": "sam@provider9.example",
+        "subject": "Your recommendation please",
+        "content": "Our team is comparing several vendors. Since you have worked with one of them, could you share what the experience was like? Your advice would be useful.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:10",
+      "group": "authored:Conversations:teach:10",
+      "email": {
+        "from": "sam@provider10.example",
+        "subject": "Thanks for the introduction",
+        "content": "I appreciate you introducing me to your colleague. We had a productive conversation and I wanted to let you know how it went. Thank you for making the connection.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:11",
+      "group": "authored:Conversations:teach:11",
+      "email": {
+        "from": "sam@provider0.example",
+        "subject": "A request from the client",
+        "content": "Could your team revise the design to include the changes we discussed? Please send me the updated version for approval. I am happy to clarify any of the requirements.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:12",
+      "group": "authored:Conversations:teach:12",
+      "email": {
+        "from": "sam@provider1.example",
+        "subject": "Checking a detail with you",
+        "content": "Before I finish the analysis, I need to confirm an assumption. Does the number you gave me include the additional team? Please reply when you have a chance.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:13",
+      "group": "authored:Conversations:teach:13",
+      "email": {
+        "from": "sam@provider2.example",
+        "subject": "An idea for our next project",
+        "content": "I have been thinking about the problem we discussed and have a possible approach. Would you be willing to read a short outline and tell me whether it seems useful?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:14",
+      "group": "authored:Conversations:teach:14",
+      "email": {
+        "from": "sam@provider3.example",
+        "subject": "Personal update",
+        "content": "I finally finished the course I told you about. It was demanding but I learned a lot. How has your new role been going? I would love to hear your news.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:15",
+      "group": "authored:Conversations:teach:15",
+      "email": {
+        "from": "sam@provider4.example",
+        "subject": "Please send the missing document",
+        "content": "I am putting together our submission and still need the signed document from you. Could you send it when convenient? Thanks for helping us complete the packet.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:16",
+      "group": "authored:Conversations:teach:16",
+      "email": {
+        "from": "sam@provider5.example",
+        "subject": "Clarification about your invoice",
+        "content": "I received the invoice you sent but have a question about one of the line items. Could you explain what the additional service covers before I approve it?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:17",
+      "group": "authored:Conversations:teach:17",
+      "email": {
+        "from": "sam@provider6.example",
+        "subject": "Campaign changes for approval",
+        "content": "As your agency client, I would like you to change the copy in our promotional campaign. Please send the revised advertisement back to me for approval before publication.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:18",
+      "group": "authored:Conversations:teach:18",
+      "email": {
+        "from": "sam@provider7.example",
+        "subject": "Can you help me resolve this",
+        "content": "I tried the instructions you sent but am still having trouble. Could you tell me what to try next? I can describe the steps I followed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "teach:Conversations:19",
+      "group": "authored:Conversations:teach:19",
+      "email": {
+        "from": "sam@provider8.example",
+        "subject": "Closing the loop",
+        "content": "Thanks for answering my question. That resolves the issue on my side, and I do not need anything else. I wanted to let you know we can consider this discussion complete.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    }
+  ],
+  "calibration": [
+    {
+      "id": "calibration:Newsletter:0",
+      "group": "authored:Newsletter:calibration:0",
+      "email": {
+        "from": "editor@provider0.example",
+        "subject": "Our new subscriber edition",
+        "content": "This week's editorial digest covers a new discovery, an interview, and two books worth reading. A sponsored message appears after the articles.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:1",
+      "group": "authored:Newsletter:calibration:1",
+      "email": {
+        "from": "editor@provider1.example",
+        "subject": "The weekend reading club",
+        "content": "Here are the essays our editors selected for you this week, with short summaries and links. Reply to suggest a topic for our next issue.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:2",
+      "group": "authored:Newsletter:calibration:2",
+      "email": {
+        "from": "editor@provider2.example",
+        "subject": "A letter about astronomy",
+        "content": "In our regular science publication we explain a newly observed star system. Read the full feature and an interview with the research team.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:3",
+      "group": "authored:Newsletter:calibration:3",
+      "email": {
+        "from": "editor@provider3.example",
+        "subject": "Notes from the design desk",
+        "content": "Our monthly journal contains three design critiques and a reader conversation. Thank you for supporting the publication.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:4",
+      "group": "authored:Newsletter:calibration:4",
+      "email": {
+        "from": "editor@provider4.example",
+        "subject": "The weekly policy digest",
+        "content": "Our newsroom summarizes the most significant policy developments of the week and links to detailed analysis for subscribers.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:5",
+      "group": "authored:Newsletter:calibration:5",
+      "email": {
+        "from": "editor@provider5.example",
+        "subject": "Stories from the outdoors",
+        "content": "This edition features a trail guide, an interview with a conservationist, and photographs submitted by readers. You receive this regular newsletter as a subscriber.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:6",
+      "group": "authored:Newsletter:calibration:6",
+      "email": {
+        "from": "editor@provider6.example",
+        "subject": "The books briefing",
+        "content": "Our editors reviewed this month's new releases and selected several novels and essays to discuss. Find the reviews in this subscriber digest.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Newsletter:7",
+      "group": "authored:Newsletter:calibration:7",
+      "email": {
+        "from": "editor@provider7.example",
+        "subject": "Your regular industry review",
+        "content": "A roundup of research, analysis, and commentary from our publication. This week's sponsor helps keep the editorial content free.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Newsletter"
+    },
+    {
+      "id": "calibration:Marketing:0",
+      "group": "authored:Marketing:calibration:0",
+      "email": {
+        "from": "hello@provider0.example",
+        "subject": "An optional upgrade awaits",
+        "content": "Try the advanced version of our service with an introductory discount. Your existing service continues if you do not accept this promotion.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:1",
+      "group": "authored:Marketing:calibration:1",
+      "email": {
+        "from": "hello@provider1.example",
+        "subject": "We saved an offer for you",
+        "content": "Shop our new collection and apply a coupon toward a future purchase. Visit the store to explore this promotional offer.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:2",
+      "group": "authored:Marketing:calibration:2",
+      "email": {
+        "from": "hello@provider2.example",
+        "subject": "Share your experience for a voucher",
+        "content": "Our research team invites customers to an optional feedback interview. Participants receive a gift voucher. Choose a slot or unsubscribe from these invitations.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:3",
+      "group": "authored:Marketing:calibration:3",
+      "email": {
+        "from": "hello@provider3.example",
+        "subject": "Last chance to claim a deal",
+        "content": "The sale on optional accessories ends tonight. Browse the offers before the promotional window closes. Your account requires no action.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:4",
+      "group": "authored:Marketing:calibration:4",
+      "email": {
+        "from": "hello@provider4.example",
+        "subject": "Meet our latest product",
+        "content": "We are announcing a new product range and inviting you to try it. Visit our store or start a free trial using the links below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:5",
+      "group": "authored:Marketing:calibration:5",
+      "email": {
+        "from": "hello@provider5.example",
+        "subject": "A special invitation for members",
+        "content": "Explore optional partner promotions and member discounts. These benefits are available if you wish to try a new service.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:6",
+      "group": "authored:Marketing:calibration:6",
+      "email": {
+        "from": "hello@provider6.example",
+        "subject": "Your opinion and a thank-you gift",
+        "content": "Hi, our customer team would like your feedback in a short survey. We will send a discount voucher if you take part. Participation is optional.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Marketing:7",
+      "group": "authored:Marketing:calibration:7",
+      "email": {
+        "from": "hello@provider7.example",
+        "subject": "Explore our premium features",
+        "content": "An optional paid plan adds features beyond your current subscription. Compare plans and upgrade if you would like to try them.",
+        "hasListUnsubscribeHeader": true
+      },
+      "label": "Marketing"
+    },
+    {
+      "id": "calibration:Calendar:0",
+      "group": "authored:Calendar:calibration:0",
+      "email": {
+        "from": "calendar@provider0.example",
+        "subject": "Reminder for the scheduled review",
+        "content": "The quarterly review meeting begins in one hour. The invitation contains the joining link, organizer, and agenda.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:1",
+      "group": "authored:Calendar:calibration:1",
+      "email": {
+        "from": "calendar@provider1.example",
+        "subject": "Updated appointment details",
+        "content": "Your booked appointment has a new location. The date and time are unchanged. Open the calendar event for directions.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:2",
+      "group": "authored:Calendar:calibration:2",
+      "email": {
+        "from": "calendar@provider2.example",
+        "subject": "Invitation to a planning call",
+        "content": "Please accept or decline the scheduled planning call next Thursday. The calendar invitation includes the video link.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:3",
+      "group": "authored:Calendar:calibration:3",
+      "email": {
+        "from": "calendar@provider3.example",
+        "subject": "Can you pick a meeting slot",
+        "content": "Please choose an available time for our interview using the scheduling page. Once you select a slot, it will be added to both calendars.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:4",
+      "group": "authored:Calendar:calibration:4",
+      "email": {
+        "from": "calendar@provider4.example",
+        "subject": "Meeting cancellation notice",
+        "content": "The organizer canceled tomorrow's meeting. This occurrence has been removed from your calendar, but the recurring series continues.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:5",
+      "group": "authored:Calendar:calibration:5",
+      "email": {
+        "from": "calendar@provider5.example",
+        "subject": "Accepted your event invitation",
+        "content": "A participant accepted the invitation to the scheduled training session. You can view the current guest list in the calendar entry.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:6",
+      "group": "authored:Calendar:calibration:6",
+      "email": {
+        "from": "calendar@provider6.example",
+        "subject": "A reminder about your consultation",
+        "content": "Your booked consultation starts tomorrow morning. See the calendar appointment for arrival details and a rescheduling link.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Calendar:7",
+      "group": "authored:Calendar:calibration:7",
+      "email": {
+        "from": "calendar@provider7.example",
+        "subject": "The workshop has moved",
+        "content": "The organizer changed the workshop to Friday afternoon. Respond to the updated calendar invitation to confirm attendance.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Calendar"
+    },
+    {
+      "id": "calibration:Receipt:0",
+      "group": "authored:Receipt:calibration:0",
+      "email": {
+        "from": "billing@provider0.example",
+        "subject": "Receipt for your completed purchase",
+        "content": "Your card was charged successfully for the order. The attached receipt lists the items, tax, and total paid.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:1",
+      "group": "authored:Receipt:calibration:1",
+      "email": {
+        "from": "billing@provider1.example",
+        "subject": "Your invoice is ready to download",
+        "content": "The invoice for this service period is available. It itemizes the agreed charges and provides the payment reference.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:2",
+      "group": "authored:Receipt:calibration:2",
+      "email": {
+        "from": "billing@provider2.example",
+        "subject": "Payment confirmation for your membership",
+        "content": "We received your renewal payment. This receipt confirms the amount paid and dates covered by your membership.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:3",
+      "group": "authored:Receipt:calibration:3",
+      "email": {
+        "from": "billing@provider3.example",
+        "subject": "A refund for the returned item",
+        "content": "The refund transaction has been processed to your original payment method. Keep this confirmation and reference number for your records.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:4",
+      "group": "authored:Receipt:calibration:4",
+      "email": {
+        "from": "billing@provider4.example",
+        "subject": "Your order was paid",
+        "content": "Here is the itemized purchase confirmation. It records the successful charge and the products you ordered.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:5",
+      "group": "authored:Receipt:calibration:5",
+      "email": {
+        "from": "billing@provider5.example",
+        "subject": "Receipt for the completed ride",
+        "content": "The trip has ended and your payment succeeded. View the fare breakdown and download your receipt.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:6",
+      "group": "authored:Receipt:calibration:6",
+      "email": {
+        "from": "billing@provider6.example",
+        "subject": "Your subscription invoice",
+        "content": "The invoice shows the billing period, plan charges, taxes, and payment recorded on your account. Save a copy for your records.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Receipt:7",
+      "group": "authored:Receipt:calibration:7",
+      "email": {
+        "from": "billing@provider7.example",
+        "subject": "Confirmation of the license order",
+        "content": "The software license purchase was completed and paid. Download the invoice and find the order details below.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Receipt"
+    },
+    {
+      "id": "calibration:Notification:0",
+      "group": "authored:Notification:calibration:0",
+      "email": {
+        "from": "alerts@provider0.example",
+        "subject": "A new account login",
+        "content": "A new device accessed your account. Review recent activity if you do not recognize the access. This is an automated security alert.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:1",
+      "group": "authored:Notification:calibration:1",
+      "email": {
+        "from": "alerts@provider1.example",
+        "subject": "Build check did not pass",
+        "content": "The automated build failed a validation step. Open the run details to inspect logs and affected components.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:2",
+      "group": "authored:Notification:calibration:2",
+      "email": {
+        "from": "alerts@provider2.example",
+        "subject": "A reply on your tracked issue",
+        "content": "Someone replied to a software issue you follow. The message is quoted in this automatic notification; open the project page to respond.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:3",
+      "group": "authored:Notification:calibration:3",
+      "email": {
+        "from": "alerts@provider3.example",
+        "subject": "Incident update for the service",
+        "content": "We are investigating errors affecting the service. Read the status page for current impact and the next update.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:4",
+      "group": "authored:Notification:calibration:4",
+      "email": {
+        "from": "alerts@provider4.example",
+        "subject": "Storage threshold reached",
+        "content": "Your account has reached its configured storage warning threshold. Review usage in the dashboard. This is an account status alert.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:5",
+      "group": "authored:Notification:calibration:5",
+      "email": {
+        "from": "alerts@provider5.example",
+        "subject": "Package tracking update",
+        "content": "Your parcel has reached the regional carrier hub. Follow the tracking link for the expected delivery date.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:6",
+      "group": "authored:Notification:calibration:6",
+      "email": {
+        "from": "alerts@provider6.example",
+        "subject": "Your scheduled task needs attention",
+        "content": "The scheduled job finished with errors. Review the report to see which items failed and retry as appropriate.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:Notification:7",
+      "group": "authored:Notification:calibration:7",
+      "email": {
+        "from": "alerts@provider7.example",
+        "subject": "Payment could not be completed",
+        "content": "The card charge failed and your subscription may be interrupted. Update the payment method in your account. No payment was received.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Notification"
+    },
+    {
+      "id": "calibration:OTP:0",
+      "group": "authored:OTP:calibration:0",
+      "email": {
+        "from": "accounts@provider0.example",
+        "subject": "A code to complete sign-in",
+        "content": "Enter the temporary code below in the login screen. It expires soon and can only be used once.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:1",
+      "group": "authored:OTP:calibration:1",
+      "email": {
+        "from": "accounts@provider1.example",
+        "subject": "Please verify your registration",
+        "content": "Follow this email confirmation link to activate your new account. The verification link has a short expiry.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:2",
+      "group": "authored:OTP:calibration:2",
+      "email": {
+        "from": "accounts@provider2.example",
+        "subject": "Your requested recovery link",
+        "content": "Use this password recovery link to set a new password. If you did not request a reset, ignore this message.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:3",
+      "group": "authored:OTP:calibration:3",
+      "email": {
+        "from": "accounts@provider3.example",
+        "subject": "One-time account access",
+        "content": "The magic link below signs you into your dashboard. It contains a temporary authentication token and should not be shared.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:4",
+      "group": "authored:OTP:calibration:4",
+      "email": {
+        "from": "accounts@provider4.example",
+        "subject": "Verify this device",
+        "content": "Use the one-time code to complete device verification. This extra step is required before your login can proceed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:5",
+      "group": "authored:OTP:calibration:5",
+      "email": {
+        "from": "accounts@provider5.example",
+        "subject": "Confirm your changed email",
+        "content": "Enter this verification code to approve the email address change you requested. The code expires in a few minutes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:6",
+      "group": "authored:OTP:calibration:6",
+      "email": {
+        "from": "accounts@provider6.example",
+        "subject": "Reset access to your account",
+        "content": "You requested password assistance. Click the reset link to choose a new password before the link expires.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:OTP:7",
+      "group": "authored:OTP:calibration:7",
+      "email": {
+        "from": "accounts@provider7.example",
+        "subject": "Sign in to claim your member benefits",
+        "content": "Use this requested magic login link to access the member dashboard. It is an authentication link and expires after one use.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "OTP"
+    },
+    {
+      "id": "calibration:Conversations:0",
+      "group": "authored:Conversations:calibration:0",
+      "email": {
+        "from": "sam@provider0.example",
+        "subject": "Could you explain your recommendation",
+        "content": "I read your proposal and would like to understand why you prefer that approach. Please share your reasoning before we decide.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:1",
+      "group": "authored:Conversations:calibration:1",
+      "email": {
+        "from": "sam@provider1.example",
+        "subject": "A follow-up from our client",
+        "content": "Could you update the draft to reflect the feedback we sent? We need to approve the revised version before it goes out.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:2",
+      "group": "authored:Conversations:calibration:2",
+      "email": {
+        "from": "sam@provider2.example",
+        "subject": "Checking in with you",
+        "content": "How have things been since your move? I wanted to hear how you are settling in. Write back when you have time.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:3",
+      "group": "authored:Conversations:calibration:3",
+      "email": {
+        "from": "sam@provider3.example",
+        "subject": "Please confirm the figures",
+        "content": "I am preparing our report and need your confirmation of the totals. Does the estimate include the additional work we discussed?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:4",
+      "group": "authored:Conversations:calibration:4",
+      "email": {
+        "from": "sam@provider4.example",
+        "subject": "A question from a customer",
+        "content": "I bought the product last week and need help using one of its features. Could you explain the steps I should follow?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:5",
+      "group": "authored:Conversations:calibration:5",
+      "email": {
+        "from": "sam@provider5.example",
+        "subject": "Your review would help",
+        "content": "I have finished a draft of our analysis. Would you read it and tell me whether any assumptions need to change?",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:6",
+      "group": "authored:Conversations:calibration:6",
+      "email": {
+        "from": "sam@provider6.example",
+        "subject": "An update on our work",
+        "content": "I wanted to keep you informed about our progress. We completed the first stage and are ready to discuss the next steps with you.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    },
+    {
+      "id": "calibration:Conversations:7",
+      "group": "authored:Conversations:calibration:7",
+      "email": {
+        "from": "sam@provider7.example",
+        "subject": "Thanks, that answers my question",
+        "content": "Your explanation was helpful and I now understand what happened. There is nothing else I need on this issue. Thanks for following up.",
+        "hasListUnsubscribeHeader": false
+      },
+      "label": "Conversations"
+    }
+  ]
+}

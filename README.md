@@ -218,6 +218,7 @@ application when to request review.
 | Learn by observing a running teacher | [Teacher callbacks and automatic takeover](https://github.com/steph4n-gh/system1/blob/main/docs/typesafe.md) |
 | Use Apple Silicon decision-head operations | Install `system1[metal]`; see [backend scope](https://github.com/steph4n-gh/system1/blob/main/docs/architecture/technical_specification.md) |
 | Connect LangChain, MCP, ASGI or gRPC | [Integration guide](https://github.com/steph4n-gh/system1/blob/main/docs/integrations.md) |
+| Pilot local email categories in Inbox Zero | [Working integration and measured quality limits](https://github.com/steph4n-gh/system1/blob/main/examples/inbox_zero/README.md) |
 | Monitor local decisions | [Metrics and tracing](https://github.com/steph4n-gh/system1/blob/main/docs/observability/README.md) |
 
 ### Policy guard

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add an opt-in Inbox Zero category-classification pilot: editable lessons, saved local skill, authenticated HTTP service, and a separately licensed upstream provider patch. Preserve review on uncertainty, contract changes, and service failures.
+- Publish all 35 upstream compatibility results and a conventional baseline. The initial System1 lesson accepts 5/35 cases and remains review-only by default; no claim of production takeover.
+
 ## 1.0.3 — 2026-09-20
 
 - Require an independent trusted public key for receipt authentication. Expose `check_decision_receipt_integrity()` for unsigned diagnostics; comparison results no longer claim unsigned receipts are authenticated.
