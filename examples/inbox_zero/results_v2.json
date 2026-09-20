@@ -1,0 +1,3248 @@
+{
+  "protocol": {
+    "candidate": "tfidf-email-v2",
+    "feature_space": "NumPy-only word unigram/bigram TF-IDF, max_features=2048, smoothed IDF, sublinear TF, L2 normalization; vocabulary fitted only on teaching rows",
+    "head": {
+      "type": "existing System1 ridge",
+      "regularization": 0.1
+    },
+    "alpha": 0.05,
+    "counts": {
+      "teach": 252,
+      "calibration": 140,
+      "fresh_evaluation": 84,
+      "upstream_regression": 35
+    },
+    "selection": "One fixed candidate; no parameter search or evaluation-driven lesson edits. Preserve any failure.",
+    "targets": {
+      "accepted_accuracy": 0.95,
+      "acceptance_rate": 0.8
+    },
+    "scope": "Synthetic English category pilot; passing point targets does not qualify real mailbox automation. Existing service defaults to review-only.",
+    "baseline": "Same capped TF-IDF features and fit rows, logistic regression C=1; same conformal fold at alpha=.05",
+    "cohorts": {
+      "fresh": "New authored holdout, same author as teaching, not blind or independent production evidence",
+      "upstream": "Previously seen upstream cases, retained as regressions only"
+    },
+    "sha256": {
+      "lessons_v2.json": "b3ee22595ace50707a5508c8dc0bff370b8a6d8bc35043ee5a3865c1313357d0",
+      "evaluation_v2.json": "806bbbffac3e4a9101fda4a57e669efda0d05abdd711482ba0ed6d6db882fbf4"
+    }
+  },
+  "protocol_sha256": "ddc08610349e4107eba12b5a305cdaba41ce13c847cb423f03b93cd77a15148c",
+  "lessons_sha256": "b3ee22595ace50707a5508c8dc0bff370b8a6d8bc35043ee5a3865c1313357d0",
+  "upstream": {
+    "repository": "elie222/inbox-zero",
+    "commit": "2571ce4970aa5d024bb664a6739bd91b1172c367",
+    "file_sha256": {
+      "apps/web/utils/rule/consts.ts": "8e263aa75275afaad88c9a83b9662ce955b6b993d8fbc4fc0ab1f7a772112186",
+      "apps/web/utils/ai/choose-rule/run-rules.ts": "8eb8a93cdd0b41f19405c747b8952329fa5165c2009ff4faad5e6a84191b0a91",
+      "apps/web/utils/ai/choose-rule/classifier-choose-rule.ts": "53ea52b8411a15599c0c089e884becaeec320061d064d7bebd4192bc88f99b25",
+      "apps/web/__tests__/eval/choose-rule.test.ts": "2064b51c6cac22c0523251809185b24d2a54e8085b8c186bca3908dd3fd34ae9"
+    }
+  },
+  "environment": {
+    "system1": "1.0.3",
+    "python": "3.13.5",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "sklearn": "1.9.1"
+  },
+  "teacher_calls": 0,
+  "external_network_calls": 0,
+  "system1": {
+    "teaching_ms": 124.89254196407273,
+    "skill_bytes": 115635,
+    "counts": {
+      "teach": 252,
+      "calibration": 140
+    },
+    "teacher_calls": 0,
+    "load_ms": 3.8262910093180835,
+    "reload_identical": true,
+    "quality": {
+      "cases": 119,
+      "raw_correct": 115,
+      "raw_accuracy": 0.9663865546218487,
+      "accepted": 105,
+      "accepted_correct": 104,
+      "accepted_errors": 1,
+      "accepted_accuracy": 0.9904761904761905,
+      "reviewed": 14,
+      "acceptance_rate": 0.8823529411764706,
+      "accepted_accuracy_interval_95": [
+        0.9480137413881103,
+        0.9983168307671438
+      ],
+      "meets_targets": true,
+      "latency_median_ms": 0.20412501180544496,
+      "latency_p95_ms": 0.27834624052047724
+    },
+    "predictions": [
+      {
+        "id": "fresh:Newsletter:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.24687498807907104
+      },
+      {
+        "id": "fresh:Newsletter:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.22058398462831974
+      },
+      {
+        "id": "fresh:Newsletter:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2180419978685677
+      },
+      {
+        "id": "fresh:Newsletter:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2855840139091015
+      },
+      {
+        "id": "fresh:Newsletter:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.21879200357943773
+      },
+      {
+        "id": "fresh:Newsletter:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.30387501465156674
+      },
+      {
+        "id": "fresh:Newsletter:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.23291702382266521
+      },
+      {
+        "id": "fresh:Newsletter:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2074579824693501
+      },
+      {
+        "id": "fresh:Newsletter:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.20775001030415297
+      },
+      {
+        "id": "fresh:Newsletter:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2074579824693501
+      },
+      {
+        "id": "fresh:Newsletter:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2002500114031136
+      },
+      {
+        "id": "fresh:Newsletter:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2002919791266322
+      },
+      {
+        "id": "fresh:Marketing:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.19833300029858947
+      },
+      {
+        "id": "fresh:Marketing:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.19895797595381737
+      },
+      {
+        "id": "fresh:Marketing:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.21112500689923763
+      },
+      {
+        "id": "fresh:Marketing:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.21137500880286098
+      },
+      {
+        "id": "fresh:Marketing:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.20833400776609778
+      },
+      {
+        "id": "fresh:Marketing:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.22329197963699698
+      },
+      {
+        "id": "fresh:Marketing:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.27754204347729683
+      },
+      {
+        "id": "fresh:Marketing:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.20987499738112092
+      },
+      {
+        "id": "fresh:Marketing:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.2010409953072667
+      },
+      {
+        "id": "fresh:Marketing:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.20354200387373567
+      },
+      {
+        "id": "fresh:Marketing:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.19774999236688018
+      },
+      {
+        "id": "fresh:Marketing:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.20283303456380963
+      },
+      {
+        "id": "fresh:Calendar:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19587500719353557
+      },
+      {
+        "id": "fresh:Calendar:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19399996381253004
+      },
+      {
+        "id": "fresh:Calendar:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19391701789572835
+      },
+      {
+        "id": "fresh:Calendar:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19754201639443636
+      },
+      {
+        "id": "fresh:Calendar:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19220804097130895
+      },
+      {
+        "id": "fresh:Calendar:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.19291701028123498
+      },
+      {
+        "id": "fresh:Calendar:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.20741700427606702
+      },
+      {
+        "id": "fresh:Calendar:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.5311660352163017
+      },
+      {
+        "id": "fresh:Calendar:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.2027079463005066
+      },
+      {
+        "id": "fresh:Calendar:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.20112498896196485
+      },
+      {
+        "id": "fresh:Calendar:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.20212499657645822
+      },
+      {
+        "id": "fresh:Calendar:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.1972089521586895
+      },
+      {
+        "id": "fresh:Receipt:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20529195899143815
+      },
+      {
+        "id": "fresh:Receipt:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.2687080414034426
+      },
+      {
+        "id": "fresh:Receipt:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.3421669825911522
+      },
+      {
+        "id": "fresh:Receipt:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.24595798458904028
+      },
+      {
+        "id": "fresh:Receipt:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20541698904708028
+      },
+      {
+        "id": "fresh:Receipt:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.23875001352280378
+      },
+      {
+        "id": "fresh:Receipt:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20695803686976433
+      },
+      {
+        "id": "fresh:Receipt:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.2043750137090683
+      },
+      {
+        "id": "fresh:Receipt:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.19341602455824614
+      },
+      {
+        "id": "fresh:Receipt:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20095898071303964
+      },
+      {
+        "id": "fresh:Receipt:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20879099611192942
+      },
+      {
+        "id": "fresh:Receipt:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.19500002963468432
+      },
+      {
+        "id": "fresh:Notification:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20083400886505842
+      },
+      {
+        "id": "fresh:Notification:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.19766698824241757
+      },
+      {
+        "id": "fresh:Notification:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.19712495850399137
+      },
+      {
+        "id": "fresh:Notification:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.22570800501853228
+      },
+      {
+        "id": "fresh:Notification:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.20883302204310894
+      },
+      {
+        "id": "fresh:Notification:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.19691704073920846
+      },
+      {
+        "id": "fresh:Notification:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.19616703502833843
+      },
+      {
+        "id": "fresh:Notification:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.35879103234037757
+      },
+      {
+        "id": "fresh:Notification:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20587496692314744
+      },
+      {
+        "id": "fresh:Notification:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.1991660101339221
+      },
+      {
+        "id": "fresh:Notification:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20045798737555742
+      },
+      {
+        "id": "fresh:Notification:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20291702821850777
+      },
+      {
+        "id": "fresh:OTP:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.2155840047635138
+      },
+      {
+        "id": "fresh:OTP:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.196542008779943
+      },
+      {
+        "id": "fresh:OTP:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19595801131799817
+      },
+      {
+        "id": "fresh:OTP:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.20541599951684475
+      },
+      {
+        "id": "fresh:OTP:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19887497182935476
+      },
+      {
+        "id": "fresh:OTP:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19933300791308284
+      },
+      {
+        "id": "fresh:OTP:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19645900465548038
+      },
+      {
+        "id": "fresh:OTP:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.20783301442861557
+      },
+      {
+        "id": "fresh:OTP:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.22562500089406967
+      },
+      {
+        "id": "fresh:OTP:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.2187080099247396
+      },
+      {
+        "id": "fresh:OTP:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.20516704535111785
+      },
+      {
+        "id": "fresh:OTP:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19954197341576219
+      },
+      {
+        "id": "fresh:Conversations:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.20054099150002003
+      },
+      {
+        "id": "fresh:Conversations:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.19958300981670618
+      },
+      {
+        "id": "fresh:Conversations:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.1977920182980597
+      },
+      {
+        "id": "fresh:Conversations:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.2032080083154142
+      },
+      {
+        "id": "fresh:Conversations:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.19820895977318287
+      },
+      {
+        "id": "fresh:Conversations:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.22624997654929757
+      },
+      {
+        "id": "fresh:Conversations:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.21379097597673535
+      },
+      {
+        "id": "fresh:Conversations:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.2098329714499414
+      },
+      {
+        "id": "fresh:Conversations:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.20812498405575752
+      },
+      {
+        "id": "fresh:Conversations:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.2155840047635138
+      },
+      {
+        "id": "fresh:Conversations:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.2069160109385848
+      },
+      {
+        "id": "fresh:Conversations:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.19933399744331837
+      },
+      {
+        "id": "testCases:0",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.20412501180544496
+      },
+      {
+        "id": "testCases:1",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.19749999046325684
+      },
+      {
+        "id": "testCases:2",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": false,
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "latency_ms": 0.2126250183209777
+      },
+      {
+        "id": "testCases:3",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.1996249775402248
+      },
+      {
+        "id": "testCases:4",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.1901250216178596
+      },
+      {
+        "id": "testCases:5",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.19345898181200027
+      },
+      {
+        "id": "testCases:6",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.21320802625268698
+      },
+      {
+        "id": "testCases:7",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.20454201148822904
+      },
+      {
+        "id": "testCases:8",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.2059590187855065
+      },
+      {
+        "id": "testCases:9",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "needs_review": false,
+        "prediction_set": [
+          "Calendar"
+        ],
+        "latency_ms": 0.20212499657645822
+      },
+      {
+        "id": "testCases:10",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Calendar",
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.2126669860444963
+      },
+      {
+        "id": "testCases:11",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Conversations",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.20099995890632272
+      },
+      {
+        "id": "testCases:12",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter",
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.22016698494553566
+      },
+      {
+        "id": "testCases:13",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.20541698904708028
+      },
+      {
+        "id": "testCases:14",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt",
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20091596525162458
+      },
+      {
+        "id": "testCases:15",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.19925000378862023
+      },
+      {
+        "id": "testCases:16",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter",
+          "Notification"
+        ],
+        "prediction": "Newsletter",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.2062499988824129
+      },
+      {
+        "id": "testCases:17",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.19449996761977673
+      },
+      {
+        "id": "testCases:18",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Calendar",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.19804103067144752
+      },
+      {
+        "id": "testCases:19",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.19854202400892973
+      },
+      {
+        "id": "testCases:20",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20487501751631498
+      },
+      {
+        "id": "testCases:21",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20141596905887127
+      },
+      {
+        "id": "testCases:22",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.18937495769932866
+      },
+      {
+        "id": "testCases:23",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "needs_review": false,
+        "prediction_set": [
+          "Receipt"
+        ],
+        "latency_ms": 0.21008396288380027
+      },
+      {
+        "id": "testCases:24",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.2994590322487056
+      },
+      {
+        "id": "testCases:25",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing",
+          "Notification",
+          "Conversations"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.2502909628674388
+      },
+      {
+        "id": "testCases:26",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.260957982391119
+      },
+      {
+        "id": "promotionalBoundaryCases:0",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.203833042178303
+      },
+      {
+        "id": "promotionalBoundaryCases:1",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "needs_review": false,
+        "prediction_set": [
+          "Conversations"
+        ],
+        "latency_ms": 0.20599999697878957
+      },
+      {
+        "id": "promotionalBoundaryCases:2",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "needs_review": false,
+        "prediction_set": [
+          "Notification"
+        ],
+        "latency_ms": 0.20145898452028632
+      },
+      {
+        "id": "promotionalBoundaryCases:3",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.193667015992105
+      },
+      {
+        "id": "promotionalBoundaryCases:4",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "needs_review": false,
+        "prediction_set": [
+          "OTP"
+        ],
+        "latency_ms": 0.1955829793587327
+      },
+      {
+        "id": "promotionalBoundaryCases:5",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "Calendar",
+        "needs_review": true,
+        "prediction_set": [],
+        "latency_ms": 0.19975000759586692
+      },
+      {
+        "id": "promotionalBoundaryCases:6",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.2328749978914857
+      },
+      {
+        "id": "promotionalBoundaryCases:7",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "needs_review": false,
+        "prediction_set": [
+          "Marketing"
+        ],
+        "latency_ms": 0.20833400776609778
+      }
+    ],
+    "cohorts": {
+      "fresh_authored": {
+        "cases": 84,
+        "raw_correct": 83,
+        "raw_accuracy": 0.9880952380952381,
+        "accepted": 81,
+        "accepted_correct": 80,
+        "accepted_errors": 1,
+        "accepted_accuracy": 0.9876543209876543,
+        "reviewed": 3,
+        "acceptance_rate": 0.9642857142857143,
+        "accepted_accuracy_interval_95": [
+          0.9333311840195164,
+          0.9978173499414612
+        ],
+        "meets_targets": true,
+        "latency_median_ms": 0.20477102953009307,
+        "latency_p95_ms": 0.28437771834433073
+      },
+      "upstream_regression": {
+        "cases": 35,
+        "raw_correct": 32,
+        "raw_accuracy": 0.9142857142857143,
+        "accepted": 24,
+        "accepted_correct": 24,
+        "accepted_errors": 0,
+        "accepted_accuracy": 1.0,
+        "reviewed": 11,
+        "acceptance_rate": 0.6857142857142857,
+        "accepted_accuracy_interval_95": [
+          0.8620237953250198,
+          1.0
+        ],
+        "meets_targets": false,
+        "latency_median_ms": 0.203833042178303,
+        "latency_p95_ms": 0.2534910687245428
+      }
+    }
+  },
+  "tfidf_logistic": {
+    "teaching_ms": 31.84624999994412,
+    "quality": {
+      "cases": 119,
+      "raw_correct": 115,
+      "raw_accuracy": 0.9663865546218487,
+      "accepted": 105,
+      "accepted_correct": 104,
+      "accepted_errors": 1,
+      "accepted_accuracy": 0.9904761904761905,
+      "reviewed": 14,
+      "acceptance_rate": 0.8823529411764706,
+      "accepted_accuracy_interval_95": [
+        0.9480137413881103,
+        0.9983168307671438
+      ],
+      "meets_targets": true,
+      "latency_median_ms": 0.20779104670509696,
+      "latency_p95_ms": 0.34391727531328786
+    },
+    "predictions": [
+      {
+        "id": "fresh:Newsletter:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2899999963119626
+      },
+      {
+        "id": "fresh:Newsletter:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2548330230638385
+      },
+      {
+        "id": "fresh:Newsletter:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.24866702733561397
+      },
+      {
+        "id": "fresh:Newsletter:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2221250324510038
+      },
+      {
+        "id": "fresh:Newsletter:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2168749924749136
+      },
+      {
+        "id": "fresh:Newsletter:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22291700588539243
+      },
+      {
+        "id": "fresh:Newsletter:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.24262501392513514
+      },
+      {
+        "id": "fresh:Newsletter:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.33175002317875624
+      },
+      {
+        "id": "fresh:Newsletter:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.4403330385684967
+      },
+      {
+        "id": "fresh:Newsletter:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2620420418679714
+      },
+      {
+        "id": "fresh:Newsletter:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.23716595023870468
+      },
+      {
+        "id": "fresh:Newsletter:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2110829809680581
+      },
+      {
+        "id": "fresh:Marketing:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20541599951684475
+      },
+      {
+        "id": "fresh:Marketing:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19979197531938553
+      },
+      {
+        "id": "fresh:Marketing:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20299997413530946
+      },
+      {
+        "id": "fresh:Marketing:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20391697762534022
+      },
+      {
+        "id": "fresh:Marketing:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19616697682067752
+      },
+      {
+        "id": "fresh:Marketing:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1985409762710333
+      },
+      {
+        "id": "fresh:Marketing:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19087496912106872
+      },
+      {
+        "id": "fresh:Marketing:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19691599300131202
+      },
+      {
+        "id": "fresh:Marketing:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20037498325109482
+      },
+      {
+        "id": "fresh:Marketing:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19354099640622735
+      },
+      {
+        "id": "fresh:Marketing:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1955829793587327
+      },
+      {
+        "id": "fresh:Marketing:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19874999998137355
+      },
+      {
+        "id": "fresh:Calendar:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19175000488758087
+      },
+      {
+        "id": "fresh:Calendar:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20820798818022013
+      },
+      {
+        "id": "fresh:Calendar:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2168749924749136
+      },
+      {
+        "id": "fresh:Calendar:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1913330052047968
+      },
+      {
+        "id": "fresh:Calendar:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18679199274629354
+      },
+      {
+        "id": "fresh:Calendar:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19237503875046968
+      },
+      {
+        "id": "fresh:Calendar:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19504199735820293
+      },
+      {
+        "id": "fresh:Calendar:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18970895325765014
+      },
+      {
+        "id": "fresh:Calendar:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19383395556360483
+      },
+      {
+        "id": "fresh:Calendar:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1930830185301602
+      },
+      {
+        "id": "fresh:Calendar:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1915409811772406
+      },
+      {
+        "id": "fresh:Calendar:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18920900765806437
+      },
+      {
+        "id": "fresh:Receipt:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2228330122306943
+      },
+      {
+        "id": "fresh:Receipt:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20187499467283487
+      },
+      {
+        "id": "fresh:Receipt:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18858298426494002
+      },
+      {
+        "id": "fresh:Receipt:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22437499137595296
+      },
+      {
+        "id": "fresh:Receipt:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19158300710842013
+      },
+      {
+        "id": "fresh:Receipt:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1866249949671328
+      },
+      {
+        "id": "fresh:Receipt:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3649169811978936
+      },
+      {
+        "id": "fresh:Receipt:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2951670321635902
+      },
+      {
+        "id": "fresh:Receipt:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21912500960752368
+      },
+      {
+        "id": "fresh:Receipt:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3415839746594429
+      },
+      {
+        "id": "fresh:Receipt:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.4242499708198011
+      },
+      {
+        "id": "fresh:Receipt:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2258329768665135
+      },
+      {
+        "id": "fresh:Notification:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21249998826533556
+      },
+      {
+        "id": "fresh:Notification:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.18999999156221747
+      },
+      {
+        "id": "fresh:Notification:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19004195928573608
+      },
+      {
+        "id": "fresh:Notification:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19633304327726364
+      },
+      {
+        "id": "fresh:Notification:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "Notification",
+          "OTP"
+        ],
+        "needs_review": true,
+        "latency_ms": 0.1937079941853881
+      },
+      {
+        "id": "fresh:Notification:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.189624959602952
+      },
+      {
+        "id": "fresh:Notification:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19033299759030342
+      },
+      {
+        "id": "fresh:Notification:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19087496912106872
+      },
+      {
+        "id": "fresh:Notification:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18691702280193567
+      },
+      {
+        "id": "fresh:Notification:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18854200607165694
+      },
+      {
+        "id": "fresh:Notification:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21287496201694012
+      },
+      {
+        "id": "fresh:Notification:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20395801402628422
+      },
+      {
+        "id": "fresh:OTP:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19491702551022172
+      },
+      {
+        "id": "fresh:OTP:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18912501400336623
+      },
+      {
+        "id": "fresh:OTP:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19824999617412686
+      },
+      {
+        "id": "fresh:OTP:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2103750011883676
+      },
+      {
+        "id": "fresh:OTP:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2044580178335309
+      },
+      {
+        "id": "fresh:OTP:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18812500638887286
+      },
+      {
+        "id": "fresh:OTP:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18791697220876813
+      },
+      {
+        "id": "fresh:OTP:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.18695800099521875
+      },
+      {
+        "id": "fresh:OTP:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2115420065820217
+      },
+      {
+        "id": "fresh:OTP:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19837496802210808
+      },
+      {
+        "id": "fresh:OTP:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1888339756987989
+      },
+      {
+        "id": "fresh:OTP:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2073749783448875
+      },
+      {
+        "id": "fresh:Conversations:0",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1937909983098507
+      },
+      {
+        "id": "fresh:Conversations:1",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19575003534555435
+      },
+      {
+        "id": "fresh:Conversations:2",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2044999855570495
+      },
+      {
+        "id": "fresh:Conversations:3",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20237499848008156
+      },
+      {
+        "id": "fresh:Conversations:4",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.24741695960983634
+      },
+      {
+        "id": "fresh:Conversations:5",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19704096484929323
+      },
+      {
+        "id": "fresh:Conversations:6",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19020895706489682
+      },
+      {
+        "id": "fresh:Conversations:7",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19916699966415763
+      },
+      {
+        "id": "fresh:Conversations:8",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20887498976662755
+      },
+      {
+        "id": "fresh:Conversations:9",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2109580091200769
+      },
+      {
+        "id": "fresh:Conversations:10",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.19358302233740687
+      },
+      {
+        "id": "fresh:Conversations:11",
+        "cohort": "fresh_authored",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.2073749783448875
+      },
+      {
+        "id": "testCases:0",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.20779104670509696
+      },
+      {
+        "id": "testCases:1",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2382500097155571
+      },
+      {
+        "id": "testCases:2",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.24866702733561397
+      },
+      {
+        "id": "testCases:3",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.22616703063249588
+      },
+      {
+        "id": "testCases:4",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.1919579808600247
+      },
+      {
+        "id": "testCases:5",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.4463749937713146
+      },
+      {
+        "id": "testCases:6",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3178750048391521
+      },
+      {
+        "id": "testCases:7",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2405419945716858
+      },
+      {
+        "id": "testCases:8",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21137500880286098
+      },
+      {
+        "id": "testCases:9",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Calendar"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [
+          "Calendar"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.274707970675081
+      },
+      {
+        "id": "testCases:10",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Calendar",
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2506250166334212
+      },
+      {
+        "id": "testCases:11",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [
+          "Newsletter"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22712501231580973
+      },
+      {
+        "id": "testCases:12",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter",
+          "Marketing"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.22612500470131636
+      },
+      {
+        "id": "testCases:13",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.21429097978398204
+      },
+      {
+        "id": "testCases:14",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt",
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.22316700778901577
+      },
+      {
+        "id": "testCases:15",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.19979203352704644
+      },
+      {
+        "id": "testCases:16",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Newsletter",
+          "Notification"
+        ],
+        "prediction": "Newsletter",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.3011670196428895
+      },
+      {
+        "id": "testCases:17",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3089579986408353
+      },
+      {
+        "id": "testCases:18",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.25037501472979784
+      },
+      {
+        "id": "testCases:19",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.23733300622552633
+      },
+      {
+        "id": "testCases:20",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2334170276299119
+      },
+      {
+        "id": "testCases:21",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22550002904608846
+      },
+      {
+        "id": "testCases:22",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22570794681087136
+      },
+      {
+        "id": "testCases:23",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Receipt"
+        ],
+        "prediction": "Receipt",
+        "prediction_set": [
+          "Receipt"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22158300271257758
+      },
+      {
+        "id": "testCases:24",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.4507920239120722
+      },
+      {
+        "id": "testCases:25",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing",
+          "Notification",
+          "Conversations"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3317499649710953
+      },
+      {
+        "id": "testCases:26",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2878329833038151
+      },
+      {
+        "id": "promotionalBoundaryCases:0",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.3862500307150185
+      },
+      {
+        "id": "promotionalBoundaryCases:1",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Conversations"
+        ],
+        "prediction": "Conversations",
+        "prediction_set": [
+          "Conversations"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.26283401530236006
+      },
+      {
+        "id": "promotionalBoundaryCases:2",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Notification"
+        ],
+        "prediction": "Notification",
+        "prediction_set": [
+          "Notification"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.21445797756314278
+      },
+      {
+        "id": "promotionalBoundaryCases:3",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20779098849743605
+      },
+      {
+        "id": "promotionalBoundaryCases:4",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "OTP",
+        "prediction_set": [
+          "OTP"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.2092499635182321
+      },
+      {
+        "id": "promotionalBoundaryCases:5",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "OTP"
+        ],
+        "prediction": "Calendar",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.20808400586247444
+      },
+      {
+        "id": "promotionalBoundaryCases:6",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [],
+        "needs_review": true,
+        "latency_ms": 0.19525003153830767
+      },
+      {
+        "id": "promotionalBoundaryCases:7",
+        "cohort": "upstream_regression",
+        "acceptable": [
+          "Marketing"
+        ],
+        "prediction": "Marketing",
+        "prediction_set": [
+          "Marketing"
+        ],
+        "needs_review": false,
+        "latency_ms": 0.22420799359679222
+      }
+    ],
+    "cohorts": {
+      "fresh_authored": {
+        "cases": 84,
+        "raw_correct": 82,
+        "raw_accuracy": 0.9761904761904762,
+        "accepted": 80,
+        "accepted_correct": 79,
+        "accepted_errors": 1,
+        "accepted_accuracy": 0.9875,
+        "reviewed": 4,
+        "acceptance_rate": 0.9523809523809523,
+        "accepted_accuracy_interval_95": [
+          0.9325372992233133,
+          0.9977900244795477
+        ],
+        "meets_targets": true,
+        "latency_median_ms": 0.1989584998227656,
+        "latency_p95_ms": 0.3262625745264811
+      },
+      "upstream_regression": {
+        "cases": 35,
+        "raw_correct": 33,
+        "raw_accuracy": 0.9428571428571428,
+        "accepted": 25,
+        "accepted_correct": 25,
+        "accepted_errors": 0,
+        "accepted_accuracy": 1.0,
+        "reviewed": 10,
+        "acceptance_rate": 0.7142857142857143,
+        "accepted_accuracy_interval_95": [
+          0.8668077490609514,
+          1.0
+        ],
+        "meets_targets": false,
+        "latency_median_ms": 0.22712501231580973,
+        "latency_p95_ms": 0.4042875196319072
+      }
+    }
+  },
+  "adapter_http": {
+    "requests": 595,
+    "responses_match_direct": true,
+    "first_request_ms": 17.920417000000015,
+    "median_ms": 0.6194999999999595,
+    "p95_ms": 0.9465463999999736,
+    "external_fetches": 0
+  },
+  "fresh_targets_met": true,
+  "all_cohort_targets_met": false,
+  "rollout_ready": false,
+  "rollout_limit": "Synthetic/maintainer-authored evidence only; validate on independent representative mailbox data before automation. Inspect each cohort, not just combined metrics."
+}

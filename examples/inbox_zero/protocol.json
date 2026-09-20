@@ -1,0 +1,12 @@
+{
+  "candidate": "initial-seven-category-skill",
+  "upstream_commit": "2571ce4970aa5d024bb664a6739bd91b1172c367",
+  "evaluation": "35 public maintainer-authored Inbox Zero regression cases, never used to fit or calibrate. Compatibility evidence, not production mailbox accuracy. Reviewed source during integration development; not a blind benchmark.",
+  "teaching": "140 independently authored English examples, no synthetic expansion or teacher API",
+  "calibration": "56 separate authored examples, split by the compiler into temperature and conformal halves",
+  "system1": {"dimension": 2048, "regularization": 0.1, "backend": "numpy", "alpha": 0.05, "cache": false, "receipts": false},
+  "baseline": "TF-IDF word unigrams/bigrams, sublinear TF, logistic regression C=1.0; identical fit rows and conformal half, LAC scoring at alpha=0.05",
+  "targets": {"accepted_accuracy": 0.95, "acceptance_rate": 0.8},
+  "decision": "A multi-class or empty prediction set requires review. A point estimate meeting targets on 35 examples still requires mailbox-specific validation before automatic actions.",
+  "retuning": "Preserve this candidate and its results. Subsequent teaching based on these errors makes this set a regression set and requires fresh independent evaluation."
+}

@@ -41,3 +41,19 @@ The bundled [protobuf contract](https://github.com/steph4n-gh/system1/blob/main/
 ### Observability
 
 Install `system1[observability]` for Prometheus or `system1[otel]` for OpenTelemetry. See the [observability guide](https://github.com/steph4n-gh/system1/blob/main/docs/observability/README.md) and [Grafana dashboard](https://github.com/steph4n-gh/system1/blob/main/docs/observability/grafana-dashboard.json). Starting a metrics server or configuring an exporter changes the application's network behavior.
+
+### Inbox Zero email categories
+
+The [Inbox Zero pilot](../examples/inbox_zero/README.md) supplies JSON teaching
+files, an authenticated local endpoint, and a provider patch for its seven
+standard email categories. Install the optional server with `system1[http]`.
+The current candidate uses portable TF-IDF features and the existing ridge head,
+with no new runtime dependency. It is roughly ten times faster than the initial
+hashed email skill. The fresh authored cohort meets point quality targets, while
+the upstream regression cohort still misses acceptance; independent evidence for
+all seven categories is also missing. The separate
+[public spam/ham experiment](../benchmarks/quality/public_email/README.md) offers a
+real-email teaching recipe without credentials, but has a different label contract.
+The Inbox Zero provider therefore starts in review-only mode and leaves
+uncertain or failed classifications unprocessed without an LLM fallback.
+Other Inbox Zero LLM features remain outside this classification integration.

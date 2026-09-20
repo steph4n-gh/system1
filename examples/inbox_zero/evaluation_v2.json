@@ -1,0 +1,1097 @@
+{
+  "provenance": "Separately authored synthetic English holdout, frozen before evaluating candidate v2. Same assistant authored lessons and holdout; not independently collected or blinded production evidence. No paraphrase generator or teacher API used.",
+  "cases": [
+    {
+      "id": "fresh:Newsletter:0",
+      "group": "fresh:Newsletter:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "Why bridges fail slowly",
+        "content": "Good morning readers. In today’s civil engineering digest we look at corrosion inspections, summarize two new papers, and share an interview with a bridge historian. This week’s sponsor supplies survey tools. Read the articles and browse earlier editions below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:1",
+      "group": "fresh:Newsletter:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Notes from the observatory",
+        "content": "Our autumn issue includes photographs of the recent eclipse, a conversation with an astronomer, and a guide to the month’s visible planets. You received this periodic bulletin because you subscribed to the observatory’s publication.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:2",
+      "group": "fresh:Newsletter:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "A city built around water",
+        "content": "This week our editors visit Rotterdam and explain how flood defenses changed the city. We also recommend an essay about public housing. The complete reporting is linked in this regular dispatch.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:3",
+      "group": "fresh:Newsletter:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Five things we read in August",
+        "content": "The editorial team selected five essays for this month’s subscriber letter. Topics range from typography to the history of public parks. Send us your reading recommendations for the next edition.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:4",
+      "group": "fresh:Newsletter:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Edition 106: the quiet archive",
+        "content": "Welcome to another issue of our literature newsletter. Today’s long read profiles an archivist; the closing section reviews two novels. A subscription-management link appears below.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:5",
+      "group": "fresh:Newsletter:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "What happened in clean energy",
+        "content": "Here is your fortnightly research briefing. We summarize three studies, explain a new grid standard, and link to the original reports. The full article archive is free to subscribers.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:6",
+      "group": "fresh:Newsletter:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "The community journal, September",
+        "content": "Inside our latest newsletter: reporting from the town hall, an interview with the new librarian, and photographs submitted by readers. Thank you for following our local journalism.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:7",
+      "group": "fresh:Newsletter:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Sketchbook: working with shadows",
+        "content": "This edition of our artists’ digest discusses charcoal technique and features a studio interview. We finish with recommended exhibitions and an editor’s reading list.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:8",
+      "group": "fresh:Newsletter:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Your Monday policy digest",
+        "content": "Our newsletter team has selected the week’s most useful policy reporting. Read summaries of the parliamentary debate and an analysis of the proposed transport budget.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:9",
+      "group": "fresh:Newsletter:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "How forests remember fire",
+        "content": "In this month’s ecology letter we discuss tree-ring research and visit a restored woodland. Links to the full feature and previous issues follow. The publication is supported by a small sponsor message.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:10",
+      "group": "fresh:Newsletter:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "The weekly engineering reader",
+        "content": "Three articles worth your time: a postmortem of a database outage, a tutorial on indexes, and a researcher interview. This is issue 59 of our regular editorial digest.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Newsletter:11",
+      "group": "fresh:Newsletter:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "From the editor’s desk",
+        "content": "Dear subscribers, our winter edition is now available. It contains an essay about regional food traditions, reader letters, and a collection of archival photographs. Enjoy this month’s reading.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Newsletter"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:0",
+      "group": "fresh:Marketing:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "A little something for your desk",
+        "content": "We think you will love our new lamp collection. Browse the store and take fifteen percent off with the enclosed code. The offer ends Sunday. Shop now to secure the introductory price.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:1",
+      "group": "fresh:Marketing:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Could we help with your hiring?",
+        "content": "Hello, I work with a talent agency that supports growing software teams. We would like to introduce our recruitment packages. Would you be open to a brief sales call to discuss rates?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:2",
+      "group": "fresh:Marketing:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Your invitation to a product showcase",
+        "content": "Learn how our platform can reduce administrative work. Register for this free webinar to see a live sales demonstration and compare our subscription plans. Anyone on our mailing list can join.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:3",
+      "group": "fresh:Marketing:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Get rewarded for your opinion",
+        "content": "We are seeking business owners for a market research study about accounting products. Fill in the screener and you may qualify for a $60 gift card. Places in this promotional research program are limited.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:4",
+      "group": "fresh:Marketing:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Your saved items are waiting",
+        "content": "You added a pair of shoes to your basket but did not finish the order. Return to our checkout page and use WELCOME for a discount. The sale price will not last.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:5",
+      "group": "fresh:Marketing:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "The early booking offer is open",
+        "content": "Plan your next holiday with our seasonal resort promotion. Explore special room rates and book through the offer page this week to get complimentary breakfast.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:6",
+      "group": "fresh:Marketing:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "An invitation from our founder",
+        "content": "We are launching a premium course for designers. Purchase your place before Friday and receive an introductory price. The link below explains the curriculum and paid enrollment options.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:7",
+      "group": "fresh:Marketing:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "A better plan for your business",
+        "content": "Upgrade to our professional subscription and unlock additional automation features. For the next three days you can get your first year at a reduced rate. Choose your plan on the sales page.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:8",
+      "group": "fresh:Marketing:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Quick introduction from our studio",
+        "content": "Our creative agency produces advertisements and branded films. We are contacting prospective clients to introduce our paid services. Reply if you would like a rate card or an introductory call.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:9",
+      "group": "fresh:Marketing:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "Your exclusive members’ offer",
+        "content": "Our loyalty promotion is here. Buy any two items in the store and receive the third at half price. Browse our recommendations and complete your purchase before the campaign ends.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:10",
+      "group": "fresh:Marketing:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "The offer you asked to hear about",
+        "content": "You joined our list for product promotions. This week we are discounting annual subscriptions by thirty percent. Follow the upgrade link to claim the deal before it expires.",
+        "hasListUnsubscribeHeader": true
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Marketing:11",
+      "group": "fresh:Marketing:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "A fresh approach to outbound sales",
+        "content": "I run a consultancy that helps businesses generate leads. We are offering introductory assessments as part of our sales campaign. Could I tell you about our paid program next week?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Marketing"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:0",
+      "group": "fresh:Calendar:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "Updated invitation: accessibility audit",
+        "content": "The organizer moved this calendar meeting to October 6, 10:00–11:00. Please respond Yes, No, or Maybe. The updated location is Meeting Room Birch.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:1",
+      "group": "fresh:Calendar:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Canceled: first-round interview",
+        "content": "Your calendar appointment for Tuesday at 15:15 has been canceled by the interviewer. This automated event notification updates the original invitation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:2",
+      "group": "fresh:Calendar:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Appointment reminder from the clinic",
+        "content": "You have a scheduled consultation tomorrow at 09:40. View the calendar booking for directions, or use the scheduling link to move your appointment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:3",
+      "group": "fresh:Calendar:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Accepted: procurement review",
+        "content": "Robin has accepted your calendar invitation for the procurement review. The event is scheduled on Thursday from 14:00 until 14:30.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:4",
+      "group": "fresh:Calendar:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Invitation: handover session",
+        "content": "You are invited to the handover meeting on November 12 at 16:00. The calendar invitation includes a video link and an agenda. Please RSVP.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:5",
+      "group": "fresh:Calendar:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "A new time for your appointment",
+        "content": "The scheduler moved your appointment from 11:45 to 12:15 on Friday. Confirm the updated calendar entry or choose another available slot.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:6",
+      "group": "fresh:Calendar:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "Declined: monthly steering group",
+        "content": "An attendee declined the calendar invitation for next Monday’s steering group. The event remains scheduled at 13:30. This is an automatic attendance response.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:7",
+      "group": "fresh:Calendar:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Your booked session begins shortly",
+        "content": "The scheduled mentoring appointment starts in fifteen minutes. Join from the link in your calendar event. The session ends at 17:00.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:8",
+      "group": "fresh:Calendar:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Tentative response: project kickoff",
+        "content": "Chris responded Maybe to your calendar invitation. The project kickoff is still scheduled for Wednesday at 08:30 in the main meeting room.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:9",
+      "group": "fresh:Calendar:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "Room changed for board review",
+        "content": "The organizer updated your calendar event to use Conference Room Elm. The meeting time is unchanged: Tuesday, 10:00–12:00. Please review the revised invitation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:10",
+      "group": "fresh:Calendar:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "Reminder: volunteer briefing tomorrow",
+        "content": "Your calendar event starts Saturday at 09:00. The organizer has included parking details in the invitation. Accept or decline if your plans have changed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Calendar:11",
+      "group": "fresh:Calendar:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "Invitation canceled: research catch-up",
+        "content": "The meeting organizer canceled the research catch-up on December 2. This calendar cancellation removes the 30-minute appointment from the schedule.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Calendar"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:0",
+      "group": "fresh:Receipt:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "Payment confirmation for your service",
+        "content": "Your card was charged $118.40 for the completed repair. The attached receipt shows labor, parts, and tax. Transaction reference TX-442. Thank you for your payment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:1",
+      "group": "fresh:Receipt:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Invoice 8804 from the workshop",
+        "content": "Please find the invoice for September’s consulting work attached. The total amount payable is $720, due on October 20. Quote the invoice number when making payment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:2",
+      "group": "fresh:Receipt:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Your book order is confirmed",
+        "content": "We received payment for order 2219: two hardbacks, subtotal $38, shipping $5, tax $3.04. Total charged $46.04. This email is your purchase receipt.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:3",
+      "group": "fresh:Receipt:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Refund confirmation for returned goods",
+        "content": "The $64 refund for your returned jacket has been sent to the original card. Your refund receipt includes the transaction reference and the original order number.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:4",
+      "group": "fresh:Receipt:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Thank you for supporting the library",
+        "content": "Your donation of $125 has been received. Attached is the donation receipt for your tax records. No goods or services were supplied in return.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:5",
+      "group": "fresh:Receipt:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "Your annual membership receipt",
+        "content": "Membership payment completed: $48 for the coming year. A paid invoice is attached to this confirmation. Retain it as proof of the transaction.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:6",
+      "group": "fresh:Receipt:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "Receipt for yesterday’s journey",
+        "content": "We charged $13.70 for your completed ride. The receipt itemizes the fare and local fees. You can download a copy for your expense claim.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:7",
+      "group": "fresh:Receipt:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Reservation deposit accepted",
+        "content": "Your deposit payment of $200 was received for booking B-819. The remaining balance is $450. This email and the attached receipt confirm the completed payment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:8",
+      "group": "fresh:Receipt:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Credit note CN-640",
+        "content": "A credit of $27 has been issued against invoice INV-814 for the returned part. The attached credit note records the adjusted transaction totals.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:9",
+      "group": "fresh:Receipt:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "License order complete",
+        "content": "Thank you for purchasing the application license. Payment of $84 was successful. Your receipt includes tax details and the order reference; the license key is provided separately.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:10",
+      "group": "fresh:Receipt:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "Invoice settled by bank transfer",
+        "content": "We matched your transfer of $350 to invoice 7001 and marked it paid. The attached receipt confirms the settlement date and amount.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Receipt:11",
+      "group": "fresh:Receipt:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "Your accommodation payment receipt",
+        "content": "Your final hotel bill was paid at checkout. Room charges were $390 and taxes were $31.20, for a total of $421.20. The itemized receipt is attached.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Receipt"
+      ]
+    },
+    {
+      "id": "fresh:Notification:0",
+      "group": "fresh:Notification:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "New browser activity on your account",
+        "content": "We detected a login from a browser you have not used before. If you recognize the activity, no action is needed. Otherwise review account security. This is an automated alert.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:1",
+      "group": "fresh:Notification:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Your parcel reached the sorting center",
+        "content": "Shipment 5518 arrived at the regional facility. Check the tracking page for the latest delivery estimate. The order receipt was sent at the time of purchase.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:2",
+      "group": "fresh:Notification:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Could not charge your card",
+        "content": "The scheduled payment attempt was declined. Please update your saved payment method to prevent service interruption. No funds were collected and no payment receipt was created.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:3",
+      "group": "fresh:Notification:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Your download is available",
+        "content": "The archive you requested has finished exporting. Log in to retrieve the files before the link expires next week. This automated message reports the export status.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:4",
+      "group": "fresh:Notification:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Password change confirmation",
+        "content": "The password for your account was changed at 14:12 UTC. If you did not perform this update, start account recovery. This security notice contains no sign-in code.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:5",
+      "group": "fresh:Notification:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "Maintenance on the storage service",
+        "content": "Planned maintenance will cause intermittent access on Sunday between 01:00 and 02:00 UTC. Follow the status page for progress. Replies to this operational notice are not monitored.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:6",
+      "group": "fresh:Notification:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "A new comment in the tracker",
+        "content": "Someone commented on a work item you follow. Open the project dashboard to read the discussion. This email was automatically generated from your notification preferences.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:7",
+      "group": "fresh:Notification:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Your support request has been logged",
+        "content": "Ticket 7821 was created successfully. A support representative will respond separately after review. This is an automated acknowledgement and no reply is required.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:8",
+      "group": "fresh:Notification:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Backup job completed",
+        "content": "Your scheduled backup finished successfully and the archive is available in the dashboard. This is an automated status report from the backup service.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:9",
+      "group": "fresh:Notification:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "Storage quota warning",
+        "content": "Your workspace has less than one percent of its storage allowance remaining. Review stored files to avoid upload failures. This automated notice reports current account usage.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:10",
+      "group": "fresh:Notification:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "Access to a folder was granted",
+        "content": "A collaborator shared the planning folder with your account. Visit the document application to view it. You received this automated sharing notification because permissions changed.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:Notification:11",
+      "group": "fresh:Notification:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "Updated privacy terms",
+        "content": "Our revised privacy notice takes effect on November 1. The informational update explains how we retain account data. You can read the complete policy in account settings.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Notification"
+      ]
+    },
+    {
+      "id": "fresh:OTP:0",
+      "group": "fresh:OTP:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "Here is your login code",
+        "content": "Use 638214 to finish signing in to your account. The verification code is single-use and expires after ten minutes. Never send this code to someone who asks for it.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:1",
+      "group": "fresh:OTP:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "Please verify your email",
+        "content": "Enter confirmation code 902731 in the registration form. This temporary code verifies ownership of the address and expires in fifteen minutes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:2",
+      "group": "fresh:OTP:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Password recovery verification",
+        "content": "Your reset code is 471608. Enter it on the password recovery screen to continue. If you did not request a reset, ignore this one-time code.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:3",
+      "group": "fresh:OTP:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Two-step authentication",
+        "content": "The authentication code for your current sign-in is 285946. It is valid for five minutes. Keep the code private and enter it only in the application.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:4",
+      "group": "fresh:OTP:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "Authorize the requested account change",
+        "content": "Use security passcode 719035 to verify this action. The code is temporary and cannot be reused. Do not proceed if you did not initiate the request.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:5",
+      "group": "fresh:OTP:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "Finish verifying your device",
+        "content": "Your one-time verification code is 360182. Enter it in the sign-in screen to approve the new device. This code expires shortly.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:6",
+      "group": "fresh:OTP:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "Email change confirmation code",
+        "content": "Enter 854203 to verify the new email address. The one-time code confirms ownership of the address. Ignore this message if you did not request the change.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:7",
+      "group": "fresh:OTP:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Your recovery security code",
+        "content": "Use temporary verification code 126975 to continue account recovery. It is valid for twenty minutes and only for this recovery session.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:8",
+      "group": "fresh:OTP:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Your code is ready",
+        "content": "Sign-in code: 593817. Enter these six digits in the login form. The code is valid once and expires after ten minutes. Discover other account features after you sign in.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:9",
+      "group": "fresh:OTP:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "Complete the verification step",
+        "content": "Your authentication passcode is 740619. Enter it to confirm your identity. This one-time code should never be forwarded or shared.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:10",
+      "group": "fresh:OTP:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "Confirm the payment request",
+        "content": "Use 218564 as the one-time authorization code for the transaction you initiated. Enter it in the secure confirmation page. This is a verification step, not a receipt for completed payment.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:OTP:11",
+      "group": "fresh:OTP:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "Temporary access verification",
+        "content": "The security code for this login request is 987310. It expires in five minutes. If you did not start a login attempt, leave the code unused.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "OTP"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:0",
+      "group": "fresh:Conversations:0",
+      "email": {
+        "from": "Sender <sender0@outside.example>",
+        "subject": "Re: the September invoice",
+        "content": "Hi, thanks for sending the bill. The purchase order covers only six days of work, but the invoice lists seven. Could you check the dates and send a revised copy before I approve payment?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:1",
+      "group": "fresh:Conversations:1",
+      "email": {
+        "from": "Sender <sender1@outside.example>",
+        "subject": "A question about the workshop",
+        "content": "Hello, I am preparing the handouts for the session. Do you know how many people will attend? Please send me the final count by Thursday so I can arrange printing.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:2",
+      "group": "fresh:Conversations:2",
+      "email": {
+        "from": "Sender <sender2@outside.example>",
+        "subject": "Re: your proposal",
+        "content": "Thanks for the proposal. We are interested, but I need to understand whether the quoted amount includes ongoing support. Could you clarify that point and suggest a time to discuss?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:3",
+      "group": "fresh:Conversations:3",
+      "email": {
+        "from": "Sender <sender3@outside.example>",
+        "subject": "Could we find another time?",
+        "content": "Hi, I have a conflict with our planned catch-up. Would Wednesday afternoon work for you instead? Let me know before I change the calendar invitation.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:4",
+      "group": "fresh:Conversations:4",
+      "email": {
+        "from": "Sender <sender4@outside.example>",
+        "subject": "The updated draft",
+        "content": "I have attached the revisions you requested. The introduction is shorter and the examples are clearer. Please look at the final paragraph and tell me whether it addresses your concern.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:5",
+      "group": "fresh:Conversations:5",
+      "email": {
+        "from": "Sender <sender5@outside.example>",
+        "subject": "Re: delivery problem",
+        "content": "The package arrived this morning, but the replacement cable is the wrong size. Could you check the order details and let me know how we should arrange an exchange?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:6",
+      "group": "fresh:Conversations:6",
+      "email": {
+        "from": "Sender <sender6@outside.example>",
+        "subject": "Following our call",
+        "content": "Thanks for discussing the project yesterday. I will prepare the cost breakdown and you can confirm the schedule. Please let me know if I have misunderstood who is handling the supplier contact.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:7",
+      "group": "fresh:Conversations:7",
+      "email": {
+        "from": "Sender <sender7@outside.example>",
+        "subject": "Re: account troubleshooting",
+        "content": "I tried the steps you suggested and still see the same error. I have attached a screenshot and the browser version. Could you investigate or suggest what I should try next?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:8",
+      "group": "fresh:Conversations:8",
+      "email": {
+        "from": "Sender <sender8@outside.example>",
+        "subject": "Would you review the numbers?",
+        "content": "Hi, I updated the forecast after our meeting. Can you check the assumptions in the second tab and send me your comments before I circulate it to the team?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:9",
+      "group": "fresh:Conversations:9",
+      "email": {
+        "from": "Sender <sender9@outside.example>",
+        "subject": "Your application materials",
+        "content": "Thank you for sending your portfolio. We would like to hear more about the accessibility project. Could you describe your role and send an example of the research you conducted?",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:10",
+      "group": "fresh:Conversations:10",
+      "email": {
+        "from": "Sender <sender10@outside.example>",
+        "subject": "Re: our renewal discussion",
+        "content": "We have approval to continue for another year, but the team size has changed. Please send a revised agreement for eight seats and confirm when the new terms would begin.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    },
+    {
+      "id": "fresh:Conversations:11",
+      "group": "fresh:Conversations:11",
+      "email": {
+        "from": "Sender <sender11@outside.example>",
+        "subject": "It worked, thank you",
+        "content": "Just following up to say your suggestion solved the problem. The service has been stable all afternoon. I appreciate you looking into it and will get back in touch if anything changes.",
+        "hasListUnsubscribeHeader": false
+      },
+      "acceptable": [
+        "Conversations"
+      ]
+    }
+  ]
+}

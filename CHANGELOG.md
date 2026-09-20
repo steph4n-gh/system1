@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Add a reproducible public SpamAssassin teaching recipe requiring no mailbox or API credentials. Freeze source hashes and disjoint group splits, compare a conventional baseline offline, and retain both the failed collection-shift result (89.9% accepted correctness) and the subsequent representative split (603/618 accepted answers correct, 0.216 ms median). Keep this binary task distinct from the seven-category Inbox Zero pilot.
+
+- Add optional NumPy-only `TfidfProjector` for taught text skills, with a frozen vocabulary carried in `.s1m`, bounded loader validation, and review for inputs with no known features. Preserve the default hashed projector.
+- Broaden email teaching and retain both the original failed result and the new TF-IDF result: 83/84 correct on a fresh authored set, one accepted mistake, and about 10× faster direct decisions. Keep review-only default because upstream acceptance and independent mailbox validation remain incomplete.
+
+- Add an opt-in Inbox Zero category-classification pilot: editable lessons, saved local skill, authenticated HTTP service, and a separately licensed upstream provider patch. Preserve review on uncertainty, contract changes, and service failures.
+- Publish all 35 upstream compatibility results and a conventional baseline. The initial System1 lesson accepts 5/35 cases and remains review-only by default; no claim of production takeover.
+
 ## 1.0.3 — 2026-09-20
 
 - Require an independent trusted public key for receipt authentication. Expose `check_decision_receipt_integrity()` for unsigned diagnostics; comparison results no longer claim unsigned receipts are authenticated.

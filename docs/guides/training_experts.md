@@ -70,6 +70,50 @@ prediction sets. Always inspect `decision.is_ambiguous`: a best-guess value is
 still returned when the skill needs review. Your application chooses how to ask
 a person or call System 2.
 
+## Choose text features for a taught skill
+
+The default hashed features remain useful without fitting a vocabulary. For a
+text classification task with teaching examples, you can instead use the optional
+`TfidfProjector`. It learns which words and adjacent word pairs to retain, weighs
+common words less, and normalizes each document. It is classical text processing,
+not a language model. Both teaching and inference use only NumPy.
+
+```python
+from system1 import TfidfProjector
+
+# Fit the vocabulary ONLY on the examples reserved for teaching.
+projector = TfidfProjector.fit([text for text, label in examples["team"]])
+calibration = {"team": [
+    ("Please correct my invoice total", "billing"),
+    ("The application crashes during startup", "support"),
+    # Supply enough separate, representative examples for useful calibration.
+]}
+skill = SystemOneCompiler(SupportRoute, projector=projector).compile(
+    examples, augment=False, calibration_exemplars=calibration,
+)
+skill.save("support-route.s1m")
+loaded = CompiledSystemOneModel.load("support-route.s1m")
+```
+
+The default vocabulary cap is 2,048 terms. Text is lowercased and limited to its
+first 8,192 characters; tokens use Unicode word characters with at least two
+characters. Terms longer than 128 characters are ignored. Unseen words are
+ignored, and an input with no known features requires review. That check alone
+does not detect every out-of-scope input containing familiar words. TF-IDF does
+not support recency weighting.
+
+Vocabulary and IDF weights are frozen and embedded in `.s1m`. Refit and recompile
+when teaching new vocabulary; online head corrections do not expand it. Keep
+vocabulary fitting, head fitting, calibration, and evaluation appropriately
+separated. In particular, fitting vocabulary before asking the compiler to
+split those same rows internally would expose calibration text to vocabulary
+selection; use explicit separate calibration as above. Old readers continue to
+read old skills but cannot load the new TF-IDF feature type.
+
+See the [email comparison](../../examples/inbox_zero/README.md) for measured gains,
+remaining accepted errors, and the distinction between authored and real-world
+evidence. The tiny snippet above only demonstrates the API.
+
 ## Teach your data
 
 Define a narrow task and consistent labels. Include ordinary cases, confusing

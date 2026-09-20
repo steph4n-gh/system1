@@ -1,0 +1,629 @@
+diff --git a/apps/web/.env.example b/apps/web/.env.example
+index 7d559a102de3057e7472c82f4a6003aab7568395..7f928ec6992ae9cf3cb6e78a79329b1e40e36c05 100644
+--- a/apps/web/.env.example
++++ b/apps/web/.env.example
+@@ -67,6 +67,10 @@ NEXT_PUBLIC_BYPASS_PREMIUM_CHECKS=true
+ # DEFAULT_CLASSIFIER=typesafe:jev-latest # Requires TYPESAFE_API_KEY
+ # DEFAULT_CLASSIFIER_ENABLED=false # true: on for users who haven't chosen; false: users opt in
+ # TYPESAFE_API_KEY=
++# Local, taught email categories; uncertainty and service errors require review.
++# DEFAULT_CLASSIFIER=system1:email
++# SYSTEM1_CLASSIFIER_URL=http://127.0.0.1:8781
++# SYSTEM1_CLASSIFIER_TOKEN= # Same secret as the local service, at least 24 characters
+ # NEXT_PUBLIC_WEBHOOK_ACTION_ENABLED=false # Self-hosted: disable outgoing webhook rule actions and webhook secret UI
+ # NEXT_PUBLIC_DELETE_EMAIL_ACTION_ENABLED=true # Self-hosted: enable delete/trash rule actions
+ # NEXT_PUBLIC_INTEGRATION_ACTION_ENABLED=true # Enable integration rule actions globally (otherwise controlled by PostHog)
+diff --git a/apps/web/env.ts b/apps/web/env.ts
+index 3fd7624ec1f768fc6c1252ddb2895263db392e50..6f9b046c15b1e772e4896058f508e47d5ebfe8d6 100644
+--- a/apps/web/env.ts
++++ b/apps/web/env.ts
+@@ -326,11 +326,16 @@ const parsedEnv = createEnv({
+     // provider:model for structured classifiers, e.g. typesafe:jev-latest
+     DEFAULT_CLASSIFIER: z
+       .string()
+-      .regex(/^typesafe:\S+$/, "Expected typesafe:<model>")
++      .regex(
++        /^(typesafe|system1):\S+$/,
++        "Expected typesafe:<model> or system1:<skill>",
++      )
+       .optional(),
+     // Whether users who haven't chosen get DEFAULT_CLASSIFIER; otherwise opt-in
+     DEFAULT_CLASSIFIER_ENABLED: booleanString.optional().default(false),
+     TYPESAFE_API_KEY: z.string().optional(),
++    SYSTEM1_CLASSIFIER_URL: z.string().url().optional(),
++    SYSTEM1_CLASSIFIER_TOKEN: z.string().min(24).optional(),
+     IMAGE_PROXY_SIGNING_SECRET: z.string().min(16).optional(),
+     // Set to true on the server that acts as the OAuth proxy (e.g., staging)
+     IS_OAUTH_PROXY_SERVER: booleanString.optional().default(false),
+@@ -611,10 +616,22 @@ if (
+   );
+ }
+ 
+-if (process.env.DEFAULT_CLASSIFIER && !process.env.TYPESAFE_API_KEY) {
++if (
++  process.env.DEFAULT_CLASSIFIER?.startsWith("typesafe:") &&
++  !process.env.TYPESAFE_API_KEY
++) {
+   throw new Error(
+     "TYPESAFE_API_KEY is required when DEFAULT_CLASSIFIER is set.",
+   );
+ }
+ 
++if (
++  process.env.DEFAULT_CLASSIFIER?.startsWith("system1:") &&
++  (!process.env.SYSTEM1_CLASSIFIER_URL || !process.env.SYSTEM1_CLASSIFIER_TOKEN)
++) {
++  throw new Error(
++    "SYSTEM1_CLASSIFIER_URL and SYSTEM1_CLASSIFIER_TOKEN are required for System1.",
++  );
++}
++
+ export const env = parsedEnv;
+diff --git a/apps/web/utils/ai/choose-rule/classifier-choose-rule.test.ts b/apps/web/utils/ai/choose-rule/classifier-choose-rule.test.ts
+index a1809573fe0d3449e813bc54d6ba4595accc9d5c..8c40cfc1554130f9b9dac354d451fabad875cb6b 100644
+--- a/apps/web/utils/ai/choose-rule/classifier-choose-rule.test.ts
++++ b/apps/web/utils/ai/choose-rule/classifier-choose-rule.test.ts
+@@ -84,6 +84,22 @@ describe("classifierChooseRule", () => {
+     vi.clearAllMocks();
+   });
+ 
++  it("returns review without parsing an absent answer", async () => {
++    classifyMock.mockResolvedValue({
++      model: "system1-email-test",
++      inputTokens: 0,
++      answers: {},
++      needsReview: true,
++      reviewReason: "uncertain",
++    });
++    expect(await chooseRule()).toEqual({
++      rules: [],
++      isColdEmail: false,
++      needsReview: true,
++      reason: "System1 needs review: uncertain",
++    });
++  });
++
+   it("maps the chosen key back to the rule", async () => {
+     mockAnswer("Receipts", { confidence: 0.8 });
+ 
+diff --git a/apps/web/utils/ai/choose-rule/classifier-choose-rule.ts b/apps/web/utils/ai/choose-rule/classifier-choose-rule.ts
+index 5add6083bc70d8dcd87726748c0b2bb5302e6c5a..d9233ec93cd61ea150706c00c79af5039df3e97a 100644
+--- a/apps/web/utils/ai/choose-rule/classifier-choose-rule.ts
++++ b/apps/web/utils/ai/choose-rule/classifier-choose-rule.ts
+@@ -54,6 +54,7 @@ export async function classifierChooseRule<T extends RuleCandidate>({
+   rules: { rule: T; isPrimary?: boolean }[];
+   reason: string;
+   isColdEmail: boolean;
++  needsReview?: boolean;
+ }> {
+   const logger = parentLogger.with({ module: MODULE });
+ 
+@@ -97,6 +98,15 @@ export async function classifierChooseRule<T extends RuleCandidate>({
+     logger,
+   });
+ 
++  if (res.needsReview) {
++    return {
++      rules: [],
++      reason: `System1 needs review: ${res.reviewReason || "uncertain"}${res.suggestedCategory ? ` (suggested: ${res.suggestedCategory})` : ""}`,
++      isColdEmail: false,
++      needsReview: true,
++    };
++  }
++
+   const answer = res.answers[CHOICE_QUESTION_KEY];
+   if (answer?.type !== "choice") {
+     throw new Error("Classifier response is missing the rule choice");
+diff --git a/apps/web/utils/ai/choose-rule/match-rules.test.ts b/apps/web/utils/ai/choose-rule/match-rules.test.ts
+index 30acc021bcc89e99a954dfc3b3c0bc905ddf7557..e2f114d079694974a8cf1b491353a14e5389639e 100644
+--- a/apps/web/utils/ai/choose-rule/match-rules.test.ts
++++ b/apps/web/utils/ai/choose-rule/match-rules.test.ts
+@@ -3212,6 +3212,41 @@ describe("findMatchingRules - classifier rule selection", () => {
+     expect(result.reasoning).toBe("LLM reason");
+   });
+ 
++  it.each([
++    "uncertain",
++    "unavailable",
++  ])("leaves System1 %s cases for review without LLM fallback", async (mode) => {
++    vi.mocked(getClassifierConfig).mockResolvedValue({
++      provider: "system1",
++      model: "email",
++      apiKey: "local-service-token",
++      baseUrl: "http://127.0.0.1:8781",
++    });
++    if (mode === "unavailable")
++      vi.mocked(classifierChooseRule).mockRejectedValue(
++        new Error("Service down"),
++      );
++    else
++      vi.mocked(classifierChooseRule).mockResolvedValue({
++        rules: [],
++        isColdEmail: false,
++        needsReview: true,
++        reason: "System1 needs review: uncertain",
++      });
++    const result = await findMatchingRules({
++      rules: [getAiRule()],
++      message: getMessage(),
++      emailAccount: getEmailAccount(),
++      provider,
++      modelType: "default",
++      logger,
++    });
++    expect(result.needsReview).toBe(true);
++    expect(result.matches).toEqual([]);
++    expect(aiChooseRule).not.toHaveBeenCalled();
++    expect(checkColdEmailWithAi).not.toHaveBeenCalled();
++  });
++
+   it("falls back to the LLM path when the classifier throws", async () => {
+     const coldEmailRule = getRule({
+       id: "cold-email-rule",
+diff --git a/apps/web/utils/ai/choose-rule/match-rules.ts b/apps/web/utils/ai/choose-rule/match-rules.ts
+index ee15fd523603d86e27e99ba1a19e5d66d577e1e6..2b54859b15c4824a5a8f8dc30f17df29081741b4 100644
+--- a/apps/web/utils/ai/choose-rule/match-rules.ts
++++ b/apps/web/utils/ai/choose-rule/match-rules.ts
+@@ -71,6 +71,7 @@ const NO_REPLY_PREFIXES = [
+ type AiRuleCandidate = RuleWithActions & { instructions: string };
+ 
+ type MatchingRulesResult = {
++  needsReview?: boolean;
+   matches: {
+     rule: RuleWithActions;
+     matchReasons?: MatchReason[];
+@@ -164,6 +165,17 @@ export async function findMatchingRules({
+       classificationFeedback,
+       logger,
+     }).catch((error) => {
++      if (classifier.provider === "system1") {
++        logger.warn("Local classifier unavailable; leaving email for review", {
++          error,
++        });
++        return {
++          rules: [],
++          reason: "System1 needs review: local classifier unavailable",
++          isColdEmail: false,
++          needsReview: true,
++        };
++      }
+       logger.warn(
+         "Classifier rule selection failed, falling back to LLM path",
+         {
+@@ -173,6 +185,15 @@ export async function findMatchingRules({
+       return null;
+     });
+ 
++    if (classifierResult?.needsReview) {
++      return {
++        matches: [],
++        reasoning: classifierResult.reason,
++        selectionMetadata,
++        needsReview: true,
++      };
++    }
++
+     if (classifierResult?.isColdEmail && pendingColdEmailRule) {
+       return buildColdEmailMatch({
+         coldEmailRuleId: pendingColdEmailRule.id,
+diff --git a/apps/web/utils/ai/choose-rule/run-rules.test.ts b/apps/web/utils/ai/choose-rule/run-rules.test.ts
+index 87861100ca789294e7b9c0517c983c42b46ae3fb..6c29a7a28ee6192b844cc5667e6eb283bb8e57c6 100644
+--- a/apps/web/utils/ai/choose-rule/run-rules.test.ts
++++ b/apps/web/utils/ai/choose-rule/run-rules.test.ts
+@@ -810,6 +810,38 @@ describe("runRules draft attribution persistence", () => {
+   });
+ });
+ 
++describe("runRules System1 review", () => {
++  it("persists SKIPPED and bypasses thread continuity, conversation LLMs, and actions", async () => {
++    vi.clearAllMocks();
++    vi.mocked(findMatchingRules).mockResolvedValue({
++      matches: [],
++      needsReview: true,
++      reasoning: "System1 needs review: uncertain",
++      selectionMetadata: {},
++    } as never);
++    prisma.executedRule.findFirst.mockResolvedValue({
++      id: "previous-conversation",
++    } as never);
++    const result = await runRulesWithDefaults({
++      rules: [toReplyRule, regularRule],
++    });
++    expect(result[0]?.status).toBe(ExecutedRuleStatus.SKIPPED);
++    expect(result[0]?.reason).toBe("System1 needs review: uncertain");
++    expect(prisma.executedRule.create).toHaveBeenCalledWith(
++      expect.objectContaining({
++        data: expect.objectContaining({
++          status: ExecutedRuleStatus.SKIPPED,
++          reason: "System1 needs review: uncertain",
++        }),
++      }),
++    );
++    expect(prisma.executedRule.findFirst).not.toHaveBeenCalled();
++    expect(determineConversationStatus).not.toHaveBeenCalled();
++    expect(getActionItemsWithAiArgs).not.toHaveBeenCalled();
++    expect(executeAct).not.toHaveBeenCalled();
++  });
++});
++
+ describe("runRules outbound guardrails", () => {
+   beforeEach(() => {
+     vi.clearAllMocks();
+diff --git a/apps/web/utils/ai/choose-rule/run-rules.ts b/apps/web/utils/ai/choose-rule/run-rules.ts
+index 29b84f7c48ec3f2d118af0a46d2c0e7a30431fd2..9f99bff0c738488164eb12d854b9bb9f11d2ac1e 100644
+--- a/apps/web/utils/ai/choose-rule/run-rules.ts
++++ b/apps/web/utils/ai/choose-rule/run-rules.ts
+@@ -133,22 +133,26 @@ export async function runRules({
+     logger,
+   });
+ 
+-  const calendarAwareMatches = ensureConversationRuleForAiCalendarMatch({
+-    conversationRules,
+-    regularRules,
+-    matches: results.matches,
+-    logger,
+-  });
++  const calendarAwareMatches = results.needsReview
++    ? []
++    : ensureConversationRuleForAiCalendarMatch({
++        conversationRules,
++        regularRules,
++        matches: results.matches,
++        logger,
++      });
+ 
+   // Auto-reapply conversation tracking for thread continuity
+-  const conversationAwareMatches = await ensureConversationRuleContinuity({
+-    emailAccountId: emailAccount.id,
+-    threadId: message.threadId,
+-    conversationRules,
+-    regularRules,
+-    matches: calendarAwareMatches,
+-    logger,
+-  });
++  const conversationAwareMatches = results.needsReview
++    ? []
++    : await ensureConversationRuleContinuity({
++        emailAccountId: emailAccount.id,
++        threadId: message.threadId,
++        conversationRules,
++        regularRules,
++        matches: calendarAwareMatches,
++        logger,
++      });
+ 
+   // Separate regular matches from conversation meta-rule
+   const regularMatches = conversationAwareMatches.filter(
+diff --git a/apps/web/utils/classifier/classify.test.ts b/apps/web/utils/classifier/classify.test.ts
+index 29cf6b3b9c288d18e888787153c943829cac288d..67b13257a9053f4dbcea1313d5f2c2ee142b5a0a 100644
+--- a/apps/web/utils/classifier/classify.test.ts
++++ b/apps/web/utils/classifier/classify.test.ts
+@@ -5,6 +5,8 @@ const envMock = vi.hoisted(() => ({
+   DEFAULT_CLASSIFIER: undefined as string | undefined,
+   DEFAULT_CLASSIFIER_ENABLED: false,
+   TYPESAFE_API_KEY: undefined as string | undefined,
++  SYSTEM1_CLASSIFIER_URL: undefined as string | undefined,
++  SYSTEM1_CLASSIFIER_TOKEN: undefined as string | undefined,
+ }));
+ const classifyWithTypeSafeMock = vi.hoisted(() => vi.fn());
+ 
+@@ -22,6 +24,11 @@ import prisma from "@/utils/__mocks__/prisma";
+ import { saveAiUsage } from "@/utils/usage";
+ import { classify, getClassifierConfig } from "./classify";
+ 
++const classifyWithSystem1Mock = vi.hoisted(() => vi.fn());
++vi.mock("@/utils/classifier/system1", () => ({
++  classifyWithSystem1: classifyWithSystem1Mock,
++}));
++
+ const logger = createTestLogger();
+ const config = {
+   provider: "typesafe" as const,
+@@ -171,3 +178,61 @@ describe("classify", () => {
+     );
+   });
+ });
++
++describe("System1 configuration and usage", () => {
++  beforeEach(() => {
++    vi.clearAllMocks();
++    envMock.DEFAULT_CLASSIFIER = "system1:email";
++    envMock.SYSTEM1_CLASSIFIER_URL = "http://127.0.0.1:8781";
++    envMock.SYSTEM1_CLASSIFIER_TOKEN = "local-service-token-24-characters";
++  });
++  it("respects opt-in and requires both URL and token", async () => {
++    envMock.DEFAULT_CLASSIFIER_ENABLED = false;
++    prisma.user.findUnique.mockResolvedValue({
++      classifierEnabled: null,
++      aiApiKey: null,
++    } as never);
++    expect(await getClassifierConfig(getEmailAccount())).toBeNull();
++    prisma.user.findUnique.mockResolvedValue({
++      classifierEnabled: true,
++      aiApiKey: null,
++    } as never);
++    expect(await getClassifierConfig(getEmailAccount())).toEqual({
++      provider: "system1",
++      model: "email",
++      apiKey: envMock.SYSTEM1_CLASSIFIER_TOKEN,
++      baseUrl: envMock.SYSTEM1_CLASSIFIER_URL,
++    });
++    envMock.SYSTEM1_CLASSIFIER_TOKEN = undefined;
++    expect(await getClassifierConfig(getEmailAccount())).toBeNull();
++  });
++  it("uses the local provider and records zero tokens", async () => {
++    classifyWithSystem1Mock.mockResolvedValue({
++      model: "system1-email-test",
++      inputTokens: 0,
++      answers: {},
++      needsReview: true,
++    });
++    await classify({
++      config: {
++        provider: "system1",
++        model: "email",
++        baseUrl: envMock.SYSTEM1_CLASSIFIER_URL!,
++        apiKey: envMock.SYSTEM1_CLASSIFIER_TOKEN!,
++      },
++      emailAccount: getEmailAccount(),
++      state: {},
++      questions: {},
++      label: "test",
++      logger,
++    });
++    expect(classifyWithTypeSafeMock).not.toHaveBeenCalled();
++    expect(classifyWithSystem1Mock).toHaveBeenCalledTimes(1);
++    expect(saveAiUsage).toHaveBeenCalledWith(
++      expect.objectContaining({
++        provider: "system1",
++        usage: expect.objectContaining({ inputTokens: 0, outputTokens: 0 }),
++      }),
++    );
++  });
++});
+diff --git a/apps/web/utils/classifier/classify.ts b/apps/web/utils/classifier/classify.ts
+index 07be159af6995c05e7984ecb9fa96655881fbfac..d02419d4c3de89a22f832add56e1539164c952ba 100644
+--- a/apps/web/utils/classifier/classify.ts
++++ b/apps/web/utils/classifier/classify.ts
+@@ -1,6 +1,7 @@
+ import { env } from "@/env";
+ import type { User } from "@/generated/prisma/client";
+ import { classifyWithTypeSafe } from "@/utils/classifier/typesafe";
++import { classifyWithSystem1 } from "@/utils/classifier/system1";
+ import { assertTrialAiUsageAllowed } from "@/utils/llms/model-usage-guard";
+ import { enforceSensitiveDataPolicy } from "@/utils/llms/sensitive-content";
+ import type { EmailAccountWithAI } from "@/utils/llms/types";
+@@ -34,13 +35,23 @@ export type ClassifierResponse = {
+   model: string;
+   inputTokens: number;
+   answers: Record<string, ClassifierAnswer | undefined>;
++  needsReview?: boolean;
++  reviewReason?: string;
++  suggestedCategory?: string | null;
+ };
+ 
+-export type ClassifierConfig = {
+-  provider: "typesafe";
+-  model: string;
+-  apiKey: string;
+-};
++export type ClassifierConfig =
++  | {
++      provider: "typesafe";
++      model: string;
++      apiKey: string;
++    }
++  | {
++      provider: "system1";
++      model: string;
++      apiKey: string;
++      baseUrl: string;
++    };
+ 
+ /** The classifier this account uses, or null to use the LLM path instead. */
+ export async function getClassifierConfig(
+@@ -147,11 +158,22 @@ function sendToProvider(options: {
+   switch (options.config.provider) {
+     case "typesafe":
+       return classifyWithTypeSafe(options);
++    case "system1":
++      return classifyWithSystem1({ ...options, config: options.config });
+   }
+ }
+ 
+ function getDeploymentClassifierConfig(): ClassifierConfig | null {
+-  // env.ts only accepts typesafe:<model> and requires TYPESAFE_API_KEY with it.
++  if (env.DEFAULT_CLASSIFIER?.startsWith("system1:")) {
++    if (!env.SYSTEM1_CLASSIFIER_URL || !env.SYSTEM1_CLASSIFIER_TOKEN)
++      return null;
++    return {
++      provider: "system1",
++      model: env.DEFAULT_CLASSIFIER.slice("system1:".length),
++      apiKey: env.SYSTEM1_CLASSIFIER_TOKEN,
++      baseUrl: env.SYSTEM1_CLASSIFIER_URL,
++    };
++  }
+   if (!env.DEFAULT_CLASSIFIER || !env.TYPESAFE_API_KEY) return null;
+ 
+   return {
+diff --git a/apps/web/utils/classifier/system1.test.ts b/apps/web/utils/classifier/system1.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..0153f37de2cabb1039c68c06d84bc40eb56fca1e
+--- /dev/null
++++ b/apps/web/utils/classifier/system1.test.ts
+@@ -0,0 +1,94 @@
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { classifyWithSystem1 } from "./system1";
++
++const request = {
++  config: {
++    provider: "system1" as const,
++    model: "email",
++    apiKey: "local-service-token",
++    baseUrl: "http://127.0.0.1:8781",
++  },
++  state: { email: { subject: "Your verification code" } },
++  questions: {
++    __rule_choice__: {
++      type: "choice" as const,
++      instructions: "Choose",
++      criteria: { OTP: "Codes" },
++    },
++  },
++};
++const accepted = {
++  model: "system1-email-test",
++  inputTokens: 0,
++  teacherCalls: 0,
++  needsReview: false,
++  answers: {
++    __rule_choice__: {
++      type: "choice",
++      choice: "OTP",
++      confidence: 0.99,
++      probabilities: { OTP: 0.99 },
++    },
++  },
++};
++
++afterEach(() => vi.unstubAllGlobals());
++
++describe("local System1 provider", () => {
++  it("posts to the configured service and accepts a validated zero-token answer", async () => {
++    const fetch = vi.fn().mockResolvedValue(Response.json(accepted));
++    vi.stubGlobal("fetch", fetch);
++    expect(await classifyWithSystem1(request)).toEqual(accepted);
++    expect(fetch).toHaveBeenCalledWith(
++      new URL("http://127.0.0.1:8781/v1/classify"),
++      expect.objectContaining({
++        method: "POST",
++        redirect: "error",
++        signal: expect.any(AbortSignal),
++        headers: expect.objectContaining({
++          Authorization: "Bearer local-service-token",
++        }),
++      }),
++    );
++  });
++  it("preserves review without inventing a choice", async () => {
++    const review = {
++      ...accepted,
++      needsReview: true,
++      reviewReason: "uncertain",
++      answers: {},
++    };
++    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(review)));
++    expect(await classifyWithSystem1(request)).toEqual(review);
++  });
++  it.each([
++    { ...accepted, teacherCalls: 1 },
++    { ...accepted, inputTokens: 10 },
++    { ...accepted, answers: {} },
++    {
++      ...accepted,
++      answers: {
++        __rule_choice__: {
++          ...accepted.answers.__rule_choice__,
++          choice: "Unknown",
++        },
++      },
++    },
++    {
++      ...accepted,
++      answers: {
++        __rule_choice__: { ...accepted.answers.__rule_choice__, confidence: 2 },
++      },
++    },
++  ])("rejects a response outside the local contract", async (response) => {
++    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(Response.json(response)));
++    await expect(classifyWithSystem1(request)).rejects.toThrow();
++  });
++  it("propagates service failure for the caller's review path", async () => {
++    vi.stubGlobal(
++      "fetch",
++      vi.fn().mockResolvedValue(new Response("unavailable", { status: 503 })),
++    );
++    await expect(classifyWithSystem1(request)).rejects.toThrow("status 503");
++  });
++});
+diff --git a/apps/web/utils/classifier/system1.ts b/apps/web/utils/classifier/system1.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..c2ff118ede729372afd96d19132d206d9bdac835
+--- /dev/null
++++ b/apps/web/utils/classifier/system1.ts
+@@ -0,0 +1,62 @@
++import { z } from "zod";
++import type {
++  ClassifierConfig,
++  ClassifierQuestion,
++  ClassifierResponse,
++} from "@/utils/classifier/classify";
++
++const probability = z.number().min(0).max(1);
++const responseSchema = z.object({
++  model: z.string(),
++  inputTokens: z.literal(0),
++  teacherCalls: z.literal(0),
++  needsReview: z.boolean(),
++  reviewReason: z.string().optional(),
++  suggestedCategory: z.string().nullable().optional(),
++  answers: z.record(
++    z.string(),
++    z.object({
++      type: z.literal("choice"),
++      choice: z.string(),
++      confidence: probability,
++      probabilities: z.record(z.string(), probability),
++    }),
++  ),
++});
++
++export async function classifyWithSystem1({
++  config,
++  state,
++  questions,
++}: {
++  config: Extract<ClassifierConfig, { provider: "system1" }>;
++  state: Record<string, unknown>;
++  questions: Record<string, ClassifierQuestion>;
++}): Promise<ClassifierResponse> {
++  const response = await fetch(new URL("/v1/classify", config.baseUrl), {
++    method: "POST",
++    headers: {
++      Authorization: `Bearer ${config.apiKey}`,
++      "Content-Type": "application/json",
++    },
++    body: JSON.stringify({ state, questions }),
++    signal: AbortSignal.timeout(5000),
++    redirect: "error",
++  });
++  if (!response.ok) {
++    throw new Error(`System1 request failed with status ${response.status}`);
++  }
++  const result = responseSchema.parse(await response.json());
++  if (!result.needsReview) {
++    const answer = result.answers.__rule_choice__;
++    const question = questions.__rule_choice__;
++    if (
++      !answer ||
++      question?.type !== "choice" ||
++      !Object.hasOwn(question.criteria, answer.choice)
++    ) {
++      throw new Error("System1 returned an unavailable rule");
++    }
++  }
++  return result;
++}
+diff --git a/turbo.json b/turbo.json
+index a11f7641d76b2fe928708b4a963f5c83c90c0ab2..5438362fdc8ec17abb3fefa25b86b1f81bad15cb 100644
+--- a/turbo.json
++++ b/turbo.json
+@@ -188,6 +188,8 @@
+         "DEFAULT_CLASSIFIER",
+         "DEFAULT_CLASSIFIER_ENABLED",
+         "TYPESAFE_API_KEY",
++        "SYSTEM1_CLASSIFIER_URL",
++        "SYSTEM1_CLASSIFIER_TOKEN",
+         "IMAGE_PROXY_SIGNING_SECRET",
+         "IS_OAUTH_PROXY_SERVER",
+         "ADDITIONAL_TRUSTED_ORIGINS",

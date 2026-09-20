@@ -863,6 +863,19 @@ class SystemOneEngine:
                             is_ambiguous = True
                             escalated_fields.append(name)
 
+            # Unknown vocabulary carries no evidence. Do not accept a class prior
+            # as a taught answer when a fixed-vocabulary skill sees no features.
+            from system1.core.text import TfidfProjector
+            if isinstance(self.projector, TfidfProjector) and not np.any(raw_result.embedding):
+                for name, definition in self.schema.fields.items():
+                    conformal_sets[name] = []
+                    if name not in ambiguous_fields:
+                        ambiguous_fields.append(name)
+                    if getattr(definition, "escalate_on_ambiguity", True):
+                        is_ambiguous = True
+                        if name not in escalated_fields:
+                            escalated_fields.append(name)
+
             validated_values = self.schema.validate_decision(values)
             total_latency_ms = (time.perf_counter() - t_start) * 1000.0
 

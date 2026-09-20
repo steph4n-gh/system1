@@ -13,6 +13,8 @@ SQLite (ActionLedger), or disk I/O.
 
 from __future__ import annotations
 
+from system1.core.text import TfidfProjector
+
 from system1.core.schema import (
     BooleanField,
     ChoiceField,
@@ -71,6 +73,7 @@ __all__ = [
     "SchemaMeta",
     # Evaluation Kernel & Projectors
     "DeterministicSemanticProjector",
+    "TfidfProjector",
     "LocalNeuralProjector",
     "HybridProjector",
     "HybridSemanticProjector",

@@ -1,0 +1,30 @@
+{
+  "candidate": "tfidf-email-v2",
+  "feature_space": "NumPy-only word unigram/bigram TF-IDF, max_features=2048, smoothed IDF, sublinear TF, L2 normalization; vocabulary fitted only on teaching rows",
+  "head": {
+    "type": "existing System1 ridge",
+    "regularization": 0.1
+  },
+  "alpha": 0.05,
+  "counts": {
+    "teach": 252,
+    "calibration": 140,
+    "fresh_evaluation": 84,
+    "upstream_regression": 35
+  },
+  "selection": "One fixed candidate; no parameter search or evaluation-driven lesson edits. Preserve any failure.",
+  "targets": {
+    "accepted_accuracy": 0.95,
+    "acceptance_rate": 0.8
+  },
+  "scope": "Synthetic English category pilot; passing point targets does not qualify real mailbox automation. Existing service defaults to review-only.",
+  "baseline": "Same capped TF-IDF features and fit rows, logistic regression C=1; same conformal fold at alpha=.05",
+  "cohorts": {
+    "fresh": "New authored holdout, same author as teaching, not blind or independent production evidence",
+    "upstream": "Previously seen upstream cases, retained as regressions only"
+  },
+  "sha256": {
+    "lessons_v2.json": "b3ee22595ace50707a5508c8dc0bff370b8a6d8bc35043ee5a3865c1313357d0",
+    "evaluation_v2.json": "806bbbffac3e4a9101fda4a57e669efda0d05abdd711482ba0ed6d6db882fbf4"
+  }
+}
