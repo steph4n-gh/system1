@@ -2273,7 +2273,9 @@ class TypeSafeClient:
         speedup = cloud_lat / local_resp.latency_ms if is_live and local_resp.latency_ms > 0 else None
         cloud_tokens = cloud_resp.usage.total_tokens if cloud_resp and cloud_resp.get("usage") else 0
         from system1.receipt import verify_decision_witness_receipt
-        receipt_verified = bool(local_resp.receipt) and verify_decision_witness_receipt(local_resp.receipt)
+        receipt_verified = bool(local_resp.receipt) and verify_decision_witness_receipt(
+            local_resp.receipt, public_key=self.signing_key.public_key() if self.signing_key else None,
+        )
 
         return DotDict({
             "state": state,

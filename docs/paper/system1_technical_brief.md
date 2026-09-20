@@ -1,6 +1,6 @@
 # System 1: technical brief
 
-**System 1 1.0.2 · 19 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.0.3 · 20 September 2026 · Maintainer-authored implementation brief**
 
 System 1 turns a repeatable decision into a small reusable local skill. Define the
 outputs, teach from examples or observe a teacher, validate the skill, then reuse
@@ -69,6 +69,11 @@ For application permissions, `PolicyEngine` evaluates explicit rules and
 key and durable ledger. A classifier answer alone is not authorization. Software
 Ed25519 receipts and a SHA-256-chained SQLite ledger support auditing; applications
 must authenticate callers, protect keys and enforce tool boundaries.
+
+Version 1.0.3 requires independent receipt verification keys, binds ledger IDs in
+signed envelopes, checks exact inclusion and full ledger history, and bounds
+saved-skill loading. gRPC resolves only registered schemas. See the
+[security release notes](../releases/1.0.3.md) for compatibility changes.
 
 ## Start here
 

@@ -1,6 +1,6 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.0.2 · 19 September 2026 · Implementation notes, not new theorems**
+**System 1 1.0.3 · 20 September 2026 · Implementation notes, not new theorems**
 
 This note describes the mathematics used by the runtime and the assumptions
 needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the

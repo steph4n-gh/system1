@@ -620,24 +620,7 @@ class SystemOneEngine:
                             if active_ledger is not None:
                                 try:
                                     ledger_record_id = active_ledger.record_decision_receipt(hit_receipt)
-                                    hit_receipt = DecisionWitnessReceipt(
-                                        decision_id=hit_receipt.decision_id,
-                                        schema_name=hit_receipt.schema_name,
-                                        schema_digest=hit_receipt.schema_digest,
-                                        prompt=hit_receipt.prompt,
-                                        prompt_digest=hit_receipt.prompt_digest,
-                                        values=hit_receipt.values,
-                                        confidences=hit_receipt.confidences,
-                                        conformal_sets=hit_receipt.conformal_sets,
-                                        probabilities=hit_receipt.probabilities,
-                                        latency_ms=hit_receipt.latency_ms,
-                                        is_ambiguous=hit_receipt.is_ambiguous,
-                                        timestamp=hit_receipt.timestamp,
-                                        truth_ledger_head=hit_receipt.truth_ledger_head,
-                                        ledger_record_id=ledger_record_id,
-                                        signer_public_key=hit_receipt.signer_public_key,
-                                        envelope=hit_receipt.envelope,
-                                    )
+                                    hit_receipt = hit_receipt.with_ledger_record(ledger_record_id, self.signing_key)
                                 except Exception as ex:
                                     if is_fail_closed:
                                         raise LedgerWriteError(f"Fail-closed ledger recording failed on cache hit: {ex}") from ex
@@ -929,24 +912,7 @@ class SystemOneEngine:
             if active_ledger is not None and record_receipt:
                 try:
                     ledger_record_id = active_ledger.record_decision_receipt(receipt)
-                    receipt = DecisionWitnessReceipt(
-                        decision_id=receipt.decision_id,
-                        schema_name=receipt.schema_name,
-                        schema_digest=receipt.schema_digest,
-                        prompt=receipt.prompt,
-                        prompt_digest=receipt.prompt_digest,
-                        values=receipt.values,
-                        confidences=receipt.confidences,
-                        conformal_sets=receipt.conformal_sets,
-                        probabilities=receipt.probabilities,
-                        latency_ms=receipt.latency_ms,
-                        is_ambiguous=receipt.is_ambiguous,
-                        timestamp=receipt.timestamp,
-                        truth_ledger_head=receipt.truth_ledger_head,
-                        ledger_record_id=ledger_record_id,
-                        signer_public_key=receipt.signer_public_key,
-                        envelope=receipt.envelope,
-                    )
+                    receipt = receipt.with_ledger_record(ledger_record_id, self.signing_key)
                 except Exception as ex:
                     if is_fail_closed:
                         raise LedgerWriteError(f"Fail-closed ledger recording failed: {ex}") from ex

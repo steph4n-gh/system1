@@ -243,9 +243,10 @@ the practical value is the complete path from examples to a checked local skill.
 
 ## Release and development
 
-**Version 1.0.2:** clearer first-skill teaching, explicit accepted-decision
-qualification, a fuller SMS observation run and transparent quality limits.
-See the [release report](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.2.md)
+**Version 1.0.3:** authenticated audit receipts, checked ledger inclusion, bounded
+saved-skill loading and registered gRPC schemas. Includes the numeric teaching
+fix and supervised Paperclips example.
+See the [release report](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.3.md)
 and [1.0 migration guide](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.md).
 The legacy `reflex` import namespace remains a compatibility alias.
 

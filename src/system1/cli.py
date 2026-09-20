@@ -354,6 +354,13 @@ def handle_verify_receipt_command(args: argparse.Namespace) -> int:
 
     pub_key = None
     pub_key_path = getattr(args, "public_key", None)
+    if not pub_key_path:
+        message = "Authentication requires --public-key from an independently trusted source"
+        if getattr(args, "json", False):
+            print(json.dumps({"verified": False, "error": message}, indent=2))
+        else:
+            print(f"[SYSTEM1 VERIFICATION FAILED] {message}", file=sys.stderr)
+        return 1
     if pub_key_path:
         if Path(pub_key_path).is_file():
             try:

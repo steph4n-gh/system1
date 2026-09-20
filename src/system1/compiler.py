@@ -13,6 +13,7 @@ import os
 import struct
 import threading
 import time
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Type, Union
@@ -41,6 +42,78 @@ from system1.core.telemetry import TelemetryProjector
 from system1.cache import SemanticSystemOneCache
 
 MAGIC_HEADER = b"S1M\x02"
+
+# Fixed budgets for portable, bounded skills. Check before decoding/allocating.
+MAX_SKILL_BYTES = 64 * 1024 * 1024
+MAX_SKILL_HEADER_BYTES = 1024 * 1024
+MAX_SKILL_ARRAY_BYTES = 128 * 1024 * 1024
+MAX_SKILL_RUNTIME_BYTES = 256 * 1024 * 1024
+MAX_SKILL_DIMENSION = 4096
+MAX_SKILL_FIELDS = 64
+MAX_SKILL_OPTIONS = 1024
+MAX_SKILL_CALIBRATION_SCORES = 1_000_000
+MAX_SKILL_COMPRESSION_RATIO = 1024
+
+
+def _read_skill_arrays(data: bytes, schema: DecisionSchema, dimension: int) -> Dict[str, np.ndarray]:
+    """Preflight ZIP and NPY headers before NumPy can allocate any array."""
+    # Bound central-directory parsing too: ZipFile creates one object per entry.
+    end = data.rfind(b"PK\x05\x06", max(0, len(data) - 65557))
+    if end < 0 or end + 22 > len(data):
+        raise ValueError("Saved skill has no valid NPZ directory")
+    _, disk, directory_disk, disk_count, count, directory_size, directory_offset, comment_size = struct.unpack(
+        "<4s4H2LH", data[end:end + 22]
+    )
+    if (disk or directory_disk or disk_count != count or count > MAX_SKILL_FIELDS * 5
+            or directory_size > MAX_SKILL_HEADER_BYTES or directory_offset + directory_size != end
+            or end + 22 + comment_size != len(data)):
+        raise ValueError("Saved skill NPZ directory exceeds limits or is malformed")
+    expected = {f"{name}_{suffix}.npy" for name in schema.fields
+                for suffix in ("w", "b", "P", "B", "calib_scores")}
+    shapes: Dict[str, Tuple[int, ...]] = {}
+    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        members = archive.infolist()
+        names = [info.filename for info in members]
+        if (len(members) != count or len(set(names)) != len(names) or not set(names) <= expected
+                or sum(info.file_size for info in members) > MAX_SKILL_ARRAY_BYTES):
+            raise ValueError("Saved skill contains unexpected, duplicate or oversized arrays")
+        for info in members:
+            if (info.flag_bits & 1 or info.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)
+                    or info.file_size > MAX_SKILL_ARRAY_BYTES
+                    or info.file_size > max(1, info.compress_size) * MAX_SKILL_COMPRESSION_RATIO):
+                raise ValueError("Saved skill array compression exceeds limits")
+            with archive.open(info) as stream:
+                version = np.lib.format.read_magic(stream)
+                if version == (1, 0):
+                    shape, _, dtype = np.lib.format.read_array_header_1_0(stream)
+                elif version == (2, 0):
+                    shape, _, dtype = np.lib.format.read_array_header_2_0(stream)
+                else:
+                    raise ValueError("Unsupported saved skill array format")
+                if (dtype.kind != "f" or dtype.itemsize not in (4, 8) or len(shape) not in (1, 2)
+                        or any(type(n) is not int or n < 0 for n in shape)):
+                    raise ValueError("Saved skill arrays must be bounded float32/float64 vectors or matrices")
+                byte_count = math.prod(shape) * dtype.itemsize
+                if byte_count > MAX_SKILL_ARRAY_BYTES or stream.tell() + byte_count != info.file_size:
+                    raise ValueError("Saved skill array shape exceeds its declared size or budget")
+                shapes[info.filename[:-4]] = shape
+        for name, definition in schema.fields.items():
+            widths = (1, 2) if isinstance(definition, BooleanField) else (len(definition.options),) if hasattr(definition, "options") else (1,)
+            weight_shape = shapes.get(f"{name}_w", ())
+            if weight_shape not in tuple((width, dimension) for width in widths):
+                raise ValueError(f"Saved head {name!r} has incompatible weight dimensions")
+            width = weight_shape[0]
+            required_shapes = {"b": (width,), "P": (dimension + 1, dimension + 1), "B": (dimension + 1, width)}
+            for suffix, shape in required_shapes.items():
+                actual = shapes.get(f"{name}_{suffix}")
+                if (suffix == "b" or actual is not None) and actual != shape:
+                    raise ValueError(f"Saved head {name!r} has incompatible {suffix} dimensions")
+            calibration = shapes.get(f"{name}_calib_scores")
+            if calibration is not None and (len(calibration) != 1 or calibration[0] > MAX_SKILL_CALIBRATION_SCORES):
+                raise ValueError("Saved skill calibration exceeds limits")
+        # Every member has been checked, including optional covariance arrays.
+        with np.load(io.BytesIO(data), allow_pickle=False) as arrays:
+            return {name: arrays[name] for name in shapes}
 
 
 def _projector_config(projector: Any) -> Dict[str, Any]:
@@ -436,10 +509,14 @@ class CompiledSystemOneModel:
         backend: str = "numpy",
     ) -> CompiledSystemOneModel:
         """Deserializes a CompiledSystemOneModel from binary bytes."""
+        if len(data) > MAX_SKILL_BYTES:
+            raise ValueError("Saved skill file exceeds size limit")
         if len(data) < 8 or data[:4] not in (b"S1M\x01", MAGIC_HEADER):
             raise ValueError("Invalid System 1 Model binary: missing or invalid magic header")
 
         header_len = struct.unpack(">I", data[4:8])[0]
+        if header_len > MAX_SKILL_HEADER_BYTES:
+            raise ValueError("Saved skill header exceeds size limit")
         header_end = 8 + header_len
         if len(data) < header_end:
             raise ValueError("Corrupted System 1 Model binary: truncated header")
@@ -449,18 +526,40 @@ class CompiledSystemOneModel:
         if meta.get("version") not in (1, 2) or meta["version"] != data[3]:
             raise ValueError("Unsupported or inconsistent saved skill format version")
 
-        # Unpack npz payload
-        npz_bytes = data[header_end:]
-        npz_file = np.load(io.BytesIO(npz_bytes))
-
         # Reconstruct schema
+        fields_data = meta["schema_dict"]["fields"]
+        if not isinstance(fields_data, dict) or not 0 < len(fields_data) <= MAX_SKILL_FIELDS:
+            raise ValueError("Saved skill field count exceeds limits")
+        for definition in fields_data.values():
+            if len(definition.get("options", ())) > MAX_SKILL_OPTIONS:
+                raise ValueError("Saved skill option count exceeds limits")
         schema = DecisionSchema.from_dict(meta["schema_dict"])
         if meta.get("schema_digest") != schema.schema_digest():
             raise ValueError("Saved skill schema digest does not match its definition")
-        dimension = int(meta["dimension"])
-        if dimension <= 0:
-            raise ValueError("Saved skill dimension must be positive")
+        dimension = meta["dimension"]
+        if type(dimension) is not int or not 0 < dimension <= MAX_SKILL_DIMENSION:
+            raise ValueError("Saved skill dimension must be a positive integer within limits")
+        if set(meta["heads"]) != set(schema.fields):
+            raise ValueError("Saved skill heads must exactly match its schema")
+        # Includes constructor/NumPy temporaries and missing covariance defaults.
+        widths = sum(max(2, len(getattr(f, "options", ()))) for f in schema.fields.values())
+        runtime_bytes = 16 * len(schema.fields) * (dimension + 1) ** 2 + 16 * widths * (dimension + 1)
         projector_config = meta.get("projector")
+        if projector_config is not None:
+            kind = projector_config["type"]
+            if kind == "deterministic" and projector_config.get("dimension") != dimension:
+                raise ValueError("Saved projector dimension does not match the skill")
+            if kind == "hybrid":
+                if set(projector_config) - {"type", "sparse_dim", "dense_dim", "alpha", "seed"}:
+                    raise ValueError("Saved hybrid projector contains unsupported settings")
+                sparse, dense = projector_config.get("sparse_dim"), projector_config.get("dense_dim")
+                if (type(sparse) is not int or type(dense) is not int or sparse <= 0 or dense <= 0
+                        or sparse + dense != dimension):
+                    raise ValueError("Saved hybrid projector dimensions do not match the skill")
+                runtime_bytes += 16 * 25000 * dense
+        if runtime_bytes > MAX_SKILL_RUNTIME_BYTES:
+            raise ValueError("Saved skill runtime allocation exceeds memory budget")
+        npz_file = _read_skill_arrays(data[header_end:], schema, dimension)
         if projector_config is not None:
             if projector is not None:
                 if _projector_config(projector) != projector_config:
@@ -472,7 +571,10 @@ class CompiledSystemOneModel:
                 )
             elif projector_config["type"] == "hybrid":
                 from system1.core.embeddings import HybridProjector
-                projector = HybridProjector(**{k: v for k, v in projector_config.items() if k != "type"}, backend=backend)
+                projector = HybridProjector(
+                    sparse_dim=projector_config["sparse_dim"], dense_dim=projector_config["dense_dim"],
+                    alpha=projector_config.get("alpha", 0.5), seed=projector_config.get("seed", 42), backend=backend,
+                )
             else:
                 raise ValueError("This skill requires its original external projector; pass projector= when loading")
 
@@ -498,6 +600,8 @@ class CompiledSystemOneModel:
                 raise ValueError(f"Saved head {name!r} options do not match the schema")
             p_mat = npz_file[f"{name}_P"] if f"{name}_P" in npz_file else None
             b_mat = npz_file[f"{name}_B"] if f"{name}_B" in npz_file else None
+            if any(a is not None and not np.all(np.isfinite(a)) for a in (p_mat, b_mat)):
+                raise ValueError(f"Saved head {name!r} contains non-finite covariance")
             calib_scores_arr = npz_file[f"{name}_calib_scores"] if f"{name}_calib_scores" in npz_file else None
             calib_scores = tuple(float(s) for s in calib_scores_arr) if calib_scores_arr is not None else ()
             if any(not math.isfinite(score) or score < 0 for score in calib_scores):
@@ -544,7 +648,8 @@ class CompiledSystemOneModel:
         target = Path(path)
         if not target.is_file():
             raise FileNotFoundError(f"Model file not found: {target}")
-        data = target.read_bytes()
+        with target.open("rb") as stream:
+            data = stream.read(MAX_SKILL_BYTES + 1)
         return cls.from_bytes(data, projector=projector, backend=backend)
 
 

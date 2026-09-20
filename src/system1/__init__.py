@@ -51,7 +51,7 @@ from system1 import (
     schema,
 )
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 
 def decide(
@@ -159,6 +159,7 @@ _MODULE_MAP = {
     "DecisionWitnessReceipt": "system1.receipt",
     "create_decision_receipt": "system1.receipt",
     "verify_decision_witness_receipt": "system1.receipt",
+    "check_decision_receipt_integrity": "system1.receipt",
     "compute_receipt_digest": "system1.receipt",
     "RunWitnessEnvelope": "system1.receipt",
     "create_run_witness_envelope": "system1.receipt",
@@ -287,6 +288,7 @@ __all__ = [
     "DecisionWitnessReceipt",
     "create_decision_receipt",
     "verify_decision_witness_receipt",
+    "check_decision_receipt_integrity",
     "compute_receipt_digest",
     "RunWitnessEnvelope",
     "create_run_witness_envelope",

@@ -1,6 +1,6 @@
 # System 1 architecture and implementation
 
-Implementation reference for **System 1 1.0.2**, reviewed 19 September 2026.
+Implementation reference for **System 1 1.0.3**, reviewed 20 September 2026.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
 [pyproject.toml](../../pyproject.toml).
@@ -146,8 +146,13 @@ Format-v2 `.s1m` files contain schema, projector configuration, weights, tempera
 calibration scores and score semantics; adapter exports retain evaluated review
 settings. Built-in projectors can be reconstructed. External projectors must be
 supplied and should expose a configuration digest. Readers validate versions,
-shapes, schema identity and finite numerical values. Version 1.0.2 also reads v1
+shapes, schema identity and finite numerical values. Version 1.0.3 also reads v1
 skills with legacy APS semantics; 0.2.x readers cannot read v2.
+
+The loader bounds file/header size, schema complexity, compressed and expanded
+arrays, and runtime allocation before materializing arrays or projectors. It
+checks NPY shapes and floating-point types before NumPy loading, including
+covariance and calibration state. See the [exact budgets](../deployment.md#saved-skill-resource-limits).
 
 Saving a validated skill is tested to preserve values, probabilities, prediction
 sets and review flags. Online correction methods, including `learn_from_tier2`
@@ -172,8 +177,16 @@ hash chain. Trusted keys and external head checkpoints are needed to assess
 provenance and rollback; neither artifact proves a tool executed correctly.
 Receipts and ledgers are optional on ordinary classification paths.
 
+Receipt authentication requires an independently supplied public key. Diagnostic
+integrity checks do not authenticate a signer. After append, the existing signed
+envelope binds the committed ledger record ID while the core receipt digest stays
+stable. Guards check exact stored receipt inclusion; write transactions reverify
+the complete chain. See [audit migration details](../releases/1.0.3.md).
+
 LangChain, MCP, ASGI, gRPC, Prometheus and OpenTelemetry are adapters around these
 contracts. gRPC's diagnostic CLI has insecure transport and defaults to loopback.
+Remote schema selection is restricted to built-ins and exact startup registrations;
+file/import/inline-JSON loading belongs to the trusted local CLI path.
 Experimental container templates exist but no published image or authenticated
 service is supplied. Read [deployment boundaries](../deployment.md) and
 [observability](../observability/README.md) before exposing an endpoint.

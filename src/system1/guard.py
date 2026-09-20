@@ -892,7 +892,10 @@ class SystemOneGuardHook:
             return GuardInterceptionResult(outcome, reason, decision_result=None, policy_decision=pol_decision, proposal=proposal)
 
         # Fail-closed ledger check: if ledger is configured, durable recording MUST have succeeded
-        if self.ledger is not None and (decision.receipt is None or not getattr(decision.receipt, "ledger_record_id", None)):
+        if self.ledger is not None and (decision.receipt is None or not decision.receipt.ledger_record_id or self.ledger.verify_receipt_record(
+            decision.receipt,
+            trusted_public_key=self.engine.signing_key.public_key() if self.engine.signing_key else None,
+        ) is not True):
             outcome = DecisionOutcome.DENY
             reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
             pol_decision = self._build_policy_decision(
@@ -1049,7 +1052,7 @@ class SystemOneGuardHook:
                     principal_id=proposal.principal_id,
                     scope=proposal.scope,
                 )
-                final_receipt = replace(final_receipt, ledger_record_id=ledger_rec_id)
+                final_receipt = final_receipt.with_ledger_record(ledger_rec_id, self.engine.signing_key)
             except Exception as ex:
                 if self.fail_closed_ledger:
                     f_outcome = DecisionOutcome.DENY
@@ -1059,7 +1062,10 @@ class SystemOneGuardHook:
                     )
                     return GuardInterceptionResult(f_outcome, f_reason, decision_result=None, policy_decision=f_pol_decision, proposal=proposal)
 
-        if self.ledger is not None and not final_receipt.ledger_record_id:
+        if self.ledger is not None and (not final_receipt.ledger_record_id or self.ledger.verify_receipt_record(
+            final_receipt,
+            trusted_public_key=self.engine.signing_key.public_key() if self.engine.signing_key else None,
+        ) is not True):
             if self.fail_closed_ledger:
                 f_outcome = DecisionOutcome.DENY
                 f_reason = "Fail-closed Reference Monitor: ActionLedger failed to durably record decision receipt"
@@ -1119,4 +1125,3 @@ __all__ = [
     "ResultStatus",
     "RiskLevel",
 ]
-

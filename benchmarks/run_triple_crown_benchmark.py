@@ -657,7 +657,10 @@ def run_openhands_benchmark(iterations: int = 50) -> BenchmarkComparison:
         if result.is_ambiguous:
             conformal_escalations += 1
 
-        if result.receipt and verify_decision_witness_receipt(result.receipt.to_dict()):
+        if result.receipt and verify_decision_witness_receipt(
+            result.receipt.to_dict(),
+            public_key=analyzer.engine.signing_key.public_key() if analyzer.engine.signing_key else None,
+        ):
             verified_receipts += 1
 
         # Cloud baseline evaluation
@@ -763,7 +766,10 @@ def run_instructor_benchmark(iterations: int = 50) -> BenchmarkComparison:
         if triage.is_ambiguous:
             conformal_escalations += 1
 
-        if triage.receipt and verify_decision_witness_receipt(triage.receipt.to_dict()):
+        if triage.receipt and verify_decision_witness_receipt(
+            triage.receipt.to_dict(),
+            public_key=classifier.engine.signing_key.public_key() if classifier.engine.signing_key else None,
+        ):
             verified_receipts += 1
 
         c_lat, c_tok, c_egr, c_prov = simulate_cloud_call(text, "instructor")
@@ -866,7 +872,10 @@ def run_semantic_router_benchmark(iterations: int = 50) -> BenchmarkComparison:
         if choice.is_ambiguous:
             conformal_escalations += 1
 
-        if choice.receipt and verify_decision_witness_receipt(choice.receipt.to_dict()):
+        if choice.receipt and verify_decision_witness_receipt(
+            choice.receipt.to_dict(),
+            public_key=router.engine.signing_key.public_key() if router.engine.signing_key else None,
+        ):
             verified_receipts += 1
 
         c_lat, c_tok, c_egr, c_prov = simulate_cloud_call(query, "semantic_router")

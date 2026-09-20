@@ -37,6 +37,7 @@ from system1.compat.typesafe import (
 )
 from system1.grpc_server import SystemOneServiceServicer, serve
 from system1.guard import DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
+from system1.guard import DefaultGuardDecisionSchema
 from system1.ledger import ActionLedger
 from system1.receipt import verify_decision_witness_receipt
 
@@ -225,6 +226,7 @@ class TestPackagingAndProtobufAlignment:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
 
         class FakeContext:

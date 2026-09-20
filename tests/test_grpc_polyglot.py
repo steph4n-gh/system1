@@ -42,7 +42,8 @@ def simple_engine():
         },
         schema_name="auth_policy",
     )
-    return SystemOneEngine(schema, dimension=64)
+    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+    return SystemOneEngine(schema, dimension=64, signing_key=Ed25519PrivateKey.generate())
 
 
 @pytest.fixture(scope="module")
@@ -124,7 +125,7 @@ def test_grpc_verify_receipt_wire_call(live_grpc_server, simple_engine):
 
     req = system1_pb2.VerifyReceiptRequest(
         receipt_json=receipt_bytes,
-        public_key_hex="",
+        public_key_hex=simple_engine.signing_key.public_key().public_bytes_raw().hex(),
     )
 
     resp = stub.VerifyReceipt(req)

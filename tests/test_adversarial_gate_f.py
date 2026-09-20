@@ -46,6 +46,7 @@ from system1 import __version__
 from system1.cli import build_parser
 from system1.grpc_server import SystemOneServiceServicer, serve
 from system1.guard import ActionProposal, DecisionOutcome, PolicyEngine, PolicyRule, RiskLevel
+from system1.guard import DefaultGuardDecisionSchema
 from system1.ledger import ActionLedger
 from system1.receipt import verify_decision_witness_receipt
 
@@ -144,6 +145,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
 
         class MockContext:
@@ -210,6 +212,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
 
         class GuardReq:
@@ -247,6 +250,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
 
         class GuardReq:
@@ -324,6 +328,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
 
         class GuardReq:
@@ -399,7 +404,7 @@ class TestAttack2GuardReferenceMonitorBypass:
             ),
         ])
 
-        servicer = SystemOneServiceServicer(policy_engine=policy_engine)
+        servicer = SystemOneServiceServicer(policy_engine=policy_engine, schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools})
 
         class GuardReq:
             prompt = "Transfer $1,000"
@@ -496,6 +501,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
         port = server.port
 
@@ -564,7 +570,8 @@ class TestAttack3ProtobufPolyglotInteroperability:
                     receipt_json=g_allow.receipt_json,
                     public_key_hex="",
                 ))
-                # When public_key_hex is empty string, VerifyReceipt verifies against embedded key if allowed
+                # Missing trust anchors never authenticate a receipt.
+                assert v_no_key.verified is False
                 assert v_no_key.decision_id != ""
         finally:
             server.stop(grace=0)
@@ -595,6 +602,7 @@ class TestAttack3ProtobufPolyglotInteroperability:
             signing_key=signing_key,
             ledger=ledger,
             policy_engine=policy_engine,
+            schemas={tool: DefaultGuardDecisionSchema() for rule in policy_engine.rules for tool in rule.tools},
         )
         port = server.port
 

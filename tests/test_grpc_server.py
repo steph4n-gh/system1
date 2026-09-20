@@ -356,10 +356,9 @@ class TestVerifyReceiptRPC:
             public_key_hex = ""
 
         verify_resp = servicer.VerifyReceipt(_VerReq(), _FakeContext())
-        # Unsigned receipts may or may not verify depending on the engine config,
-        # but the RPC itself should not crash.
+        # Unsigned receipts never authenticate, and the RPC must not crash.
         assert verify_resp is not None
-        assert isinstance(verify_resp.verified, bool)
+        assert verify_resp.verified is False
 
     def test_verify_receipt_empty_receipt(self):
         from system1.grpc_server import SystemOneServiceServicer

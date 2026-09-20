@@ -1,6 +1,6 @@
 # System 1 documentation
 
-Current stable runtime: **1.0.2**. Reviewed 19 September 2026.
+Current stable runtime: **1.0.3**. Reviewed 20 September 2026.
 System 1 is not an LLM. Start with one journey: **choose a decision → show
 examples → check answers → save and reuse → improve**. A person or a running
 teacher can supply the examples.
@@ -44,7 +44,7 @@ Do not compare unlike timing cohorts as a measured speedup.
 
 ## Release and review history
 
-[1.0.2 release report](releases/1.0.2.md) · [1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
+[1.0.3 security release](releases/1.0.3.md) · [1.0.2 release report](releases/1.0.2.md) · [1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
 [completed stabilization checklist](stable-release-checklist.md) ·
 [historical launch review](launch-review.md) · [historical example review](examples-review.md).
 

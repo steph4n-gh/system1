@@ -85,7 +85,7 @@ def test_cli_calibrate_command(tmp_path, capsys):
 
 def test_cli_verify_receipt_command(tmp_path, capsys):
     parser = build_parser()
-    decide_args = parser.parse_args(["decide", "Audit access logs", "--sign", "--json"])
+    decide_args = parser.parse_args(["decide", "Audit access logs", "--sign", "--identity-dir", str(tmp_path), "--json"])
     decide_args.func(decide_args)
     captured = capsys.readouterr()
     receipt_data = json.loads(captured.out)["receipt"]
@@ -93,7 +93,7 @@ def test_cli_verify_receipt_command(tmp_path, capsys):
     receipt_file = tmp_path / "test_receipt.json"
     receipt_file.write_text(json.dumps(receipt_data))
 
-    verify_args = parser.parse_args(["verify-receipt", "--receipt", str(receipt_file), "--json"])
+    verify_args = parser.parse_args(["verify-receipt", "--receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub"), "--json"])
     code = verify_args.func(verify_args)
     assert code == 0
 
@@ -107,7 +107,7 @@ def test_cli_verify_receipt_command(tmp_path, capsys):
     tampered_file = tmp_path / "tampered_receipt.json"
     tampered_file.write_text(json.dumps(tampered_data))
 
-    tampered_args = parser.parse_args(["verify-receipt", "--receipt", str(tampered_file), "--json"])
+    tampered_args = parser.parse_args(["verify-receipt", "--receipt", str(tampered_file), "--public-key", str(tmp_path / "identity.pub"), "--json"])
     tampered_code = tampered_args.func(tampered_args)
     assert tampered_code == 1
 
@@ -119,7 +119,7 @@ def test_cli_verify_receipt_command(tmp_path, capsys):
 def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     """Verifies that verify-receipt accepts positional argument as documented in README.md."""
     parser = build_parser()
-    decide_args = parser.parse_args(["decide", "Audit access logs", "--sign", "--json"])
+    decide_args = parser.parse_args(["decide", "Audit access logs", "--sign", "--identity-dir", str(tmp_path), "--json"])
     decide_args.func(decide_args)
     captured = capsys.readouterr()
     receipt_data = json.loads(captured.out)["receipt"]
@@ -128,7 +128,7 @@ def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     receipt_file.write_text(json.dumps(receipt_data))
 
     # 1. Positional argument syntax matching README.md (system1 verify-receipt path/to/receipt.json)
-    pos_args = parser.parse_args(["verify-receipt", str(receipt_file), "--json"])
+    pos_args = parser.parse_args(["verify-receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub"), "--json"])
     assert pos_args.func(pos_args) == 0
     pos_out = capsys.readouterr()
     pos_res = json.loads(pos_out.out)
@@ -136,7 +136,7 @@ def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     assert pos_res["decision_id"] == receipt_data["decision_id"]
 
     # 2. Positional argument with human-readable output
-    pos_human_args = parser.parse_args(["verify-receipt", str(receipt_file)])
+    pos_human_args = parser.parse_args(["verify-receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub")])
     assert pos_human_args.func(pos_human_args) == 0
     human_out = capsys.readouterr().out
     assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_out
@@ -148,7 +148,7 @@ def test_cli_verify_receipt_positional_and_syntax_alignment(tmp_path, capsys):
     tampered_file = tmp_path / "tampered.json"
     tampered_file.write_text(json.dumps(tampered_data))
 
-    tampered_args = parser.parse_args(["verify-receipt", str(tampered_file), "--json"])
+    tampered_args = parser.parse_args(["verify-receipt", str(tampered_file), "--public-key", str(tmp_path / "identity.pub"), "--json"])
     assert tampered_args.func(tampered_args) == 1
     tampered_res = json.loads(capsys.readouterr().out)
     assert tampered_res["verified"] is False
@@ -166,7 +166,7 @@ def test_cli_verify_receipt_entrypoints_system1_and_reflex(tmp_path, capsys):
     import system1.cli
 
     # Create signed receipt
-    ret = system1.cli.main(["decide", "Entrypoint verification prompt", "--sign", "--json"])
+    ret = system1.cli.main(["decide", "Entrypoint verification prompt", "--sign", "--identity-dir", str(tmp_path), "--json"])
     assert ret == 0
     captured = capsys.readouterr()
     receipt_data = json.loads(captured.out)["receipt"]
@@ -177,23 +177,23 @@ def test_cli_verify_receipt_entrypoints_system1_and_reflex(tmp_path, capsys):
     # Test both entrypoints
     for entrypoint in [system1.cli.main, reflex.cli.main]:
         # Positional syntax: <cli> verify-receipt <file> --json
-        assert entrypoint(["verify-receipt", str(receipt_file), "--json"]) == 0
+        assert entrypoint(["verify-receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub"), "--json"]) == 0
         res = json.loads(capsys.readouterr().out)
         assert res["verified"] is True
         assert res["decision_id"] == receipt_data["decision_id"]
 
         # Positional syntax human readable: <cli> verify-receipt <file>
-        assert entrypoint(["verify-receipt", str(receipt_file)]) == 0
+        assert entrypoint(["verify-receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub")]) == 0
         human_out = capsys.readouterr().out
         assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_out
 
         # Flag syntax: <cli> verify-receipt --receipt <file> --json
-        assert entrypoint(["verify-receipt", "--receipt", str(receipt_file), "--json"]) == 0
+        assert entrypoint(["verify-receipt", "--receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub"), "--json"]) == 0
         res_flag = json.loads(capsys.readouterr().out)
         assert res_flag["verified"] is True
 
         # Flag syntax human readable: <cli> verify-receipt --receipt <file>
-        assert entrypoint(["verify-receipt", "--receipt", str(receipt_file)]) == 0
+        assert entrypoint(["verify-receipt", "--receipt", str(receipt_file), "--public-key", str(tmp_path / "identity.pub")]) == 0
         human_flag_out = capsys.readouterr().out
         assert "[SYSTEM1 RECEIPT VERIFICATION] SUCCESS" in human_flag_out
 

@@ -620,8 +620,8 @@ def test_adversarial_verify_receipt_invalid_explicit_public_key_raises():
     )
     rec_dict = receipt.to_dict()
 
-    # public_key=None succeeds by falling back to receipt key
-    assert verify_decision_witness_receipt(rec_dict, public_key=None) is True
+    # A receipt cannot supply its own trust anchor.
+    assert verify_decision_witness_receipt(rec_dict, public_key=None) is False
 
     # Explicit invalid public_key raises ValueError, does not fall back to receipt key
     for bad_key in ["invalid_key", b"bad_bytes", 12345, "not_hex_nor_32_chars", b"short", b"a" * 31, b"a" * 33, Path("/nonexistent/key.pub")]:

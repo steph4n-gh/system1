@@ -125,8 +125,8 @@ def test_cache_receipts_bind_the_current_request_and_respect_opt_out():
     assert second.is_cache_hit
     assert second.receipt.prompt == "different request"
     assert second.receipt.decision_id != first.receipt.decision_id
-    from system1.receipt import verify_decision_witness_receipt
-    assert verify_decision_witness_receipt(second.receipt.to_dict())
+    from system1.receipt import check_decision_receipt_integrity
+    assert check_decision_receipt_integrity(second.receipt.to_dict())
     assert engine.decide("different request", embedding=embedding, record_receipt=False).receipt is None
 
 

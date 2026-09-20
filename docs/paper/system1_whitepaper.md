@@ -1,6 +1,6 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.0.2 · 19 September 2026**
+**steph4n-gh · System 1 1.0.3 · 20 September 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
 
@@ -197,6 +197,12 @@ linear SHA-256 hash chain, not a Merkle tree or hardware attestation. Signatures
 verify recorded payloads under a trusted key; they do not prove correct external
 execution or complete event capture on a compromised host.
 
+In 1.0.3, authentication requires an independent key; unsigned diagnostics expose
+only an integrity check. The signed envelope binds the committed ledger ID,
+guards check exact inclusion, and writes reverify the whole chain. Saved-skill
+resource budgets and a closed gRPC schema registry constrain input handling.
+See the [security release and migration](../releases/1.0.3.md).
+
 Local decisions require no teacher API, but callbacks, tools, network services
 and telemetry exporters can communicate externally. The package is not a process
 sandbox or a regulatory certification. See [deployment boundaries](../deployment.md).
@@ -223,5 +229,5 @@ on fresh representative data. The existing compiler, callback and evaluation
 workflow can support that work without a new provider or training framework.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
-local reuse*, version 1.0.2. Cite the source revision and linked evidence when
+local reuse*, version 1.0.3. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.

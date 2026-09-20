@@ -31,7 +31,7 @@ from pokemon_showdown_system1 import (
     compute_gen1_stat,
     get_gen1_type_multiplier,
 )
-from system1.receipt import verify_decision_witness_receipt
+from system1.receipt import check_decision_receipt_integrity, verify_decision_witness_receipt
 
 
 # ============================================================================
@@ -175,7 +175,8 @@ def test_agent_lethal_ko_decision():
     assert cmd.startswith("/choose move")
     assert lat_ms < 50.0  # Fast sub-millisecond evaluation
     assert receipt is not None
-    assert verify_decision_witness_receipt(receipt.to_dict()) is True
+    assert check_decision_receipt_integrity(receipt.to_dict()) is True
+    assert verify_decision_witness_receipt(receipt.to_dict()) is False
 
 
 def test_agent_conformal_safety_gate_trigger():
@@ -188,8 +189,9 @@ def test_agent_conformal_safety_gate_trigger():
     cmd, slot, yomi, lat_ms, receipt = agent.decide_action(state)
     assert cmd.startswith("/choose move")
     assert len(agent.receipts) == 1
-    # Receipt confirms execution
-    assert verify_decision_witness_receipt(receipt.to_dict()) is True
+    # Diagnostic receipt checks the recorded decision
+    assert check_decision_receipt_integrity(receipt.to_dict()) is True
+    assert verify_decision_witness_receipt(receipt.to_dict()) is False
 
 
 def test_agent_force_switch_handling():

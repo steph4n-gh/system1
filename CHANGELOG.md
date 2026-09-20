@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.3 — 2026-09-20
+
+- Require an independent trusted public key for receipt authentication. Expose `check_decision_receipt_integrity()` for unsigned diagnostics; comparison results no longer claim unsigned receipts are authenticated.
+- Bind the committed ledger record ID in the signed envelope while preserving the core receipt digest. Check exact ledger inclusion before guard acceptance, and recheck the full history before every ledger write.
+- Restrict gRPC schema selection to built-ins and the startup registry, with canonical built-in aliases. Remote names cannot trigger imports, local file loading, or unlimited cache growth.
+- Bound `.s1m` file/header sizes, ZIP entries and expanded bytes, NPY shapes and types, calibration counts, projector dimensions, and runtime allocations before loading. Preserve ordinary v1/v2 saved-skill roundtrips.
+- Fix numeric teaching/calibration split handling and add a supervised Paperclips skill with separate evaluation.
+- Add attack regressions and document the receipt and gRPC migration in [the release notes](docs/releases/1.0.3.md).
+
 ## 1.0.2 — 2026-09-19
 
 - Add a beginner walkthrough and editable teaching file explaining labels, corrections and readiness. Let the minimal example read custom lessons, try a supplied message and save a separate candidate. Organize the README and documentation around that journey; keep advanced policy/integration examples in linked guides.

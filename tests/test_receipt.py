@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 from system1.receipt import (
     create_decision_receipt,
+    check_decision_receipt_integrity,
     public_key_bytes,
     verify_decision_witness_receipt,
 )
@@ -28,8 +29,9 @@ def test_unsigned_decision_receipt():
     assert receipt.envelope is not None
     assert receipt.envelope.profile == "diagnostic_local"
 
-    # Unsigned envelope verification
-    assert verify_decision_witness_receipt(receipt.to_dict()) is True
+    # Unsigned diagnostics have integrity, never authenticated provenance.
+    assert check_decision_receipt_integrity(receipt.to_dict()) is True
+    assert verify_decision_witness_receipt(receipt.to_dict()) is False
 
 
 def test_signed_decision_receipt_and_verification():

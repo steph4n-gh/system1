@@ -57,6 +57,7 @@ def test_system1_namespace_exports():
         "DecisionWitnessReceipt",
         "create_decision_receipt",
         "verify_decision_witness_receipt",
+        "check_decision_receipt_integrity",
         "compute_receipt_digest",
         "RunWitnessEnvelope",
         "create_run_witness_envelope",
@@ -530,6 +531,5 @@ def test_spec_harmonization_aliases():
 
     assert system1.compiler.CompiledSystemOneModel.learn_from_system2 is system1.compiler.CompiledSystemOneModel.learn_from_tier2
     assert system1.core.SystemOneModel.learn_from_system2 is system1.core.SystemOneModel.learn_from_tier2
-
 
 

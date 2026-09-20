@@ -37,7 +37,7 @@ from benchmarks.run_triple_crown_benchmark import (
     run_all_benchmarks,
 )
 from reflex import SystemOneEngine
-from system1.receipt import verify_decision_witness_receipt
+from system1.receipt import check_decision_receipt_integrity, verify_decision_witness_receipt
 
 
 class TestOpenHandsSecurityGuardrail:
@@ -77,11 +77,12 @@ class TestOpenHandsSecurityGuardrail:
         accuracy = (correct / total) * 100.0
         assert accuracy >= 90.0, f"Expected >=90% accuracy on OpenHands, got {accuracy:.1f}% ({correct}/{total})"
 
-    def test_cryptographic_receipt_validity(self) -> None:
+    def test_diagnostic_receipt_integrity(self) -> None:
         analyzer = SystemOneSecurityAnalyzer()
         code, res = analyzer.security_risk("cat /etc/shadow")
         assert res.receipt is not None
-        assert verify_decision_witness_receipt(res.receipt.to_dict()) is True
+        assert check_decision_receipt_integrity(res.receipt.to_dict()) is True
+        assert verify_decision_witness_receipt(res.receipt.to_dict()) is False
 
 
 class TestInstructorStructuredClassifier:
@@ -121,11 +122,12 @@ class TestInstructorStructuredClassifier:
         accuracy = (correct / total) * 100.0
         assert accuracy >= 90.0, f"Expected >=90% accuracy on Instructor, got {accuracy:.1f}% ({correct}/{total})"
 
-    def test_cryptographic_receipt_validity(self) -> None:
+    def test_diagnostic_receipt_integrity(self) -> None:
         classifier = SystemOneInstructorClassifier()
         triage = classifier.extract("I need a refund for my subscription charge")
         assert triage.receipt is not None
-        assert verify_decision_witness_receipt(triage.receipt.to_dict()) is True
+        assert check_decision_receipt_integrity(triage.receipt.to_dict()) is True
+        assert verify_decision_witness_receipt(triage.receipt.to_dict()) is False
 
 
 class TestSemanticRouterIntentLayer:
@@ -161,11 +163,12 @@ class TestSemanticRouterIntentLayer:
         accuracy = (correct / total) * 100.0
         assert accuracy >= 95.0, f"Expected >=95% accuracy on Semantic Router, got {accuracy:.1f}% ({correct}/{total})"
 
-    def test_cryptographic_receipt_validity(self) -> None:
+    def test_diagnostic_receipt_integrity(self) -> None:
         router = SystemOneSemanticRouter()
         choice = router("Show me total revenue for 2025")
         assert choice.receipt is not None
-        assert verify_decision_witness_receipt(choice.receipt.to_dict()) is True
+        assert check_decision_receipt_integrity(choice.receipt.to_dict()) is True
+        assert verify_decision_witness_receipt(choice.receipt.to_dict()) is False
 
 
 class TestTripleCrownBenchmarkHarness:

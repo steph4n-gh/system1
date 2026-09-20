@@ -1,6 +1,6 @@
 # Deployment boundaries and release limitations
 
-System 1 1.0.2 supports the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. See the [current release evidence](releases/1.0.2.md) and subsequent [public-workload evaluation](../benchmarks/quality/workloads/README.md). Current papers describe these same boundaries; earlier release reports retain their version-specific measurements.
+System 1 1.0.3 supports the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. See the [current release evidence](releases/1.0.3.md) and subsequent [public-workload evaluation](../benchmarks/quality/workloads/README.md). Current papers describe these same boundaries; earlier release reports retain their version-specific measurements.
 
 ## Deterministic tool authorization
 
@@ -23,6 +23,22 @@ Use separate teaching, calibration, and evaluation data. Recalibrate after model
 ## Audit evidence and privacy
 
 Signed receipts allow a verifier with an independently trusted public key to detect changes to the signed payload. The SQLite ledger is a linear SHA-256 hash chain, not a Merkle tree or hardware attestation. It cannot prove that an external tool executed correctly or that a compromised host recorded every event. Preserve trusted ledger-head checkpoints outside the writable ledger if detecting truncation or rollback is required.
+
+`verify_decision_witness_receipt(receipt, public_key=trusted_key)` requires that
+independent key; omitting it returns `False`. The CLI likewise requires
+`verify-receipt --public-key trusted.pub`. For local diagnostics,
+`check_decision_receipt_integrity(receipt)` checks internal consistency without
+authenticating a signer. A key included in a receipt is never an independent
+source of trust.
+
+The committed `ledger_record_id` is bound in the receipt's signed envelope after
+append. This is the signer's attestation of inclusion; use
+`ledger.verify_receipt_record(receipt, trusted_public_key=trusted_key)` to check
+the exact stored record and the complete chain. Guards perform that lookup
+before accepting recorded decisions. Each ledger write rechecks the complete
+history in its transaction. Receipts from older versions with an unbound
+nonempty record ID fail current verification; retain the original evidence and
+validate it against its original ledger, or issue a fresh decision.
 
 Keep signing keys persistent and protected; regenerating a key on every process start breaks a single-key trust chain. Maintain backups and an application-specific rotation strategy. Outcome records are linked to their prior authorization through the ledger; they are not independent hardware execution proofs. Explicit policy denials and approval requirements do not always produce receipts, so applications that need a complete denial audit must record those events separately.
 
@@ -48,7 +64,30 @@ The wrappers are adapters rather than a complete agent host or MCP authenticatio
 
 The CLI server binds to loopback by default using insecure gRPC transport. It has no built-in caller authentication or TLS, and the CLI does not configure a persistent signing key, ledger, or deterministic policy. Keep diagnostic instances local. A service deployment needs an authenticated transport boundary and explicit application configuration through `system1.grpc_server.serve(...)`.
 
+RPC `schema_name` accepts only built-ins (`triage`, `guard`, and their canonicalized
+aliases) and exact names registered with `serve(schemas={"support": schema})` at
+startup. Unknown names fail; remote inputs cannot load Python modules, local
+files or inline JSON, and no default guard is substituted for an unknown name.
+The trusted CLI `--schema` loader still supports those local formats. Register
+every custom name used by your clients, including policy tool names used in the
+diagnostic Guard RPC. Configure caller authentication and request limits at the
+service boundary.
+
 Experimental [Docker and Kubernetes templates](../deploy/README.md) are included. No published container image, authenticated service configuration, HSM integration or hardware enclave attestation is supplied.
+
+## Saved-skill resource limits
+
+The `.s1m` loader accepts at most 64 MiB of file data, a 1 MiB JSON header,
+64 fields, 1,024 options per field, dimension 4,096, and 1,000,000 calibration
+scores per field. It checks a maximum of five NPZ members per field, 128 MiB of
+expanded arrays, a 1,024:1 per-member compression ratio, and a 256 MiB estimated
+model-construction allocation budget. NPY headers must describe correctly shaped
+float32 or float64 arrays before any array is materialized; pickle is disabled.
+Projector dimensions must match the model, and the allocation estimate includes
+covariance matrices and hybrid-projector tables. These are loader admission
+budgets, not a process-wide memory ceiling; stricter application limits can be
+applied outside the loader. Ordinary v1/v2 skills continue to load; over-budget
+files raise `ValueError` and malformed files are rejected.
 
 ## Performance and optional backends
 

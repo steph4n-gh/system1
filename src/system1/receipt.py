@@ -12,7 +12,7 @@ import json
 import math
 import os
 from collections.abc import Mapping as MappingABC, Sequence as SequenceABC, Set as SetABC
-from dataclasses import asdict, dataclass, field, fields, is_dataclass
+from dataclasses import asdict, dataclass, field, fields, is_dataclass, replace
 from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
@@ -425,6 +425,31 @@ class DecisionWitnessReceipt:
     effective_alpha: Optional[float] = None
     effective_gates: Optional[Dict[str, Any]] = None
 
+    def with_ledger_record(
+        self, record_id: str, signing_key: Optional[Ed25519PrivateKey] = None,
+    ) -> DecisionWitnessReceipt:
+        """Bind a committed ledger hash in the envelope without changing the core digest.
+
+        The ledger stores the original receipt, so its entry hash cannot be part
+        of that receipt's core digest. Re-sign the envelope after the commit to
+        attest to inclusion while preserving execution-outcome digest linkage.
+        """
+        if not isinstance(record_id, str) or len(record_id) != 64 or any(c not in "0123456789abcdef" for c in record_id):
+            raise ValueError("Ledger record ID must be a lowercase SHA-256 hash")
+        if self.envelope is None:
+            raise ValueError("Receipt contains no RunWitnessEnvelope")
+        if self.envelope.signature and (
+            signing_key is None or public_key_bytes(signing_key).hex() != self.signer_public_key
+        ):
+            raise ValueError("Binding a signed receipt requires its original signing key")
+        envelope = replace(
+            self.envelope,
+            mutation_intent={**self.envelope.mutation_intent, "ledger_record_id": record_id},
+        )
+        if signing_key is not None:
+            envelope = sign_run_witness_envelope(envelope, signing_key)
+        return replace(self, ledger_record_id=record_id, envelope=envelope)
+
     def unsigned_payload(self) -> Dict[str, Any]:
         """Returns deterministic dictionary representation for canonical hashing."""
         payload: Dict[str, Any] = {
@@ -685,6 +710,7 @@ def create_decision_receipt(
         "schema_digest": schema_digest,
         "prompt_digest": prompt_digest,
         "values": dict(values),
+        "ledger_record_id": ledger_record_id,
     }
     if policy_decision_dict is not None:
         envelope_payload_mutation["policy_decision"] = policy_decision_dict
@@ -805,7 +831,25 @@ def verify_decision_witness_receipt(
     receipt_data: Mapping[str, Any],
     public_key: Optional[Union[Ed25519PublicKey, str, bytes]] = None,
 ) -> bool:
-    """Independently verifies an emitted decision receipt and its signed envelope."""
+    """Authenticate a signed receipt against an independently trusted public key.
+
+    A key embedded in a receipt is not a trust anchor. For unsigned diagnostics
+    or self-consistency only, use check_decision_receipt_integrity instead.
+    """
+    if public_key is None:
+        return False
+    return _check_decision_receipt(receipt_data, public_key)
+
+
+def check_decision_receipt_integrity(receipt_data: Mapping[str, Any]) -> bool:
+    """Check internal consistency only; this does not authenticate a signer."""
+    return _check_decision_receipt(receipt_data, None)
+
+
+def _check_decision_receipt(
+    receipt_data: Mapping[str, Any],
+    public_key: Optional[Union[Ed25519PublicKey, str, bytes]],
+) -> bool:
     envelope_data = receipt_data.get("envelope")
     if not envelope_data:
         raise ValueError("Receipt contains no RunWitnessEnvelope")
@@ -908,6 +952,8 @@ def verify_decision_witness_receipt(
 
     # 3. Verify cross-field integrity between receipt and envelope
     mutation = envelope.mutation_intent
+    if mutation.get("ledger_record_id") != receipt_data.get("ledger_record_id"):
+        return False
     if mutation.get("decision_id") != receipt_data.get("decision_id"):
         return False
     if mutation.get("schema_name") and mutation.get("schema_name") != receipt_data.get("schema_name"):
@@ -1005,6 +1051,7 @@ __all__ = [
     "canonical_bytes",
     "canonical_json",
     "compute_receipt_digest",
+    "check_decision_receipt_integrity",
     "create_decision_receipt",
     "create_run_witness_envelope",
     "fingerprint",
@@ -1024,6 +1071,5 @@ __all__ = [
     "verify_payload",
     "verify_run_witness_envelope",
 ]
-
 
 

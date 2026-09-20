@@ -61,7 +61,7 @@ def grpc_available() -> bool:
 def _load_schema_by_name(name: str, custom_schemas: Optional[Dict[str, Any]] = None):
     """Resolve a schema name to a ``DecisionSchema`` instance."""
     from system1.guard import DefaultGuardDecisionSchema
-    from system1.cli import DefaultTriageSchema, _load_schema
+    from system1.cli import DefaultTriageSchema
 
     if custom_schemas and name in custom_schemas:
         return custom_schemas[name]
@@ -75,8 +75,7 @@ def _load_schema_by_name(name: str, custom_schemas: Optional[Dict[str, Any]] = N
     if name.lower() in builtins:
         return builtins[name.lower()]()
 
-    # Attempt generic load (file path, JSON, import path)
-    return _load_schema(name)
+    raise ValueError("Unknown schema name; register custom schemas at server startup")
 
 
 # ---------------------------------------------------------------------------
@@ -99,7 +98,7 @@ class SystemOneServiceServicer(_BaseServicer):
         from system1.engine import SystemOneEngine
         from system1.guard import SystemOneGuardHook
 
-        self._custom_schemas = schemas or {}
+        self._custom_schemas = dict(schemas or {})
         self._signing_key = signing_key
         self._ledger = ledger
         self._policy_engine = policy_engine
@@ -119,7 +118,7 @@ class SystemOneServiceServicer(_BaseServicer):
     def _get_engine(self, schema_name: str):
         from system1.engine import SystemOneEngine
 
-        key = schema_name or "triage"
+        key = self._schema_key(schema_name, "triage")
         if key not in self._engines:
             schema = _load_schema_by_name(key, self._custom_schemas)
             self._engines[key] = SystemOneEngine(
@@ -132,12 +131,9 @@ class SystemOneServiceServicer(_BaseServicer):
     def _get_guard_hook(self, schema_name: str):
         from system1.guard import SystemOneGuardHook
 
-        key = schema_name or "guard"
+        key = self._schema_key(schema_name, "guard")
         if key not in self._guard_hooks:
-            try:
-                engine = self._get_engine(key)
-            except Exception:
-                engine = self._get_engine("guard")
+            engine = self._get_engine(key)
             self._guard_hooks[key] = SystemOneGuardHook(
                 engine=engine,
                 signing_key=self._signing_key,
@@ -145,6 +141,17 @@ class SystemOneServiceServicer(_BaseServicer):
                 policy=self._policy_engine,
             )
         return self._guard_hooks[key]
+
+    def _schema_key(self, name: str, default: str) -> str:
+        """Keep remote names within the finite startup registry, including aliases."""
+        key = name or default
+        if key in self._custom_schemas:
+            return key
+        aliases = {"triage": "triage", "default": "triage", "guard": "guard", "guardrail": "guard"}
+        canonical = aliases.get(key.lower())
+        if canonical is None:
+            raise ValueError("Unknown schema name; register custom schemas at server startup")
+        return canonical
 
     # -- Decide -----------------------------------------------------------
 

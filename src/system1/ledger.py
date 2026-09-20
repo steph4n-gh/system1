@@ -15,6 +15,8 @@ from typing import Any, Iterator, Mapping, Optional, Tuple
 
 from system1.receipt import (
     canonical_json,
+    check_decision_receipt_integrity,
+    compute_receipt_digest,
     fingerprint,
     utc_now,
     verify_decision_witness_receipt,
@@ -180,16 +182,11 @@ class ActionLedger:
 
     def _verify_integrity_locked(self, connection: sqlite3.Connection, trusted_public_key: Optional[Any] = None) -> bool:
         """Internal helper to verify full cryptographic chain integrity under a coherent transaction/snapshot."""
-        if not hasattr(self, "_last_verified_sequence"):
-            self._last_verified_sequence = 0
-            self._last_verified_hash = _ZERO_HASH
-
         entries = connection.execute(
-            "SELECT * FROM audit_entries WHERE sequence > ? ORDER BY sequence ASC",
-            (self._last_verified_sequence,)
+            "SELECT * FROM audit_entries ORDER BY sequence ASC"
         ).fetchall()
-        previous = self._last_verified_hash
-        last_sequence = self._last_verified_sequence
+        previous = _ZERO_HASH
+        last_sequence = 0
 
         for row in entries:
             if row["previous_hash"] != previous:
@@ -244,9 +241,6 @@ class ActionLedger:
             return False
         if int(meta.get("audit_head_sequence", "-1")) != last_sequence:
             return False
-
-        self._last_verified_sequence = last_sequence
-        self._last_verified_hash = previous
 
         return True
 
@@ -541,69 +535,44 @@ class ActionLedger:
     def verify_integrity(self, trusted_public_key: Optional[Any] = None) -> bool:
         """Verifies the complete cryptographic hash chain and meta head, and validates entry signatures when trusted_public_key is supplied."""
         with self._lock:
-            entries = self._connection.execute(
-                "SELECT * FROM audit_entries ORDER BY sequence ASC"
-            ).fetchall()
-            previous = _ZERO_HASH
-            last_sequence = 0
+            self._connection.execute("BEGIN")
+            try:
+                return self._verify_integrity_locked(self._connection, trusted_public_key)
+            finally:
+                self._connection.rollback()
 
-            for row in entries:
-                if row["previous_hash"] != previous:
-                    return False
+    def verify_receipt_record(
+        self, receipt: Mapping[str, Any] | Any, trusted_public_key: Optional[Any] = None,
+    ) -> bool:
+        """Check exact receipt inclusion and the complete chain in one snapshot."""
+        payload = receipt.to_dict() if hasattr(receipt, "to_dict") else dict(receipt)
+        record_id = payload.get("ledger_record_id")
+        if not record_id:
+            return False
+        try:
+            valid = (verify_decision_witness_receipt(payload, public_key=trusted_public_key)
+                     if trusted_public_key is not None else check_decision_receipt_integrity(payload))
+            if not valid:
+                return False
+            with self._lock:
+                self._connection.execute("BEGIN")
                 try:
-                    payload_data = json.loads(row["payload_json"])
-                    body = {
-                        "event_id": row["event_id"],
-                        "tenant_id": row["tenant_id"],
-                        "principal_id": row["principal_id"],
-                        "scope": row["scope"],
-                        "action_id": row["action_id"],
-                        "event_type": row["event_type"],
-                        "payload": payload_data,
-                        "previous_hash": row["previous_hash"],
-                        "created_at": row["created_at"],
-                    }
-                except (TypeError, ValueError, json.JSONDecodeError):
-                    return False
+                    if not self._verify_integrity_locked(self._connection, trusted_public_key):
+                        return False
+                    row = self._connection.execute(
+                        "SELECT payload_json FROM audit_entries WHERE entry_hash=? AND event_type='system1_decision'",
+                        (record_id,),
+                    ).fetchone()
+                    if row is None:
+                        return False
+                    stored = json.loads(row["payload_json"]).get("receipt", {})
+                    return (stored.get("decision_id") == payload.get("decision_id")
+                            and compute_receipt_digest(stored) == compute_receipt_digest(payload))
+                finally:
+                    self._connection.rollback()
+        except (TypeError, ValueError, sqlite3.Error):
+            return False
 
-                if fingerprint(body) != row["entry_hash"]:
-                    return False
-
-                # Cryptographic signature check if trusted_public_key is provided
-                if trusted_public_key is not None:
-                    target_receipt = None
-                    if isinstance(payload_data, dict):
-                        if isinstance(payload_data.get("receipt"), dict) and "envelope" in payload_data["receipt"]:
-                            target_receipt = payload_data["receipt"]
-                        elif "envelope" in payload_data:
-                            target_receipt = payload_data
-
-                    # If this is a decision receipt event, it MUST have a valid envelope signed by trusted_public_key
-                    if row["event_type"] in ("system1_decision", "decision_receipt", "action_receipt"):
-                        if not target_receipt:
-                            return False
-                        try:
-                            if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
-                                return False
-                        except Exception:
-                            return False
-                    elif target_receipt is not None:
-                        try:
-                            if not verify_decision_witness_receipt(target_receipt, public_key=trusted_public_key):
-                                return False
-                        except Exception:
-                            return False
-
-                previous = row["entry_hash"]
-                last_sequence = int(row["sequence"])
-
-            meta = dict(self._connection.execute("SELECT key, value FROM ledger_meta").fetchall())
-            if meta.get("audit_head_hash") != previous:
-                return False
-            if int(meta.get("audit_head_sequence", "-1")) != last_sequence:
-                return False
-
-            return True
 
 
     def entries(self) -> List[Dict[str, Any]]:
@@ -633,4 +602,3 @@ __all__ = [
     "LedgerError",
     "LedgerWriteError",
 ]
-

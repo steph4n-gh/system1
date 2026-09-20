@@ -762,7 +762,7 @@ def test_typesafe_client_compare():
     assert comparison.local_cost_usd == 0.0
     assert comparison.cloud_cost_usd is None
     assert comparison.speedup_factor is None  # Simulated fallback is not live performance evidence
-    assert comparison.local_receipt_verified is True
+    assert comparison.local_receipt_verified is False  # No signing key configured
     assert comparison.cloud_receipt_verified is False
     assert comparison.local_response.receipt is not None
 
