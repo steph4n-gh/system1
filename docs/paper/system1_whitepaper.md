@@ -44,6 +44,9 @@ Schemas define Choice, Boolean, MultiChoice and score fields. A deterministic
 projector creates SHA-256-derived lexical and subword features, defaulting to 384
 dimensions. An optional hybrid projector adds a seeded local subword table with
 curated semantic anchors. Neither path downloads a pretrained language model.
+An optional fitted TF-IDF projector now supplies word unigram/bigram features
+for taught text tasks. It retains the existing ridge head and saves its frozen
+vocabulary and IDF weights in the skill; NumPy remains sufficient at runtime.
 Numerical telemetry can contribute features for structured state.
 
 For explicit teaching, `SystemOneCompiler(...).compile(examples, augment=False)`
@@ -231,3 +234,16 @@ workflow can support that work without a new provider or training framework.
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
 local reuse*, version 1.0.3. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.
+
+
+### Email feature comparison (unreleased pilot)
+
+The [Inbox Zero experiment](../../examples/inbox_zero/README.md) compares optional
+TF-IDF features and broader authored lessons with the original hashed skill.
+On the same 35 upstream regressions, correct classifications increase from 28
+to 32, accepted choices from 5 to 24, and median direct latency falls from
+2.02 ms to about 0.20 ms. On 84 separately authored synthetic emails, the new
+candidate is correct on 83 and accepts 81, with one accepted error. These are
+not independently collected mailbox examples. The upstream cohort still misses
+the 80% acceptance target, and the pilot remains review-only by default. Existing
+public-dataset and recorded teacher measurements above are unchanged.

@@ -37,6 +37,7 @@ it does not run the teacher, execute a tool, or perform the entire lifecycle.
 |---|---|---|
 | `DecisionSchema` and field classes | Choice, Boolean, MultiChoice and continuous score outputs; field-level review configuration | [schema](../../src/system1/core/schema.py) |
 | `DeterministicSemanticProjector` | SHA-256-derived signed word, subword and character features, normalized into 384 dimensions by default | [core model](../../src/system1/core/model.py) |
+| `TfidfProjector` | Optional fitted word unigram/bigram vocabulary, smoothed IDF and sublinear term frequency; frozen during inference and saved in the skill | [text features](../../src/system1/core/text.py) |
 | `HybridProjector` | Optional hashed lexical features plus a seeded subword table with curated semantic anchors | [embeddings](../../src/system1/core/embeddings.py) |
 | `SystemOneCompiler` | Validate labels, partition examples, fit ridge heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
 | `System1Engine` / `SystemOneEngine` | Apply a schema or compiled skill, uncertainty checks, optional caching and audit evidence | [engine](../../src/system1/engine.py) |
@@ -144,7 +145,7 @@ adapter's own HTTP fallback, not network calls made by a user callback or tool.
 
 Format-v2 `.s1m` files contain schema, projector configuration, weights, temperature,
 calibration scores and score semantics; adapter exports retain evaluated review
-settings. Built-in projectors can be reconstructed. External projectors must be
+settings. Built-in projectors, including the optional fitted TF-IDF vocabulary, can be reconstructed. External projectors must be
 supplied and should expose a configuration digest. Readers validate versions,
 shapes, schema identity and finite numerical values. Version 1.0.3 also reads v1
 skills with legacy APS semantics; 0.2.x readers cannot read v2.

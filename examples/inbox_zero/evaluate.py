@@ -52,21 +52,29 @@ def evaluate(args):
     data = load_lessons(args.lessons)
     contract = json.loads(args.contract.read_text())
     evaluation = json.loads(args.evaluation.read_text())
-    protocol_path = HERE / "protocol.json"
+    protocol_path = HERE / ("protocol_v2.json" if args.candidate == "tfidf" else "protocol.json")
     protocol = json.loads(protocol_path.read_text())
-    if evaluation["upstream"]["commit"] != protocol["upstream_commit"]:
+    if evaluation["upstream"]["commit"] != "2571ce4970aa5d024bb664a6739bd91b1172c367":
         raise ValueError("Evaluation must use the pinned upstream revision")
-    cases = evaluation["cases"]
+    cases = [{**row, "cohort": "upstream_regression"} for row in evaluation["cases"]]
+    if args.candidate == "tfidf":
+        fresh_path = HERE / "evaluation_v2.json"
+        for path in (args.lessons, fresh_path):
+            if hashlib.sha256(path.read_bytes()).hexdigest() != protocol["sha256"].get(path.name):
+                raise ValueError("The frozen candidate dataset changed")
+        fresh = json.loads(fresh_path.read_text())
+        cases = [{**row, "cohort": "fresh_authored"} for row in fresh["cases"]] + cases
     seen = {" ".join(email_text(r["email"]).casefold().split()) for split in ("teach", "calibration") for r in data[split]}
     if any(" ".join(email_text(r["email"]).casefold().split()) in seen for r in cases):
         raise ValueError("Evaluation overlaps teaching/calibration")
-    if len(cases) != 35 or any(not set(r["acceptable"]) <= set(CATEGORIES) for r in cases):
+    if len(cases) != (119 if args.candidate == "tfidf" else 35) or any(not set(r["acceptable"]) <= set(CATEGORIES) for r in cases):
         raise ValueError("Unexpected upstream evaluation")
     model_path = output / "email.s1m"
     questions = {CHOICE_KEY: {"type": "choice", "instructions": contract["question"], "criteria": contract["criteria"]}}
     requests = [{"id": row["id"], "payload": {"state": {"email": row["email"]}, "questions": questions}} for row in cases]
     with patch.object(socket.socket, "connect", no_network), patch.object(socket, "create_connection", no_network):
-        skill, teaching = teach(args.lessons, args.contract, model_path)
+        skill, teaching = teach(args.lessons, args.contract, model_path,
+                               features="tfidf" if args.candidate == "tfidf" else "hash")
         skill.use_cache = False
         before = System1Engine(skill.schema, model=skill, strict_mode=True, use_cache=False)
         start = time.perf_counter()
@@ -81,14 +89,20 @@ def evaluate(args):
             start = time.perf_counter()
             result = restored.classify(request["payload"])
             elapsed = (time.perf_counter() - start) * 1000
-            rows.append({"id": row["id"], "acceptable": row["acceptable"], "prediction": decision.values["category"],
+            rows.append({"id": row["id"], "cohort": row["cohort"], "acceptable": row["acceptable"], "prediction": decision.values["category"],
                          "needs_review": result["needsReview"], "prediction_set": result["predictionSet"], "latency_ms": elapsed})
         compiler = SystemOneCompiler(skill.schema, dimension=2048, regularization=.1, backend="numpy")
         _, conformal = compiler._split_samples([(email_text(r["email"]), r["label"]) for r in data["calibration"]], None, .5)
-        baseline = make_pipeline(TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True),
+        # Supply the exact vocabulary for v2; fit IDF on the same teaching inputs.
+        vocabulary = skill.projector.to_config()["terms"] if args.candidate == "tfidf" else None
+        baseline = make_pipeline(TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True, vocabulary=vocabulary),
                                  LogisticRegression(C=1.0, max_iter=1000, solver="lbfgs"))
         start = time.perf_counter()
         baseline.fit([email_text(r["email"]) for r in data["teach"]], [r["label"] for r in data["teach"]])
+        if args.candidate == "tfidf":
+            probes = [email_text(row["email"]) for row in data["calibration"]]
+            np.testing.assert_allclose(skill.projector.project_batch(probes),
+                                       baseline[0].transform(probes).toarray(), atol=1e-6, rtol=1e-6)
         labels = list(baseline.classes_)
         ps = baseline.predict_proba([text for text, _ in conformal])
         scores = sorted(1 - ps[i, labels.index(label)] for i, (_, label) in enumerate(conformal))
@@ -101,7 +115,7 @@ def evaluate(args):
             probabilities = baseline.predict_proba([email_text(row["email"])])[0]
             prediction = labels[int(np.argmax(probabilities))]
             prediction_set = [label for label, p in zip(labels, probabilities) if 1 - p <= quantile]
-            baseline_rows.append({"id": row["id"], "acceptable": row["acceptable"], "prediction": prediction,
+            baseline_rows.append({"id": row["id"], "cohort": row["cohort"], "acceptable": row["acceptable"], "prediction": prediction,
                                   "prediction_set": prediction_set, "needs_review": len(prediction_set) != 1,
                                   "latency_ms": (time.perf_counter() - start) * 1000})
     # Only this loopback endpoint can be fetched by the actual TypeScript provider.
@@ -156,16 +170,28 @@ def evaluate(args):
               "adapter_http": {"requests": wire["local_calls"], "responses_match_direct": True,
                                "first_request_ms": timings[0], "median_ms": statistics.median(timings),
                                "p95_ms": float(np.quantile(timings, .95)), "external_fetches": wire["external_fetches"]}}
+    for key in ("system1", "tfidf_logistic"):
+        report[key]["cohorts"] = {cohort: summarize([row for row in report[key]["predictions"] if row["cohort"] == cohort])
+                                  for cohort in sorted({row["cohort"] for row in cases})}
+    report["fresh_targets_met"] = (report["system1"]["cohorts"].get("fresh_authored", {}).get("meets_targets", False))
+    report["all_cohort_targets_met"] = all(q["meets_targets"] for q in report["system1"]["cohorts"].values())
+    report["rollout_ready"] = False
+    report["rollout_limit"] = "Synthetic/maintainer-authored evidence only; validate on independent representative mailbox data before automation. Inspect each cohort, not just combined metrics."
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(output / "report.json"), "system1": report["system1"]["quality"],
-                      "baseline": report["tfidf_logistic"]["quality"], "adapter_http": report["adapter_http"]}, indent=2))
+                      "cohorts": report["system1"]["cohorts"],
+                      "baseline": report["tfidf_logistic"]["cohorts"], "adapter_http": report["adapter_http"]}, indent=2))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--lessons", type=Path, default=HERE / "lessons.json")
+    parser.add_argument("--candidate", choices=("initial", "tfidf"), default="initial")
+    parser.add_argument("--lessons", type=Path)
     parser.add_argument("--contract", type=Path, default=Path(".system1/inbox-zero/sources/contract.json"))
     parser.add_argument("--evaluation", type=Path, default=Path(".system1/inbox-zero/sources/upstream-evaluation.json"))
     parser.add_argument("--inbox-zero", type=Path, required=True)
-    parser.add_argument("--output", type=Path, default=Path(".system1/inbox-zero/evaluation"))
-    evaluate(parser.parse_args())
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    args.lessons = args.lessons or HERE / ("lessons_v2.json" if args.candidate == "tfidf" else "lessons.json")
+    args.output = args.output or Path(".system1/inbox-zero") / ("evaluation-v2" if args.candidate == "tfidf" else "evaluation")
+    evaluate(args)

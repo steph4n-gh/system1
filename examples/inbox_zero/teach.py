@@ -8,7 +8,7 @@ import socket
 import time
 from unittest.mock import patch
 
-from system1 import ChoiceField, DecisionSchema, SystemOneCompiler
+from system1 import ChoiceField, DecisionSchema, SystemOneCompiler, TfidfProjector
 from system1.integrations.inbox_zero import CATEGORIES, email_text, instruction_digest
 
 HERE = Path(__file__).resolve().parent
@@ -32,7 +32,7 @@ def load_lessons(path):
     return data
 
 
-def teach(lessons_path, contract_path, output_path):
+def teach(lessons_path, contract_path, output_path, *, features="hash"):
     data = load_lessons(lessons_path)
     contract = json.loads(Path(contract_path).read_text())
     if tuple(contract["categories"]) != CATEGORIES or set(contract["criteria"]) != set(CATEGORIES) | {"None"}:
@@ -42,10 +42,13 @@ def teach(lessons_path, contract_path, output_path):
             category: contract["criteria"][category] for category in CATEGORIES
         })
     })
-    compiler = SystemOneCompiler(schema, dimension=2048, regularization=.1, backend="numpy")
     samples = {split: [(email_text(row["email"]), row["label"]) for row in data[split]]
                for split in ("teach", "calibration")}
     start = time.perf_counter()
+    if features not in ("hash", "tfidf"):
+        raise ValueError("Choose hash or tfidf features")
+    projector = TfidfProjector.fit([text for text, _ in samples["teach"]]) if features == "tfidf" else None
+    compiler = SystemOneCompiler(schema, projector=projector, dimension=2048, regularization=.1, backend="numpy")
     skill = compiler.compile({"category": samples["teach"]}, augment=False,
                              calibration_exemplars={"category": samples["calibration"]})
     teaching_ms = (time.perf_counter() - start) * 1000
@@ -68,12 +71,13 @@ def no_network(*args, **kwargs):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--lessons", type=Path, default=HERE / "lessons.json")
+    parser.add_argument("--lessons", type=Path, default=HERE / "lessons_v2.json")
+    parser.add_argument("--features", choices=("hash", "tfidf"), default="tfidf")
     parser.add_argument("--contract", type=Path, default=Path(".system1/inbox-zero/sources/contract.json"))
     parser.add_argument("--output", type=Path, default=Path(".system1/inbox-zero/email.s1m"))
     args = parser.parse_args()
     with patch.object(socket.socket, "connect", no_network), patch.object(socket, "create_connection", no_network):
-        _, report = teach(args.lessons, args.contract, args.output)
+        _, report = teach(args.lessons, args.contract, args.output, features=args.features)
     print(json.dumps({**report, "saved": str(args.output),
                       "next": "Evaluate before enabling actions; teaching is not qualification."}, indent=2))
 

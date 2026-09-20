@@ -39,6 +39,7 @@ from system1.core.schema import (
 )
 from system1.calibration import ConformalPredictor, DecisionCalibrator
 from system1.core.telemetry import TelemetryProjector
+from system1.core.text import TfidfProjector
 from system1.cache import SemanticSystemOneCache
 
 MAGIC_HEADER = b"S1M\x02"
@@ -123,6 +124,8 @@ def _projector_config(projector: Any) -> Dict[str, Any]:
     if type(projector) is DeterministicSemanticProjector:
         return {"type": "deterministic", "dimension": projector.dimension,
                 "recency_weighted": projector.recency_weighted}
+    if type(projector) is TfidfProjector:
+        return projector.to_config()
     if type(projector) is HybridProjector:
         return {"type": "hybrid", "sparse_dim": projector.sparse_dim,
                 "dense_dim": projector.dense_dim, "alpha": projector.alpha,
@@ -186,6 +189,8 @@ class CompiledSystemOneModel:
         self.created_at = float(self.metadata.get("created_at", 0.0))
         self.forgetting_factor = float(forgetting_factor)
         self.recency_weighted = bool(recency_weighted)
+        if type(projector) is TfidfProjector and self.recency_weighted:
+            raise ValueError("TF-IDF does not support recency weighting")
         self.projector = (
             projector
             if projector is not None
@@ -243,7 +248,8 @@ class CompiledSystemOneModel:
             emb = emb / norm
         else:
             emb = np.zeros(self.dimension, dtype=np.float32)
-            emb[0] = 1.0
+            if not isinstance(self.projector, TfidfProjector):
+                emb[0] = 1.0
         if telemetry is not None:
             emb = self.telemetry_projector.fuse(emb, telemetry)
         return emb
@@ -545,8 +551,13 @@ class CompiledSystemOneModel:
         widths = sum(max(2, len(getattr(f, "options", ()))) for f in schema.fields.values())
         runtime_bytes = 16 * len(schema.fields) * (dimension + 1) ** 2 + 16 * widths * (dimension + 1)
         projector_config = meta.get("projector")
+        saved_tfidf = None
         if projector_config is not None:
             kind = projector_config["type"]
+            if kind == "tfidf":
+                saved_tfidf = TfidfProjector.from_config(projector_config)
+                if saved_tfidf.dimension != dimension:
+                    raise ValueError("Saved TF-IDF dimension does not match the skill")
             if kind == "deterministic" and projector_config.get("dimension") != dimension:
                 raise ValueError("Saved projector dimension does not match the skill")
             if kind == "hybrid":
@@ -575,6 +586,8 @@ class CompiledSystemOneModel:
                     sparse_dim=projector_config["sparse_dim"], dense_dim=projector_config["dense_dim"],
                     alpha=projector_config.get("alpha", 0.5), seed=projector_config.get("seed", 42), backend=backend,
                 )
+            elif saved_tfidf is not None:
+                projector = saved_tfidf
             else:
                 raise ValueError("This skill requires its original external projector; pass projector= when loading")
 

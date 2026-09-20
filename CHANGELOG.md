@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add optional NumPy-only `TfidfProjector` for taught text skills, with a frozen vocabulary carried in `.s1m`, bounded loader validation, and review for inputs with no known features. Preserve the default hashed projector.
+- Broaden email teaching and retain both the original failed result and the new TF-IDF result: 83/84 correct on a fresh authored set, one accepted mistake, and about 10× faster direct decisions. Keep review-only default because upstream acceptance and independent mailbox validation remain incomplete.
+
 - Add an opt-in Inbox Zero category-classification pilot: editable lessons, saved local skill, authenticated HTTP service, and a separately licensed upstream provider patch. Preserve review on uncertainty, contract changes, and service failures.
 - Publish all 35 upstream compatibility results and a conventional baseline. The initial System1 lesson accepts 5/35 cases and remains review-only by default; no claim of production takeover.
 

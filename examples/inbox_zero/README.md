@@ -4,14 +4,31 @@ This working integration replaces Inbox Zero's **category-classification call**
 with a saved System1 skill. Teach from a JSON file, save it once, and serve decisions
 locally. No LLM weights, token generation, or teacher API is needed.
 
-**The first lesson is a review-only pilot, not a qualified automatic replacement.**
-On 35 upstream regression examples, System1 got 28 categories right and accepted
-5 for automatic handling; all 5 were correct. A plain TF-IDF/logistic classifier
-using the same teaching rows got 35 right and accepted 11. Neither met our
-95% accepted accuracy / 80% acceptance targets. The baseline is both more accurate
-and faster here. This identifies a concrete improvement target for System1's text
-representation and decision head; it does not establish which component causes
-the gap.
+**This remains a review-only pilot.** The second candidate uses learned TF-IDF
+word features with the existing System1 ridge head. It needs only NumPy at runtime;
+its vocabulary and weights are saved together. It adds no LLM or new classifier
+framework.
+
+| Evaluation | Correct | Accepted | Accepted correct | Median direct latency |
+|---|---:|---:|---:|---:|
+| Original hashed skill, 35 upstream cases | 28/35 | 5/35 | 5/5 | 2.02 ms |
+| TF-IDF skill with broader lessons, same 35 regressions | 32/35 | 24/35 | 24/24 | 0.20 ms |
+| TF-IDF skill, 84 newly authored cases | 83/84 | 81/84 | 80/81 | 0.20 ms |
+| Same-feature logistic baseline, 84 newly authored cases | 82/84 | 80/84 | 79/80 | 0.20 ms |
+
+The fresh authored cohort meets the 95% accepted accuracy / 80% acceptance point
+targets; the upstream regression cohort still misses acceptance. One unsolicited
+recruiting pitch was incorrectly accepted as a conversation. Keep that failure
+visible. The new examples are synthetic and authored by the same assistant as
+the lessons, not independently collected or blinded mailbox evidence. The 95%
+Wilson interval for accepted accuracy on the fresh cohort is 93.3%–99.8%.
+
+[The feature/lesson comparison](feature_comparison.json) separates the changes:
+TF-IDF with the **original** lessons gets 34/35 upstream classifications right,
+but accepts only 7. Broader lessons improve acceptance. The original TF-IDF/logistic
+baseline got 35/35 right and accepted 11; these experiments do not establish
+System1 as universally more accurate than a conventional classifier. The current
+baseline comparison uses the identical capped vocabulary and teaching rows.
 
 The seven categories are **Newsletter, Marketing, Calendar, Receipt, Notification,
 OTP, and Conversations**. Arbitrary custom rules, multi-rule requests, cold-email
@@ -62,7 +79,7 @@ cd ../system1
 
 node examples/inbox_zero/export_upstream.mjs ../inbox-zero .system1/inbox-zero/sources
 python examples/inbox_zero/teach.py
-python examples/inbox_zero/evaluate.py --inbox-zero ../inbox-zero
+python examples/inbox_zero/evaluate.py --candidate tfidf --inbox-zero ../inbox-zero
 ```
 
 The commands assume the System1 checkout is named `system1`; adjust paths if yours
@@ -73,8 +90,8 @@ application or evaluating its TypeScript.
 
 ## Teach and correct
 
-[lessons.json](lessons.json) is the editable teaching file: `teach` has 140 examples,
-and `calibration` has 56 different examples used to decide when to request review.
+[lessons_v2.json](lessons_v2.json) is the editable teaching file: `teach` has 252 examples,
+and `calibration` has 140 different examples used to decide when to request review.
 Each row pairs an email with **the category you want**. That category is its label.
 For example:
 
@@ -147,29 +164,51 @@ require review. Restart the service to load a newly checked `.s1m` file.
 
 ## Evidence and scope
 
-[protocol.json](protocol.json) records the fixed initial candidate and thresholds;
-[results.json](results.json) contains every prediction, timing, source digest, and
-failure. The 35 examples are public maintainer-authored regression fixtures from
-Inbox Zero, not private customer emails. They were not used to fit or calibrate,
-but source was reviewed during integration work: this is compatibility evidence,
-not a blind benchmark or a production accuracy claim.
+[protocol_v2.json](protocol_v2.json) fixes the candidate, file digests, and targets;
+[results_v2.json](results_v2.json) preserves all predictions, including the accepted
+mistake. The vocabulary is fitted only on teaching rows. The 140 separate
+calibration rows are split for temperature fitting and conformal scoring. No
+candidate parameters or lessons were changed after seeing the new evaluation.
 
-The evaluation compares the saved/reloaded skill with the pre-save result, then
-sends 175 requests through the actual TypeScript provider and Python HTTP service.
-It blocks outbound Python connections and restricts adapter fetches to the local
-endpoint. Results: **zero teacher calls**, identical direct/adapter choices and
-review decisions, **2.66 ms median / 6.72 ms p95** HTTP adapter latency including
-JSON and validation (17.55 ms first request). Direct System1 classification was
-2.02 ms median; TF-IDF was 0.22 ms. Timings are this machine/run, not a portable SLA.
-Teaching took about 0.36 seconds; the saved skill is about 56 KiB; see the JSON for
-exact values and environment. The installed runtime and dependencies are extra.
-Only five accepted examples gives a 95% Wilson accuracy interval of roughly
-56.6%–100%; observing zero errors in five cases proves little about future mail.
+The 35 public upstream examples are now regression tests: they were already seen
+in the initial evaluation. The 84 new examples were written and frozen before
+running this candidate, but share an author with its lessons. Passing their point
+targets is encouraging; it is not enough to enable real mailbox automation.
+Combined metrics do not override a failing individual cohort.
 
-The immediate quality work is to investigate the representation/head gap using
-teaching and development data, preserve these upstream cases as regressions, and
-then evaluate on a fresh, consented mailbox sample with template/thread separation.
-The service and adapter can remain unchanged while the skill improves.
+The evaluation compares saved/reloaded values, probabilities, and review flags,
+then makes 595 requests through the actual TypeScript provider and Python HTTP
+service. Outbound Python connections are blocked and adapter fetches are restricted
+to the local endpoint. All responses match, with **zero teacher calls**.
+HTTP adapter latency was **0.62 ms median / 0.95 ms p95**, including JSON and
+validation (17.92 ms first request). Direct classification was 0.20 ms median,
+roughly ten times faster than the original 2.02 ms on the same upstream cases.
+These timings are this machine/run, not a portable SLA.
+
+Teaching took about 0.125 seconds, loading 3.83 ms, and the saved skill is about
+113 KiB. The runtime and dependencies are extra. The vocabulary is part of the
+artifact, so its contents reflect the supplied teaching text. TF-IDF weights
+match scikit-learn on all 140 calibration messages to numerical tolerance;
+scikit-learn is only a comparison dependency.
+
+The original [protocol](protocol.json), [lessons](lessons.json), and
+[results](results.json) remain unchanged. Reproduce them with:
+
+```bash
+python examples/inbox_zero/evaluate.py --candidate initial --inbox-zero ../inbox-zero
+```
+
+To separate the effects of features and teaching data:
+
+```bash
+python examples/inbox_zero/compare_features.py
+```
+
+That comparison is diagnostic, not another fresh qualification attempt. It
+retains all four combinations of original/broader lessons and hash/TF-IDF
+features. The remaining step before mailbox automation is evaluation on a
+consented, redacted, representative email set with template/thread separation.
+The service stays review-only by default while this evidence is missing.
 
 ## Upstream patch and license
 

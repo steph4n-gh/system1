@@ -44,11 +44,13 @@ Install `system1[observability]` for Prometheus or `system1[otel]` for OpenTelem
 
 ### Inbox Zero email categories
 
-The [Inbox Zero pilot](../examples/inbox_zero/README.md) supplies a JSON teaching
-file, authenticated local endpoint, and a provider patch for its seven standard
-email categories. Install the optional server with `system1[http]`. It starts in
-review-only mode and leaves uncertain or failed classifications unprocessed,
-without an LLM fallback. The initial lesson accepted only 5/35 upstream examples
-and does not qualify for broad automatic takeover; the guide includes a stronger
-TF-IDF baseline and complete reproduction instructions. Other Inbox Zero LLM
-features remain outside this classification integration.
+The [Inbox Zero pilot](../examples/inbox_zero/README.md) supplies JSON teaching
+files, an authenticated local endpoint, and a provider patch for its seven
+standard email categories. Install the optional server with `system1[http]`.
+The current candidate uses portable TF-IDF features and the existing ridge head,
+with no new runtime dependency. It is roughly ten times faster than the initial
+hashed email skill. The fresh authored cohort meets point quality targets, while
+the upstream regression cohort still misses acceptance; independent mailbox
+evidence is also missing. It therefore starts in review-only mode and leaves
+uncertain or failed classifications unprocessed without an LLM fallback.
+Other Inbox Zero LLM features remain outside this classification integration.

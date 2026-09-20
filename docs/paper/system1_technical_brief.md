@@ -17,6 +17,8 @@ are also its limits; it does not acquire the teacher's general knowledge.
 ## How it works
 
 Fixed text features and optional numerical telemetry feed NumPy decision heads.
+The optional TF-IDF projector fits a vocabulary on teaching text and freezes it
+for inference, retaining the existing ridge head and NumPy-only runtime.
 Separate examples calibrate uncertainty. Explicit teaching produces a `.s1m`
 file; automatic observation keeps the teacher answering until promotion checks
 pass. A saved skill preserves the schema, feature configuration, weights and
@@ -90,3 +92,10 @@ For your own task, follow the [teaching guide](../guides/training_experts.md).
 The [architecture reference](../architecture/technical_specification.md),
 [teacher adapter](../typesafe.md), [deployment boundaries](../deployment.md) and
 [documentation index](../README.md) describe the supported interfaces.
+
+
+The unreleased [Inbox Zero pilot](../../examples/inbox_zero/README.md) now includes
+a TF-IDF feature option and broader lessons. It improves the original email
+result and speed, but its new quality evidence is synthetic, includes an accepted
+mistake, and does not qualify real-mailbox automation. Its recorded results are
+separate from the public-data and teacher comparisons above.
