@@ -141,29 +141,41 @@ def test_auto_cutover_respects_min_agreement_threshold():
     assert deferred_event["status"] == "deferred_insufficient_agreement"
 
 
-def test_auto_cutover_high_concurrency_thread_safety():
-    """Attack Target 2: Verify 50 parallel threads calling systemone at cutover threshold is thread-safe."""
+def test_auto_cutover_high_concurrency_thread_safety(monkeypatch):
+    """Concurrent eligible calls promote once and preserve counters and the ledger."""
     import concurrent.futures
+    import threading
+    from unittest.mock import Mock
+    from system1.compat import typesafe
+
+    # Eligibility is controlled here so thread arrival order cannot turn a
+    # synchronization test into a test of tiny, randomly ordered teaching folds.
+    # The other promotion tests and workload evaluations exercise the real gate.
+    eligible = Mock(return_value=typesafe.PromotionReport(
+        is_eligible=True, total_validation_checks=1, matching_checks=1,
+        agreement_rate=1.0, wilson_lower_bound=1.0, false_allow_count=0,
+        critical_class_count=0, false_allow_rate=0.0, rejection_reasons=[],
+    ))
+    monkeypatch.setattr(typesafe, 'evaluate_promotion_eligibility', eligible)
 
     ledger = ActionLedger(":memory:")
     client = TypeSafeClient(
         mode="auto_cutover",
         cutover_threshold=10,
-        promotion_policy=PromotionPolicy(
-            min_agreement_threshold=0.75,
-            false_allow_ceiling=0.0,
-            require_statistical_bound=False,
-        ),
         ledger=ledger,
-        zero_egress=False,
-        fallback_baseline=True,
+        zero_egress=True,
+        baseline_handler=lambda state, questions: {
+            'answers': {'action': {'type': 'choice', 'choice': 'allow'}}},
         augment=True, strict_mode=False,
     )
     questions = {
         "action": Choice("Action", criteria={"allow": "Allow", "deny": "Deny"}),
     }
 
+    ready = threading.Barrier(50)
+
     def worker(idx: int):
+        ready.wait(timeout=30)
         return client.systemone(f"Concurrent action request {idx}", questions)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
@@ -173,12 +185,15 @@ def test_auto_cutover_high_concurrency_thread_safety():
     assert len(results) == 50
     assert client.call_count == 50
     assert client.is_cutover is True
+    assert eligible.call_count == 1
     # Audit log should only contain 1 cutover event
     cutover_events = [e for e in client.cutover_audit_log if e["event"] == "trojan_horse_cutover"]
     assert len(cutover_events) == 1
     # ActionLedger integrity must verify cleanly across all 50 concurrent writes
     assert ledger.audit_head()[0] >= 51
     assert ledger.verify_integrity() is True
+    client.close()
+    ledger.close()
 
 
 def test_manual_distill_and_cutover():
