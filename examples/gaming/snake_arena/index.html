@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="arena-token" content="__ARENA_TOKEN__">
+  <title>System1 / Snake Arena</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080e12;--panel:#0e171d;--line:#24333c;--text:#e9f1f3;--muted:#8fa4ad;--gold:#ffc781;--mint:#6de0bc;--blue:#a8b7ff;font:14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 14% 0%,#17303970,transparent 52%),var(--bg);color:var(--text);min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.36;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:4px}a{color:var(--mint)}.mono,.eyebrow,.badge,.stat,.score,.bar-row,.clock,.phase,.chip{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    main{max-width:1700px;margin:auto;padding:38px 38px 24px}.eyebrow{color:var(--muted);font-size:10px;letter-spacing:2.4px;text-transform:uppercase}.heading{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin:14px 0 26px}h1{font-size:clamp(27px,3vw,44px);font-weight:650;letter-spacing:-1.6px;margin:0}h1 span{color:var(--muted);font-weight:300;padding:0 8px}.subtitle{color:var(--muted);font-size:14px;margin:10px 0 0;line-height:1.6}.top-label{text-align:right;margin-top:9px;white-space:nowrap}.dot{display:inline-block;background:var(--mint);width:6px;height:6px;border-radius:50%;margin-right:8px;box-shadow:0 0 12px #6de0bc66}.top-label p{color:var(--muted);font-size:12px}
+    .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:14px;background:#0e171daa}.button{border:1px solid #354954;background:#172630;color:var(--text);border-radius:5px;padding:10px 15px;font-size:12px;font-weight:600}.primary{background:var(--gold);border-color:var(--gold);color:#241c14}.quiet{background:transparent}.field{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted)}select,input[type=number]{background:var(--bg);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:4px}input[type=number]{width:74px}input[type=checkbox]{accent-color:var(--mint)}.spacer{flex:1}.switch{white-space:nowrap}.run-strip{display:flex;align-items:center;gap:12px;margin:19px 0 15px;min-height:29px}.phase{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px}.run-note{font-size:12px;color:var(--muted)}.clock{font-size:22px;letter-spacing:-.5px;margin-left:auto;font-variant-numeric:tabular-nums}.progress{height:2px;background:var(--line);margin-bottom:20px;border-radius:2px}.progress div{height:100%;width:0;background:var(--gold);transition:width .15s linear}.error{color:#ffab9f;border:1px solid #793e37;background:#2e1818;padding:12px;margin:12px 0;border-radius:5px}.hidden{display:none!important}
+    .lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.lane{--accent:var(--gold);background:linear-gradient(155deg,#13202988,transparent 50%),var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}.lane[data-name=laya]{--accent:var(--mint)}.lane[data-name=jev]{--accent:var(--blue)}.lane-head{padding:20px 20px 17px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}.lane h2{color:var(--accent);margin:0 0 6px;font-size:19px;letter-spacing:2px;font-weight:650}.model{font-size:11px;color:var(--muted)}.badge{font-size:9px;letter-spacing:.4px;color:var(--accent);border:1px solid var(--line);padding:5px 7px;white-space:nowrap}.body{padding:19px 20px 18px}.scoreline{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.score{font-size:30px;color:var(--accent);letter-spacing:-1px;font-variant-numeric:tabular-nums}.scorelabel{font-size:9px;color:var(--muted);letter-spacing:1px}.length{margin-left:12px}.status{font-size:10px;text-transform:uppercase;color:var(--muted);margin-left:auto}.board{aspect-ratio:3/2;background:#071116;border:1px solid #293d48;border-radius:3px;display:block;width:100%;height:auto}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px 9px;padding:20px 0 18px;border-bottom:1px solid var(--line)}.stat-label{color:var(--muted);font-size:8px;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap}.stat-value{display:block;color:var(--accent);font-size:21px;letter-spacing:-.5px;margin-top:6px;font-variant-numeric:tabular-nums}.unit{font-size:10px;color:var(--muted);margin-left:3px}.decision{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-top:18px}.bars{display:grid;gap:6px}.bar-row{display:grid;grid-template-columns:36px 1fr 29px;gap:5px;align-items:center;font-size:9px;color:var(--muted)}.bar-track{height:7px;background:#22313a;border-radius:1px;overflow:hidden}.bar-fill{height:100%;background:var(--accent);opacity:.35;width:0;transition:width .12s}.bar-row.chosen{color:var(--accent)}.bar-row.chosen .bar-fill{opacity:1}.details{font-size:10px;display:grid;gap:7px;align-content:start}.detail{display:flex;gap:4px;justify-content:space-between;color:var(--muted)}.detail b{font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}.lane-foot{border-top:1px solid var(--line);padding:12px 20px;font-size:10px;color:var(--muted);line-height:1.5;min-height:40px}.hint{margin-top:20px;border:1px solid var(--line);border-radius:8px;padding:16px 19px;display:flex;gap:22px;align-items:center;background:#111a2080}.chip{font-size:10px;color:var(--gold);white-space:nowrap}.hint p{font-size:12px;line-height:1.6;color:var(--muted);margin:0}.hint strong{color:var(--text);font-weight:500}details{margin-top:18px;color:var(--muted);font-size:12px;line-height:1.7}summary{cursor:pointer;color:var(--text)}details ul{padding-left:20px;margin-bottom:0}footer{display:flex;justify-content:space-between;gap:15px;margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:10px;color:var(--muted)}footer a{text-decoration:none}.replay-controls{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted)}
+    @media(max-width:1150px){main{padding:26px 20px}.lanes{gap:10px}.lane-head{padding:15px 12px;flex-wrap:wrap}.body{padding:14px 12px}.lane-foot{padding:10px 12px}.stat-value{font-size:19px}.decision{gap:10px}.top-label{display:none}}
+    @media(max-width:800px){.lanes{grid-template-columns:1fr}.lane-head{flex-wrap:nowrap}.body{padding:18px}.lane-head{padding:18px}.stats{gap:15px}.stat-label{font-size:10px}.stat-value{font-size:23px}.decision{gap:30px}.bar-row,.details{font-size:11px}.hint{display:block}.hint p{margin-top:8px}.run-note{max-width:55%}.heading{margin-bottom:20px}footer{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow" id="arena-kind">Decision lab / Live Snake benchmark</div>
+  <header class="heading">
+    <div><h1>System1 <span>×</span> Laya <span>×</span> Jev</h1><p class="subtitle">One game. Three decision engines. Every move measured.</p></div>
+    <div class="top-label"><span class="eyebrow"><i class="dot"></i><span id="connection-label">Real engines / local arena</span></span><p>NumPy CPU · MLX GPU · Remote API</p></div>
+  </header>
+  <div class="toolbar">
+    <button id="start" class="button primary" disabled>▶ Start race</button><button id="stop" class="button quiet" disabled>Stop</button>
+    <label class="field">MODE <select id="mode"><option value="timed">Timed race</option><option value="turns">Equal moves</option></select></label>
+    <label class="field" id="seconds-field">SECONDS <input id="seconds" type="number" min="5" max="60" value="30"></label>
+    <label class="field hidden" id="turns-field">MOVES <input id="turns" type="number" min="20" max="600" value="120"></label>
+    <label class="field">SEED <input id="seed" type="number" min="0" max="2147483647" value="2026" style="width:86px"></label>
+    <label class="field switch"><input id="shield" type="checkbox" checked> Shared safety shield</label>
+    <div class="spacer"></div><button id="replay" class="button quiet" disabled>↺ Replay</button><button id="export" class="button quiet" disabled>↓ JSON</button>
+  </div>
+  <div id="error" class="error hidden" role="alert"></div>
+  <div class="run-strip"><span id="phase" class="phase">Connecting</span><span id="run-note" class="run-note">Loading real engine status…</span><div id="replay-controls" class="replay-controls hidden"><label>Speed <select id="speed"><option value="1">1×</option><option value="4">4×</option><option value="10">10×</option></select></label><button id="exit-replay" class="button quiet">Exit replay</button></div><span id="clock" class="clock">00:00.0</span></div>
+  <div class="progress"><div id="progress"></div></div>
+  <section class="lanes" id="lanes" aria-label="Three Snake players"></section>
+  <aside class="hint"><span class="chip">WHAT THIS MEASURES</span><p><strong>Fast execution of a bounded decision skill.</strong> All three engines read the same planner hints. System1 learns this vocabulary from examples; Laya and Jev use their existing models. Timed score combines speed and choices. Equal moves isolates the move budget.</p></aside>
+  <details><summary>Fairness, teaching &amp; what the planner does</summary><ul>
+    <li>The shared planner labels moves “Blocked,” “Unsafe,” “Safe,” or “Best.” It already knows a safe route to food. This is a test of acting on these hints, not discovering Snake strategy from a raw board. A direct planner is sufficient to play.</li>
+    <li>The optional shield picks the highest-scored safe direction for every engine. Each changed move is counted below its board. Turn it off to observe raw choices. System1’s review flags are recorded; this game executes its top choice even when it asks for review.</li>
+    <li>System1 uses a small taught TF-IDF skill on CPU. Laya uses its English 421M checkpoint through compiled MLX on GPU. Jev makes a real TypeSafe API request for every decision. There is no saved decision cache or substitute competitor.</li>
+    <li>Each engine gets the same seeded starting board and three questions. Paths can diverge, so later food locations can differ. Loading and warm-up are excluded. P50 and P95 include input encoding and result formatting; Jev also includes network time. E2E includes planning and the game update. Concurrent engines share this Mac.</li>
+    <li>JSON exports include engine details, teaching results, the protocol and every executed move. Replay uses that recorded trace and makes no model requests.</li>
+  </ul></details>
+  <footer><span>System1 · Teach a skill. Run it locally.</span><span>Game &amp; planner adapted from <a href="https://github.com/mizchi/laya-mlx/tree/dc3aa6b150cb861d0788fbd421cfd1303de4ed57/laya_mlx/snake" target="_blank" rel="noreferrer">Laya-MLX ↗</a> · Apache-2.0</span></footer>
+</main>
+<script>
+const $=id=>document.getElementById(id), names=['system1','laya','jev'], dirs=['UP','DOWN','LEFT','RIGHT'];
+const colors={system1:'#ffc781',laya:'#6de0bc',jev:'#a8b7ff'};
+const subtitles={system1:'Taught planner-reading skill',laya:'Laya English · 421M',jev:'TypeSafe · API'};
+const badges={system1:'LOCAL / CPU',laya:'LOCAL / MLX',jev:'REMOTE / API'};
+const labels={system1:'System1',laya:'Laya',jev:'Jev'};
+const statLabels={p50:'P50 latency',p95:'P95 latency',rate:'Decisions / s',moves:'Moves',last:'Last decision',e2e:'E2E P50'};
+const detailLabels={proposed:'Proposed',executed:'Executed',interventions:'Shield changes',reviews:'Review flags'};
+let live=null,replay=null,requestPending=false,connectionFailed=false;
+for(const name of names){
+  const card=document.createElement('article');card.className='lane';card.dataset.name=name;
+  card.innerHTML=`<div class="lane-head"><div><h2>${labels[name].toUpperCase()}</h2><div class="model">${subtitles[name]}</div></div><span class="badge">${badges[name]}</span></div><div class="body"><div class="scoreline"><span class="score" id="${name}-score">000</span><span class="scorelabel">SCORE</span><span class="scorelabel length">LENGTH <b id="${name}-length">006</b></span><span class="status" id="${name}-status">Ready</span></div><canvas class="board" id="${name}-board" width="768" height="512" role="img" aria-label="${labels[name]} Snake board"></canvas><div class="stats">${Object.entries(statLabels).map(([key,label])=>`<div class="stat"><span class="stat-label">${label}</span><span class="stat-value"><span id="${name}-${key}">—</span>${['p50','p95','last','e2e'].includes(key)?'<span class="unit">ms</span>':''}</span></div>`).join('')}</div><div class="decision"><div class="bars">${dirs.map(dir=>`<div class="bar-row" id="${name}-${dir}-row"><span>${dir}</span><div class="bar-track"><div class="bar-fill" id="${name}-${dir}-bar"></div></div><span id="${name}-${dir}-value">—</span></div>`).join('')}</div><div class="details">${Object.entries(detailLabels).map(([key,label])=>`<div class="detail"><span>${label}</span><b id="${name}-${key}">—</b></div>`).join('')}</div></div></div><div class="lane-foot" id="${name}-foot">Waiting for engine…</div>`;
+  $('lanes').appendChild(card);
+}
+function error(message){$('error').textContent=message;$('error').classList.toggle('hidden',!message)}
+async function api(path,payload){const options=payload===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json','X-Arena-Token':document.querySelector('meta[name=arena-token]').content},body:JSON.stringify(payload)};const response=await fetch(path,options),data=await response.json();if(!response.ok)throw Error(data.error||`HTTP ${response.status}`);return data}
+const number=(value,digits=1)=>value==null?'—':value.toLocaleString(undefined,{maximumFractionDigits:digits,minimumFractionDigits:digits});
+function draw(name,board){
+  const canvas=$(name+'-board'),ctx=canvas.getContext('2d'),cell=canvas.width/board.width;
+  ctx.fillStyle='#071116';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#20313a';for(let y=0;y<board.height;y++)for(let x=0;x<board.width;x++){ctx.beginPath();ctx.arc((x+.5)*cell,(y+.5)*cell,.7,0,Math.PI*2);ctx.fill()}
+  if(board.food){const[x,y]=board.food;ctx.shadowColor='#ffe6a6';ctx.shadowBlur=10;ctx.fillStyle='#ffe6a6';ctx.beginPath();ctx.arc((x+.5)*cell,(y+.5)*cell,cell*.21,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}
+  for(let i=board.body.length-1;i>=0;i--){const[x,y]=board.body[i];ctx.fillStyle=i===0?'#f3fbfa':colors[name];ctx.globalAlpha=i===0?1:.42+.5*(1-i/board.body.length);ctx.fillRect(x*cell+1.5,y*cell+1.5,cell-3,cell-3)}ctx.globalAlpha=1;
+  if(!board.alive){ctx.fillStyle='#080e1299';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#ffc3b4';ctx.font='20px monospace';ctx.textAlign='center';ctx.fillText('COLLISION',canvas.width/2,canvas.height/2)}
+  canvas.setAttribute('aria-label',`${labels[name]}: score ${board.score}, length ${board.length}, ${board.ticks} moves${board.alive?'':', collision'}`);
+}
+function laneView(name,lane){
+  const board=lane.board,last=lane.last;
+  $(name+'-score').textContent=String(board.score).padStart(3,'0');$(name+'-length').textContent=String(board.length).padStart(3,'0');$(name+'-status').textContent=lane.status;
+  for(const[key,value]of Object.entries({p50:lane.p50_ms,p95:lane.p95_ms,rate:lane.rate,last:last?.inference_ms,e2e:lane.total_p50_ms}))$(name+'-'+key).textContent=number(value,key==='rate'?1:2);
+  $(name+'-moves').textContent=board.ticks.toLocaleString();$(name+'-proposed').textContent=last?.proposed||'—';$(name+'-executed').textContent=last?.executed||'—';$(name+'-interventions').textContent=lane.interventions.toLocaleString();$(name+'-reviews').textContent=name==='system1'?lane.reviews.toLocaleString():'n/a';
+  for(const dir of dirs){const p=last?.probabilities[dir];$(name+'-'+dir+'-bar').style.width=(p==null?0:p*100)+'%';$(name+'-'+dir+'-value').textContent=number(p,2);$(name+'-'+dir+'-row').classList.toggle('chosen',last?.proposed===dir)}
+  if(lane.error)$(name+'-foot').textContent=lane.error;
+  else if(name==='system1'){const t=lane.metadata.teaching;$(name+'-foot').textContent=`${number(t.skill_bytes/1024,1)} KiB skill · taught in ${number(t.teaching_ms,0)} ms · ${t.held_out_correct}/${t.held_out_cases} held-out hints correct`}
+  else if(name==='laya')$(name+'-foot').textContent='Compiled MLX · FP16 · fresh inference every move';
+  else $(name+'-foot').textContent=`${lane.metadata.model} · ${lane.teacher_calls.toLocaleString()} API calls this run${lane.late_responses?' · '+lane.late_responses+' late reply':''}`;
+  draw(name,board);
+}
+function clock(value){return String(Math.floor(value/60)).padStart(2,'0')+':'+(value%60).toFixed(1).padStart(4,'0')}
+function render(data,isReplay=false){
+  for(const name of names)laneView(name,data.lanes[name]);
+  $('connection-label').textContent=live?.read_only?'Recorded / offline':'Real engines / local arena';
+  $('phase').textContent=isReplay?'Recorded replay':data.phase;$('clock').textContent=clock(data.elapsed);
+  const timed=data.settings.mode==='timed';
+  $('run-note').textContent=(isReplay?'Recorded moves · ':`Seed ${data.settings.seed} · `)+(timed?`${data.settings.seconds}s common clock`:`${data.settings.turns} moves per engine`)+(data.settings.shield?' · shield on':' · raw choices');
+  const progress=timed?data.elapsed/data.settings.seconds:Math.min(...names.map(n=>data.lanes[n].board.ticks/data.settings.turns));$('progress').style.width=Math.min(100,progress*100)+'%';
+  const busy=data.running||isReplay||requestPending,readOnly=Boolean(live?.read_only);
+
+  $('arena-kind').textContent=readOnly?'Decision lab / Recorded Snake benchmark':'Decision lab / Live Snake benchmark';
+  if(readOnly){for(const key of ['mode','seconds','turns','seed'])$(key).value=data.settings[key];$('shield').checked=data.settings.shield;$('mode').onchange()}
+  $('start').disabled=busy||readOnly;$('stop').disabled=!data.running||data.phase==='stopping'||isReplay;
+  for(const id of ['mode','seconds','turns','seed','shield'])$(id).disabled=busy||readOnly;
+  $('replay').disabled=busy||!data.has_replay;$('export').disabled=data.running||!data.has_replay;$('replay-controls').classList.toggle('hidden',!isReplay);
+}
+$('mode').onchange=()=>{$('seconds-field').classList.toggle('hidden',$('mode').value!=='timed');$('turns-field').classList.toggle('hidden',$('mode').value!=='turns');$('start').textContent=$('mode').value==='timed'?'▶ Start race':'▶ Compare moves'};
+$('start').onclick=async()=>{error('');requestPending=true;$('start').disabled=true;try{live=await api('/api/start',{mode:$('mode').value,seconds:Number($('seconds').value),turns:Number($('turns').value),seed:Number($('seed').value),shield:$('shield').checked})}catch(e){error(e.message)}finally{requestPending=false;if(live)render(live)}};
+$('stop').onclick=async()=>{try{live=await api('/api/stop',{});render(live)}catch(e){error(e.message)}};
+$('export').onclick=async()=>{try{const report=await api('/api/export'),url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download=`snake-${report.summary.run_id}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}catch(e){error(e.message)}};
+function percentile(values,fraction){if(!values.length)return null;const a=[...values].sort((a,b)=>a-b),i=(a.length-1)*fraction,lo=Math.floor(i);return a[lo]+(a[Math.ceil(i)]-a[lo])*(i-lo)}
+$('replay').onclick=async()=>{try{const report=await api('/api/replay'),data=structuredClone(report.summary);data.elapsed=0;data.running=false;for(const name of names){Object.assign(data.lanes[name],{board:structuredClone(report.lanes[name].initial),last:null,status:'replay',p50_ms:null,p95_ms:null,total_p50_ms:null,interventions:0,reviews:0,rate:0,teacher_calls:0,late_responses:0})}replay={report,data,time:0,previous:performance.now(),indices:Object.fromEntries(names.map(n=>[n,0])),times:Object.fromEntries(names.map(n=>[n,[]])),totals:Object.fromEntries(names.map(n=>[n,[]]))};render(data,true);requestAnimationFrame(replayFrame)}catch(e){error(e.message)}};
+$('exit-replay').onclick=()=>{replay=null;if(live)render(live)};
+function replayFrame(now){
+  if(!replay)return;const r=replay;r.time+=(now-r.previous)/1000*Number($('speed').value);r.previous=now;r.data.elapsed=Math.min(r.time,r.report.summary.elapsed);
+  for(const name of names){const events=r.report.lanes[name].events,lane=r.data.lanes[name];let changed=false;
+    while(r.indices[name]<events.length&&events[r.indices[name]].at<=r.time){const event=events[r.indices[name]++],board=lane.board;if(event.alive){board.body.unshift(event.head);board.body.length=event.length}Object.assign(board,{food:event.food,length:event.length,score:event.score,alive:event.alive,won:event.won,ticks:r.indices[name]});lane.last=event;lane.interventions+=Number(event.intervened);lane.reviews+=Number(event.needs_review===true);lane.teacher_calls+=Number(name==='jev');r.times[name].push(event.inference_ms);r.totals[name].push(event.total_ms);changed=true}
+    if(changed){lane.p50_ms=percentile(r.times[name],.5);lane.p95_ms=percentile(r.times[name],.95);lane.total_p50_ms=percentile(r.totals[name],.5)}lane.rate=lane.board.ticks/Math.max(.001,Math.min(r.time,r.report.summary.lanes[name].elapsed));lane.status=r.indices[name]===events.length?r.report.summary.lanes[name].status:'replay';
+  }
+  const finished=r.time>=r.report.summary.elapsed;
+  if(finished)for(const name of names){for(const key of ['teacher_calls','late_responses'])r.data.lanes[name][key]=r.report.summary.lanes[name][key]}
+  render(r.data,true);if(!finished)requestAnimationFrame(replayFrame);else $('phase').textContent='Replay complete';
+}
+async function poll(){try{live=await api('/api/status');if(connectionFailed){error('');connectionFailed=false}if(!replay)render(live)}catch(e){connectionFailed=true;if(!replay){$('start').disabled=true;$('phase').textContent='Disconnected';error('Arena connection lost. Keep the local Python server running.')}}finally{setTimeout(poll,live?.running?150:700)}}
+poll();
+</script>
+</body>
+</html>

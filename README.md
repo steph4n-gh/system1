@@ -241,6 +241,14 @@ for identity, network and enforcement responsibilities.
 
 ## Examples and research
 
+The [Snake arena](examples/gaming/snake_arena/README.md) puts System1, Laya-MLX
+and Jev side by side in a live GUI. Replay the published runs without an API key,
+or run fresh comparisons. In the recorded 30-second race, System1 filled the board
+in 13.44 seconds; three equal-move runs matched Jev's preferred-move choices.
+All engines receive planner hints, so this demonstrates a tiny taught skill's
+execution cost, not independent game reasoning. See the
+[full measurements and limitations](examples/gaming/snake_arena/RESULTS.md).
+
 The [example catalog](https://github.com/steph4n-gh/system1/blob/main/examples/README.md)
 links every teaching, observation, game and integration example with its scope.
 The [architecture](https://github.com/steph4n-gh/system1/blob/main/docs/architecture/technical_specification.md),
