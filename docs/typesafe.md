@@ -106,10 +106,28 @@ MultiChoice sets. Related observations count as one validation group; repeating
 an easy request cannot inflate either agreement or acceptance. Agreement among
 accepted decisions must also meet the threshold.
 
-For the statistical gate, both agreement and acceptance must pass exact
+For a task needing higher agreement on unattended decisions, use
+`PromotionPolicy(min_accepted_agreement=.95)` in the client's `promotion_policy`
+argument. Its point estimate and exact lower bound must both pass. No accepted
+validation groups means no qualification. The report includes
+`accepted_agreement_rate` and `accepted_agreement_lower_bound`, and the promotion
+manifest records the chosen thresholds. This measures agreement with the teacher;
+check independent labels separately to measure correctness.
+
+The new requirement is opt-in; `None` preserves the original policy. Setting
+`require_statistical_bound=False` explicitly requests point checks only. The
+[1.0.2 experiment](../benchmarks/quality/quality_round/README.md) uses the stronger
+requirement with `dimension=2048`, `regularization=.1` and
+`cutover_threshold=400`. The adapter now exposes the compiler's existing
+regularization setting (default 1.0) in both sync and async clients. More examples
+and a suitable fit can help, but these settings do not promise promotion.
+
+For the default statistical gate, both agreement and acceptance must pass exact
 one-sided binomial lower bounds. At validation attempt `k`, each bound spends
 `(1 - confidence) / (2 * k * (k + 1))`; the total across attempts is bounded by
-`1 - confidence`. Each attempt needs an entirely fresh validation block. This
+`1 - confidence`. With `min_accepted_agreement` set, three exact bounds share
+the budget instead: `(1 - confidence) / (3 * k * (k + 1))` for each bound.
+Each attempt needs an entirely fresh validation block. This
 controls repeated checks only under independent, representative validation
 groups and a candidate fixed before its validation. Correlated templates,
 adaptive traffic, or changed workloads do not satisfy those assumptions merely
@@ -128,7 +146,8 @@ unless the caller explicitly opts into a labeled simulation with
 and does not manufacture pricing or performance data after a failed request.
 
 Explicit `PromotionPolicy` objects can override the defaults, including opting
-out of the acceptance check when `min_local_acceptance=0`. The older enterprise
+out of the acceptance-rate check when `min_local_acceptance=0`. An explicit
+`min_accepted_agreement` still requires accepted evidence in that configuration. The older enterprise
 showcases explicitly retain synthetic augmentation, heuristic non-strict gates,
 and relaxed promotion settings. Their output demonstrates integration mechanics;
 use the flagship example for the normal observation path.

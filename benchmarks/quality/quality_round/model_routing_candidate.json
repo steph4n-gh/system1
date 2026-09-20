@@ -793,6 +793,222 @@
       "label": "frontier_reasoning",
       "prompt": "Prove or disprove the proposition; a summary of the claimed proof is insufficient.",
       "quality_round": "2026-09-contrast"
+    },
+    {
+      "group": "quality-102-local_small-0",
+      "prompt": "Reindent the supplied proof script without checking its validity.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-1",
+      "prompt": "Extract every numbered lemma heading from the attached document.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-2",
+      "prompt": "Alphabetize the supplied names of consensus algorithms.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-3",
+      "prompt": "Convert this theorem bibliography from CSV to JSON.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-4",
+      "prompt": "Copy all certificate serial numbers into a newline separated list.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-5",
+      "prompt": "Replace tabs with spaces in this replica configuration.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-6",
+      "prompt": "Sort the given mathematical symbols by their Unicode values.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-7",
+      "prompt": "Delete empty lines from this formal specification.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-8",
+      "prompt": "Count how many times the word theorem occurs in the supplied text.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-9",
+      "prompt": "Rename the JSON key proof to certificate in each supplied record.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-10",
+      "prompt": "Format this stack trace as a Markdown code block.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-local_small-11",
+      "prompt": "Extract timestamps from the supplied database incident log.",
+      "label": "local_small",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-0",
+      "prompt": "Summarize the attached lemma in a short paragraph for students.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-1",
+      "prompt": "Explain the author commentary accompanying this theorem in plain language.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-2",
+      "prompt": "Draft a friendly email explaining that our certificate expires next month.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-3",
+      "prompt": "Translate this supplied proof explanation into French.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-4",
+      "prompt": "Rewrite this database incident announcement for a nontechnical audience.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-5",
+      "prompt": "Summarize the supplied analysis of replica divergence without investigating its cause.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-6",
+      "prompt": "Explain what a formal correctness certificate means to a beginner.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-7",
+      "prompt": "Write a brief introduction to this textbook chapter about induction.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-8",
+      "prompt": "Shorten this supplied mathematical commentary to two sentences.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-9",
+      "prompt": "Explain the terminology used in the attached concurrency tutorial.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-10",
+      "prompt": "Draft release notes from this supplied list of replication fixes.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-standard_chat-11",
+      "prompt": "Write a welcoming introduction for a workshop on theorem proving.",
+      "label": "standard_chat",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-0",
+      "prompt": "Check whether this formal certificate establishes the claimed invariant.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-1",
+      "prompt": "Diagnose why these replicas diverge after the same transaction sequence.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-2",
+      "prompt": "Find the logical gap in this proposed lemma proof.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-3",
+      "prompt": "Determine whether the supplied certificate is a valid proof of termination.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-4",
+      "prompt": "Analyze why the consensus participants disagree after a leader failover.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-5",
+      "prompt": "Prove that this concurrent update algorithm cannot lose a committed write.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-6",
+      "prompt": "Construct a counterexample to the stated theorem under these assumptions.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-7",
+      "prompt": "Design a replication protocol satisfying latency, consistency and recovery constraints.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-8",
+      "prompt": "Assess whether the proposed proof establishes all required boundary cases.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-9",
+      "prompt": "Deduce the cause of this intermittent deadlock from the attached traces.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-10",
+      "prompt": "Verify that the formal argument remains valid when messages arrive out of order.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
+    },
+    {
+      "group": "quality-102-frontier_reasoning-11",
+      "prompt": "Investigate the correctness of this lock-free queue under weak memory ordering.",
+      "label": "frontier_reasoning",
+      "quality_round": "2026-09-quality-102"
     }
   ],
   "calibration": [

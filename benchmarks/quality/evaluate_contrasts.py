@@ -45,6 +45,8 @@ def evaluate(output_dir):
     with patch.object(socket.socket, 'connect', disconnected), patch.object(socket, 'create_connection', disconnected):
         for name, schema in SCHEMAS.items():
             path = ROOT / 'examples/teaching' / f'{name}.json'
+            if name == 'model_routing':
+                path = ROOT / 'benchmarks/quality/results/model_routing_1_0_1.json'
             current = load_cases(path)
             baseline = load_cases(path, include_quality_round=False)
             digest = hashlib.sha256(path.read_bytes()).hexdigest()

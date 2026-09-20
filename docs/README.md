@@ -1,7 +1,7 @@
 # System 1 documentation
 
-Current stable runtime: **1.0.1**. Reviewed 19 September 2026.
-The product loop is **teach or observe → validate → run locally → save and reuse**.
+Current stable runtime: **1.0.2**. Reviewed 19 September 2026.
+System 1 is not an LLM. The product loop is **teach or observe → validate → run locally → save and reuse**.
 GitHub can contain documentation and evaluation tools added after the published
 package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes.
 
@@ -26,6 +26,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | [Whitepaper](paper/system1_whitepaper.md) | Current design, measurements and limitations |
 | [Mathematical notes](paper/conformal_gating.md) | Established results and their assumptions |
 | [Public workloads](../benchmarks/quality/workloads/README.md) | Banking, assistant, SMS, classical baseline and real teachers |
+| [1.0.2 quality round](../benchmarks/quality/quality_round/README.md) | Stricter takeover qualification, SMS improvement and fresh diagnostic failures |
 | [Teaching examples](../examples/teaching/README.md) | Authored lessons, current counts and historical development |
 | [Benchmark index](../benchmarks/README.md) and [quality suite](../benchmarks/quality/README.md) | Reproduction commands and distinct evaluation targets |
 | [Game examples](SPEEDRUN_SHOWDOWN_WORLD_RECORDS.md) | Scripted policies, model hooks and emulator limits |
@@ -38,7 +39,7 @@ Do not compare unlike timing cohorts as a measured speedup.
 
 ## Release and review history
 
-[1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
+[1.0.2 release report](releases/1.0.2.md) · [1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
 [completed stabilization checklist](stable-release-checklist.md) ·
 [historical launch review](launch-review.md) · [historical example review](examples-review.md).
 

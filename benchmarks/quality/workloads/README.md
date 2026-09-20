@@ -1,5 +1,9 @@
 # Three workloads, two live teachers
 
+This is the preserved first public-workload experiment. The later
+[1.0.2 quality round](../quality_round/README.md) adds stricter qualification and
+new diagnostics; it does not rewrite the original results below.
+
 System 1.0.1 meets the fixed 95% accepted-correctness and 80% local-acceptance
 targets on three public-data teaching tasks. On the assistant task, both actual
 Jev and Gemini observations produce a validated local takeover. The classical

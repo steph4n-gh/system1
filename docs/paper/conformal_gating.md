@@ -1,6 +1,6 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.0.1 · 19 September 2026 · Implementation notes, not new theorems**
+**System 1 1.0.2 · 19 September 2026 · Implementation notes, not new theorems**
 
 This note describes the mathematics used by the runtime and the assumptions
 needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the
@@ -78,6 +78,15 @@ uncertain fields affect the overall review flag.
 
 The published public-data experiments use strict mode and report **acceptance**,
 **correctness among accepted decisions** and **raw correctness** separately.
+The optional `PromotionPolicy(min_accepted_agreement=.95)` added in 1.0.2 also
+tests agreement conditional on an accepted validation group. Its point estimate
+and exact lower bound must pass, with no accepted evidence causing deferral.
+This adds a third exact bound to the error budget: at attempt `k`, each spends
+`(1 - confidence) / (3 * k * (k + 1))`. The default two-bound budget is unchanged.
+Teacher agreement is distinct from correctness against independent labels; the
+[quality round](../../benchmarks/quality/quality_round/README.md) reports both
+qualification and subsequent diagnostic failures.
+
 Default automatic promotion tests 80% agreement and 80% acceptance; that is a
 separate policy from alpha 0.05 or a 95% accepted-correctness workload target.
 The [SMS observation result](../../benchmarks/quality/workloads/README.md)

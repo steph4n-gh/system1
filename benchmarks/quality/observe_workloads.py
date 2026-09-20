@@ -179,7 +179,7 @@ def observe(name, teacher, output_dir, *, offline=False, protocol_path=DEFAULT_P
     report['meets_test_targets'] = report.get('quality', {}).get('meets_routing_targets', False)
     client.close()
     (output_dir / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
-    print(f"{name} {teacher}: promoted={report['promoted']}; independent test targets={report['meets_test_targets']}", flush=True)
+    print(f"{name} {teacher}: promoted={report['promoted']}; test targets={report['meets_test_targets']}", flush=True)
     return report
 
 

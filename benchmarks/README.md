@@ -1,4 +1,8 @@
-# Benchmarks and evidence
+# Benchmarks
+
+The [1.0.2 quality round](quality/quality_round/README.md) adds stricter qualification,
+a measured SMS takeover improvement and fresh authored failures. System 1 remains
+a small local decision runtime, not an LLM. and evidence
 
 Use the [quality suite](quality/README.md) for current evaluation commands and the
 [public-workload report](quality/workloads/README.md) for banking, assistant and

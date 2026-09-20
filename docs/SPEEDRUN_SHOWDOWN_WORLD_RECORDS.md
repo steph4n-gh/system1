@@ -1,6 +1,6 @@
 # Gaming demonstrations and their limits
 
-Current scope for **System 1 1.0.1**. The legacy filename is retained for links;
+Current scope for **System 1 1.0.2**. The legacy filename is retained for links;
 this project has no independently verified speedrun world record or #1 ladder
 result. These examples explore game rules, local decisions, observation loops
 and optional emulator/browser integrations.

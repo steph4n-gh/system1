@@ -1,9 +1,16 @@
 # Changelog
 
-## Unreleased
+## 1.0.2 — 2026-09-19
+
+- Add opt-in `PromotionPolicy(min_accepted_agreement=.95)`: require point agreement and an exact lower bound among accepted validation groups, sharing the repeated-attempt confidence budget. Preserve the original default policy.
+- Expose the compiler's existing regularization parameter through sync/async observation clients; retain its default of 1.0.
+- Publish a fuller original-label SMS observation run: 2,961 observations, 954/980 correct accepted old-test decisions (97.3%). Preserve stricter banking/assistant deferrals and the new authored SMS failure.
+- Retain 106 new diagnostic probes and a rejected routing teaching candidate. Keep primary lesson files unchanged; do not claim all quality gaps are solved.
+- Make the product distinction explicit: System 1 is not an LLM; it teaches bounded local decision heads without language-model weights or token generation.
+
 
 - Publish three fixed public-data workload evaluations and actual Jev/Gemini takeover records, including unsuccessful promotions and a classical baseline. All teacher recordings replay offline; no new runtime dependency.
-- Synchronize the README, guides, architecture and papers with 1.0.1 behavior and current evidence. Separate historical reports from current instructions, correct example output claims, and retire unsupported promotional graphics.
+- Synchronize the README, guides, architecture and papers with current behavior and evidence. Separate historical reports from current instructions, correct example output claims, and retire unsupported promotional graphics.
 - Clarify experimental container templates and repair their binding/probe instructions. Add lightweight documentation link/version checks to CI.
 - Make the concurrent-cutover regression independent of teaching-fold arrival order while retaining 50 simultaneous callers and ledger checks.
 

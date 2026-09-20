@@ -76,7 +76,7 @@ These files are demonstration bundles containing three splits, policy notes,
 and case groups. The helper converts each split to the compiler's field mapping;
 a whole bundle is not itself a CLI `--dataset` file.
 
-## Current 1.0.1 results
+## Current primary results (unchanged in 1.0.2)
 
 | Skill | Accepted locally | Correct among accepted |
 |---|---:|---:|
@@ -84,6 +84,11 @@ a whole bundle is not itself a CLI `--dataset` file.
 | Model routing | 94/96 | 94/94 |
 | Operation triage | 126/132 | 126/126 |
 | Banking support | 118/120 | 115/118 |
+
+The [1.0.2 quality round](../../benchmarks/quality/quality_round/README.md) adds
+new authored probes and retains a rejected routing candidate. It does not change
+these primary lesson files. Banking and SMS failures on new phrasing are disclosed
+separately from these existing test results.
 
 The [current primary report](../../benchmarks/quality/results/release_1_0_1.json)
 and [banking report](../../benchmarks/quality/workloads/results.json) retain the

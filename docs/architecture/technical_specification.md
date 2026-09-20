@@ -1,6 +1,6 @@
 # System 1 architecture and implementation
 
-Implementation reference for **System 1 1.0.1**, reviewed 19 September 2026.
+Implementation reference for **System 1 1.0.2**, reviewed 19 September 2026.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
 [pyproject.toml](../../pyproject.toml).
@@ -125,6 +125,13 @@ and agreement among accepted responses. Exact one-sided binomial lower bounds
 and a summable budget across attempts constrain repeated promotion checks.
 Independent representative groups are still required for statistical meaning.
 
+Since 1.0.2, `PromotionPolicy(min_accepted_agreement=.95)` optionally requires
+both point agreement and an exact lower bound on accepted validation groups.
+The three exact bounds share the repeated-attempt confidence budget. This
+measures teacher agreement, not independent correctness. Sync and async adapters
+also expose the compiler's existing `regularization` setting (default 1.0).
+See [qualification settings and evidence](../typesafe.md#what-promotion-means).
+
 A promotion threshold is not a promised number of teacher calls. The gate's 80%
 thresholds are also not the separate 95% accepted-correctness workload target.
 The assistant, banking and SMS experiments demonstrate why the distinction matters.
@@ -139,7 +146,7 @@ Format-v2 `.s1m` files contain schema, projector configuration, weights, tempera
 calibration scores and score semantics; adapter exports retain evaluated review
 settings. Built-in projectors can be reconstructed. External projectors must be
 supplied and should expose a configuration digest. Readers validate versions,
-shapes, schema identity and finite numerical values. Version 1.0.1 also reads v1
+shapes, schema identity and finite numerical values. Version 1.0.2 also reads v1
 skills with legacy APS semantics; 0.2.x readers cannot read v2.
 
 Saving a validated skill is tested to preserve values, probabilities, prediction

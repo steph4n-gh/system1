@@ -1,5 +1,14 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## 1.0.2 qualification and teaching-quality round
+
+[Protocol, results and limits](quality_round/README.md) cover the new opt-in
+accepted-agreement bound, fuller SMS observation and 106 fresh authored probes.
+The stronger SMS recipe improves the old test result but fails the new authored
+SMS cohort. Banking/assistant remain deferred, and the routing candidate is not
+adopted. Reproduce with `python benchmarks/quality/evaluate_quality_round.py`
+after preparing the public datasets. No live teacher calls or new dependencies.
+
 ## Three public workloads and two live teachers
 
 The [workload evidence](workloads/README.md) measures banking support, six assistant

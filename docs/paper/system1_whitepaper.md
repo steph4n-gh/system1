@@ -1,8 +1,12 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.0.1 · 19 September 2026**
+**steph4n-gh · System 1 1.0.2 · 19 September 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
+
+System 1 is **not an LLM**. Its built-in local path fits small numerical decision
+heads and requires no language-model download, token generation or GPU. It can
+learn a bounded decision from an LLM's answers without becoming a language model.
 
 ## Abstract
 
@@ -151,6 +155,27 @@ responses reproduce promotion and quality entirely offline without API keys.
 Teacher and local latency cohorts differ, so their timings are not a matched-input
 speedup benchmark. No dollar savings are inferred from token usage.
 
+## 1.0.2 qualification follow-up
+
+The [follow-up protocol and full results](../../benchmarks/quality/quality_round/README.md)
+retain the earlier experiments above and add an explicit 95% accepted-agreement
+requirement. Both its point estimate and exact lower bound must pass; three exact
+bounds share the repeated-attempt confidence budget. This is opt-in and does not
+change the original default policy. The adapter also exposes the compiler's
+existing regularization parameter.
+
+With regularization 0.1, a first attempt at 400 observations and a fuller available
+stream, the original-label SMS skill promotes after 2,961 observations. On the
+old test, 954/980 accepted decisions are correct (97.3%), improving on the earlier
+897/963 (93.1%). This test is now regression evidence, not a fresh independent
+experiment. Banking and assistant do not qualify under the stronger requirement.
+On 40 new authored SMS probes the promoted skill gets only 27/33 accepted answers
+right. Unchanged explicitly taught banking and SMS skills likewise miss the
+accepted-correctness target on new authored probes. A 36-lesson routing candidate
+reduces accepted errors on the older difficult cohort but misses fresh coverage
+and introduces a primary-cohort error; it is not adopted. No general quality
+claim follows from the older passing results.
+
 ## 6. Statistical and operational boundaries
 
 Split-conformal prediction provides marginal prediction-set coverage when the
@@ -198,5 +223,5 @@ on fresh representative data. The existing compiler, callback and evaluation
 workflow can support that work without a new provider or training framework.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
-local reuse*, version 1.0.1. Cite the source revision and linked evidence when
+local reuse*, version 1.0.2. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.

@@ -1,12 +1,18 @@
 # System 1: technical brief
 
-**System 1 1.0.1 · 19 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.0.2 · 19 September 2026 · Maintainer-authored implementation brief**
 
 System 1 turns a repeatable decision into a small reusable local skill. Define the
 outputs, teach from examples or observe a teacher, validate the skill, then reuse
 it through the same local runtime. A teacher can be a person, JSON data, a rule,
 Jev, Gemini or another callback. System 1 fits numerical decision heads; it does
 not fine-tune or run a language model.
+
+**System 1 is not an LLM:** the built-in path needs no language-model weights,
+token generation or GPU. Optional MLX supports Apple Silicon decision-head
+operations; the results below use NumPy, and speedups must be measured for the
+workload. Its narrow output schema and learned feature weights
+are also its limits; it does not acquire the teacher's general knowledge.
 
 ## How it works
 
@@ -41,6 +47,14 @@ missed the independent 95% correctness target; the live Jev SMS run did not prom
 The classical TF-IDF/logistic-regression baseline ran faster locally. Full counts,
 methods, errors, teacher recordings and reproduction commands are in the
 [workload report](../../benchmarks/quality/workloads/README.md).
+
+The later [1.0.2 quality round](../../benchmarks/quality/quality_round/README.md)
+adds an opt-in 95% accepted-agreement lower-bound requirement. With fuller local
+label observation, SMS takes over after 2,961 cases and gets 954/980 accepted old
+test decisions right (97.3%). Banking and assistant remain deferred. Fresh authored
+SMS probes reach only 27/33 correct accepted decisions (81.8%). A proposed routing
+teaching change is retained as an experiment because its tradeoffs failed the
+adoption criteria. These limits remain part of the evidence.
 
 ## What the product adds
 
