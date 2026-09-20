@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
-"""Triple-Crown Open-Source Benchmark Suite.
+"""Historical three-domain simulation inspired by agent-library use cases.
 
-Benchmarks System 1 (Machine-Native System 1) as a drop-in replacement across
-three premier open-source repositories:
-1. OpenHands (SecurityAnalyzer command guardrails)
-2. Instructor (Pydantic structured ticket triage & routing)
-3. Semantic Router (RouteLayer multi-intent query routing)
-
-Demonstrates 500x-1000x latency speedup, zero tokens/cost, zero data egress,
-and 95%+ decision quality with ZERO training required.
-"""
+System 1 decisions are measured on authored data. The cloud timings, nominal
+quality and token-cost assumptions are synthetic. This script does not execute
+OpenHands, Instructor or Semantic Router, and is not a comparative provider or
+package benchmark. Use benchmarks/quality/workloads for current measured evidence."""
 
 from __future__ import annotations
 
@@ -44,7 +39,7 @@ from system1.receipt import verify_decision_witness_receipt
 
 
 # =====================================================================
-# Target 1: OpenHands Command Security Guardrail
+# Illustrative domain 1, inspired by OpenHands Command Security Guardrail
 # =====================================================================
 
 class OpenHandsActionSecurityRisk:
@@ -204,7 +199,7 @@ OPENHANDS_DATASET: List[Tuple[str, str, str]] = [
 
 
 # =====================================================================
-# Target 2: Instructor Structured Ticket Triage
+# Illustrative domain 2, inspired by Instructor Structured Ticket Triage
 # =====================================================================
 
 class InstructorTicketTriageSchema(DecisionSchema):
@@ -398,7 +393,7 @@ INSTRUCTOR_DATASET: List[Tuple[str, str, str, str]] = [
 
 
 # =====================================================================
-# Target 3: Semantic Router RouteLayer
+# Illustrative domain 3, inspired by Semantic Router RouteLayer
 # =====================================================================
 
 class SemanticRouterSchema(DecisionSchema):
@@ -1003,7 +998,7 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
     )
     lines.append(summary_row)
     lines.append("=" * 128)
-    lines.append(f"  * Total Estimated Cloud Cost Saved: ${total_cost:.4f}")
+    lines.append(f"  * Simulated Cost Difference (not actual savings): ${total_cost:.4f}")
     lines.append(f"  * Total WAN Network Egress Eliminated: {total_egress:,} bytes (100% On-Device Privacy)")
     lines.append("  * Training Epochs Required: 0 (Zero-Shot Semantic Hyperplane Compilation)")
     lines.append("  * Benchmark Provenance: System 1 System 1 = MEASURED_LIVE; Cloud Baseline = SYNTHETIC_SIMULATED (calibrated Gaussian model)")
@@ -1013,10 +1008,10 @@ def format_scorecard_table(comparisons: List[BenchmarkComparison]) -> str:
 
 
 def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) -> Dict[str, Any]:
-    print(f"[*] Starting Triple-Crown Benchmark Suite ({iterations} iterations per domain)...")
-    print("    Target 1: OpenHands (Action & Command Security Guardrail)")
-    print("    Target 2: Instructor (Pydantic Structured Ticket Triage)")
-    print("    Target 3: Semantic Router (Multi-Intent RAG Query Routing)")
+    print(f"[*] Starting Three-Domain Simulation (synthetic cloud baseline) ({iterations} iterations per domain)...")
+    print("    Illustrative domain 1, inspired by OpenHands (Action & Command Security Guardrail)")
+    print("    Illustrative domain 2, inspired by Instructor (Pydantic Structured Ticket Triage)")
+    print("    Illustrative domain 3, inspired by Semantic Router (Multi-Intent RAG Query Routing)")
     print()
 
     # Warmup
@@ -1025,13 +1020,13 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
 
     # Run benchmarks
     oh_res = run_openhands_benchmark(iterations)
-    print(f"  [+] OpenHands complete: System 1 P50={oh_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={oh_res.cloud_baseline.latency_p50_ms:.1f}ms ({oh_res.speedup_factor:.1f}x)")
+    print(f"  [+] OpenHands complete: System 1 P50={oh_res.reflex.latency_p50_ms:.3f}ms vs SIMULATED cloud P50={oh_res.cloud_baseline.latency_p50_ms:.1f}ms ({oh_res.speedup_factor:.1f}x)")
 
     inst_res = run_instructor_benchmark(iterations)
-    print(f"  [+] Instructor complete: System 1 P50={inst_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={inst_res.cloud_baseline.latency_p50_ms:.1f}ms ({inst_res.speedup_factor:.1f}x)")
+    print(f"  [+] Instructor complete: System 1 P50={inst_res.reflex.latency_p50_ms:.3f}ms vs SIMULATED cloud P50={inst_res.cloud_baseline.latency_p50_ms:.1f}ms ({inst_res.speedup_factor:.1f}x)")
 
     sr_res = run_semantic_router_benchmark(iterations)
-    print(f"  [+] Semantic Router complete: System 1 P50={sr_res.reflex.latency_p50_ms:.3f}ms vs Cloud P50={sr_res.cloud_baseline.latency_p50_ms:.1f}ms ({sr_res.speedup_factor:.1f}x)")
+    print(f"  [+] Semantic Router complete: System 1 P50={sr_res.reflex.latency_p50_ms:.3f}ms vs SIMULATED cloud P50={sr_res.cloud_baseline.latency_p50_ms:.1f}ms ({sr_res.speedup_factor:.1f}x)")
     print()
 
     comparisons = [oh_res, inst_res, sr_res]
@@ -1044,7 +1039,7 @@ def run_all_benchmarks(iterations: int = 50, output_path: Optional[str] = None) 
         "provenance_metadata": {
             "reflex_provenance": "MEASURED_LIVE",
             "cloud_baseline_provenance": "SYNTHETIC_SIMULATED",
-            "description": "System 1 System 1 latencies are measured live on local hardware. Cloud baseline latencies are generated via a calibrated empirical Gaussian model (SYNTHETIC_SIMULATED).",
+            "description": "System 1 System 1 latencies are measured live on local hardware. Cloud baseline latencies are generated via a illustrative Gaussian model (SYNTHETIC_SIMULATED).",
         },
         "aggregate": {
             "mean_speedup_factor": statistics.mean([c.speedup_factor for c in comparisons]),

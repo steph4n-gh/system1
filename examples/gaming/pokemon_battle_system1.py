@@ -901,7 +901,7 @@ class PyBoyAdapter:
                 raise ImportError(
                     "PyBoy is not installed in the current environment. "
                     "Install with `pip install pyboy` or run without --rom to use the "
-                    "built-in standalone zero-dependency Game Boy battle simulator."
+                    "built-in simplified NumPy battle simulator."
                 )
             import pyboy  # type: ignore
             self._pyboy = pyboy.PyBoy(str(self.rom_path), window=self.window_type)
@@ -2134,7 +2134,7 @@ def main() -> None:
                     print(f"  • Fallback:        Falling back seamlessly to built-in standalone battle engine.")
             else:
                 print(f"  • PyBoy Status:    `pyboy` package not installed in environment.")
-                print(f"  • Fallback:        Seamless fallback to high-fidelity zero-dependency NumPy battle engine.")
+                print(f"  • Fallback:        Fallback to a simplified NumPy battle simulator.")
         except Exception as err:
             print(f"  Notice: Could not parse ROM header: {err}")
     elif args.rom:

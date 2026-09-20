@@ -27,7 +27,7 @@ conformal calibration using its existing prompt-disjoint split.
 The official test rows did not inform task selection, examples, model settings,
 or thresholds. After the first evaluation, the data and settings were left fixed.
 The result describes this bounded task, not all 77 intents, out-of-scope detection,
-or live traffic supplied by System 1 users. It does not compare against Jev.
+or live traffic supplied by System 1 users. The release example itself does not compare against Jev. A later [observation experiment](../../benchmarks/quality/workloads/README.md) uses Jev on the fitting/calibration stream and records that automatic promotion did not qualify.
 
 To audit provenance using the pinned upstream revision:
 

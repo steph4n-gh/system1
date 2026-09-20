@@ -628,7 +628,8 @@ def test_pyboy_adapter_availability_and_fallback():
         with pytest.raises(ImportError) as excinfo:
             PyBoyAdapter(rom_path="missing.gb")
         assert "PyBoy is not installed" in str(excinfo.value)
-        assert "built-in standalone zero-dependency" in str(excinfo.value)
+        assert "run without --rom" in str(excinfo.value)
+        assert "NumPy battle simulator" in str(excinfo.value)
 
 
 # ============================================================================
@@ -824,4 +825,3 @@ def test_all_starters_creation_gen1_and_gen2():
         assert mon.current_hp > 0
         assert mon.types == expected_types
         assert len(mon.moves) >= 2
-

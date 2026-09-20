@@ -1,3 +1,5 @@
+# Experimental template; no authentication/TLS or production permission policy.
+# See ../README.md. Do not expose to untrusted callers.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,12 +20,12 @@ spec:
     spec:
       containers:
         - name: reflex-grpc
-          image: reflex-grpc:latest
+          image: system1-grpc:local
           ports:
             - containerPort: 50051
               name: grpc
               protocol: TCP
-          command: ["system1", "serve", "--grpc", "--port", "50051"]
+          command: ["system1", "serve", "--grpc", "--host", "0.0.0.0", "--port", "50051"]
           resources:
             requests:
               cpu: "100m"

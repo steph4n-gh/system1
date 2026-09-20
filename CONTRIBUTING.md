@@ -23,6 +23,18 @@ Keep changes focused and prefer the simplest implementation that addresses a rep
 
 Include the problem, resulting behavior, and relevant validation in pull requests. Benchmark claims should include the command, source revision, environment, dataset, overall quality metrics, and raw results. Simulations and cloud measurements must be clearly distinguished.
 
+Keep the [documentation index](docs/README.md), README, architecture and papers in
+agreement with the implemented behavior. Link measurements to their exact report;
+retain historical results and failed targets as labeled snapshots. Report local
+computation, acceptance without review and correctness separately. A teacher can
+be a rule, file, API or LLM; teaching a decision head does not fine-tune an LLM.
+
+Run `python scripts/check_documentation.py` from a Git checkout. This offline
+check covers local Markdown links/anchors and current version labels; CI runs it
+too. It does not establish external-link availability or correctness of prose.
+Run changed executable examples as appropriate. Documentation-only edits do not
+require new classifier evaluations or live API calls.
+
 ## Package checks
 
 ```bash
@@ -32,3 +44,9 @@ uvx twine check --strict dist/*
 ```
 
 CI also installs the wheel into a clean environment and runs the CLI outside the checkout. A release tag must match the version in `pyproject.toml`. PyPI publishing requires the repository's `pypi` environment and trusted-publisher configuration; tagging and publishing are separate release actions.
+
+For a release, update the package/runtime version and current documentation labels,
+move the relevant Unreleased changelog entries into the release record, then push
+the source and require green CI on that exact commit before tagging. Verify the
+publication workflow and installed PyPI artifact afterward. Documentation on GitHub
+can precede a package release; the PyPI README changes only when a package is published.

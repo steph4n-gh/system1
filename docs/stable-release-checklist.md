@@ -1,8 +1,9 @@
-# Stable release checklist
+# Completed 1.0 stabilization checklist
 
 The product promise is: observe a teacher, teach a bounded skill, validate it,
-take over locally, and save and reuse the skill. This checklist tracks the single
-stabilization effort following 0.2.2. An unchecked item is not release evidence.
+take over locally, and save and reuse the skill. This historical checklist records the completed
+stabilization effort following 0.2.2. Current evidence is indexed in the
+[documentation guide](README.md). An unchecked item is not release evidence.
 
 - [x] Review and fix the supported core lifecycle: Choice, Boolean/Noul,
   MultiChoice, continuous and ordinal scores, calibration, correction, persistence,
@@ -26,7 +27,8 @@ stabilization effort following 0.2.2. An unchecked item is not release evidence.
   fresh-install quickstarts, and old-skill compatibility checks.
 - [x] Update documentation, supported API boundaries, migration guidance,
   and measured release results.
-Release gate: require green CI on the exact release commit before tagging
+
+Historical release gate: require green CI on the exact release commit before tagging
 v1.0.0 and verify the triggered PyPI publication. The authoritative status is in
 [GitHub Actions](https://github.com/steph4n-gh/system1/actions), checked after the
 release commit is pushed; local checks alone do not fulfill it.

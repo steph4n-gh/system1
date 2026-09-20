@@ -166,9 +166,9 @@ def run_support_triage_demo():
 
 def run_agent_guard_demo():
     print("\n" + "=" * 76)
-    print("  DEMO 3: AGENT TOOL GUARD & INTERCEPTION (System 1 Unfair Advantage)")
+    print("  DEMO 3: PROPOSED-ACTION CLASSIFICATION")
     print("=" * 76)
-    print("Use Case: Inspect proposed actions with hardware-enforced reference monitor & tamper-evident ledger.")
+    print("Use Case: Classify proposed actions; application-level policies must grant actual tool permissions.")
 
     class AgentGuardSchema(DecisionSchema):
         verdict = ChoiceField(

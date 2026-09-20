@@ -1,7 +1,7 @@
 # Observe a teacher and reuse a local skill
 
 System 1's TypeSafe adapter supports the basic Jev decision workflow: typed
-questions in, typed answers out. A teacher can be Jev or an existing callback.
+questions in, typed answers out. A teacher can be Jev, another API or LLM through a callback, or labeled local data.
 The adapter observes answers, teaches a small decision head, validates it, and
 switches the same call site to local execution. It does not fine-tune an LLM.
 
@@ -39,6 +39,20 @@ python examples/observe_routing.py --teacher jev --output-dir .system1/observe-j
 There is no simulated fallback in that mode. Insufficient evidence leaves the
 teacher active. The fresh evaluation compares against the example's stated routing policy; it does
 not call Jev again after disconnection.
+
+## Public-data takeover with Jev and Gemini
+
+On the six-intent assistant task, actual Jev 1.13.0 and Gemini 2.5 Flash each
+qualified after 358 observations. With teacher callbacks and network access
+disabled, each skill accepted 171/180 unseen official test requests, with 167/171
+correct. Nine requests required review. Saving and reloading preserved results.
+
+The [workload report](../benchmarks/quality/workloads/README.md) includes the
+protocol, real response records and offline replay commands. Banking did not
+promote with the available 412 observations. SMS observed from original labels
+promoted but missed the independent 95% correctness target; live Jev SMS did not
+promote within 1,000 observations. The normal 80% promotion thresholds do not
+qualify a skill for a separate 95% accepted-correctness requirement.
 
 ## Integrate the same lifecycle
 
@@ -87,7 +101,7 @@ calibration and validation folds. Supply group/lineage identifiers for related
 requests; the runtime cannot discover every paraphrase automatically.
 
 The normal policy checks complete-decision agreement, critical false-allows,
-and at least 80% local acceptance. All fields must agree, including exact
+at least 80% agreement, and at least 80% local acceptance. All fields must agree, including exact
 MultiChoice sets. Related observations count as one validation group; repeating
 an easy request cannot inflate either agreement or acceptance. Agreement among
 accepted decisions must also meet the threshold.

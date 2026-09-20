@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
-"""This is a scripted route and damage-risk heuristic, without fitted conformal calibration or a taught decision model. Historical conformal_* names are retained for compatibility.
+"""Scripted campaign milestones with a damage-risk heuristic and optional PyBoy.
 
-Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine.
-
-Demonstration of System 1 System 1 + System 2 Dual-Process Cognitive Architecture:
-1. Uncapped Headless PyBoy Turbo Runner:
-   - Executes PyBoy Game Boy emulation uncapped (`window='null'`, `set_emulation_speed(0)`)
-     achieving 3,000 to 13,000+ FPS on Apple Silicon / local CPU.
-   - Pure NumPy high-speed fallback when running in air-gapped CI or environments without ROMs.
-2. Speedrun Route Optimization (Red Any% Glitchless):
-   - Squirtle -> Wartortle -> Blastoise route through all 10 campaign chapters:
-     Prologue -> Brock (Boulder) -> Misty (Cascade) -> Lt. Surge (Thunder) -> Erika (Rainbow) ->
-     Koga (Soul) -> Sabrina (Marsh) -> Blaine (Volcano) -> Giovanni (Earth) -> Elite Four & Champion!
-3. Zero-Wipe Conformal Gate against Damage Rolls & Critical Hits:
-   - Evaluates worst-case damage roll ($255/255 = 100%$) and worst-case speed-based critical hit
-     probability ($P = \\text{BaseSpeed}/512$, double damage).
-   - When worst-case hit exceeds survival margin, trips the Zero-Wipe Conformal Gate:
-     preemptively heals, applies X items, or executes tactical sacrifice pivot.
-   - Cryptographically signs zero-wipe interventions with Ed25519 receipts.
-"""
+There is no fitted conformal calibration or taught decision model in this runner.
+Historical conformal_* names remain for compatibility. Emulator ticking and
+assigned milestones do not establish autonomous navigation or a zero-wipe result."""
 
 from __future__ import annotations
 
@@ -92,7 +77,7 @@ def get_type_effectiveness(atk_type: str, def_types: Sequence[str]) -> float:
 
 
 # ============================================================================
-# 2. Zero-Wipe Conformal Gate Engine
+# 2. Damage-Risk Heuristic Engine
 # ============================================================================
 
 @dataclass
@@ -298,7 +283,7 @@ class UncappedPyBoyTurboRunner:
                 self.pyboy.set_emulation_speed(0)
                 print(f"🎮 Initialized PyBoy Headless Turbo Engine with ROM: {self.rom_path.name}")
             except Exception as exc:
-                print(f"⚠️ PyBoy initialization notice: {exc}. Using zero-dependency pure-NumPy engine.")
+                print(f"⚠️ PyBoy initialization notice: {exc}. Using NumPy simulation.")
                 self.pyboy = None
         else:
             self.pyboy = None
@@ -311,7 +296,7 @@ class UncappedPyBoyTurboRunner:
         self.frame_count += frames
 
     def step_route_milestone(self) -> Tuple[SpeedrunMilestone, str, float]:
-        """Executes one route milestone checkpoint with Zero-Wipe Conformal Gate protection."""
+        """Executes one route milestone checkpoint with Damage-Risk Heuristic protection."""
         t0 = time.perf_counter()
         if self.current_milestone_idx >= len(self.milestones):
             return self.milestones[-1], "All milestones completed", 0.0
@@ -404,7 +389,7 @@ class UncappedPyBoyTurboRunner:
             SpeedrunMilestone.CHAMPION_BLUE: {"lvl": 65, "atk": 120, "spc": 130, "spe": 110, "pwr": 95, "type": "Electric", "cat": "special"},
         }.get(milestone, {"lvl": 30, "atk": 50, "spc": 50, "spe": 50, "pwr": 50, "type": "Normal", "cat": "physical"})
 
-        # Simulate simulated / live combat turn with Zero-Wipe Conformal Gate
+        # Simulate simulated / live combat turn with Damage-Risk Heuristic
         threat = self.gate.assess_threat(
             player_hp=self.carry.current_hp,
             player_max_hp=self.carry.max_hp,
@@ -422,15 +407,15 @@ class UncappedPyBoyTurboRunner:
         )
 
         if threat.conformal_risk_score >= 0.50:
-            # Zero-Wipe Conformal Gate TRIPS!
+            # Damage-Risk Heuristic TRIPS!
             self.conformal_interventions += 1
             if threat.recommended_action == "HEAL":
                 # Emergency full restore / hyper potion
                 self.carry.current_hp = self.carry.max_hp
-                desc += " [🛡️ ZERO-WIPE GATE: Preemptive Healing Applied]"
+                desc += " [🛡️ DAMAGE-RISK CHECK: Preemptive Healing Applied]"
             elif threat.recommended_action == "X_ITEM":
                 # X-Speed / X-Defend applied
-                desc += " [🛡️ ZERO-WIPE GATE: X-Item Boost Applied]"
+                desc += " [🛡️ DAMAGE-RISK CHECK: X-Item Boost Applied]"
 
         # Advance emulator frames
         self.tick_frames(frames=120)
@@ -445,9 +430,9 @@ class UncappedPyBoyTurboRunner:
         t_start = time.perf_counter()
 
         print("\n" + "=" * 72)
-        print("  GAME BOY POKÉMON SPEEDRUN / KAIZO ZERO-WIPE ENGINE")
+        print("  GAME BOY POKÉMON / KAIZO SCRIPTED DEMO")
         print("=" * 72)
-        print(f"Runner Mode:    {'PyBoy Headless Turbo (Uncapped)' if self.pyboy else 'Zero-Dependency NumPy Engine'}")
+        print(f"Runner Mode:    {'PyBoy Headless Turbo (Uncapped)' if self.pyboy else 'NumPy Simulation'}")
         print(f"Speedrun Route: Red Any% Glitchless (Squirtle Carry)")
         print("Target:         Avoid wipes using a scripted damage-risk heuristic; no measured guarantee.\n")
 
@@ -460,13 +445,13 @@ class UncappedPyBoyTurboRunner:
         fps = self.frame_count / max(0.001, total_elapsed)
 
         print("\n" + "=" * 72)
-        print("  SPEEDRUN & ZERO-WIPE CERTIFICATION REPORT")
+        print("  SCRIPTED ROUTE AND DAMAGE-RISK REPORT")
         print("=" * 72)
         print(f"Total Frames Emulated:    {self.frame_count:,}")
         print(f"Total Wallclock Time:     {total_elapsed:.3f} seconds")
         print(f"Average Emulation Speed:  {fps:,.0f} FPS (Target: 3,000 - 5,000+ FPS)")
         print(f"Badges Acquired:          {len(self.badges_collected)}/8 {self.badges_collected}")
-        print(f"Zero-Wipe Interventions:  {self.conformal_interventions}")
+        print(f"Damage-Risk Interventions:  {self.conformal_interventions}")
         print(f"Party Wipes (Blackouts):  {self.wipes} (0.0% Wipe Rate in Benchmark Trials)")
         print("=" * 72)
 
@@ -493,8 +478,8 @@ class UncappedPyBoyTurboRunner:
 # ============================================================================
 
 def main() -> None:
-    """CLI launcher for Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine."""
-    parser = argparse.ArgumentParser(description="Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine")
+    """CLI launcher for Game Boy Pokémon Scripted Route / Kaizo Damage-Risk Demo."""
+    parser = argparse.ArgumentParser(description="Game Boy Pokémon Scripted Route / Kaizo Damage-Risk Demo")
     parser.add_argument("--rom", type=str, default="roms/pokemon_red.gb", help="Path to Game Boy ROM")
     parser.add_argument("--turbo", action="store_true", default=True, help="Enable uncapped turbo speed (3,000-5,000+ FPS)")
     parser.add_argument("--kaizo", action="store_true", help="Enable Kaizo enhanced enemy difficulty")

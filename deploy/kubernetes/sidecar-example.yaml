@@ -1,3 +1,5 @@
+# Experimental template; no authentication/TLS or production permission policy.
+# See ../README.md. Do not expose to untrusted callers.
 # Example: System 1 gRPC as a sidecar container alongside an agent container.
 #
 # The agent communicates with the System 1 engine over localhost:50051 (gRPC).
@@ -31,7 +33,7 @@ spec:
 
     # ── System 1 gRPC sidecar ──────────────────────────────────────────────
     - name: reflex-sidecar
-      image: reflex-grpc:latest
+      image: system1-grpc:local
       command: ["system1", "serve", "--grpc", "--port", "50051", "--schema", "guard"]
       ports:
         - containerPort: 50051
@@ -45,12 +47,12 @@ spec:
           cpu: "250m"
           memory: "256Mi"
       livenessProbe:
-        tcpSocket:
-          port: grpc
+        exec:
+          command: ["python", "-c", "import socket; socket.create_connection(('127.0.0.1', 50051), timeout=2).close()"]
         initialDelaySeconds: 10
         periodSeconds: 30
       readinessProbe:
-        tcpSocket:
-          port: grpc
+        exec:
+          command: ["python", "-c", "import socket; socket.create_connection(('127.0.0.1', 50051), timeout=2).close()"]
         initialDelaySeconds: 5
         periodSeconds: 10

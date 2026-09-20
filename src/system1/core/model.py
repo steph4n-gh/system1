@@ -38,13 +38,11 @@ except ImportError:
 
 
 class DeterministicSemanticProjector:
-    """High-dispersion deterministic semantic projector for offline/air-gapped environments.
+    """Deterministic normalized lexical features for local decisions.
 
-    Generates consistent dense vectors (default dimension: 384) using character and subword n-grams,
-    positional weighting, and pseudo-orthogonal projections seeded by SHA-256.
-    Ensures identical strings produce identical vectors, semantic overlap yields positive
-    cosine similarity, and orthogonal concepts yield near-zero similarity.
-    """
+    SHA-256-derived word and character features use 384 dimensions by default.
+    Shared features can support generalization, but similarity does not guarantee
+    semantic equivalence or distinguish all unrelated concepts."""
 
     def __init__(self, dimension: int = 384, recency_weighted: bool = False):
         if dimension <= 0:

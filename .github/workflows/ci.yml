@@ -53,6 +53,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Check lockfile
         run: uv lock --check
+      - name: Check documentation links and release labels
+        run: python scripts/check_documentation.py
       - name: Build and validate distributions
         run: |
           uv build

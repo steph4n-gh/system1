@@ -1,9 +1,8 @@
-"""System 1: Machine-Native Decision Runtime (System 1).
+"""System 1: teach bounded decision skills, validate them and reuse them locally.
 
-High-performance, non-autoregressive decision engine implementing Daniel Kahneman's System 1
-fast cognitive layer, designed to pair with deliberate System 2 governors (Astra, Fable, Gemini, or Grok).
-Symmetrically available as both `import system1` and `import reflex`.
-"""
+Fixed local features and small decision heads support structured outputs,
+uncertainty, optional teacher observation, explicit permissions and audit evidence.
+Available as both import system1 and the legacy import reflex."""
 
 from __future__ import annotations
 

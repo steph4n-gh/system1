@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
-"""Integration prototype: navigation and live-battle button loops include scripts. This does not establish autonomous campaign completion.
+"""Optional PyBoy spectator, RAM advisor and partial controller prototype.
 
-Pokémon Live Game Boy GUI Spectator & System 1 System 1 Agent.
-
-Runs the official Pokémon Game Boy cartridges on PyBoy with a native graphical
-macOS SDL2 window, full sprite animations, and real-time System 1 System 1
-memory-bridge decision control.
-
-Features:
-- Native Graphical macOS Game Boy Window: Real Game Boy pixels, audio, and sprites.
-- In-Place Terminal HUD: Zero scrolling, zero flashing—updates smoothly like a real monitor.
-- Dual-Process Control: System 1 System 1 evaluates battle states at 60 FPS on the metal.
-- Tactical Game Advisor HUD: Live weakness mapping and elemental advice.
-- Multi-Game Support: Seamlessly switch across Red, Blue, Yellow, Gold, Silver, Crystal.
-- Spectator Modes: Overworld navigation, Live Battle showcase, and Campaign speedrun.
-"""
+Navigation and live-battle button loops include scripts. Some modes display
+System 1 suggestions; this is not a complete model-controlled campaign or a
+measured real-time service guarantee. Compatible user-supplied ROMs are required."""
 
 from __future__ import annotations
 
@@ -775,7 +764,7 @@ def run_pyboy_live_game(
                     if auto_play:
                         # Feed System 1 decision back to Game Boy buttons
                         action = telemetry.get("action", "fight")
-                        
+
                         def execute_sequence(btns):
                             nonlocal frame_count
                             for b in btns:
@@ -787,7 +776,7 @@ def run_pyboy_live_game(
                                 for _ in range(4):
                                     emulator.tick()
                                     frame_count += 1
-                                    
+
                         if action == "fight":
                             execute_sequence(["a"])
                         elif action == "use_item":

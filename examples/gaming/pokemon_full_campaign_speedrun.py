@@ -1,42 +1,10 @@
 #!/usr/bin/env python3
-"""Campaign navigation, leveling and milestones are scripted. Battle suggestions can use a model; this is not evidence of a completed model-controlled campaign.
+"""Scripted campaign orchestration with optional model-backed battle suggestions.
 
-Pokémon Full Campaign Speedrun: 100% Autonomous Spectator Engine.
-
-A high-fidelity demonstration of System 1 + System 2 Dual-Process Cognitive Architecture
-completing 100% of Pokémon Red/Blue across all 10 major campaign chapters:
-
-1. Full 100% End-to-End Campaign State Machine:
-   - Prologue: Pallet Town -> Oak's Lab -> Starter Selection -> Route 1 -> Viridian City (Oak's Parcel)
-   - Chapter 1 (Boulder Badge): Viridian Forest -> Pewter City Gym Leader Brock (Geodude, Onix)
-   - Chapter 2 (Cascade Badge): Mt. Moon -> Cerulean City Gym Leader Misty (Staryu, Starmie)
-   - Chapter 3 (Thunder Badge): S.S. Anne (HM01 Cut) -> Vermilion City Gym Leader Lt. Surge (Voltorb, Pikachu, Raichu)
-   - Chapter 4 (Rainbow Badge): Rock Tunnel -> Celadon City -> Rocket Hideout -> Gym Leader Erika (Victreebel, Tangela, Vileplume)
-   - Chapter 5 (Soul Badge): Pokémon Tower (Silph Scope) -> Cycling Road -> Fuchsia City -> Safari Zone (HM03 Surf) -> Gym Leader Koga (Koffing, Muk, Weezing)
-   - Chapter 6 (Marsh Badge): Silph Co. (Master Ball, Rival battle) -> Saffron City Gym Leader Sabrina (Kadabra, Mr. Mime, Venomoth, Alakazam)
-   - Chapter 7 (Volcano Badge): Route 19 -> Cinnabar Island -> Pokémon Mansion (Secret Key) -> Gym Leader Blaine (Growlithe, Ponyta, Rapidash, Arcanine)
-   - Chapter 8 (Earth Badge): Viridian Gym -> Team Rocket Boss Giovanni (Rhyhorn, Dugtrio, Nidoqueen, Nidoking, Rhydon)
-   - Grand Finale (Indigo Plateau): Victory Road -> Elite Four (Lorelei, Bruno, Agatha, Lance) -> Champion Blue -> Hall of Fame!
-
-2. Dual-Process Cognitive Split:
-   - System 1 (Local Fast System 1, ~1.0 ms): Evaluates every turn on the metal in real time ($0 cost, 0 egress).
-     Chooses super-effective moves, applies potions, and auto-flees from random wild encounters.
-   - System 2 (Campaign Planner): Handles route waypoints, dungeon navigation, badge objectives, and HM puzzle gating.
-   - Conformal Safety: Flags ambiguity when facing unfamiliar Gym Leader aces, halting the emulator and triggering System 2 tactical directives.
-
-3. Live Terminal Spectator HUD:
-   - Live ASCII Retro Game Boy screen updating as the agent moves and fights.
-   - Live 8-Badge Trophy Board:
-     [🏆 Boulder] [🏆 Cascade] [🏆 Thunder] [🏆 Rainbow] [🏆 Soul] [🏆 Marsh] [🏆 Volcano] [🏆 Earth]
-   - Party Pokémon roster, current levels, moves, and HP bars.
-   - Playback speed controls: --speed {normal, fast, turbo, instant}.
-
-4. System 1 Compiler & Zero-Dependency Invariant:
-   - Compiles campaign battle heuristics into a static < 20 KB .s1m model running in pure NumPy.
-
-5. Real ROM & PyBoy Support:
-   - Connects to PyBoy Game Boy memory when installed, with seamless pure-NumPy fallback.
-"""
+Navigation, levels and milestones are assigned by the demonstration. Saved
+skills and real adapter promotion state can be exercised in battle decisions.
+Optional PyBoy integration does not establish complete autonomous game control,
+a verified campaign completion or a speed record."""
 
 from __future__ import annotations
 

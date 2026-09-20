@@ -1,13 +1,8 @@
-"""Tier 0 Semantic System 1 Cache (L1 Vector & Exact Match Cache).
+"""In-memory exact and vector cache primitives using NumPy and the standard library.
 
-In-memory, sub-millisecond L1 cache for SystemOneEngine and CompiledSystemOneModel:
-1. Exact Match Index: O(1) hash table lookup for identical prompts/telemetry (<0.005ms).
-2. Semantic Vector Index: Matrix-vector cosine similarity search over cached embeddings
-   for near-identical edge cases (cosine similarity >= tau, default tau=0.98) (<0.03ms).
-3. Certified Execution: Bypasses forward pass and conformal ambiguity halts for certified
-   prior Tier 2 resolutions and high-confidence evaluations.
-4. Pure NumPy & Standard Library: Zero external vector database or disk dependencies.
-"""
+Callers bind reuse to input, model, calibration, telemetry and policy context.
+Compiled inference uses exact matching; nearby text is not interchangeable.
+A cache entry does not certify execution or supply independent calibration data."""
 
 from __future__ import annotations
 

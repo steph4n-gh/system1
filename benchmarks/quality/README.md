@@ -40,7 +40,7 @@ checks saved/reloaded behavior. The command exits unsuccessfully if any skill
 misses 95% accepted correctness or 80% acceptance on these authored cases.
 
 See the [1.0 evidence and limitations](../../docs/releases/1.0.md),
-[recorded results](results/stable_release.json), and
+[current primary results](results/release_1_0_1.json), [original 1.0 results](results/stable_release.json), and
 [data and development history](../../examples/teaching/README.md).
 These point-estimate targets do not certify population accuracy. The seed and
 five-fold results below are retained as historical 0.2.2 comparisons.
@@ -67,9 +67,9 @@ measures the existing hybrid text projector. See the
 [results and limitations](zero_shot/README.md): game-policy improvements are
 reported separately from raw classifier quality.
 
-## Overview
+## Historical seed benchmarks
 
-This benchmark suite measures the **decision quality** (accuracy, precision, recall, F1, MAE, RMSE, correlation) of the System 1 non-autoregressive decision engine. It complements the existing latency benchmarks by providing the first published accuracy/quality metrics.
+The remainder of this page describes the original 0.2.2 development benchmarks. Recorded values are historical snapshots; rerunning with current code can differ. The public-workload and release evaluations above are the current evidence entry points.
 
 ## Benchmarks
 
@@ -186,7 +186,7 @@ benchmarks/quality/
 
 ## Schemas
 
-The benchmark schemas mirror the patterns from `examples/support_triage.py` and `examples/autonomous_agent_firewall_showcase.py`:
+The historical benchmark schemas use field types also demonstrated by `examples/support_triage.py` and `examples/autonomous_agent_firewall_showcase.py`:
 
 - **SecurityTriageSchema**: `ChoiceField` with 3 options (ALLOW/QUARANTINE/BLOCK) and detailed multi-line descriptions per option
 - **IntentRoutingSchema**: `ChoiceField` with 4 options (technical_support/billing/sales/escalate) with detailed descriptions
@@ -201,7 +201,7 @@ The benchmark schemas mirror the patterns from `examples/support_triage.py` and 
 | Recall | TP / (TP + FN) | How many actual examples of a class were found |
 | F1 | 2 × P × R / (P + R) | Harmonic mean of precision and recall |
 | Macro-F1 | mean(F1 per class) | Unweighted average across classes |
-| Micro-F1 | F1 on aggregated TP/FP/FN | Weighted by class frequency |
-| MAE | mean(|actual - predicted|) | Average absolute prediction error |
+| Micro-F1 | F1 on aggregated TP/FP/FN | Aggregate counts; equals accuracy for single-label multiclass classification |
+| MAE | mean(abs(actual - predicted)) | Average absolute prediction error |
 | RMSE | √mean((actual - predicted)²) | Root mean square error |
 | Pearson r | correlation coefficient | Linear correlation between predicted and actual |

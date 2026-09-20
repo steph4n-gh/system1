@@ -1,34 +1,9 @@
 #!/usr/bin/env python3
-"""The main battle policy is a damage heuristic with minimax fallback. Online opponent updates are not wired into the supplied loops; no ladder performance is established.
+"""Experimental Showdown damage policy, minimax fallback and transport adapters.
 
-Pokémon Showdown Competitive Ladder (#1 Peak Elo Bot): System 1 System 1 Engine.
-
-Implements an autonomous, sub-millisecond competitive agent for Pokémon Showdown
-connecting via WebSocket (to `wss://sim3.psim.us/showdown/websocket` or local simulator)
-for Gen 1 OU format battles.
-
-Key Pillars:
-1. WebSocket Client & Protocol Engine:
-   - Connects to Pokémon Showdown (`sim3.psim.us`), parses challenge strings, joins Gen 1 OU
-     ladder queues (`/search gen1ou`), parses `|request|` JSON game states, and dispatches actions.
-   - High-fidelity offline Mock Showdown Server for deterministic local testing.
-2. Gen 1 OU Format & Damage Matrix:
-   - Complete stats and mechanics for competitive staples: Tauros, Snorlax, Chansey, Alakazam,
-     Exeggutor, Starmie, Cloyster, Gengar, Rhydon, Zapdos, Jynx, Lapras, Jolteon.
-   - Exact Gen 1 damage calculation: STAB, physical/special split, Gen 1 type charts (Psychic immune
-     to Ghost), speed-based critical hit rate ($P = \\text{BaseSpeed}/512$), and 217-255 damage rolls.
-   - Sub-millisecond evaluation in pure NumPy BLAS.
-3. Conformal Safety Gate:
-   - Detects 50/50 prediction turns (e.g. Tauros vs Tauros Body Slam vs Hyper Beam, or Explosion
-     reads, or switch vs stay-in). Halts System 1 when action ambiguity set size >= 2.
-4. System 2 Yomi Prediction Engine:
-   - Levels 0, 1, and 2 minimax game theory prediction over opponent moves and switch decisions.
-5. Sherman-Morrison Distillation:
-   - Online adaptive Recursive Least Squares (RLS) rank-1 distillation of opponent tendencies
-     (switch frequency, aggression, status bias) updating in $O(d^2)$ per turn without matrix inversion.
-6. Cryptographic Audit Receipts:
-   - Signs each turn decision with Ed25519 key and appends to an ActionLedger.
-"""
+The main policy is handwritten and its ambiguity threshold is heuristic, not
+fitted conformal calibration. Opponent-update helpers are not wired into the
+supplied loops; live parsing is partial. No ladder ranking is established."""
 
 from __future__ import annotations
 
@@ -450,7 +425,7 @@ class ShowdownBattleState:
 # ============================================================================
 
 class ShowdownBattleSystemOneAgent:
-    """Master agent combining System 1 fast damage reflex, Conformal Safety Gate, and System 2 Yomi."""
+    """Master agent combining System 1 fast damage reflex, Heuristic Ambiguity Gate, and System 2 Yomi."""
 
     def __init__(self, conformal_threshold: float = 0.15) -> None:
         self.conformal_threshold = conformal_threshold
@@ -540,14 +515,14 @@ class ShowdownBattleSystemOneAgent:
             self.ledger.record_decision_receipt(receipt)
             return f"/choose move {top_move['slot']}", top_move["slot"], 0, latency_ms, receipt
 
-        # 3. Conformal Safety Gate: Detect 50/50 Prediction Turn
+        # 3. Heuristic Ambiguity Gate: Detect 50/50 Prediction Turn
         # Close expected damage between top 2 moves, or opponent threat
         score_diff = abs(top_move["exp_dmg"] - second_move["exp_dmg"]) / max(1.0, top_move["exp_dmg"])
         is_50_50_fork = score_diff < self.conformal_threshold
 
         yomi_level = 0
         if is_50_50_fork:
-            # Conformal Safety Gate TRIGGERS -> Escalate to System 2 Yomi Planner!
+            # Heuristic Ambiguity Gate TRIGGERS -> Escalate to System 2 Yomi Planner!
             opp_features = self.opponent_model.extract_features(
                 opponent_hp_pct=opp_pkmn.hp_percent,
                 type_disadvantage=1.0 if get_gen1_type_multiplier("Normal", opp_pkmn.types) > 1.0 else 0.0,

@@ -14,7 +14,7 @@ Measures:
 2. Headless Frame Stepping Throughput (Hardware CPU/PPU frame rate in FPS via PyBoy).
 3. RAM Memory Bridge Extraction Integrity (HP, Max HP, Level, Moves, PP, Status, Species, Coordinates).
 4. System 1 System 1 Inference Performance (Forward pass & E2E latency in microseconds, QPS, Sub-1ms verification).
-5. Conformal Safety Evaluation (Conformal set size, ambiguity halt rate, System 2 cognitive escalations).
+5. Returned uncertainty and review signals; not a proof of safe or successful gameplay.
 """
 
 from __future__ import annotations
@@ -595,7 +595,7 @@ def format_ansi_comparison_table(results: List[SingleGameBenchmarkResult]) -> st
         plat_display = c.platform
         rom_display = f"{c.rom_size_kb // 1024} MB" if c.rom_size_kb >= 1024 else f"{c.rom_size_kb} KB"
         fps_display = f"{r.headless_fps:>8.1f} FPS"
-        
+
         if m.passed:
             ram_display = f"{GREEN}✓ PASS (10/10){RESET}"
             total_integrity_passed += 1

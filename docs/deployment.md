@@ -1,6 +1,6 @@
 # Deployment boundaries and release limitations
 
-System 1 1.0 stabilizes the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. The supported release claims are documented with [measured release evidence](releases/1.0.md). Earlier research manuscripts and graphics contain historical or illustrative measurements; they are not deployment guarantees.
+System 1 1.0.1 supports the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. See the [current release evidence](releases/1.0.1.md) and subsequent [public-workload evaluation](../benchmarks/quality/workloads/README.md). Current papers describe these same boundaries; earlier release reports retain their version-specific measurements.
 
 ## Deterministic tool authorization
 
@@ -14,7 +14,7 @@ Default/diagnostic guard mode can grant permission through a sufficiently calibr
 
 ## Statistical limits
 
-The seed projector uses local features and schema descriptions. The included security-triage benchmark achieves 50% raw accuracy, including 8 of 35 BLOCK examples classified as ALLOW. This is evidence that the seed classifier must not be used as a standalone security boundary. The benchmark does not measure the error rate of the separate deterministic guard.
+The seed projector uses local features and schema descriptions. The recorded historical 0.2.2 security-triage benchmark achieved 50% raw accuracy, including 8 of 35 BLOCK examples classified as ALLOW. This is evidence that the seed classifier must not be used as a standalone security boundary. The benchmark does not measure the error rate of the separate deterministic guard.
 
 Split-conformal coverage requires calibration examples and future examples to be exchangeable, with the scoring model fixed independently of the conformal calibration fold. Its finite-sample guarantee concerns marginal membership of the true label in a prediction set. It does not guarantee correctness conditional on accepting a singleton, simultaneous coverage across every field, or adversarial robustness. An empty set is an abstention signal, not proof of distribution shift. See [Angelopoulos and Bates](https://arxiv.org/abs/2107.07511).
 
@@ -48,10 +48,10 @@ The wrappers are adapters rather than a complete agent host or MCP authenticatio
 
 The CLI server binds to loopback by default using insecure gRPC transport. It has no built-in caller authentication or TLS, and the CLI does not configure a persistent signing key, ledger, or deterministic policy. Keep diagnostic instances local. A service deployment needs an authenticated transport boundary and explicit application configuration through `system1.grpc_server.serve(...)`.
 
-No maintained Docker image, Kubernetes manifests, HSM integration, or hardware enclave attestation is included in this release.
+Experimental [Docker and Kubernetes templates](../deploy/README.md) are included. No published container image, authenticated service configuration, HSM integration or hardware enclave attestation is supplied.
 
 ## Performance and optional backends
 
-Sub-millisecond timings in the recorded run are median decision timings for small seed-model workloads. They do not include durable authorization, complete tool execution, or network services. Measure whole-operation latency and throughput on your own hardware; the ledger's integrity checks can grow with ledger history.
+Sub-millisecond timings in the recorded runs are median decisions for the specific seed or taught workloads, with their measurement settings disclosed. They do not include durable authorization, complete tool execution, or network services. Measure whole-operation latency and throughput on your own hardware; the ledger's integrity checks can grow with ledger history.
 
 The base package uses NumPy and cryptography. MLX acceleration, neural-head experiments, gaming environments, and Game Boy emulation remain experimental and depend on platform support and user-provided assets. Their inclusion does not imply the stable core has learned those tasks. The `reflex` compatibility namespace shares a name with a separate web framework; avoid installing both distributions in the same environment.

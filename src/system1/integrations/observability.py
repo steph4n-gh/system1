@@ -6,7 +6,7 @@ rates, cache-hit ratios, conformal-set sizes, and ledger depth.
 
 Requires the optional ``prometheus_client`` package::
 
-    pip install system1[observability]
+    python -m pip install 'system1[observability]'
 """
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ class SystemOneMetricsExporter:
         # --- Gauges ---
         self.cache_hit_ratio = Gauge(
             "system1_cache_hit_ratio",
-            "Rolling ratio of cache hits to total decisions.",
+            "Cumulative ratio of cache hits to total decisions since exporter creation.",
             registry=self._registry,
         )
 
@@ -156,7 +156,7 @@ class SystemOneMetricsExporter:
             reason = self._classify_escalation_reason(result)
             self.escalations_total.labels(schema=schema_name, reason=reason).inc()
 
-        # Cache-hit ratio (rolling)
+        # Cache-hit ratio since exporter creation
         with self._lock:
             self._total_decisions += 1
             if cache_hit:

@@ -272,15 +272,14 @@ class CompiledSystemOneModel:
         forgetting_factor: Optional[float] = None,
         recency_weighted: Optional[bool] = None,
     ) -> Dict[str, Any]:
-        """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
+        """Apply an optional online correction and invalidate changed calibration.
 
-        Permanently adapts decision hyperplanes for resolved edge cases and updates the
-        Tier 0 Semantic System 1 Cache for sub-0.05ms certified execution on repeat edge cases.
-        """
+        Separate recalibration is needed before strict local acceptance. Retaining
+        examples and recompiling is the simplest reproducible update workflow."""
         with self._lock:
             t0 = time.perf_counter()
 
-            # Bump model_version and evict prompt before certified evaluation
+            # Bump model_version and evict prompt before reevaluation
             self.model_version = getattr(self, "model_version", 1) + 1
             if self.use_cache and self.cache is not None:
                 if hasattr(self.cache, "evict_prompt"):

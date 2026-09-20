@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-"""CLI script to launch Universal Paperclips World Record Speedrun.
+"""Launch the handwritten Paperclips policy in mock or optional browser mode.
 
-Supports Playwright Chromium live web automation against https://www.decisionproblem.com/paperclips/index2.html
-or high-speed deterministic mock simulation.
-"""
+No verified speed record or learned game-control result is claimed."""
 
 from __future__ import annotations
 

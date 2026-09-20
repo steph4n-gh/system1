@@ -1,195 +1,123 @@
-# System 1 Observability Guide
+# Observability
 
-Production monitoring for the System 1 decision engine via **Prometheus** metrics and **OpenTelemetry** distributed tracing.
+Optional Prometheus metrics and OpenTelemetry spans describe decisions and review
+signals. They do not measure whether an external teacher or human completed a
+review. Starting a metrics server or configuring a remote exporter changes the
+application's network behavior.
 
-## Installation
+## Install
 
 ```bash
-# Prometheus metrics endpoint
-pip install system1[observability]
-
-# OpenTelemetry tracing
-pip install system1[otel]
-
-# Both
-pip install system1[observability,otel]
+python -m pip install 'system1[observability,otel]'
 ```
 
----
+Use just `system1[observability]` or `system1[otel]` if only one is needed. The
+base package does not require these dependencies.
 
-## Prometheus Metrics
+## Prometheus
 
-### Quick Start
+This self-contained example instruments a diagnostic schema; without teaching
+and calibration it should request review. Substitute your validated engine for
+application use.
 
 ```python
-from system1.engine import SystemOneEngine
+from system1 import ChoiceField, DecisionSchema, System1Engine
 from system1.integrations.observability import SystemOneMetricsExporter
 
-# 1. Create your engine
-engine = SystemOneEngine(MySchema)
+class Route(DecisionSchema):
+    queue = ChoiceField(options=["billing", "support"])
 
-# 2. Attach metrics exporter (wraps engine.decide automatically)
+engine = System1Engine(Route, strict_mode=True)
 metrics = SystemOneMetricsExporter()
 metrics.instrument(engine)
-
-# 3. Start the /metrics HTTP server (default port 9090)
-metrics.start_server(port=9090)
-
-# 4. Use the engine as normal — all decisions are tracked
-result = engine.decide("Is this action safe?")
+result = engine.decide("Please correct my invoice")
+print("Needs review:", result.is_ambiguous)
 ```
 
-### Available Metrics
-
-| Metric | Type | Labels | Description |
-|---|---|---|---|
-| `system1_decisions_total` | Counter | `schema`, `outcome`, `cache_hit` | Total decisions evaluated |
-| `system1_decision_latency_seconds` | Histogram | `schema` | Evaluation latency (sub-ms buckets) |
-| `system1_escalations_total` | Counter | `schema`, `reason` | Escalated decisions count |
-| `system1_cache_hit_ratio` | Gauge | — | Rolling cache hit ratio (0–1) |
-| `system1_conformal_set_size` | Histogram | `schema` | Conformal prediction set sizes |
-| `system1_ledger_entries_total` | Gauge | — | Current ActionLedger depth |
-
-### Histogram Buckets
-
-The latency histogram uses sub-millisecond buckets tuned for System 1's performance profile:
-
-```
-0.0001s, 0.0005s, 0.001s, 0.005s, 0.01s, 0.05s, 0.1s, 1.0s
-```
-
-### Prometheus Scrape Config
-
-Add to your `prometheus.yml`:
+To expose `/metrics`, call `metrics.start_server(port=9090)` and keep your
+application running. It uses `prometheus_client.start_http_server`'s default
+listen address; restrict network access through your deployment boundary. It
+provides no authentication. Example scrape configuration:
 
 ```yaml
 scrape_configs:
-  - job_name: 'reflex'
+  - job_name: system1
     scrape_interval: 15s
     static_configs:
       - targets: ['localhost:9090']
 ```
 
-### Manual Recording
+| Metric | Type | Labels | Meaning |
+|---|---|---|---|
+| `system1_decisions_total` | Counter | `schema`, `outcome`, `cache_hit` | Instrumented decision calls; outcome is the first returned field's value |
+| `system1_decision_latency_seconds` | Histogram | `schema` | The result's reported decision latency, converted from milliseconds |
+| `system1_escalations_total` | Counter | `schema`, `reason` | Decisions flagged for review, not completed external escalations |
+| `system1_cache_hit_ratio` | Gauge | None | Cumulative hits divided by decisions since exporter creation |
+| `system1_conformal_set_size` | Histogram | `schema` | Set sizes recorded across fields |
+| `system1_ledger_entries_total` | Gauge | None | Last observed ledger sequence/depth |
 
-If you prefer not to use `instrument()`, record decisions manually:
+Latency buckets are 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1 and 1.0 seconds.
+The reason labels `ambiguous`, `low_margin` and `ood` come from an internal
+heuristic; `ood` is not an independently calibrated distribution-shift detector.
+Do not interpret this histogram as full request, durable authorization or tool
+execution latency. Limit schema/outcome cardinality in your application.
+
+For manual recording instead of wrapping `decide()`:
 
 ```python
-metrics = SystemOneMetricsExporter()
-result = engine.decide("route this query")
-
 metrics.record_decision(
     result=result,
-    schema_name="RoutingSchema",
+    schema_name=result.schema_name,
     cache_hit=result.is_cache_hit,
     escalated=result.is_ambiguous,
 )
 ```
 
-### Ledger Gauge
+Do not also manually record the same call after instrumentation. The wrapper
+updates the ledger gauge on a best-effort basis if the engine has a ledger;
+otherwise call `metrics.update_ledger_gauge(ledger.audit_head()[0])` yourself.
+A ledger-read failure can leave the previous gauge value in place.
 
-The ledger entries gauge is updated automatically when using `instrument()`, or manually:
+## OpenTelemetry
 
-```python
-metrics.update_ledger_gauge(ledger.audit_head()[0])
-```
-
----
-
-## OpenTelemetry Tracing
-
-### Quick Start
+A self-contained console example:
 
 ```python
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-
-from system1.engine import SystemOneEngine
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+from system1 import ChoiceField, DecisionSchema, System1Engine
 from system1.integrations.otel import SystemOneOTelInstrumentor
 
-# 1. Configure OTel (example: console exporter)
+class Route(DecisionSchema):
+    queue = ChoiceField(options=["billing", "support"])
+
 provider = TracerProvider()
 provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
-
-# 2. Instrument the engine
-engine = SystemOneEngine(MySchema)
-instrumentor = SystemOneOTelInstrumentor(tracer_provider=provider)
-instrumentor.instrument(engine)
-
-# 3. Decisions now emit spans automatically
-result = engine.decide("Classify this input")
+engine = System1Engine(Route, strict_mode=True)
+SystemOneOTelInstrumentor(tracer_provider=provider).instrument(engine)
+engine.decide("Please correct my invoice")
+provider.shutdown()
 ```
 
-### Span Attributes
+The legacy `reflex.*` telemetry names are retained for compatibility:
+`reflex.schema`, `reflex.latency_ms`, `reflex.latency_seconds`, `reflex.outcome`,
+`reflex.cache_hit`, `reflex.is_ambiguous` and `reflex.conformal_set_size_max`.
+The span name is `reflex.decide.<schema>`. An ambiguity flag represents a review
+request, not proof that another service was called.
 
-Each decision span includes:
+Remote OTLP export additionally requires a separately installed exporter, for
+example `python -m pip install opentelemetry-exporter-otlp-proto-grpc`. That package
+is not part of `system1[otel]`. Configure its collector, transport and access
+controls in your application. Metrics and OTel can wrap the same engine; attach
+each once to avoid duplicate instrumentation.
 
-| Attribute | Type | Description |
-|---|---|---|
-| `reflex.schema` | string | Schema name |
-| `reflex.latency_ms` | float | Decision latency in milliseconds |
-| `reflex.latency_seconds` | float | Decision latency in seconds |
-| `reflex.outcome` | string | Top-level choice value |
-| `reflex.cache_hit` | bool | Whether the result was a cache hit |
-| `reflex.is_ambiguous` | bool | Whether the decision was escalated |
-| `reflex.conformal_set_size_max` | int | Largest conformal prediction set |
+## Dashboard
 
-### Exporting to Jaeger / OTLP
+Import [grafana-dashboard.json](grafana-dashboard.json) and select your Prometheus
+data source. It includes latency quantiles, decisions/second, review-signal rates,
+cumulative cache hit ratio, conformal-set buckets and ledger depth. Its legacy
+`reflex-decision-engine` UID is retained so an import can update an existing dashboard.
 
-```python
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-
-provider = TracerProvider()
-provider.add_span_processor(
-    SimpleSpanProcessor(OTLPSpanExporter(endpoint="http://localhost:4317"))
-)
-```
-
----
-
-## Combining Both
-
-Both instrumentors can wrap the same engine. They compose cleanly:
-
-```python
-metrics = SystemOneMetricsExporter()
-otel = SystemOneOTelInstrumentor(tracer_provider=provider)
-
-# Order doesn't matter
-metrics.instrument(engine)
-otel.instrument(engine)
-
-metrics.start_server(port=9090)
-```
-
----
-
-## Grafana Dashboard
-
-Import the included dashboard template:
-
-1. Open Grafana → Dashboards → Import
-2. Upload `grafana-dashboard.json` from this directory
-3. Select your Prometheus data source
-
-The dashboard includes panels for:
-- **Decision latency histogram** — P50/P90/P99 latency over time
-- **Decisions per second** — Rate of evaluated decisions
-- **Escalation rate** — Escalations by reason (ambiguous, low_margin, ood)
-- **Cache hit ratio** — Rolling gauge
-- **Conformal set size distribution** — Histogram quantiles
-
----
-
-## Architecture
-
-```
-┌──────────────────┐     ┌─────────────────────┐
-│  SystemOneEngine    │────▶│ SystemOneMetricsExporter│────▶ /metrics :9090
-│  .decide()       │     │  (Prometheus)        │       ↓
-│                  │     └─────────────────────┘   Prometheus
-│                  │     ┌─────────────────────┐       ↓
-│                  │────▶│ SystemOneOTelInstrumentor│    Grafana
-│                  │     │  (OpenTelemetry)     │────▶ Jaeger / OTLP
-└──────────────────┘     └─────────────────────┘
-```
+[Implementation](../../src/system1/integrations/observability.py) ·
+[Tracing implementation](../../src/system1/integrations/otel.py) ·
+[Deployment boundaries](../deployment.md).

@@ -1,5 +1,7 @@
 # Teaching close distinctions
 
+> Historical contrast-round snapshot. Later routing calibration and [1.0.1 results](../../docs/releases/1.0.1.md) supersede the routing acceptance counts below. The comparison runner intentionally reconstructs this snapshot.
+
 This round changes the teaching examples, with no new dependencies, runtime
 algorithm, calibration data, or compiler settings. The ordinary example commands
 automatically use the additional lessons:

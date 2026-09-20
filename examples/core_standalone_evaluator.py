@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """System 1 / System 1 Core: Standalone Non-Autoregressive Forward Evaluator.
 
-Demonstrates using `system1.core` as an ultra-lightweight, zero-overhead standalone
+Demonstrates using `system1.core` as an NumPy-only standalone
 library requiring ONLY NumPy (with optional Apple Silicon Metal MLX acceleration):
 - ZERO dependencies on cryptography (Ed25519 signing / receipts)
 - ZERO dependencies on SQLite / disk I/O (ActionLedger)
@@ -73,14 +73,14 @@ def main():
     print("  SYSTEM 1 CORE: STANDALONE NON-AUTOREGRESSIVE FORWARD EVALUATOR")
     print("=" * 80)
 
-    # 1. Verify zero-dependency footprint
+    # 1. Verify isolated dependency footprint
     loaded_crypto = [m for m in sys.modules if "cryptography" in m]
     loaded_sqlite = [m for m in sys.modules if "sqlite3" in m]
     print(f"[*] Cryptography loaded: {bool(loaded_crypto)} ({len(loaded_crypto)} modules)")
     print(f"[*] SQLite3 loaded:      {bool(loaded_sqlite)} ({len(loaded_sqlite)} modules)")
     assert not loaded_crypto, "Cryptography should NOT be loaded in standalone core"
     assert not loaded_sqlite, "SQLite should NOT be loaded in standalone core"
-    print("[✓] Verified pure zero-dependency isolation (NumPy only)\n")
+    print("[✓] Verified core isolation (NumPy only)\n")
 
     # 2. Instantiate Model
     print("[*] Initializing SystemOneModel on GatewayRoutingSchema...")

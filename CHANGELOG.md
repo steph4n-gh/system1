@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Publish three fixed public-data workload evaluations and actual Jev/Gemini takeover records, including unsuccessful promotions and a classical baseline. All teacher recordings replay offline; no new runtime dependency.
+- Synchronize the README, guides, architecture and papers with 1.0.1 behavior and current evidence. Separate historical reports from current instructions, correct example output claims, and retire unsupported promotional graphics.
+- Clarify experimental container templates and repair their binding/probe instructions. Add lightweight documentation link/version checks to CI.
+- Make the concurrent-cutover regression independent of teaching-fold arrival order while retaining 50 simultaneous callers and ledger checks.
+
 ## 1.0.1 — 2026-09-19
 
 - Add 60 routing calibration cases that move two of three previously accepted mistakes to review, preserving fitted weights and raw predictions. Retain the fresh 48-case result that still misses the 95% accepted-correctness target.

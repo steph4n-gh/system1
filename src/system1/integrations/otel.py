@@ -5,7 +5,7 @@ latency, outcome, schema name, and cache-hit status as span attributes.
 
 Requires the optional ``opentelemetry-api`` and ``opentelemetry-sdk`` packages::
 
-    pip install system1[otel]
+    python -m pip install 'system1[otel]'
 """
 
 from __future__ import annotations

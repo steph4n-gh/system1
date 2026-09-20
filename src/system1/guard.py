@@ -1,9 +1,8 @@
-"""System 1 Fail-Closed Reference Monitor & Guard Hook.
+"""Application-level policy guard and optional signed audit evidence.
 
-Binds System 1 decision outputs into a hardware-enforced fail-closed Reference Monitor
-and ActionLedger. Guarantees that ambiguous, low-confidence, or unsafe decisions
-fail-closed to REQUIRE_APPROVAL or DENY.
-"""
+Enforcement mode requires explicit grants, a signing key and durable ledger.
+Applications authenticate principals and enforce returned decisions at the tool
+boundary. This in-process hook is not a hardware sandbox or security detector."""
 
 from __future__ import annotations
 
@@ -709,15 +708,11 @@ _DEFAULT_GUARD_CALIBRATION = [
 
 
 class SystemOneGuardHook:
-    """Fail-closed reference monitor hook driven by System 1 decisions.
+    """Evaluate explicit policies and optionally statistical review signals.
 
-    Guarantees:
-    1. Unsafe evaluation -> immediate DENY.
-    2. Conformal ambiguity (|C(x)| > 1) -> REQUIRE_APPROVAL.
-    3. Low calibrated confidence (< min_confidence) -> REQUIRE_APPROVAL.
-    4. Out-of-distribution (|C(x)| == 0) -> REQUIRE_APPROVAL.
-    5. Proof-carrying Ed25519 receipt bound to ActionLedger.
-    """
+    Use enforcement_profile=True for deterministic tool permissions. Diagnostic
+    mode can allow through the classifier; uncertain/low-confidence results request
+    review. An empty prediction set is not proof of distribution shift."""
 
     def __init__(
         self,
@@ -832,7 +827,7 @@ class SystemOneGuardHook:
         pol_eval = None
         if self.policy is not None:
             pol_eval = self.policy.evaluate(proposal)
-            
+
         if pol_eval is not None:
             p_outcome, p_risk, p_rule_id, p_reason = pol_eval
             pol_dec = self._build_policy_decision(

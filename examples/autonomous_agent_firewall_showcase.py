@@ -895,54 +895,24 @@ def render_conformal_human_escalation_audit(results: List[Dict[str, Any]], alpha
     print("-" * 116)
     print(f"  Coverage on these demonstration cases: {empirical_coverage:.1f}% (configured target: {(1 - alpha) * 100:.1f}%; not a guarantee for this simulation)")
     print(f"  Conformal Ambiguity Rate:        {ambiguous_count}/{total_local} ({ambiguous_count / total_local * 100:.1f}%)")
-    print(f"  Human-in-the-Loop Interventions: {escalated_count}/{total_local} ({escalated_count / total_local * 100:.1f}%) - Borderline actions safely held")
+    print(f"  Human-in-the-Loop Interventions: {escalated_count}/{total_local} ({escalated_count / total_local * 100:.1f}%) - review flags; no human review executed")
     print("=" * 116)
 
 
 def render_summary_scorecard(results: List[Dict[str, Any]]) -> None:
-    cloud_results = [r for r in results if not r["local_execution"]]
-    local_results = [r for r in results if r["local_execution"]]
-
-    avg_cloud_lat = (sum(r["latency_ms"] for r in cloud_results) / len(cloud_results)) if cloud_results else 0.0
-    avg_local_lat = (sum(r["latency_ms"] for r in local_results) / len(local_results)) if local_results else 0.0
-
-    total_cloud_egress = sum(r["egress_bytes"] for r in cloud_results)
-    total_local_egress = sum(r["egress_bytes"] for r in local_results)
-
-    total_cloud_tokens = sum(r["total_tokens"] for r in cloud_results)
-    total_local_tokens = sum(r["total_tokens"] for r in local_results)
-
-    cloud_cost_usd = total_cloud_tokens * 0.000003
-    local_cost_usd = 0.0
-
-    if avg_cloud_lat > 0 and avg_local_lat > 0:
-        speedup_str = f"{avg_cloud_lat / avg_local_lat:.1f}x faster"
-    elif local_results:
-        speedup_str = "Sub-2ms local"
-    else:
-        speedup_str = "N/A"
-
-    cloud_lat_str = f"{avg_cloud_lat:>16.2f} ms" if cloud_results else "N/A"
-    local_lat_str = f"{avg_local_lat:>15.2f} ms" if local_results else "N/A"
-    avg_cloud_egress = int(total_cloud_egress / max(1, len(cloud_results))) if cloud_results else 0
-
-    print("\n" + "┌" + "─" * 92 + "┐")
-    print("│" + " " * 31 + "ENTERPRISE METRICS SCORECARD" + " " * 33 + "│")
-    print("├" + "─" * 92 + "┤")
-    print(f"│  Metric                          │ Cloud SaaS Proxy Phase   │ 100% Local System 1 System 1 │")
-    print("├──────────────────────────────────┼──────────────────────────┼────────────────────────────┤")
-    print(f"│  Average Decision Latency        │ {cloud_lat_str}   │ {local_lat_str}    │")
-    print(f"│  Measured Latency Speedup        │ {'Baseline (1.0x)':<24} │ {speedup_str:>26} │")
-    print(f"│  Data Egress per Decision        │ {avg_cloud_egress:>16} B     │ {0:>20} B    │")
-    print(f"│  Total Cumulative Data Egress    │ {total_cloud_egress:>16} B     │ {total_local_egress:>20} B    │")
-    print(f"│  Data Egress Reduction           │ {'0% (Full Payload)':<24} │ {'100.0% (Zero Egress Lock)':>26} │")
-    print(f"│  LLM Tokens Billed               │ {total_cloud_tokens:>16} tok   │ {total_local_tokens:>20} tok  │")
-    print(f"│  Inference Cost ($USD)           │ ${cloud_cost_usd:>15.5f}     │ ${local_cost_usd:>19.2f}    │")
-    print(f"│  Conformal Prediction Guarantees │ {'Not Available':<24} │ {'Finite-Sample (1-α)':>26} │")
-    print(f"│  Automated Human Escalation Gate │ {'Manual Review Queues':<24} │ {'Conformal Ambiguity Bound':>26} │")
-    print(f"│  Cryptographic Non-Repudiation   │ {'None (Plain JSON)':<24} │ {'Ed25519 Signed Receipts':>26} │")
-    print(f"│  Tamper-Evident Auditability     │ {'External Cloud Logs':<24} │ {'SQLite ActionLedger':>26} │")
-    print("└" + "─" * 92 + "┘\n")
+    print("\nDEMONSTRATION PHASE SUMMARY")
+    print("Teacher timings/usage may be simulated; phases contain different requests.")
+    print("No provider speedup, billing or quality guarantee is inferred.")
+    for local, name in ((False, "Teacher"), (True, "Local")):
+        rows = [r for r in results if bool(r["local_execution"]) == local]
+        if not rows:
+            print(f"  {name}: no decisions")
+            continue
+        latency = sum(r["latency_ms"] for r in rows) / len(rows)
+        verified = sum(bool(r.get("receipt_verified")) for r in rows)
+        print(f"  {name}: {len(rows)} decisions; mean reported latency {latency:.3f} ms; "
+              f"{verified} verified receipts")
+    print("Local computation and signed receipts do not imply accepted or correct answers.")
 
 
 # ============================================================================

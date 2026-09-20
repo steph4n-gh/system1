@@ -1,31 +1,9 @@
 #!/usr/bin/env python3
-"""This runner uses a handwritten three-phase policy. Timing is simulator/browser throughput, not learned control or a verified world record.
+"""Handwritten three-phase Paperclips policy with mock and browser controllers.
 
-Universal Paperclips Speedrun: Playwright / Chromium Autonomous World Record Engine.
-
-Achieves high-frequency (50-100 Hz) browser automation for Frank Lantz's 'Universal Paperclips'
-(https://www.decisionproblem.com/paperclips/index2.html) using Playwright / Chromium and System 1 System 1.
-
-Key Architecture:
-1. High-Frequency Browser Observation & Action Loop (50-100 Hz):
-   - Uses Playwright Chromium (headless or headed) with batched JavaScript state extraction
-     and sub-millisecond action dispatch.
-   - Fallback offline mock controller for deterministic air-gapped testing and CI verification.
-2. 3-Phase Optimal Control Policy:
-   - Phase 1 (Human Era): High-frequency manual clicking, dynamic elasticity price tuning,
-     wire inventory buffer, AutoClipper/MegaClipper ROI scaling, trust memory/processor allocation,
-     photonic peak quantum harvesting, tournament optimization ("Beat Last" / "Tit for Tat"),
-     and topological project prioritization up to "Release the HypnoDrones".
-   - Phase 2 (Earth Manufacturing): Balanced Harvester/Wire drone scaling, zero-deficit Solar/Battery
-     power grid management, Clip Factory throughput balancing, and facility disassembly for space launch.
-   - Phase 3 (Space Probes): Von Neumann probe swarm configuration, self-replication exponential expansion,
-     zero-wipe hazard remediation, drifter combat war response, and 100% universe conversion (30 Septendecillion clips).
-3. Split Timer & Milestone Logging:
-   - Benchmarked against Speedrun.com World Record pace across all 8 major milestones with live delta tracking.
-4. System 1 System 1 Conformal Ambiguity Gating:
-   - Sub-2ms local reflex evaluation with conformal prediction sets on critical decision forks.
-   - Signed Ed25519 decision witness receipts.
-"""
+The accelerated mock checks action-loop behavior, not real-game economics.
+The runner does not invoke a taught System 1 decision model or fitted conformal
+gate. Split targets are illustrative constants, not verified world records."""
 
 from __future__ import annotations
 
@@ -63,7 +41,7 @@ from system1.receipt import DecisionWitnessReceipt, create_decision_receipt, ver
 
 
 # ============================================================================
-# 1. World Record Split Timer & Milestone Tracker
+# 1. Illustrative Split Timer & Milestone Tracker
 # ============================================================================
 
 @dataclass
@@ -78,7 +56,7 @@ class SpeedrunSplit:
 
 @dataclass
 class PaperclipsSplitTimer:
-    """High-precision split timer benchmarked against Speedrun.com World Record pace."""
+    """Split timer against illustrative targets; target_wr_seconds is a legacy name."""
     splits: List[SpeedrunSplit] = field(default_factory=lambda: [
         SpeedrunSplit("s1_clips_1k", "First 1,000 Clips", 45.0),
         SpeedrunSplit("s2_trust_5", "Trust 5 (Compute Resources)", 135.0),
@@ -97,7 +75,7 @@ class PaperclipsSplitTimer:
         return time.perf_counter() - self.start_time
 
     def check_and_record_split(self, split_id: str, current_elapsed: Optional[float] = None) -> Optional[SpeedrunSplit]:
-        """Marks a split as completed if not already done and computes delta to WR."""
+        """Marks a split as completed if not already done and computes delta to its illustrative target."""
         now = current_elapsed if current_elapsed is not None else self.elapsed_seconds()
         for split in self.splits:
             if split.id == split_id and split.completed_time is None:
@@ -122,7 +100,7 @@ class PaperclipsSplitTimer:
             "┌" + "─" * total_inner + "┐",
             "│ " + "PAPERCLIPS SCRIPTED POLICY — REFERENCE SPLITS".center(total_inner - 2) + " │",
             "├" + "─" * w1 + "┬" + "─" * w2 + "┬" + "─" * w3 + "┬" + "─" * w4 + "┤",
-            f"│ {'Split Milestone':<{w1-2}} │ {'Target WR':>{w2-2}} │ {'Live Time':>{w3-2}} │ {'Live Delta':>{w4-2}} │",
+            f"│ {'Split Milestone':<{w1-2}} │ {'Demo target':>{w2-2}} │ {'Live Time':>{w3-2}} │ {'Live Delta':>{w4-2}} │",
             "├" + "─" * w1 + "┼" + "─" * w2 + "┼" + "─" * w3 + "┼" + "─" * w4 + "┤",
         ]
         for s in self.splits:

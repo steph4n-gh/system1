@@ -8,6 +8,6 @@ Include the affected version, configuration, expected boundary, reproduction ste
 
 ## Supported scope
 
-System 1 is in beta. Fixes target the latest release; older versions are not maintained as separate branches. Report failures in deterministic policy enforcement, signed receipt verification, ledger integrity, model loading, or integration dispatch.
+System 1 1.x has a stable core. Fixes target the latest release; older versions are not maintained as separate branches. Report failures in deterministic policy enforcement, signed receipt verification, ledger integrity, model loading, or integration dispatch.
 
 The statistical classifier is not a general-purpose security detector. The application supplies authenticated identity, isolates tools, protects policy and signing keys, and enforces returned decisions. Read [deployment boundaries](docs/deployment.md) before using the library for consequential actions.

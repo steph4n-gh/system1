@@ -4,7 +4,7 @@
 
 # System 1: Local Decision Runtime for AI Agents
 
-Teach a repeatable decision skill from examples or by observing a teacher such as Jev. Validate it, take over locally, and save the skill for reuse.
+Teach a repeatable decision skill from examples or by observing a teacher such as Jev or Gemini. Validate it, take over locally, and save the skill for reuse.
 
 [![CI](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg)](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/system1.svg)](https://pypi.org/project/system1/)
@@ -13,7 +13,7 @@ Teach a repeatable decision skill from examples or by observing a teacher such a
 
 **Version 1.0.1:** improved teaching examples, routing calibration, and game policies, plus a public banking-support dataset demo. The core remains teaching bounded decisions, validated local takeover, portable skills, and explicit tool policies. See the [results and remaining limits](docs/releases/1.0.1.md) and [1.0 migration guide](docs/releases/1.0.md).
 
-[Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [Limits and deployment](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
+[Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [All documentation](docs/README.md) · [Limits and deployment](docs/deployment.md) · [Contributing](CONTRIBUTING.md)
 
 ## What it does
 
@@ -195,7 +195,7 @@ python -m pip install 'system1[grpc]'
 system1 serve --grpc --host 127.0.0.1 --port 50051
 ```
 
-The bundled [protobuf contract](src/system1/proto/system1.proto) supports clients generated for other languages. The CLI server is a local diagnostic service with insecure gRPC transport. Configure signing, ledger, and policy through the Python `serve(...)` API for a custom deployment. The repository does not supply a published Docker image or Kubernetes manifests.
+The bundled [protobuf contract](src/system1/proto/system1.proto) supports clients generated for other languages. The CLI server is a local diagnostic service with insecure gRPC transport. Configure signing, ledger, and policy through the Python `serve(...)` API for a custom deployment. The repository includes experimental [container and Kubernetes templates](deploy/README.md), but does not supply a published image or an authenticated service.
 
 ### Observability
 
@@ -211,24 +211,28 @@ python benchmarks/quality/evaluate_release.py
 
 This command uses saved real responses and blocks network access during local evaluation. It exits unsuccessfully if any primary skill misses 95% accepted accuracy or 80% acceptance. These are observed demonstration targets, not population guarantees.
 
-The following **historical 0.2.2 seed-model measurements** remain available for comparison:
+The [public-data workload evaluation](benchmarks/quality/workloads/README.md)
+measures three bounded tasks on **1,301 unseen cases**, with settings and splits
+fixed before the new evaluations:
 
-```bash
-python benchmarks/quality/run_quality_benchmarks.py
-system1 bench --schema triage --iterations 200 --json
-```
+| Explicitly taught skill | Accepted locally | Correct among accepted | Median local decision |
+|---|---:|---:|---:|
+| Banking support, three intents | 118/120 (98.3%) | 115/118 (97.5%) | 0.378 ms |
+| Assistant commands, six intents | 173/180 (96.1%) | 172/173 (99.4%) | 0.344 ms |
+| SMS spam triage | 980/1,001 (97.9%) | 957/980 (97.7%) | 0.444 ms |
 
-The 100-example datasets are small, repository-authored evaluations, not independent security certifications. The launch-review run measured:
+Teaching plus calibration took 0.23–1.77 seconds after labeled data existed;
+saved skills were 20.4–47.0 KiB. These timings exclude data preparation, startup,
+receipts and downstream actions. A TF-IDF/logistic-regression baseline matched raw
+correctness on banking and assistant, scored lower on SMS, and ran faster locally
+on all three. The report retains every error and the unsuccessful banking/SMS
+automatic-takeover experiments. Explicit teaching and automatic observation use
+different evidence partitions and settings.
 
-| Task | Overall quality | Additional metric | Median latency |
-|---|---|---|---|
-| Security triage | 50% accuracy; 0.486 macro-F1 | BLOCK recall: 0.371 | 0.410 ms |
-| Intent routing | 51% accuracy; 0.495 macro-F1 | Billing F1: 0.653 | 0.488 ms |
-| Threat scoring, 0–10 | MAE: 3.068; RMSE: 3.480 | Pearson r: 0.309 | 0.469 ms |
-
-See the [recorded results and environment](benchmarks/quality/results/launch_review.json) and [methodology](benchmarks/quality/README.md). These are raw classification results, not the accuracy of authorized tool actions. Latency is workload- and hardware-dependent; these measurements do not establish durable end-to-end authorization latency or a service-level guarantee. No cloud providers were measured in this run.
-
-Teaching from the existing examples improves raw accuracy in a separate five-fold development check: intent routing reaches 68% and security triage 71% with 2048 features. In that recorded pre-1.0 run, both required review on every case under strict uncertainty gating; their calibration sets are too small. This is evidence that examples help, not release acceptance evidence. See the [teaching comparison](benchmarks/quality/README.md#teaching-comparison) for default-dimension results, protocol, and limitations.
+The [historical seed and teaching comparisons](benchmarks/quality/README.md#historical-seed-benchmarks)
+remain available. In the recorded 0.2.2 seed run, security-triage and intent-routing
+raw accuracy were only 50% and 51%; raw predictions are not safe tool permissions.
+Use task-specific teaching and evaluation before relying on a skill.
 
 Conformal coverage applies to prediction sets under exchangeability and appropriate held-out calibration. It does not guarantee that a singleton prediction is safe, control the error rate conditional on local acceptance, or imply a particular local-retention percentage. Distribution shift and model updates require reevaluation. See [limits](docs/deployment.md#statistical-limits) and the [conformal prediction introduction](https://arxiv.org/abs/2107.07511).
 
@@ -237,7 +241,7 @@ Conformal coverage applies to prediction sets under exchangeability and appropri
 - [Support triage](examples/support_triage.py), [model routing](examples/model_routing.py), and [agent guard](examples/agent_guard.py) teach and check one skill each. Their [datasets and measured results](examples/teaching/README.md) are included, along with a [comparison of teaching close distinctions](benchmarks/quality/contrast_round.md).
 - [Teach one skill](examples/teach_skill.py), [advanced expert examples](examples/train_expert.py), and [observed teaching and takeover](examples/observe_routing.py). Cloud modes require explicit configuration.
 - [Gaming examples](examples/gaming/) explore simulated environments and optional local emulation; they are not independently verified world records. ROMs are not included. The [first-use evaluation](benchmarks/quality/zero_shot/README.md) measures game rules and legal actions separately from raw classifier quality.
-- [Research manuscripts](docs/paper/) describe the design and earlier experiments. Their historical timing and quality claims are not release acceptance criteria; use the reproducible measurements above.
+- [Whitepaper](docs/paper/system1_whitepaper.md), [technical brief](docs/paper/system1_technical_brief.md), and [mathematical notes](docs/paper/conformal_gating.md) describe the current implementation and evidence. They are maintainer-authored documents, not peer-reviewed publications. The [example catalog](examples/README.md) separates taught skills from experimental and scripted demonstrations.
 
 Both `import system1` and the legacy `import reflex` expose the same API. The `reflex` namespace can conflict with the separate Reflex web-framework package, so use separate environments when needed. The [TypeSafe adapter](docs/typesafe.md) supports the basic sync/async decision API, structured state, typed response accessors, and ordinal score distributions. Its documented contract does not include the entire SDK transport/Pydantic surface.
 

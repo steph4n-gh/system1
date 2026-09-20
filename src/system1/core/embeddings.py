@@ -1,14 +1,8 @@
-"""Pure-NumPy Dense Subword Semantic Engine & Hybrid Fusion.
+"""Local subword features and optional lexical/dense feature fusion.
 
-Provides high-speed, zero-dependency subword semantic representation and
-hybrid sparse-dense projection:
-- SubwordSemanticEmbeddings: 256-dimensional subword embedding table with semantic
-  clustering and idiom awareness executed purely in NumPy (<0.15ms).
-- HybridProjector: Concatenates lexical n-gram sparse hashing with dense subword
-  representations: v_hybrid = [ sqrt(alpha) * v_sparse ; sqrt(1 - alpha) * v_dense ].
-
-Zero external dependencies beyond NumPy (no PyTorch, no HuggingFace, no C++ runtimes).
-"""
+The NumPy subword table is seeded locally and adjusted by curated semantic
+anchors. It is not a downloaded or pretrained language model. MLX is optional;
+no workload-independent latency bound is asserted."""
 
 from __future__ import annotations
 
@@ -251,12 +245,10 @@ _SEMANTIC_ANCHORS: Dict[str, List[str]] = {
 
 
 class SubwordSemanticEmbeddings:
-    """Pure-NumPy subword semantic representation table.
+    """Seeded NumPy subword table with curated semantic anchors.
 
-    Uses a deterministic subword vocabulary and pseudo-orthogonal dense embedding
-    table with semantic anchor projections. Generates 256-dimensional semantic
-    vectors in < 0.15ms with zero external dependencies.
-    """
+    The default table dimension is 256. Its construction does not teach a
+    general language model; task quality requires separate evaluation."""
 
     def __init__(
         self,
@@ -401,19 +393,11 @@ class SubwordSemanticEmbeddings:
 
 
 class HybridProjector:
-    """Hybrid sparse-dense semantic projector combining lexical n-gram hashing
-    with dense subword embeddings.
+    """Concatenate weighted lexical and dense subword features.
 
-    Fuses lexical n-gram feature hashing (v_sparse) with dense subword semantic
-    vectors (v_dense) via normalized vector concatenation:
-        v_hybrid = [ sqrt(alpha) * v_sparse ; sqrt(1 - alpha) * v_dense ]
-
-    Guarantees:
-    - Zero external dependencies beyond NumPy.
-    - Pure unit-sphere normalization without post-hoc scaling:
-      ||v_hybrid||^2 = alpha ||v_sparse||^2 + (1 - alpha) ||v_dense||^2 = 1.0.
-    - Sub-0.5ms execution.
-    """
+    For unit components, square-root weights preserve unit norm; the
+    implementation also normalizes its final vector. The default dimensions
+    are 1024 lexical plus 256 dense, with alpha=0.5. No latency guarantee."""
 
     def __init__(
         self,

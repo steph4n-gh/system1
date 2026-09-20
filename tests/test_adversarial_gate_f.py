@@ -681,18 +681,21 @@ class TestAttack4DocumentationRigorAndPackagingParity:
 
         # 1. Ed25519 signatures are documented as software digital signatures (RFC 8032)
         assert "RFC 8032" in readme_text
-        assert "software Ed25519 digital signatures" in whitepaper_text or "pure software Ed25519" in whitepaper_text
-        assert "application-layer non-repudiation" in techspec_text or "software via RFC 8032" in techspec_text
+        assert "software Ed25519" in whitepaper_text
+        assert "software Ed25519" in techspec_text
 
-        # 2. Hardware enclaves (Intel SGX / AMD SEV / HSM) are distinguished as optional or alternative
-        assert "hardware enclave" in whitepaper_text.lower()
-        assert "hardware enclave" in techspec_text.lower()
+        # Software evidence must not be described as hardware attestation.
+        assert "not a Merkle tree or hardware attestation" in whitepaper_text
+        assert "not an OS" in techspec_text
+        assert "sandbox or hardware execution proof" in techspec_text
 
-    def test_pokemon_kaizo_speedrun_qualifies_zero_wipe_as_empirical(self):
-        """Ensure zero-wipe speedrun documentation clarifies that 0% wipe is an empirical milestone result."""
+    def test_pokemon_kaizo_speedrun_disclaims_unverified_results(self):
+        """Keep scripted milestones distinct from game completion or a safety theorem."""
         speedrun_doc = (Path(__file__).resolve().parent.parent / "docs" / "SPEEDRUN_SHOWDOWN_WORLD_RECORDS.md").read_text()
-        assert "0% Wipe Rate in Empirical Benchmark Trials" in speedrun_doc
-        assert "not an unconditional impossibility under unmodeled environments" in speedrun_doc
+        assert "0% Wipe Rate in Empirical Benchmark Trials" not in speedrun_doc
+        assert "no independently verified speedrun world record" in speedrun_doc
+        assert "not fitted prediction sets" in speedrun_doc
+        assert "scripted milestone" in speedrun_doc
 
     def test_twin_namespace_parity_gate_f_exports(self):
         """Ensure reflex and system1 export identical symbols across all Gate E and Gate F interfaces."""

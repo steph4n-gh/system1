@@ -143,20 +143,11 @@ class DecisionResult:
 
 
 class SystemOneEngine:
-    """Production-grade System 1 Decision Engine.
+    """Local structured decisions with calibration, caching and optional audit evidence.
 
-    Beats Jev with:
-    - Sub-2ms local execution (Apple Silicon Metal & vectorized CPU).
-    - True zero data egress / local enterprise privacy.
-    - Single-pass non-autoregressive schema evaluation.
-    - Temperature-scaled calibration & Brier proper scoring rule decomposition.
-    - Split Conformal Prediction with finite-sample 1 - alpha coverage guarantee.
-    - Ed25519 signed RunWitnessEnvelope receipts bound to ActionLedger.
-    - Lever 1: Tier 0 Semantic System 1 Cache (sub-0.05ms certified execution).
-    - Lever 2: Online Sherman-Morrison rank-1 distillation (learn_from_tier2 in <0.1ms).
-    - Lever 3: Margin-based conformal dominance gating (suppresses false-positive escalations).
-    - Lever 4: Continuous telemetry state vector fusion with sharp numeric boundaries.
-    """
+    Use strict_mode=True for taught skills and honor the returned review flags.
+    Prediction-set coverage needs exchangeable held-out evidence; it is not
+    accepted-answer accuracy or tool authorization. Performance is workload-dependent."""
 
     def __init__(
         self,
@@ -558,7 +549,7 @@ class SystemOneEngine:
             p_dig = self._projector_digest()
             c_dig = self._calibration_digest()
 
-            # 1. Tier 0 Semantic System 1 Cache fast-path (<0.05ms)
+            # 1. Cache lookup with request and model context
             if self.use_cache:
                 cached = self.cache.get(
                     prompt,
@@ -1052,10 +1043,10 @@ class SystemOneEngine:
         forgetting_factor: Optional[float] = None,
         recency_weighted: Optional[bool] = None,
     ) -> Dict[str, Any]:
-        """Closed-form rank-1 Sherman-Morrison online update on the metal (<0.1ms).
+        """Apply an online correction using the model's supported update path.
 
         Adapts the decision hyperplanes of SystemOneEngine for resolved Tier 2 edge cases,
-        and certifies the resolution in the Tier 0 Semantic System 1 Cache.
+        and updates the local cache. Changed calibration must be refreshed.
         """
         with self._lock, getattr(self.model, "_lock", nullcontext()):
             eff_forgetting = forgetting_factor if forgetting_factor is not None else self.forgetting_factor
@@ -1147,7 +1138,7 @@ class SystemOneEngine:
                 policy_scope=self.policy_scope,
             )
 
-            # Certify into cache
+            # Store the corrected result in the cache
             if self.use_cache:
                 eff_m_thresh = self.margin_threshold
                 m_dig = self._model_digest()

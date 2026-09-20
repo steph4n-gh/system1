@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""CLI launcher script for Game Boy Pokémon Speedrun / Kaizo Zero-Wipe Engine.
+"""Launch scripted Pokémon milestones and damage-risk checks.
 
-Runs uncapped headless PyBoy emulation (3,000-5,000+ FPS) across the Red Any% Glitchless route
-with mathematically guaranteed 0% wipe protection.
-"""
+Optional PyBoy ticks an emulator; this does not verify a complete campaign,
+a speed record or guaranteed wipe prevention."""
 
 from __future__ import annotations
 

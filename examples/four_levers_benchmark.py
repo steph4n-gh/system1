@@ -70,7 +70,7 @@ def get_gateway_exemplars():
 def run_benchmark():
     print("=" * 80)
     print("  SYSTEM 1 REFLEX: 4 ARCHITECTURAL LEVERS BENCHMARK & SHOWCASE")
-    print("  Zero-Dependency Tier 1 Enhancement & Escalation Collapse")
+    print("  Local Cache, Correction, Review and Telemetry Demonstration")
     print("=" * 80)
 
     # 0. Compilation Phase
@@ -117,7 +117,7 @@ def run_benchmark():
     print(f"  L1 Exact Cache Hit Latency:   {exact_p50_us:>8.2f} µs ({exact_p50_us/1000.0:.4f} ms)")
     print(f"  Cache Speedup Multiplier:     {cold_latency_us / max(1.0, exact_p50_us):>8.1f}x faster")
     exact_res_ambiguous = exact_hit.is_ambiguous
-    print(f"  Certified Execution Bypass:   Ambiguity = {exact_res_ambiguous} (HALT Bypassed)")
+    print(f"  Cached Review Status:        Ambiguity = {exact_res_ambiguous} (not execution permission)")
 
     # Vector cosine similarity hit (near-match query)
     near_prompt = "GET /api/v1/health status 200 OK standard client keepalive"

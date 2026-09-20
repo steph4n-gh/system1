@@ -1,6 +1,6 @@
 # Complete example review — 19 September 2026
 
-> Historical review of 0.2.2 and earlier behavior. For resolved findings, current results, and supported versus experimental scope, see the [1.0 release evidence](releases/1.0.md). The measurements below are retained as review history.
+> Historical review of 0.2.2 and earlier behavior. For the current inventory and scope, see the [example catalog](../examples/README.md), [1.0.1 release evidence](releases/1.0.1.md) and [public-workload results](../benchmarks/quality/workloads/README.md). The measurements below are retained as review history.
 
 **Release follow-up:** the ordered corrections below have now been implemented.
 The new [flagship](../examples/observe_routing.py) adds one entry point (25 Python
@@ -125,7 +125,7 @@ A separate campaign probe reached `has_cutover=True` after two decisions with
 the teacher client disabled and zero cloud observations. That confirms the
 campaign's counter-based switch is distinct from the real teaching lifecycle.
 
-## Ordered next steps
+## Original next steps (subsequently implemented)
 
 1. **Repair the existing observation-to-reuse journey.** Preserve the evaluated
    skill's projector, weights, calibration, schema identity, and uncertainty

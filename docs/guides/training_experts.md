@@ -6,12 +6,12 @@ model can supply the examples. An LLM is not required.
 
 The compiler fits small numerical decision heads over fixed text features. It
 does not train a language model or acquire general language understanding.
-The product loop is **show examples → save the skill → use it → review mistakes**.
+The product loop is **teach or observe → validate → run locally → save and reuse**. Review mistakes and revalidate when the skill changes.
 
 ## Try one skill
 
 For complete demonstrations with separate teaching, calibration, and evaluation
-cases, run [the three primary examples](../../examples/teaching/README.md).
+cases, run [the four teaching examples](../../examples/teaching/README.md).
 The smaller example below introduces the API with just eight labeled cases.
 
 From the repository root:
@@ -127,7 +127,14 @@ mistakes by label, especially costly mistakes. A small calibration set or a weak
 skill can mean every input needs review. There is no guaranteed example count
 that makes a skill reliable, and calibration is not proof of correct permissions.
 
-Run the repository's small development comparison with:
+For current measured behavior, use the [public-workload evidence](../../benchmarks/quality/workloads/README.md).
+The [teacher adapter guide](../typesafe.md) covers observing Jev or another
+callback, including the completed Gemini demonstration. A bundle such as
+`examples/teaching/support_triage.json` contains `teach`, `calibration` and
+`evaluate` splits; its example helper converts these into compiler field mappings.
+Pass a field mapping or record list, not the whole bundle, to CLI `--dataset`.
+
+To reproduce the smaller historical development comparison:
 
 ```bash
 python benchmarks/quality/evaluate_teaching.py

@@ -76,6 +76,21 @@ These files are demonstration bundles containing three splits, policy notes,
 and case groups. The helper converts each split to the compiler's field mapping;
 a whole bundle is not itself a CLI `--dataset` file.
 
+## Current 1.0.1 results
+
+| Skill | Accepted locally | Correct among accepted |
+|---|---:|---:|
+| Support triage | 92/104 | 91/92 |
+| Model routing | 94/96 | 94/94 |
+| Operation triage | 126/132 | 126/126 |
+| Banking support | 118/120 | 115/118 |
+
+The [current primary report](../../benchmarks/quality/results/release_1_0_1.json)
+and [banking report](../../benchmarks/quality/workloads/results.json) retain the
+complete measurements. Broader [public-workload evidence](../../benchmarks/quality/workloads/README.md)
+adds assistant and SMS tasks, a classical baseline and live Jev/Gemini takeovers.
+The tables below retain the original 1.0 run; operation acceptance has since changed.
+
 ## Recorded 1.0 run
 
 Measured on Apple M4 Pro with Python 3.13.5. These timings cover fitting and

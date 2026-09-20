@@ -445,7 +445,7 @@ class ConformalPredictor:
         else:
             # Calibrate threshold above observed error margins
             if error_margins:
-                # Safe upper margin guaranteeing top prediction dominance
+                # Heuristic margin threshold above observed error margins
                 self.calibrated_margin_threshold = float(
                     np.clip(np.quantile(error_margins, 0.95) + 0.05, 0.15, 0.85)
                 )
@@ -470,8 +470,8 @@ class ConformalPredictor:
           1. Absolute margin difference: margin >= eff_margin_thresh
           2. Absolute confidence floor scaled by cardinality: top_prob >= (1/K) + eff_tau0
           3. Relative odds ratio dominance: (top_prob / max(1e-6, runner_up_prob)) >= eff_gamma
-        This prevents pseudo-random hash dispersion at high cardinality (e.g. K=77) from
-        falsely suppressing conformal ambiguity escalation while maintaining precision.
+        These heuristics do not guarantee precision or preserve strict conformal
+        coverage; evaluate their behavior on the intended workload.
         """
         if not (0.0 < alpha < 1.0):
             raise ValueError(f"Significance level alpha must be in (0, 1), got {alpha}")
@@ -515,7 +515,7 @@ class ConformalPredictor:
             prediction_set = []
             cum_mass = 0.0
             total_mass = float(np.sum(probs))
-            # True OOD: total probability mass cannot reach q_hat or is degenerate (e.g. unnormalized / near-zero vectors)
+            # Invalid/degenerate probabilities abstain; this is not a calibrated OOD test.
             if self.score_method == "lac":
                 if k > n:
                     prediction_set = list(self.options)

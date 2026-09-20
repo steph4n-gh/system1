@@ -1,5 +1,7 @@
 # Launch readiness review — 19 September 2026
 
+> **Historical 0.2.2 review.** All branch, pending-release and test-count statements below describe checkpoints at that time. They are not current instructions or status. Use the [documentation index](README.md), [1.0.1 report](releases/1.0.1.md) and [current workload evidence](../benchmarks/quality/workloads/README.md).
+
 The focused observation/cutover and compatibility corrections from the
 [complete example review](examples-review.md) are implemented for **0.2.2 beta**.
 The complete lifecycle now has an executable [flagship](../examples/observe_routing.py)
@@ -87,7 +89,7 @@ The completed observation, compatibility and example corrections passed:
 - Lockfile, wheel/sdist build and strict Twine validation passed.
 - Changed Markdown link targets and `git diff --check` passed. A scan of the changed files found no common private-key, GitHub-token or AWS-key patterns.
 - The offline flagship promoted after **190 observations** using the normal gates: 38/38 validation labels agreed, 37/38 validation decisions were accepted. After disconnecting the teacher, **40/40 fresh synthetic tickets were correct and accepted**, with identical responses after reload. Its roughly 5 KB artifact and 0.45 ms median local latency are measured demonstration results, not Jev parity evidence.
-- The natural-language examples retain their original labels and raw accuracies; strict review was required on 23/24 support, 24/24 model-routing and 22/24 operation-triage cases. All three accepted answers were correct. Updated reports are under `examples/teaching/results/`.
+- The natural-language examples retain their original labels and raw accuracies; strict review was required on 23/24 support, 24/24 model-routing and 22/24 operation-triage cases. All three accepted answers were correct. Those example reports were subsequently replaced by the 1.0 snapshots under `examples/teaching/results/`; the 0.2.2 counts here remain historical observations.
 
 No live Jev quality comparison was performed. Optional MLX and ROM-dependent
 checks remain skipped. The release procedure pushes this source to `main`, waits

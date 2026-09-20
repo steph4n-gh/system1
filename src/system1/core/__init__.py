@@ -1,6 +1,6 @@
 """System 1 Core: Isolated Non-Autoregressive Forward Evaluator Kernel.
 
-Ultra-lightweight, zero-overhead forward evaluation micro-library:
+Isolated forward evaluation components:
 - Multi-Head Parallel Linear Evaluator (SystemOneModel)
 - Deterministic Semantic Projector (DeterministicSemanticProjector)
 - Local Neural Semantic Projector (LocalNeuralProjector)

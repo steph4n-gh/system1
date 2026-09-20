@@ -227,13 +227,10 @@ def get_fintech_wire_fraud_use_case() -> Tuple[str, Dict[str, Any], List[Dict[st
 
 
 def get_clinical_triage_use_case() -> Tuple[str, Dict[str, Any], List[Dict[str, Any]]]:
-    """Clinical Intake & Medical Emergency Triage (ED Emergency Severity Index).
+    """Unvalidated clinical-label schema for illustrating typed API responses.
 
-    Clinicians at triage desks require sub-second acuity scoring under ESI protocols.
-    Egress of Protected Health Information (PHI) under HIPAA to public AI cloud APIs
-    is strictly forbidden. System 1 provides zero-egress local on-device scoring.
-    """
-    title = "Clinical Intake & Medical Emergency Triage (HIPAA-Compliant ESI Protocol)"
+    This demonstration does not establish clinical accuracy or regulatory compliance."""
+    title = "Clinical-Label Schema (Unvalidated Illustration)"
 
     questions = {
         "triage_level": Choice(
@@ -476,48 +473,19 @@ def render_latency_cliff_chart(results: List[Dict[str, Any]], cutover_idx: Optio
 
 
 def render_summary_scorecard(results: List[Dict[str, Any]]) -> None:
-    cloud_results = [r for r in results if not r["local_execution"]]
-    local_results = [r for r in results if r["local_execution"]]
-
-    avg_cloud_lat = (sum(r["latency_ms"] for r in cloud_results) / len(cloud_results)) if cloud_results else 0.0
-    avg_local_lat = (sum(r["latency_ms"] for r in local_results) / len(local_results)) if local_results else 0.0
-
-    total_cloud_egress = sum(r["egress_bytes"] for r in cloud_results)
-    total_local_egress = sum(r["egress_bytes"] for r in local_results)
-
-    total_cloud_tokens = sum(r["total_tokens"] for r in cloud_results)
-    total_local_tokens = sum(r["total_tokens"] for r in local_results)
-
-    cloud_cost_usd = total_cloud_tokens * 0.000002
-    local_cost_usd = 0.0
-
-    if avg_cloud_lat > 0 and avg_local_lat > 0:
-        speedup_str = f"{avg_cloud_lat / avg_local_lat:.1f}x faster"
-    elif local_results:
-        speedup_str = "Sub-2ms local"
-    else:
-        speedup_str = "N/A (Not Cutover)"
-
-    cloud_lat_str = f"{avg_cloud_lat:>16.2f} ms" if cloud_results else "N/A"
-    local_lat_str = f"{avg_local_lat:>15.2f} ms" if local_results else "N/A (Not Cutover)"
-    avg_cloud_egress = int(total_cloud_egress / max(1, len(cloud_results))) if cloud_results else 0
-
-    print("\n" + "┌" + "─" * 86 + "┐")
-    print("│" + " " * 28 + "METRICS & PERFORMANCE SCORECARD" + " " * 27 + "│")
-    print("├" + "─" * 86 + "┤")
-    print(f"│  Metric                          │ Cloud Proxy Phase      │ Local System 1 System 1 │")
-    print("├──────────────────────────────────┼────────────────────────┼───────────────────────┤")
-    print(f"│  Average Latency                 │ {cloud_lat_str}   │ {local_lat_str}   │")
-    print(f"│  Measured Speedup Factor         │ {'Baseline (1.0x)':<22} │ {speedup_str:>21} │")
-    print(f"│  Data Egress per Decision        │ {avg_cloud_egress:>16} B    │ {0:>17} B   │")
-    print(f"│  Total Cumulative Egress         │ {total_cloud_egress:>16} B    │ {total_local_egress:>17} B   │")
-    print(f"│  Egress Reduction                │ {'0% (Full Payload)':<22} │ {'100.0% (Zero Egress)':>21} │")
-    print(f"│  Tokens Billed                   │ {total_cloud_tokens:>16} tok  │ {total_local_tokens:>17} tok │")
-    print(f"│  Inference Cost                  │ ${cloud_cost_usd:>15.5f}    │ ${local_cost_usd:>16.2f}   │")
-    print(f"│  Split Conformal Guarantees      │ {'Not Available':<22} │ {'Finite-Sample (1-α)':>21} │")
-    print(f"│  Cryptographic Non-Repudiation   │ {'None (Plain JSON)':<22} │ {'Ed25519 Receipts':>21} │")
-    print(f"│  Tamper-Evident Auditability     │ {'Unverified Log':<22} │ {'SQLite ActionLedger':>21} │")
-    print("└" + "─" * 86 + "┘\n")
+    print("\nDEMONSTRATION PHASE SUMMARY")
+    print("Teacher timings/usage may be simulated; phases contain different requests.")
+    print("No provider speedup, billing or quality guarantee is inferred.")
+    for local, name in ((False, "Teacher"), (True, "Local")):
+        rows = [r for r in results if bool(r["local_execution"]) == local]
+        if not rows:
+            print(f"  {name}: no decisions")
+            continue
+        latency = sum(r["latency_ms"] for r in rows) / len(rows)
+        verified = sum(bool(r.get("receipt_verified")) for r in rows)
+        print(f"  {name}: {len(rows)} decisions; mean reported latency {latency:.3f} ms; "
+              f"{verified} verified receipts")
+    print("Local computation and signed receipts do not imply accepted or correct answers.")
 
 
 # ============================================================================
@@ -593,14 +561,14 @@ def verify_crypto_and_ledger(
         print(f"    Decision ID:                 {receipt.get('decision_id')}")
         print(f"    Schema Digest:               {receipt.get('schema_digest')[:32]}...")
         print(f"    Ed25519 Signature:           {receipt.get('signature', '')[:32]}...")
-        print(f"    Signature Verification:      {'VALID (Ed25519 Non-Repudiation Proven)' if is_verified else 'INVALID'}")
+        print(f"    Signature Verification:      {'VALID (under the supplied public key)' if is_verified else 'INVALID'}")
         print(f"    Bound Ledger Head:           {receipt.get('truth_ledger_head', '')[:32]}...")
         assert is_verified, "Receipt cryptographic signature verification failed!"
     else:
         print("    No receipt attached to this response (Cloud passthrough or receipts disabled)")
 
     # 3. Split Conformal Prediction Verification
-    print("\n[3] Split Conformal Prediction Mathematical Guarantees:")
+    print("\n[3] Uncertainty metadata (coverage requires independent exchangeable evidence):")
     alpha = last_response.get("conformal_alpha")
     if last_response.get("local_execution") and alpha is not None:
         print(f"    Significance Level (α):      {alpha} (Target Coverage: {(1.0 - alpha) * 100:.1f}%)")

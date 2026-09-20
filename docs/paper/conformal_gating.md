@@ -1,193 +1,161 @@
-# Conformal Ambiguity Gating and Contrastive Simplex Separation for Machine-Native Decision Runtimes
+# Mathematical notes: uncertainty, prototype geometry and online correction
 
-> **Release scope:** This is a research/design document with historical or illustrative claims. It is not a release guarantee or independent validation. See [current deployment boundaries](../deployment.md) and the [reproducible release benchmarks](https://github.com/steph4n-gh/system1#benchmarks). Statistical coverage is not a guarantee of safe tool execution; game simulations are not verified world records.
+**System 1 1.0.1 · 19 September 2026 · Implementation notes, not new theorems**
 
-**Research Track: Reliable Machine Learning & Uncertainty Quantification**
-**Working Paper / Workshop Manuscript**
+This note describes the mathematics used by the runtime and the assumptions
+needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the
+product evaluation; the [architecture reference](../architecture/technical_specification.md)
+maps behavior to code. Earlier claims of guaranteed safe execution, universal
+margin improvement and fixed microsecond update times are withdrawn.
 
----
+## 1. Split-conformal prediction sets
 
-## Abstract
+Fix a categorical scoring model before evaluating the conformal calibration fold.
+Let its probabilities be $p_y(x)$ and let $n$ calibration pairs and the next test
+pair be exchangeable. Examples-only skills use the LAC nonconformity score
 
-Autoregressive transformer architectures incur substantial latency, high computational costs, and inference jitter when deployed for high-frequency discrete decisions such as tool policy enforcement, input classification, and action triage. While non-autoregressive linear and kernel projection methods offer sub-millisecond execution directly on host hardware, uncalibrated linear models are prone to catastrophic misclassification under covariate shift.
+$$s(x,y)=1-p_y(x).$$
 
-In this work, we formalize a machine-native decision framework combining three theoretical contributions:
-1. **Contrastive Whitening & Simplex Separation**: We prove that subtracting candidate centroid prototypes from shared background representations prior to spherical projection achieves the simplex bound in the equal-norm orthogonal case for maximum pairwise cosine similarity ($-\frac{1}{K-1}$ for $K$ classes), maximizing linear decision margins.
-2. **Split Conformal Ambiguity Gating**: We establish finite-sample coverage guarantees ($\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(\mathbf{x}_{n+1})) \ge 1 - \alpha$) over discrete candidate sets, replacing heuristic thresholding with provable fail-closed escalation triggers when the prediction set cardinality $|\mathcal{C}_{1-\alpha}| \ne 1$ or the dominance margin $M(\mathbf{x}) < \tau$.
-3. **Sub-50µs Online Rank-1 Distillation**: We demonstrate closed-form parameter adaptation via the Sherman-Morrison formula under an exponential forgetting factor ($\lambda_f$), allowing the runtime to assimilate deliberative feedback instantaneously without backpropagation or catastrophic forgetting.
+Sort calibration scores as $s_{(1)}\le\cdots\le s_{(n)}$ and set
 
-Empirical evaluation demonstrates sub-millisecond execution ($<0.98$ ms P50 on CPU/Metal) while bounding misclassification risk to specified confidence tolerances $1-\alpha$.
+$$k=\lceil(n+1)(1-\alpha)\rceil,\qquad
+q=\begin{cases}s_{(k)}&k\le n,\\1&k>n.\end{cases}$$
 
----
+Because LAC scores lie in $[0,1]$, the second case includes every label. With no
+calibration evidence, strict mode also retains all labels. For a calibrated skill,
 
-## 1. Introduction
+$$C(x)=\{y:s(x,y)\le q\}.$$
 
-High-frequency decision agents—including robotic controllers, microservice API gateways, and autonomous tool firewalls—must evaluate discrete policy actions within strict latency ceilings (often $<10$ ms or bounded hardware frame budgets such as 16.6 ms for 60 Hz loops). Monolithic autoregressive Large Language Models (LLMs) evaluate token sequences sequentially:
+Under the stated assumptions,
 
-$$\tau_{\text{total}} = \tau_{\text{WAN}} + \tau_{\text{prefill}} + \sum_{k=1}^K \tau_{\text{decode}}(t_k)$$
+$$\Pr\{Y_{n+1}\in C(X_{n+1})\}\ge1-\alpha.$$
 
-Even with low parameter counts or accelerated hardware, autoregressive generation introduces non-deterministic jitter and network latency when hosted remotely.
+For distinct scores, the test score's pooled rank is uniform on $1,\ldots,n+1$.
+When $k\le n$, inclusion has probability $k/(n+1)\ge1-\alpha$; when $k>n$ it is
+certain. Ties handled by including scores equal to the threshold are conservative.
+This is the established split-conformal argument, not a new System 1 result.
+See [Angelopoulos and Bates, §2](https://arxiv.org/html/2107.07511v6#S2).
 
-Conversely, small non-autoregressive linear models can execute in microseconds. However, deploying classical linear classifiers in autonomous control loops introduces two fatal vulnerabilities:
-1. **Severe Angular Compression**: When candidate class descriptors share extensive contextual phrasing, standard embedding projections collapse candidate hyperplanes into an acute cone, degrading discrimination.
-2. **Uncalibrated Confidence**: Standard softmax outputs yield overconfident probabilities under distributional drift, offering no formal safety guarantees against false positives.
+### What the guarantee does not say
 
-We address these challenges through an integrated mathematical framework: contrastive simplex separation, split conformal ambiguity gating, and closed-form online adaptation.
+Let $A$ be the event that the application accepts a local prediction. Marginal
+set coverage does not imply
 
----
+$$\Pr\{\hat Y=Y\mid A\}\ge1-\alpha.$$
 
-## 2. Representation Geometry: Contrastive Whitening & Simplex Separation
+For example, set misses can be concentrated in a small accepted subset while
+other inputs receive broad sets. The coverage statement also does not establish
+accuracy for each class, simultaneous coverage across fields, adversarial
+robustness or safe tool execution. Exchangeability can fail under traffic drift,
+related templates or adaptive collection. An empty set requests review; it does
+not by itself detect distribution shift.
 
-### 2.1 Hybrid Feature Projection
+## 2. Score definitions and release behavior
 
-Let an input string $s$ be mapped into a high-dimensional space via a combination of unbiased feature hashing and dense semantic subword embeddings:
+[ConformalPredictor](../../src/system1/calibration.py) supports LAC and a legacy,
+deterministic APS score. APS sorts labels by descending probability and sums mass
+through the candidate label. Calibration and prediction use the same score and
+ordering. Strict inversion includes labels whose score is at most the stored
+quantile; it does not add the next label after crossing that threshold.
 
-$$\mathbf{x}_{\text{sparse}}[h_i(w)] = \sum_{w \in s} \text{sign}(h_i^*(w)) \cdot \text{IDF}(w), \quad \mathbf{x}_{\text{dense}} = \frac{1}{|T(s)|} \sum_{t \in T(s)} \mathbf{E}_{t, :}$$
+New examples-only categorical/Boolean skills use LAC. Legacy and schema-augmented
+skills use APS. Format-v2 artifacts record this choice, while v1 files retain
+legacy APS semantics. Both score functions lie in $[0,1]$ for valid normalized
+probabilities; insufficient evidence conservatively includes all labels.
 
-The unified input vector $\mathbf{x} \in \mathbb{S}^{D-1}$ is constructed on the unit hypersphere:
+The compiler separates temperature fitting from conformal scoring so that the
+probability transformation is not fitted on the same labels used to claim set
+coverage. Explicit calibration must also be separate from head fitting and final
+evaluation. Repeated normalized prompts do not create new independent evidence.
 
-$$\mathbf{x} = \sqrt{\alpha} \frac{\mathbf{x}_{\text{sparse}}}{\|\mathbf{x}_{\text{sparse}}\|_2} \oplus \sqrt{1-\alpha} \frac{\mathbf{x}_{\text{dense}}}{\|\mathbf{x}_{\text{dense}}\|_2}$$
+Strict categorical decisions require a singleton set for acceptance. Non-strict
+mode can suppress review using margin, a cardinality-dependent confidence floor
+and a top-to-runner-up ratio; these are heuristics and do not inherit the strict
+coverage interpretation. They do not apply as a universal safety test to all
+field types. MultiChoice uses a complete assignment score and continuous scores
+use residual intervals. Field-level `escalate_on_ambiguity` determines which
+uncertain fields affect the overall review flag.
 
-This formulation guarantees $\|\mathbf{x}\|_2 = 1.0$ without post-hoc normalization.
+The published public-data experiments use strict mode and report **acceptance**,
+**correctness among accepted decisions** and **raw correctness** separately.
+Default automatic promotion tests 80% agreement and 80% acceptance; that is a
+separate policy from alpha 0.05 or a 95% accepted-correctness workload target.
+The [SMS observation result](../../benchmarks/quality/workloads/README.md)
+promotes under the former and misses the latter.
 
-### 2.2 Angular Compression & Centroid Removal
+## 3. Prototype centering: a conditional geometry result
 
-Consider $K$ candidate choice prototypes $\mathbf{w}_1, \dots, \mathbf{w}_K \in \mathbb{R}^D$ ($K \ge 2$, $D \ge K-1$). In structured schemas, each prototype is composed of an invariant background vector $\mathbf{b} \in \mathbb{R}^D$ and a class-distinctive feature vector $\mathbf{v}_k \in \mathbb{R}^D$:
+The schema-seeded model can center class prototypes and normalize the residuals.
+This is centering, not covariance whitening. It is separate from fitting ridge
+heads to representative labeled examples. The following identity describes a
+special geometry; it is not a guarantee about arbitrary text features.
 
-$$\mathbf{w}_k = \mathbf{b} + \mathbf{v}_k, \quad k \in \{1, \dots, K\}$$
+Let $w_j=b+v_j$ for $K\ge2$, with mutually orthogonal $v_j$ of equal nonzero norm
+$c$ in dimension $D\ge K$. Subtract $\mu=K^{-1}\sum_jw_j$ and write
+$w'_j=v_j-K^{-1}\sum_mv_m$. Then
 
-When the background magnitude dominates the distinctive component ($\|\mathbf{b}\|_2 = B \gg \|\mathbf{v}_k\|_2 = c$), uncentered prototypes exhibit acute pairwise angular compression:
+$$\langle w'_j,w'_k\rangle=c^2(\delta_{jk}-1/K),\qquad
+\|w'_j\|^2=c^2(K-1)/K.$$
 
-$$\cos \theta_{jk} = \frac{\langle \mathbf{w}_j, \mathbf{w}_k \rangle}{\|\mathbf{w}_j\|_2 \|\mathbf{w}_k\|_2} \approx \frac{B^2}{B^2 + c^2} \longrightarrow 1 \quad \text{as } B/c \to \infty$$
+Normalizing therefore gives
 
-To eliminate this degeneracy, we apply **Contrastive Centering**:
-1. Compute the empirical centroid:
-   $$\boldsymbol{\mu} = \frac{1}{K} \sum_{k=1}^K \mathbf{w}_k$$
-2. Subtract the centroid to isolate distinctive features:
-   $$\mathbf{w}_k' = \mathbf{w}_k - \boldsymbol{\mu}$$
-3. Project onto the unit hypersphere:
-   $$\tilde{\mathbf{w}}_k = \frac{\mathbf{w}_k'}{\|\mathbf{w}_k'\|_2}$$
+$$\langle\tilde w_j,\tilde w_k\rangle=-\frac1{K-1}\quad(j\ne k).$$
 
----
+This reaches the simplex bound for the maximum signed pairwise inner product:
+for any $K$ unit vectors,
 
-### 2.3 Theoretical Optimality
+$$0\le\left\|\sum_ju_j\right\|^2
+=K+\sum_{j\ne k}\langle u_j,u_k\rangle$$
 
-**Theorem 1 (Simplex Equiangular Separation & Simplex Bound Optimality)**.
-*Let candidate vectors $\mathbf{w}_1, \dots, \mathbf{w}_K \in \mathbb{R}^D$ ($K \ge 2$, $D \ge K$) satisfy $\mathbf{w}_k = \mathbf{b} + \mathbf{v}_k$, where $\mathbf{b} \in \mathbb{R}^D$ is an arbitrary shared background vector and $\mathbf{v}_1, \dots, \mathbf{v}_K \in \mathbb{R}^D$ are mutually orthogonal with equal norm: $\langle \mathbf{v}_j, \mathbf{v}_k \rangle = c^2 \delta_{jk}$ for $c > 0$.*
+implies $\max_{j\ne k}\langle u_j,u_k\rangle\ge-1/(K-1)$.
+The bound is attained by a regular simplex when dimension permits. It is not the
+Welch bound on absolute correlation. For two distinct prototypes, centering makes
+them antipodal; coincident prototypes have zero residual and cannot be normalized
+by this formula. Real correlated prototypes need not become a regular simplex,
+and greater separation at prototypes does not prove better test accuracy.
 
-*Let $\boldsymbol{\mu} = \frac{1}{K}\sum_{k=1}^K \mathbf{w}_k$, $\mathbf{w}_k' = \mathbf{w}_k - \boldsymbol{\mu}$, and $\tilde{\mathbf{w}}_k = \mathbf{w}_k' / \|\mathbf{w}_k'\|_2$. Then:*
+## 4. Ridge fitting and optional online correction
 
-1. **Equiangular Pairwise Separation:**
-   $$\langle \tilde{\mathbf{w}}_j, \tilde{\mathbf{w}}_k \rangle = -\frac{1}{K - 1} \quad \forall j \ne k$$
+For augmented features $Z=[X,\mathbf1]$, targets $Y$, and the compiler's diagonal
+regularizer $R$, the fitted coefficients satisfy
 
-2. **Centroid Annihilation:**
-   $$\sum_{k=1}^K \tilde{\mathbf{w}}_k = \mathbf{0}$$
+$$\Theta=(Z^TZ+R)^{-1}Z^TY.$$
 
-3. **Simplex Bound Minimality:**
-   *The inner product $-\frac{1}{K-1}$ strictly attains the simplex lower bound for the maximum pairwise cosine similarity of any $K$ unit vectors in $\mathbb{R}^D$:*
-   $$\min_{\mathbf{u}_1, \dots, \mathbf{u}_K \in \mathbb{S}^{D-1}} \max_{j \ne k} \langle \mathbf{u}_j, \mathbf{u}_k \rangle = -\frac{1}{K-1}$$
+The implementation computes the inverse with NumPy, retaining it when needed for
+online correction; it has a pseudoinverse/least-squares fallback. It does not ship
+the Cholesky solver described by older drafts. Bias regularization and sample
+weights must be included when comparing against a batch formula.
 
-*Proof*.
-The centroid is $\boldsymbol{\mu} = \mathbf{b} + \frac{1}{K}\sum_{m=1}^K \mathbf{v}_m$.
-The centered vector for index $k$ is:
-$$\mathbf{w}_k' = (\mathbf{b} + \mathbf{v}_k) - \left(\mathbf{b} + \frac{1}{K}\sum_{m=1}^K \mathbf{v}_m\right) = \mathbf{v}_k - \frac{1}{K}\sum_{m=1}^K \mathbf{v}_m$$
-Compute the inner product between centered vectors $j$ and $k$ ($j \ne k$):
-$$\langle \mathbf{w}_j', \mathbf{w}_k' \rangle = \left\langle \mathbf{v}_j - \frac{1}{K}\sum_{m=1}^K \mathbf{v}_m, \; \mathbf{v}_k - \frac{1}{K}\sum_{m=1}^K \mathbf{v}_m \right\rangle = -\frac{c^2}{K}$$
-Similarly, compute the squared norm for any $k$:
-$$\|\mathbf{w}_k'\|_2^2 = c^2 \left(1 - \frac{1}{K}\right) = c^2 \left(\frac{K-1}{K}\right)$$
-Therefore, the normalized inner product is:
-$$\langle \tilde{\mathbf{w}}_j, \tilde{\mathbf{w}}_k \rangle = \frac{-c^2 / K}{c^2 (K-1) / K} = -\frac{1}{K-1}$$
-From $0 \le \|\sum_k \mathbf{u}_k\|^2 = K + 2\sum_{j<k}\langle \mathbf{u}_j, \mathbf{u}_k\rangle$, for any $K$ unit vectors in $\mathbb{R}^D$ with $D \ge K-1$, the maximum inner product satisfies $\max_{j \ne k} \langle \mathbf{u}_j, \mathbf{u}_k \rangle \ge -1/(K-1)$, with equality if and only if the vectors form a regular $(K-1)$-simplex centered at the origin. Thus contrastive centering achieves this separation under the stated orthogonality and equal-norm assumptions. Arbitrary schema embeddings need not satisfy these assumptions. $\blacksquare$
+For ideal arithmetic, an invertible matrix $A$ with inverse $P$, and a new feature
+vector $z$, Sherman–Morrison gives
 
----
+$$P'=(A+zz^T)^{-1}=P-\frac{Pzz^TP}{1+z^TPz},$$
 
-## 3. Finite-Sample Split Conformal Prediction
+provided the denominator is nonzero. Updating $B'=B+zy^T$ and setting
+$\Theta'=P'B'$ yields the unweighted batch solution for the augmented data.
+This follows directly by multiplying $A+zz^T$ by the proposed inverse.
 
-To ensure statistical safety in autonomous decision loops, we deploy **Split Conformal Prediction** (Vovk et al., 2005; Angelopoulos & Bates, 2021).
+The optional runtime update also supports forgetting $f\in(0,1]$ (default 0.995):
 
-Let $\{(X_i, Y_i)\}_{i=1}^n$ be an exchangeable calibration dataset drawn from distribution $\mathcal{D}$. Given a target error rate $\alpha \in (0, 1)$, we construct a prediction set $\mathcal{C}_{1-\alpha}(X_{n+1})$ satisfying:
+$$P'=\frac1f\left(P-\frac{Pzz^TP}{f+z^TPz}\right),\qquad
+B'=fB+zy^T.$$
 
-$$\mathbb{P}(Y_{n+1} \in \mathcal{C}_{1-\alpha}(X_{n+1})) \ge 1 - \alpha$$
+This describes exponentially weighted evidence, not the original unweighted
+batch objective when $f<1$. Finite precision and runtime stabilization further
+limit exact equivalence. A positive diagonal alone does not prove positive
+definiteness; rescaling a matrix alone does not improve its condition number.
+No fixed latency, unlimited stability or immunity to forgetting is implied.
 
-### 3.1 Non-Conformity Scoring
+Most users can retain corrected examples and recompile. If online correction is
+used, changed weights invalidate their old calibration, in memory and saved
+artifacts. Strict inference requests review until separate recalibration. A
+teacher label is fallible supervision, so one correction should not be described
+as making every unseen related case correct.
 
-Let $\hat{\pi}_y(\mathbf{x}) = \sigma(\mathbf{W} \mathbf{x})_y$ be the model's calibrated probability for candidate label $y \in \mathcal{Y}$. We define the non-conformity score as the residual deficit:
+## 5. Reading the evidence
 
-$$s(\mathbf{x}, y) = 1 - \hat{\pi}_y(\mathbf{x})$$
-
-For each calibration instance $i \in \{1, \dots, n\}$, compute the non-conformity score of the ground-truth label:
-
-$$s_i = 1 - \hat{\pi}_{Y_i}(X_i)$$
-
-The conformal quantile $\hat{q}$ is the $\lceil (n+1)(1-\alpha) \rceil / n$ empirical quantile of $\{s_1, \dots, s_n\}$:
-
-$$\hat{q} = \text{Quantile}\left( \{s_1, \dots, s_n\}, \; \frac{\lceil (n+1)(1-\alpha) \rceil}{n} \right)$$
-
-At test time, the prediction set is constructed as:
-
-$$\mathcal{C}_{1-\alpha}(\mathbf{x}) = \{y \in \mathcal{Y} : \hat{\pi}_y(\mathbf{x}) \ge 1 - \hat{q}\}$$
-
-### 3.2 Dual-Criterion Gating Mechanism
-
-A prediction set $\mathcal{C}_{1-\alpha}(\mathbf{x})$ conveys two distinct failure modes:
-1. **Ambiguity / Under-Confidence ($|\mathcal{C}| > 1$):** Multiple competing options satisfy the coverage bound.
-2. **Empty-set Abstention ($|\mathcal{C}| = 0$):** No candidate option meets the threshold $1 - \hat{q}$.
-
-To prevent false executions while minimizing unnecessary escalations, we couple the conformal set size with a **Dominance Margin**:
-
-$$M(\mathbf{x}) = \hat{\pi}_{(1)}(\mathbf{x}) - \hat{\pi}_{(2)}(\mathbf{x})$$
-
-Where $\hat{\pi}_{(1)}$ and $\hat{\pi}_{(2)}$ denote the highest and second-highest class probabilities. The statistical routing criterion accepts a local prediction if and only if:
-
-$$I_{\text{safe}}(\mathbf{x}) = \left(|\mathcal{C}_{1-\alpha}(\mathbf{x})| == 1\right) \land \left(M(\mathbf{x}) \ge \tau_{\text{margin}}\right)$$
-
-If this criterion is false, the caller can route to a deliberative governor or human supervisor. This criterion does not authorize a tool. Singleton acceptance does not turn marginal conformal coverage into a conditional error guarantee; use deterministic policy enforcement for permissions. An empty set alone does not establish distribution shift.
-
----
-
-## 4. Sub-50µs Online Rank-1 Adaptation via Sherman-Morrison
-
-When an ambiguous decision is escalated and resolved by an external authority (providing ground-truth label $\mathbf{y}^*$), the model must assimilate this information without triggering expensive batch retraining.
-
-### 4.1 Covariance Formulation
-
-In regularized Ridge Regression, the optimal weight matrix satisfies:
-
-$$\mathbf{W}^* = (\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I})^{-1} \mathbf{X}^T \mathbf{Y} = \mathbf{P} \mathbf{B}$$
-
-Where $\mathbf{P} = (\mathbf{X}^T \mathbf{X} + \lambda \mathbf{I})^{-1} \in \mathbb{R}^{d \times d}$ is the inverse regularized Gram matrix and $\mathbf{B} = \mathbf{X}^T \mathbf{Y} \in \mathbb{R}^{d \times K}$ is the cross-covariance accumulator.
-
-### 4.2 Rank-1 Update Rule
-
-When receiving a new exemplar $(\mathbf{x}_{\text{aug}}, \mathbf{y}^*)$, where $\mathbf{x}_{\text{aug}} = [\mathbf{x}^T, 1]^T$, we apply an exponential forgetting factor $\lambda_f \in (0, 1]$ (default $\lambda_f = 0.995$) to prevent covariance explosion and bound historical drift:
-
-$$\mathbf{P}_{t+1} = \frac{1}{\lambda_f} \left( \mathbf{P}_t - \frac{\mathbf{P}_t \mathbf{x}_{\text{aug}} \mathbf{x}_{\text{aug}}^T \mathbf{P}_t}{\lambda_f + \mathbf{x}_{\text{aug}}^T \mathbf{P}_t \mathbf{x}_{\text{aug}}} \right)$$
-
-$$\mathbf{B}_{t+1} = \lambda_f \mathbf{B}_t + \mathbf{x}_{\text{aug}} (\mathbf{y}^*)^T$$
-
-$$\mathbf{W}_{t+1} = (\mathbf{P}_{t+1} \mathbf{B}_{t+1})^T$$
-
-Because $\mathbf{x}_{\text{aug}} \in \mathbb{R}^{d}$, the rank-1 update requires only matrix-vector products $\mathbf{u} = \mathbf{P}_t \mathbf{x}_{\text{aug}}$, an inner product $\mathbf{x}_{\text{aug}}^T \mathbf{u}$, and an outer product $\mathbf{u} \mathbf{u}^T$. On standard CPU SIMD / Metal hardware ($d \le 512$), this update completes in **$38.4$ µs** ($<50$ µs SLA), enabling real-time boundary rotation in live interactive environments.
-
----
-
-## 5. Empirical Results
-
-Earlier tables in this draft listed coverage and timing results without a committed dataset/run artifact that establishes those claims. They are withdrawn as release evidence. The [quality benchmark suite](../../benchmarks/quality/README.md) and [recorded launch-review run](../../benchmarks/quality/results/launch_review.json) provide reproducible raw classification measurements. They do not validate the coverage theorem's assumptions or a conditional safety guarantee.
-
----
-
-## 6. Conclusion
-
-The runtime combines contrastive centering, split-conformal prediction sets, and Sherman-Morrison updates for local structured decisions. Geometry results require the stated prototype assumptions; statistical coverage requires exchangeability and appropriate held-out calibration. Evaluate latency and decision quality independently on the intended workload.
-
----
-
-## References
-
-1. Angelopoulos, A. N., & Bates, S. (2021). *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification*. arXiv:2107.07511.
-2. Vovk, V., Gammerman, A., & Shafer, G. (2005). *Algorithmic Learning in a Random World*. Springer Science & Business Media.
-3. Welch, L. R. (1974). *Lower bounds on the maximum cross correlation of signals*. IEEE Transactions on Information Theory, 20(3), 397–399.
-4. Rankin, R. A. (1955). *The closest packing of spherical caps in $n$ dimensions*. Proceedings of the Glasgow Mathematical Association, 2(3), 139–144.
-5. Sherman, J., & Morrison, W. J. (1950). *Adjustment of an Inverse Matrix Corresponding to a Change in One of the Elements*. Annals of Mathematical Statistics, 21(1), 124–127.
-6. Weinberger, K., Dasgupta, A., Langford, J., Smola, A., & Attenberg, J. (2009). *Feature Hashing for Large Scale Multitask Learning*. International Conference on Machine Learning (ICML).
+The [three-workload report](../../benchmarks/quality/workloads/README.md) records
+measured quality, errors, timings, baseline behavior and failed takeovers.
+It does not experimentally prove exchangeability or the conditions of the
+prototype identity. Deterministic tool permissions and signed audit records are
+separate software mechanisms; see [deployment boundaries](../deployment.md).
