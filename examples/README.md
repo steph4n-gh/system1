@@ -60,6 +60,7 @@ statistical action label in any example does not itself grant a tool permission.
 | [gaming/pokemon_showdown_system1.py](gaming/pokemon_showdown_system1.py) | Damage heuristic and minimax fallback, mock/WebSocket transport; opponent-update helper is not called by the supplied loops |
 | [gaming/paperclips_speedrun.py](gaming/paperclips_speedrun.py) | Handwritten three-phase policy with accelerated mock and optional Playwright controller |
 | [gaming/teach_paperclips_wire.py](gaming/teach_paperclips_wire.py) | Teach, save and check one numeric restocking skill; [live demonstration and limitations](gaming/PAPERCLIPS_TEACHING.md) |
+| [gaming/snake_arena/](gaming/snake_arena/README.md) | Three-player GUI: taught System1 skill vs real Laya-MLX and Jev; timed/equal-move runs, explicit planner hints and optional shield; [recordings and results](gaming/snake_arena/RESULTS.md) |
 | [gaming/__init__.py](gaming/__init__.py) | Package marker |
 
 See [game commands and limits](../docs/SPEEDRUN_SHOWDOWN_WORLD_RECORDS.md).

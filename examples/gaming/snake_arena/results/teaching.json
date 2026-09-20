@@ -1,0 +1,1427 @@
+{
+  "teacher": "Deterministic planner vocabulary; synthetic instruction examples, not raw-board reasoning",
+  "counts": {
+    "teach": 284,
+    "calibration": 86,
+    "evaluate": 94
+  },
+  "teaching_ms": 99.87099998397753,
+  "skill_bytes": 16715,
+  "held_out_correct": 94,
+  "held_out_cases": 94,
+  "held_out_reviews": 22,
+  "reload_identical": true,
+  "records": [
+    {
+      "group": "0-0-0-0",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-0-0-0",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-0-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-0-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-0-2-3",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-0-2-3",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-1-0-1",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-1-0-1",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-1-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-1-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-2-0-3",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-2-0-3",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-3-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-3-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-3-2-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-3-2-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-3-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-3-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-0-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-0-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-0-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-0-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-4-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "0-4-2-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "0-4-2-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-0-0-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-0-0-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-0-2-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-0-2-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-1-1-0",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "1-1-1-0",
+      "labels": {
+        "move": null,
+        "risk": false,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": false
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "1-1-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-1-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-1-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-1-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-0-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-0-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-4-0",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-4-0",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-2-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-3-1-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-3-1-0",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-3-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-3-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-0-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-0-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-1-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-1-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-2-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-2-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "1-4-2-2",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-0-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-0-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-1-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-1-1-4",
+      "labels": {
+        "move": "RIGHT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "RIGHT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-2-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-2-3-2",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-2-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-2-4-1",
+      "labels": {
+        "move": "LEFT",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "LEFT",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "2-3-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "2-3-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "2-4-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "2-4-1-1",
+      "labels": {
+        "move": "DOWN",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "DOWN",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "3-0-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "3-0-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "3-1-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "3-1-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "3-1-1-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "3-1-1-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "3-1-2-0",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "3-1-2-0",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "3-2-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "3-2-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-0-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-0-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-2-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-0-2-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-1-0-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-1-0-2",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-1-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "4-1-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "4-2-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-2-0-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-2-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "4-2-1-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": true,
+      "correct": true
+    },
+    {
+      "group": "4-2-2-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": false
+      },
+      "prediction": {
+        "food": false,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    },
+    {
+      "group": "4-2-2-1",
+      "labels": {
+        "move": "UP",
+        "risk": true,
+        "food": true
+      },
+      "prediction": {
+        "food": true,
+        "move": "UP",
+        "risk": true
+      },
+      "needs_review": false,
+      "correct": true
+    }
+  ],
+  "lessons_sha256": "8ad2d66e9e618f9a9dd116c9b0cc9cc58c1815651da4536e91a5de608d752390"
+}

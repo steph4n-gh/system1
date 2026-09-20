@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a three-player Snake GUI comparing a taught System1 skill, real Laya-MLX and Jev. Include timed and equal-move modes, explicit planner/shield accounting, replay without API access, and four complete measured traces.
 - Add a reproducible public SpamAssassin teaching recipe requiring no mailbox or API credentials. Freeze source hashes and disjoint group splits, compare a conventional baseline offline, and retain both the failed collection-shift result (89.9% accepted correctness) and the subsequent representative split (603/618 accepted answers correct, 0.216 ms median). Keep this binary task distinct from the seven-category Inbox Zero pilot.
 
 - Add optional NumPy-only `TfidfProjector` for taught text skills, with a frozen vocabulary carried in `.s1m`, bounded loader validation, and review for inputs with no known features. Preserve the default hashed projector.

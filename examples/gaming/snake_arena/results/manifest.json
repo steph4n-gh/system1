@@ -1,0 +1,46 @@
+{
+  "hardware": "Apple M4 Pro",
+  "date_utc": "2026-09-20",
+  "reports": [
+    {
+      "file": "timed-seed2026.json.gz",
+      "raw_sha256": "d9374b926f7e6758aeb21f240187c321a6c456cad01c70b5d43d224847c3bae8",
+      "compressed_bytes": 1577974,
+      "run_id": "20260920T230929-3a400a"
+    },
+    {
+      "file": "turns-seed2026.json.gz",
+      "raw_sha256": "a751f21b959ad5cdc5b5fb8f4c4c339e989026175714a56b59680f05e41e80a2",
+      "compressed_bytes": 20084,
+      "run_id": "20260920T231022-2b31cd"
+    },
+    {
+      "file": "turns-seed2027.json.gz",
+      "raw_sha256": "6820594c9f5a35d1431d9842a6d27c34bf36c9361d24fe049da66109cef0c0c8",
+      "compressed_bytes": 19957,
+      "run_id": "20260920T231114-660728"
+    },
+    {
+      "file": "turns-seed2028.json.gz",
+      "raw_sha256": "e15e3dd3f6523ed258bd025f41a4993b610b499bdeafb6ac257eae5f7f2f43e9",
+      "compressed_bytes": 20163,
+      "run_id": "20260920T231241-89a1a6"
+    }
+  ],
+  "laya_checkpoint_revision": "20aed815fc6acde75733882e7ec0e3f28aeb9717",
+  "laya_weight_sha256": "b9c07bf14be2fa5c78a9193a3e6d840ac80e89e62fc40f425834c3d8a6eaa3de",
+  "note": "Raw run reports are unchanged; SHA-256 is over decompressed JSON bytes. Runtime versions collected separately after the run.",
+  "environment": {
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.5",
+    "versions": {
+      "numpy": "2.5.3",
+      "mlx": "0.32.2",
+      "mlx-metal": "0.32.2",
+      "laya-mlx": "0.1.0",
+      "tokenizers": "0.23.2",
+      "huggingface-hub": "1.32.0"
+    },
+    "memory_gib": 24.0
+  }
+}
