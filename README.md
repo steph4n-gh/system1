@@ -175,6 +175,14 @@ The report includes original labels, fixed splits, every error and a classical
 TF-IDF/logistic-regression baseline. That baseline matched raw correctness on
 banking and assistant, scored lower on SMS, and ran faster locally on all three.
 
+The unreleased [real-email experiment](https://github.com/steph4n-gh/system1/blob/main/benchmarks/quality/public_email/README.md)
+uses public SpamAssassin labels: a representative teaching recipe accepts
+618/632 held-out spam/ham decisions, with 603/618 correct (97.6%), after 0.94 seconds
+of teaching. Median local decisions take 0.216 ms and the saved skill is 78.2 KiB.
+It retains 15 accepted mistakes and an earlier source-shift failure (89.9% accepted
+correctness). The representative split was designed after that failure; it is not
+new blinded evidence or qualification of the seven-category Inbox Zero pilot.
+
 Automatic observation is measured separately. Under the original default policy,
 actual **Jev and Gemini 2.5 Flash** each enabled assistant takeover after 358
 observations: 171/180 old official test requests accepted locally, 167/171 correct,

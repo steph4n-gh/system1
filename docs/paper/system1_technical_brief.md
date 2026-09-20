@@ -99,3 +99,10 @@ a TF-IDF feature option and broader lessons. It improves the original email
 result and speed, but its new quality evidence is synthetic, includes an accepted
 mistake, and does not qualify real-mailbox automation. Its recorded results are
 separate from the public-data and teacher comparisons above.
+
+The additional [real-email recipe](../../benchmarks/quality/public_email/README.md)
+teaches spam/ham from public SpamAssassin labels in 0.94 seconds and saves a
+78.2 KiB local skill. Its representative grouped evaluation accepts 618/632
+decisions, 603 correct (97.6%), at 0.216 ms median latency. This retrospective
+experiment follows a preserved source-shift failure at 89.9% accepted correctness;
+it supports a bounded spam/ham skill, not seven-category Inbox Zero automation.

@@ -9,6 +9,12 @@ word features with the existing System1 ridge head. It needs only NumPy at runti
 its vocabulary and weights are saved together. It adds no LLM or new classifier
 framework.
 
+A separate [public real-email experiment](../../benchmarks/quality/public_email/README.md)
+now provides a downloadable spam/ham teaching recipe requiring no mailbox or API
+credentials. It reaches 97.6% accepted correctness on its representative grouped
+split, while preserving an earlier collection-shift failure. Its native labels
+do not cover these seven categories, so this pilot's review-only default remains.
+
 | Evaluation | Correct | Accepted | Accepted correct | Median direct latency |
 |---|---:|---:|---:|---:|
 | Original hashed skill, 35 upstream cases | 28/35 | 5/35 | 5/5 | 2.02 ms |

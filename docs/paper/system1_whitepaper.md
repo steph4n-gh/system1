@@ -247,3 +247,13 @@ candidate is correct on 83 and accepts 81, with one accepted error. These are
 not independently collected mailbox examples. The upstream cohort still misses
 the 80% acceptance target, and the pilot remains review-only by default. Existing
 public-dataset and recorded teacher measurements above are unchanged.
+
+A separate [public-email experiment](../../benchmarks/quality/public_email/README.md)
+uses SpamAssassin's original spam/ham labels. An initial source holdout yields
+1,239/1,378 correct accepted decisions (89.9%), failing the quality target. A
+subsequent retrospective grouped split with both collections represented yields
+603/618 correct accepted decisions (97.6%), accepting 618/632 inputs, with a
+96.0%–98.5% Wilson interval for accepted correctness. Teaching takes 0.94 seconds;
+median decisions take 0.216 ms. The conventional classifier has slightly better
+raw correctness in that second experiment. Neither experiment qualifies the
+seven-category integration or demonstrates robustness to modern mailbox drift.

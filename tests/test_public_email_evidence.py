@@ -1,5 +1,7 @@
 """Guard the public-email experiment's data boundaries, not its quality score."""
 import importlib.util
+import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -85,3 +87,33 @@ def test_mixed_collection_split_retains_each_group_once():
     assert all(mixed.values())
     assert sorted(r["id"] for items in mixed.values() for r in items) == sorted(r["id"] for r in rows)
     assert mixed == benchmark.representative_split({"evaluate": rows[::-1]})
+
+
+@pytest.mark.parametrize("suffix", ["", "_representative"])
+def test_published_predictions_match_frozen_labels_and_disjoint_groups(suffix):
+    here = ROOT / "benchmarks/quality/public_email"
+    protocol_bytes = (here / f"protocol{suffix}.json").read_bytes()
+    split_bytes = (here / f"splits{suffix}.json").read_bytes()
+    protocol = json.loads(protocol_bytes)
+    manifest = json.loads(split_bytes)
+    report = json.loads((here / f"results{suffix}.json").read_text())
+    assert hashlib.sha256(protocol_bytes).hexdigest() == report["protocol_sha256"]
+    assert hashlib.sha256(split_bytes).hexdigest() == protocol["prepared_sha256"] == report["prepared_sha256"]
+    groups, inputs = set(), set()
+    for rows in manifest["splits"].values():
+        for item in rows:
+            assert item["group"] not in groups and item["text_sha256"] not in inputs
+            groups.add(item["group"])
+            inputs.add(item["text_sha256"])
+    expected = {r["id"]: (r["group"], r["label"]) for r in manifest["splits"]["evaluate"]}
+    for name in ("system1", "tfidf_logistic"):
+        rows = report[name]["predictions"]
+        assert len(rows) == len(expected)
+        assert {r["id"]: (r["group"], r["label"]) for r in rows} == expected
+        quality = report[name]["quality"]
+        assert quality["correct"] == sum(r["label"] == r["prediction"] for r in rows)
+        accepted = [r for r in rows if not r["needs_review"]]
+        assert quality["accepted"] == len(accepted)
+        assert quality["accepted_errors"] == sum(r["label"] != r["prediction"] for r in accepted)
+    assert report["teacher_calls"] == report["outbound_connections_during_teaching_and_evaluation"] == 0
+    assert report["inbox_zero_seven_category_rollout_ready"] is False

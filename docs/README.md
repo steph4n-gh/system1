@@ -17,6 +17,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | [Teacher observation](typesafe.md) | Callback contract, actual Jev/Gemini evidence, promotion and reuse |
 | [Example catalog](../examples/README.md) | Every example's role and supported or experimental scope |
 | [Inbox Zero pilot](../examples/inbox_zero/README.md) | Teach email categories, serve locally, and inspect the initial quality limits |
+| [Public real-email recipe](../benchmarks/quality/public_email/README.md) | Download labeled mail, teach spam/ham locally, and reproduce both successful and failed evaluations |
 | [Application integrations](integrations.md) | Connect a checked skill to LangChain, MCP, ASGI, gRPC or monitoring |
 | [Tool permissions](guides/policy_guard.md) | Add an explicit permission rule when an answer would trigger an action |
 | [Deployment boundaries](deployment.md) | Permissions, identity, audit, network paths and service limits |

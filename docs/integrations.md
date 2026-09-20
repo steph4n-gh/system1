@@ -50,7 +50,10 @@ standard email categories. Install the optional server with `system1[http]`.
 The current candidate uses portable TF-IDF features and the existing ridge head,
 with no new runtime dependency. It is roughly ten times faster than the initial
 hashed email skill. The fresh authored cohort meets point quality targets, while
-the upstream regression cohort still misses acceptance; independent mailbox
-evidence is also missing. It therefore starts in review-only mode and leaves
+the upstream regression cohort still misses acceptance; independent evidence for
+all seven categories is also missing. The separate
+[public spam/ham experiment](../benchmarks/quality/public_email/README.md) offers a
+real-email teaching recipe without credentials, but has a different label contract.
+The Inbox Zero provider therefore starts in review-only mode and leaves
 uncertain or failed classifications unprocessed without an LLM fallback.
 Other Inbox Zero LLM features remain outside this classification integration.

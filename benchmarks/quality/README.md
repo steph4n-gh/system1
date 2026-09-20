@@ -1,5 +1,14 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## Real public email, without mailbox access
+
+The [SpamAssassin experiment](public_email/README.md) downloads checksum-pinned
+real emails, teaches a saved local spam/ham skill, and compares it with a
+conventional classifier. It retains both a source-shift failure and a successful
+representative grouped split. Reproduce with
+`python benchmarks/quality/evaluate_public_email.py --download --representative`.
+This separate task does not qualify the Inbox Zero pilot's seven-category routing.
+
 ## 1.0.2 qualification and teaching-quality round
 
 [Protocol, results and limits](quality_round/README.md) cover the new opt-in

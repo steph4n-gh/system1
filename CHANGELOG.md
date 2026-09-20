@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a reproducible public SpamAssassin teaching recipe requiring no mailbox or API credentials. Freeze source hashes and disjoint group splits, compare a conventional baseline offline, and retain both the failed collection-shift result (89.9% accepted correctness) and the subsequent representative split (603/618 accepted answers correct, 0.216 ms median). Keep this binary task distinct from the seven-category Inbox Zero pilot.
+
 - Add optional NumPy-only `TfidfProjector` for taught text skills, with a frozen vocabulary carried in `.s1m`, bounded loader validation, and review for inputs with no known features. Preserve the default hashed projector.
 - Broaden email teaching and retain both the original failed result and the new TF-IDF result: 83/84 correct on a fresh authored set, one accepted mistake, and about 10× faster direct decisions. Keep review-only default because upstream acceptance and independent mailbox validation remain incomplete.
 
