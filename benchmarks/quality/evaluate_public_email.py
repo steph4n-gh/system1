@@ -139,6 +139,17 @@ def split_groups(rows):
     return splits, dict(excluded)
 
 
+def representative_split(splits):
+    """A separate, retrospective experiment with both collections in each split."""
+    mixed = {name: [] for name in ("teach", "calibration", "evaluate")}
+    for rows in splits.values():
+        for row in rows:
+            bucket = int(digest("system1-public-email-representative-v1:" + row["group"]), 16) % 5
+            split = "evaluate" if bucket == 0 else "calibration" if bucket == 1 else "teach"
+            mixed[split].append(row)
+    return {name: sorted(rows, key=lambda row: row["id"]) for name, rows in mixed.items()}
+
+
 def prepare(protocol, directory, download=False):
     source_dir = directory / "sources"
     source_dir.mkdir(parents=True, exist_ok=True)
@@ -171,6 +182,8 @@ def prepare(protocol, directory, download=False):
                              "label": source["label"], "collection": source["collection"]})
                 counts[path.name] += 1
     splits, excluded = split_groups(rows)
+    if protocol.get("split_mode") == "representative":
+        splits = representative_split(splits)
     public = {"source_counts": dict(counts), "excluded": excluded,
               "counts": {name: dict(Counter(r["label"] for r in items)) for name, items in splits.items()},
               "splits": {name: [{k: row[k] for k in ("id", "group", "label")} |
@@ -290,7 +303,7 @@ def evaluate(data, protocol, directory):
                     function(row["text"])
                     timings[name].append((time.perf_counter() - start) * 1000)
     report = {
-        "protocol_sha256": digest((HERE / "protocol.json").read_bytes()),
+        "protocol_sha256": digest(json.dumps(protocol, indent=2) + "\n"),
         "prepared_sha256": protocol["prepared_sha256"],
         "environment": {"system1": __version__, "python": platform.python_version(), "platform": platform.platform(),
                         "numpy": np.__version__, "sklearn": sklearn.__version__},
@@ -310,9 +323,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--download", action="store_true", help="Download missing checksum-pinned public archives")
     parser.add_argument("--prepare-only", action="store_true", help="Inspect split counts without teaching or scoring")
-    parser.add_argument("--output", type=Path, default=ROOT / ".system1/public-email")
+    parser.add_argument("--representative", action="store_true", help="Run the separate retrospective mixed-collection experiment")
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    protocol = json.loads((HERE / "protocol.json").read_text())
+    args.output = args.output or ROOT / ".system1" / ("public-email-representative" if args.representative else "public-email")
+    protocol = json.loads((HERE / ("protocol_representative.json" if args.representative else "protocol.json")).read_text())
     data, public, prepared_hash = prepare(protocol, args.output, args.download)
     print(json.dumps({"counts": public["counts"], "excluded": public["excluded"], "prepared_sha256": prepared_hash}, indent=2))
     if not args.prepare_only:

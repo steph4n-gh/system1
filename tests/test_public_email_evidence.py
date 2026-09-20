@@ -77,3 +77,11 @@ def test_changed_download_fails_before_parsing(tmp_path):
 def test_evaluation_requires_frozen_splits(tmp_path):
     with pytest.raises(ValueError, match="Freeze prepared_sha256"):
         benchmark.evaluate({}, {"prepared_sha256": None}, tmp_path)
+
+
+def test_mixed_collection_split_retains_each_group_once():
+    rows = [{"id": str(i), "group": benchmark.digest(str(i))} for i in range(100)]
+    mixed = benchmark.representative_split({"teach": rows[:50], "evaluate": rows[50:]})
+    assert all(mixed.values())
+    assert sorted(r["id"] for items in mixed.values() for r in items) == sorted(r["id"] for r in rows)
+    assert mixed == benchmark.representative_split({"evaluate": rows[::-1]})

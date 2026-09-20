@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "task": "SpamAssassin original-label spam versus ham; separate from Inbox Zero seven-category routing",
+  "source_readme": "https://spamassassin.apache.org/old/publiccorpus/readme.html",
+  "data_rights": "Publicly offered for filter evaluation; copyright remains with original message senders. Do not redistribute raw mail or send it to live mail systems. Not an Apache-2.0 dataset.",
+  "sources": [
+    {
+      "file": "20030228_easy_ham.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_easy_ham.tar.bz2",
+      "sha256": "2b7b65904bcfcc31d2b5f51946f2d261370b257402cbbd62930b46ab83367438",
+      "bytes": 1612216,
+      "collection": "original",
+      "label": "ham"
+    },
+    {
+      "file": "20030228_hard_ham.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_hard_ham.tar.bz2",
+      "sha256": "ce2ce67880643dbde65ea7f85bffbfe4417349c4bd80b6b0de56262ae6b0a9c9",
+      "bytes": 1029898,
+      "collection": "original",
+      "label": "ham"
+    },
+    {
+      "file": "20030228_spam.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_spam.tar.bz2",
+      "sha256": "c08debc32413804949a866be45ef78195cec2cbafd1da744ed76cdb860589743",
+      "bytes": 1183768,
+      "collection": "original",
+      "label": "spam"
+    },
+    {
+      "file": "20030228_easy_ham_2.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_easy_ham_2.tar.bz2",
+      "sha256": "b4bd3dc5ae5b40f38e99a0e41ad7d16b428b56e818e3a6ffa07330d62004dd38",
+      "bytes": 1077892,
+      "collection": "later",
+      "label": "ham"
+    },
+    {
+      "file": "20050311_spam_2.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20050311_spam_2.tar.bz2",
+      "sha256": "44280a0e28bf7645b2279e8e42659271ad82c6f40bf8d364dbda7f1df344a765",
+      "bytes": 2059029,
+      "collection": "later",
+      "label": "spam"
+    },
+    {
+      "file": "readme.html",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/readme.html",
+      "sha256": "9f8cc0c8be6f32b25226d3ece26da775a6e008581b8fb061a679e3acee6b64be",
+      "bytes": 4566
+    }
+  ],
+  "preprocessing": "Decode MIME text, prefer plain text, strip HTML markup/script/style, use subject and body only, cap combined input at 8192 characters. No routing/spam headers, filenames, addresses from headers or archive names enter features.",
+  "grouping": "Connected components sharing exact normalized model input, nonempty normalized body, normalized subject with at least three words (Re/Fwd and numeric runs removed), Message-ID/References/In-Reply-To, or the first 80 normalized body words when available. Conflicting-label groups excluded. One deterministic representative per group. This reduces but cannot guarantee elimination of every near duplicate.",
+  "split": "Separate retrospective experiment planned after the source-holdout failure. Reuse the same deduplicated groups, hash each group ID with salt system1-public-email-representative-v1 modulo 5; 0 assigns evaluation, 1 calibration, 2\u20134 teaching. Original and later collections can appear in each split; groups never cross splits. Candidate and baseline settings unchanged. One attempt; no test-driven parameter or threshold changes.",
+  "candidate": {
+    "features": "tfidf",
+    "max_features": 2048,
+    "regularization": 0.1,
+    "backend": "numpy",
+    "augment": false,
+    "alpha": 0.05,
+    "cache": false
+  },
+  "baseline": {
+    "features": "identical teaching-only TF-IDF vocabulary and IDF",
+    "classifier": "sklearn LogisticRegression",
+    "C": 1.0,
+    "max_iter": 1000,
+    "solver": "lbfgs",
+    "conformal": "LAC on the same conformal half of calibration, alpha 0.05"
+  },
+  "targets": {
+    "accepted_accuracy": 0.95,
+    "acceptance_rate": 0.8
+  },
+  "timing": "One cold decision recorded separately, warm each path on teaching data, five interleaved single-message passes over the fixed evaluation set; median and p95. Includes System1 strict decision and unsigned receipt construction, no signing or storage. No HTTP or LLM timing comparison.",
+  "artifacts": "Record per-message IDs, labels, predictions, review flags and sets; no email text. Raw archives, prepared lessons and saved skill stay ignored under .system1/public-email.",
+  "prepared_sha256": "f00f785c72982153c85d64dc2ec3c7d0889a4165f5a8ee9d2722f9aa8c325d4f",
+  "limitations": [
+    "Historical 2002\u20132005 collection; not representative of a modern personal mailbox.",
+    "Spam/ham quality does not establish seven-category Inbox Zero quality or authorize mailbox actions.",
+    "Later archive additions are a source holdout, not a strict timestamp split.",
+    "Classical baseline is local; no claim of an LLM latency comparison.",
+    "This experiment was designed after seeing the source-holdout results. It uses independent public labels and group-held-out model evaluation, but is not a new blinded corpus or evidence of robustness to collection shift."
+  ],
+  "split_mode": "representative"
+}
