@@ -274,6 +274,13 @@ class PromotionPolicy:
     false_allow_ceiling: float = 0.0  # Exactly 0.0% tolerance: zero false-allows permitted
     require_statistical_bound: bool = True
     min_local_acceptance: float = 0.8
+    # None preserves the original policy. Set, for example, .95 to qualify
+    # agreement specifically among the decisions that will run unattended.
+    min_accepted_agreement: Optional[float] = None
+
+    def __post_init__(self) -> None:
+        if self.min_accepted_agreement is not None and not 0 < self.min_accepted_agreement <= 1:
+            raise ValueError("min_accepted_agreement must be between 0 (exclusive) and 1")
 
 
 @dataclass
@@ -301,6 +308,7 @@ class PromotionReport:
     exact_lower_bound: float = 0.0
     acceptance_lower_bound: float = 0.0
     validation_attempt: Optional[int] = None
+    accepted_agreement_lower_bound: Optional[float] = None
 
 
 def _is_critical_class(value: Any, critical_classes: Set[str]) -> bool:
@@ -450,8 +458,10 @@ def evaluate_promotion_eligibility(
     effective_n = scored_units
     effective_matching = agreement_rate * effective_n
     wilson_lower = compute_wilson_score_lower(effective_matching, effective_n, confidence=policy.statistical_confidence) if effective_n > 0 else 0.0
-    failure_probability = (1.0 - policy.statistical_confidence) / 2
-    if not 0 < failure_probability < 0.5:
+    # Share the error budget across every exact bound used for qualification.
+    bound_count = 3 if policy.min_accepted_agreement is not None else 2
+    failure_probability = (1.0 - policy.statistical_confidence) / bound_count
+    if not 0 < policy.statistical_confidence < 1:
         raise ValueError("statistical_confidence must be between 0 and 1")
     if validation_attempt is not None:
         if validation_attempt < 1:
@@ -462,6 +472,7 @@ def evaluate_promotion_eligibility(
     false_allow_rate = (false_allows / critical_targets) if critical_targets > 0 else 0.0
     acceptance_rate = accepted_units / effective_n if effective_n else 0.0
     accepted_agreement = accepted_matching_units / accepted_units if accepted_units else None
+    accepted_lower = _binomial_lower_bound(accepted_matching_units, accepted_units, failure_probability)
 
     effective_thresh = policy.min_agreement_threshold
 
@@ -496,6 +507,17 @@ def evaluate_promotion_eligibility(
         rejection_reasons.append(f"Local acceptance lower bound ({acceptance_lower:.4f}) below required threshold ({policy.min_local_acceptance:.4f})")
     if policy.min_local_acceptance > 0 and accepted_agreement is not None and accepted_agreement < policy.min_agreement_threshold:
         rejection_reasons.append("Agreement on accepted decisions below the required threshold")
+    if policy.min_accepted_agreement is not None:
+        if accepted_agreement is None:
+            rejection_reasons.append("No accepted validation groups; cannot qualify accepted agreement")
+        elif accepted_agreement < policy.min_accepted_agreement:
+            rejection_reasons.append(
+                f"Accepted agreement ({accepted_agreement:.4f}) below required threshold ({policy.min_accepted_agreement:.4f})"
+            )
+        if policy.require_statistical_bound and accepted_lower < policy.min_accepted_agreement:
+            rejection_reasons.append(
+                f"Accepted agreement lower bound ({accepted_lower:.4f}) below required threshold ({policy.min_accepted_agreement:.4f})"
+            )
 
     is_eligible = len(rejection_reasons) == 0
 
@@ -521,6 +543,7 @@ def evaluate_promotion_eligibility(
         validation_attempt=validation_attempt,
         local_acceptance_rate=round(acceptance_rate, 4),
         accepted_agreement_rate=round(accepted_agreement, 4) if accepted_agreement is not None else None,
+        accepted_agreement_lower_bound=round(accepted_lower, 4) if accepted_units else None,
     )
 
 
@@ -1447,13 +1470,11 @@ def call_real_typesafe_api(
 
 
 class TypeSafeClient:
-    """Synchronous drop-in replacement client for TypeSafe AI (Jev).
+    """TypeSafe-style decisions using a local skill or an observed teacher.
 
-    Routes calls locally to System 1 engine with:
-    - 0 bytes egress
-    - sub-2ms local latency
-    - Split Conformal Prediction sets
-    - Ed25519 signed decision receipts
+    Local execution uses small decision heads, not a language model. Teacher
+    calls require a callback or explicitly enabled network access. Latency and
+    quality depend on the workload; uncertain local answers can require review.
     """
 
     def __init__(
@@ -1468,6 +1489,7 @@ class TypeSafeClient:
         ledger: Optional[ActionLedger] = None,
         backend: str = "auto",
         dimension: int = 384,
+        regularization: float = 1.0,
         projector: Optional[Any] = None,
         timeout: float = 15.0,
         zero_egress: bool = True,
@@ -1502,6 +1524,9 @@ class TypeSafeClient:
         self.ledger = ledger
         self.backend = backend
         self.dimension = dimension
+        self.regularization = float(regularization)
+        if not math.isfinite(self.regularization) or self.regularization <= 0:
+            raise ValueError("regularization must be finite and positive")
         self.projector = projector
         self.timeout = timeout
         self.baseline_handler = kwargs.get("baseline_handler", None)
@@ -1772,6 +1797,7 @@ class TypeSafeClient:
 
         compiler = SystemOneCompiler(
             schema=schema, dimension=self.dimension, projector=self.projector, backend=self.backend,
+            regularization=self.regularization,
         )
         try:
             partition = partition_cutover_history(schema_history)
@@ -1841,6 +1867,13 @@ class TypeSafeClient:
             report.artifact_digest = artifact_digest
             report.schema_digest = digest
             report.manifest = {
+                "qualification_policy": {
+                    "min_agreement_threshold": policy.min_agreement_threshold,
+                    "min_local_acceptance": policy.min_local_acceptance,
+                    "min_accepted_agreement": policy.min_accepted_agreement,
+                    "statistical_confidence": policy.statistical_confidence,
+                    "require_statistical_bound": policy.require_statistical_bound,
+                },
                 "training_set_digest": _serialize_samples(partition.train_history),
                 "calibration_set_digest": _serialize_samples(partition.calib_history),
                 "validation_set_digest": _serialize_samples(partition.val_history),
@@ -1871,6 +1904,8 @@ class TypeSafeClient:
                             "wilson_lower_bound": report.wilson_lower_bound,
                             "critical_class_count": report.critical_class_count,
                             "false_allow_rate": report.false_allow_rate,
+                            "accepted_agreement_rate": report.accepted_agreement_rate,
+                            "accepted_agreement_lower_bound": report.accepted_agreement_lower_bound,
                         },
                         "manifest": report.manifest,
                     },
@@ -2276,6 +2311,7 @@ class AsyncTypeSafeClient:
         ledger: Optional[ActionLedger] = None,
         backend: str = "auto",
         dimension: int = 384,
+        regularization: float = 1.0,
         projector: Optional[Any] = None,
         timeout: float = 15.0,
         zero_egress: bool = True,
@@ -2294,6 +2330,7 @@ class AsyncTypeSafeClient:
             ledger=ledger,
             backend=backend,
             dimension=dimension,
+            regularization=regularization,
             projector=projector,
             timeout=timeout,
             zero_egress=zero_egress,

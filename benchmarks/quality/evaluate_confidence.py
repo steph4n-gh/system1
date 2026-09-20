@@ -75,7 +75,7 @@ def evaluate(output_dir):
     cases_path = ROOT / 'benchmarks/quality/confidence_cases.json'
     cases = json.loads(cases_path.read_text())
     old_cases = json.loads((ROOT / 'benchmarks/quality/contrast_cases.json').read_text())
-    routing_path = ROOT / 'examples/teaching/model_routing.json'
+    routing_path = ROOT / 'benchmarks/quality/results/model_routing_1_0_1.json'
     banking_path = ROOT / 'examples/teaching/banking_support.json'
     assert hashlib.sha256(routing_path.read_bytes()).hexdigest() == cases['teaching_sha256']
     assert hashlib.sha256(banking_path.read_bytes()).hexdigest() == cases['banking_sha256']

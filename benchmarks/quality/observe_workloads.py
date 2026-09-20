@@ -17,7 +17,9 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / 'src'), str(ROOT / 'examples')]
 from _teaching_demo import quality_metrics
-from system1.compat.typesafe import TypeSafeClient, call_real_typesafe_api
+from system1.compat.typesafe import PromotionPolicy, TypeSafeClient, call_real_typesafe_api
+
+DEFAULT_PROTOCOL = ROOT / 'benchmarks/quality/workloads/protocol.json'
 
 
 def gemini_answer(state, questions):
@@ -49,8 +51,7 @@ def gemini_answer(state, questions):
     return normalized, (time.perf_counter() - start) * 1000, 0
 
 
-def load_workload(name):
-    protocol_path = ROOT / 'benchmarks/quality/workloads/protocol.json'
+def load_workload(name, protocol_path=DEFAULT_PROTOCOL):
     protocol = json.loads(protocol_path.read_text())
     entry = protocol['workloads'][name]
     path = ROOT / entry['path']
@@ -60,8 +61,8 @@ def load_workload(name):
     return protocol, data, descriptions
 
 
-def observe(name, teacher, output_dir, *, offline=False):
-    protocol, data, descriptions = load_workload(name)
+def observe(name, teacher, output_dir, *, offline=False, protocol_path=DEFAULT_PROTOCOL):
+    protocol, data, descriptions = load_workload(name, protocol_path)
     settings = protocol['takeover']
     stream = sorted(data['teach'] + data['calibration'], key=lambda r:
                     hashlib.sha256(f"{name}:{r['group']}".encode()).hexdigest())[:settings['max_observations']]
@@ -122,6 +123,9 @@ def observe(name, teacher, output_dir, *, offline=False):
 
     client = TypeSafeClient(mode='auto_cutover', baseline_handler=baseline, backend='numpy',
                            dimension=settings['dimension'], zero_egress=teacher == 'dataset',
+                           regularization=settings['compiler_regularization'],
+                           cutover_threshold=settings.get('cutover_threshold', 50),
+                           promotion_policy=PromotionPolicy(**settings['promotion_policy']) if 'promotion_policy' in settings else None,
                            strict_mode=True, augment=False, fallback_baseline=False, use_cache=False)
     started = time.perf_counter()
     for i, next_row in enumerate(stream, 1):
@@ -131,7 +135,8 @@ def observe(name, teacher, output_dir, *, offline=False):
         if client.is_cutover:
             break
     report = {'workload': name, 'teacher': teacher, 'dataset_sha256': protocol['workloads'][name]['sha256'],
-              'protocol_sha256': hashlib.sha256((ROOT / 'benchmarks/quality/workloads/protocol.json').read_bytes()).hexdigest(),
+              'protocol_sha256': hashlib.sha256(protocol_path.read_bytes()).hexdigest(),
+              'settings': settings,
               'promoted': client.is_cutover, 'observations': len(observations), 'new_https_calls': calls,
               'observation_ms': (time.perf_counter() - started) * 1000,
               'observed_teacher_correct': sum(r['prediction'] == r['label'] for r in observations),

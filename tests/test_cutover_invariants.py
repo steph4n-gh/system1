@@ -290,3 +290,64 @@ def test_post_cutover_zero_egress_offline_abstention():
     assert resp.get("verdict") == "REQUIRE_APPROVAL"
     assert resp.get("status") in ("ABSTAINED_AMBIGUOUS", "ABSTAINED_DRIFT")
     assert resp.get("egress_bytes") == 0
+
+
+def test_accepted_agreement_has_its_own_quality_requirement():
+    """Easy reviewed cases must not hide errors in unattended decisions."""
+    from types import SimpleNamespace
+    schema = _build_dynamic_schema({'tier': Choice('Tier', criteria={'basic': 'Basic', 'pro': 'Pro'})})
+    class Engine:
+        def decide(self, prompt, **kwargs):
+            i = int(prompt)
+            return SimpleNamespace(values={'tier': 'basic' if i < 10 else 'pro'}, is_ambiguous=i >= 100)
+    history = [{'state': str(i), 'answers': {'tier': 'pro'}} for i in range(300)]
+    policy = PromotionPolicy(min_local_acceptance=.2, min_accepted_agreement=.95)
+    report = evaluate_promotion_eligibility(Engine(), history, schema, policy)
+    assert report.agreement_rate > .95
+    assert report.accepted_agreement_rate == .9
+    assert not report.is_eligible
+    assert any('Accepted agreement (' in reason for reason in report.rejection_reasons)
+
+
+def test_accepted_agreement_requires_independent_evidence_and_spends_attempt_budget():
+    from types import SimpleNamespace
+    schema = _build_dynamic_schema({'tier': Choice('Tier', criteria={'basic': 'Basic', 'pro': 'Pro'})})
+    class Engine:
+        def decide(self, prompt, **kwargs):
+            return SimpleNamespace(values={'tier': 'pro'}, is_ambiguous=False)
+    policy = PromotionPolicy(min_accepted_agreement=.95)
+    history = [{'state': str(i), 'answers': {'tier': 'pro'}} for i in range(100)]
+    first = evaluate_promotion_eligibility(Engine(), history, schema, policy, validation_attempt=1)
+    later = evaluate_promotion_eligibility(Engine(), history, schema, policy, validation_attempt=2)
+    assert first.is_eligible
+    assert first.accepted_agreement_lower_bound >= .95
+    assert not later.is_eligible
+    assert later.accepted_agreement_lower_bound < .95
+    repeated = [{**row, 'group_id': i // 10} for i, row in enumerate(history)]
+    few = evaluate_promotion_eligibility(Engine(), repeated, schema, policy)
+    assert few.accepted_agreement_rate == 1
+    assert few.independent_validation_groups == 10
+    assert not few.is_eligible
+    assert any('Accepted agreement lower bound' in reason for reason in few.rejection_reasons)
+
+
+def test_accepted_agreement_cannot_qualify_without_acceptances():
+    from types import SimpleNamespace
+    schema = _build_dynamic_schema({'tier': Choice('Tier', criteria={'basic': 'Basic', 'pro': 'Pro'})})
+    class Engine:
+        def decide(self, prompt, **kwargs):
+            return SimpleNamespace(values={'tier': 'pro'}, is_ambiguous=True)
+    report = evaluate_promotion_eligibility(
+        Engine(), [{'state': 'one', 'answers': {'tier': 'pro'}}], schema,
+        PromotionPolicy(min_local_acceptance=0, min_accepted_agreement=.95, require_statistical_bound=False),
+    )
+    assert not report.is_eligible
+    assert report.accepted_agreement_rate is None
+    assert report.accepted_agreement_lower_bound is None
+    assert any('No accepted validation groups' in reason for reason in report.rejection_reasons)
+
+
+@pytest.mark.parametrize('target', [0, -1, 1.1, float('nan')])
+def test_accepted_agreement_rejects_invalid_targets(target):
+    with pytest.raises(ValueError, match='min_accepted_agreement'):
+        PromotionPolicy(min_accepted_agreement=target)

@@ -1,0 +1,87 @@
+{
+  "purpose": "One quality round: stronger opt-in accepted-agreement qualification, fuller observed teaching, and 36 routing contrast lessons. Old official tests are regression evidence after prior inspection. Fresh authored probes are separate diagnostics.",
+  "baseline_commit": "0b49a05cc7f7e510684f60adc737bb6b10eaabff",
+  "targets": {
+    "accepted_accuracy": 0.95,
+    "acceptance_rate": 0.8
+  },
+  "teaching_settings": {
+    "dimension": 2048,
+    "regularization": 0.1,
+    "augment": false,
+    "alpha": 0.05,
+    "strict": true,
+    "backend": "numpy",
+    "cache": false,
+    "receipts": false
+  },
+  "classical_baseline": {
+    "library": "scikit-learn==1.9.1",
+    "vectorizer": "TfidfVectorizer(ngram_range=(1,2), sublinear_tf=True)",
+    "classifier": "LogisticRegression(C=1.0, max_iter=1000, solver=\"lbfgs\")",
+    "calibration": "LAC scores on the same conformal half used by System 1; no temperature fitting. No test tuning."
+  },
+  "takeover": {
+    "dimension": 2048,
+    "backend": "numpy",
+    "strict": true,
+    "augment": false,
+    "compiler_regularization": 0.1,
+    "max_observations": 4129,
+    "stream_order": "Sort teaching and calibration rows together by SHA-256 of workload name, colon, normalized group digest; use at most the first 1000. Stop on promotion.",
+    "promotion": "95% accepted teacher agreement, 80% overall teacher agreement and 80% acceptance, each with exact lower bounds sharing a 95% confidence budget; normal fresh validation blocks and repeated-attempt spending. First attempt at 400 observations.",
+    "teachers": [
+      "original dataset labels"
+    ],
+    "test_teacher_calls": 0,
+    "cache": false,
+    "gemini_settings": {
+      "model": "gemini-2.5-flash",
+      "temperature": 0,
+      "thinkingBudget": 0,
+      "maxOutputTokens": 256,
+      "output": "JSON object containing one enumerated intent label"
+    },
+    "cutover_threshold": 400,
+    "promotion_policy": {
+      "min_accepted_agreement": 0.95
+    }
+  },
+  "workloads": {
+    "banking_support": {
+      "path": "examples/teaching/banking_support.json",
+      "sha256": "d1bc96779a6ff92ad1bc21cad725b0f1b8bc08db81ee6d129485490165f4d06a",
+      "counts": {
+        "teach": 287,
+        "calibration": 125,
+        "evaluate": 120
+      }
+    },
+    "assistant_commands": {
+      "path": ".system1/workloads/data/assistant_commands.json",
+      "sha256": "98c5f3afc79acbf850f3586d732d755cc2140aaa55c807041880965f21b582e5",
+      "counts": {
+        "teach": 600,
+        "calibration": 120,
+        "evaluate": 180
+      }
+    },
+    "sms_triage": {
+      "path": ".system1/workloads/data/sms_triage.json",
+      "sha256": "1da11cf4e93ba7f9650c61e3b1b9bb54010b61e0fd72ba0db19b47e2ec36c1de",
+      "counts": {
+        "teach": 3061,
+        "calibration": 1068,
+        "evaluate": 1001
+      }
+    }
+  },
+  "limits": [
+    "Old published test sets have already been inspected: these are regression evaluations, not new independent tests.",
+    "Fresh authored probes share authorship with the new lessons and are diagnostics only.",
+    "Agreement with a teacher is not independent correctness. No new live teacher calls. A stricter requirement may correctly defer takeover."
+  ],
+  "fresh_cases_sha256": "e115462b52b26ddee8424c135bdc6c7160fc642331ebb8043e5120ffb31396a9",
+  "routing_teaching_sha256": "3cecfc3f6be53a226b429e410b5114ab012599dcb891bfdda5e7ef9fb30fcc84",
+  "routing_lessons": "36 new teaching cases; unchanged calibration and old evaluation. No additional tuning after the fresh diagnostic results."
+}

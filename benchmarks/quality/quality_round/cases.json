@@ -1,0 +1,541 @@
+{
+  "provenance": "New AI-authored diagnostic probes, written after choosing this round's lessons/settings and before running any of these probes. Not independent customer data. Shared authorship and intentionally balanced labels limit generalization claims.",
+  "workloads": {
+    "model_routing": [
+      {
+        "prompt": "Turn the attached table of theorem numbers into a JSON array.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-0"
+      },
+      {
+        "prompt": "Pull every IP address out of this consensus debug output.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-1"
+      },
+      {
+        "prompt": "Order these proof obligation identifiers from smallest to largest.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-2"
+      },
+      {
+        "prompt": "Wrap the supplied mathematical abstract at eighty columns.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-3"
+      },
+      {
+        "prompt": "Count the CSV records in this certificate inventory.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-4"
+      },
+      {
+        "prompt": "Normalize line endings in the attached correctness argument.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-5"
+      },
+      {
+        "prompt": "Change the log field follower_id to replica_id in these records.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-6"
+      },
+      {
+        "prompt": "Extract the text between each pair of quotation marks in this lemma.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-7"
+      },
+      {
+        "prompt": "Convert the supplied architecture diagram labels to uppercase.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-8"
+      },
+      {
+        "prompt": "Deduplicate this list of proof filenames while preserving order.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-9"
+      },
+      {
+        "prompt": "Parse these supplied timestamps and output ISO dates.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-10"
+      },
+      {
+        "prompt": "Transpose this provided latency table.",
+        "label": "local_small",
+        "group": "fresh-102-model_routing-local_small-11"
+      },
+      {
+        "prompt": "Give a newcomer a readable overview of the supplied theorem discussion.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-0"
+      },
+      {
+        "prompt": "Write an encouraging response to a student struggling with induction.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-1"
+      },
+      {
+        "prompt": "Rephrase the attached replica outage summary for our customers.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-2"
+      },
+      {
+        "prompt": "Tell me what the term certificate means in the quoted mathematics passage.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-3"
+      },
+      {
+        "prompt": "Summarize the provided termination argument for the class newsletter.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-4"
+      },
+      {
+        "prompt": "Translate these database recovery instructions into Spanish.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-5"
+      },
+      {
+        "prompt": "Draft a short thank-you note to the author of this proof tutorial.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-6"
+      },
+      {
+        "prompt": "Explain the vocabulary in this attached distributed systems abstract.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-7"
+      },
+      {
+        "prompt": "Write a two sentence caption describing this supplied architecture diagram.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-8"
+      },
+      {
+        "prompt": "Create a concise meeting recap from the supplied migration notes.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-9"
+      },
+      {
+        "prompt": "Make this explanation of loop invariants easier for school students to read.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-10"
+      },
+      {
+        "prompt": "Condense the supplied commentary about a corollary to one paragraph.",
+        "label": "standard_chat",
+        "group": "fresh-102-model_routing-standard_chat-11"
+      },
+      {
+        "prompt": "Establish whether the provided witness actually proves the program postcondition.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-0"
+      },
+      {
+        "prompt": "Two followers end up with different balances; find the causal ordering bug.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-1"
+      },
+      {
+        "prompt": "Determine whether this argument remains sound when the domain is infinite.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-2"
+      },
+      {
+        "prompt": "Find a schedule that violates the claimed linearizability of this implementation.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-3"
+      },
+      {
+        "prompt": "Check the mathematical validity of the attached safety certificate.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-4"
+      },
+      {
+        "prompt": "Work out why the replicated counters disagree despite matching event sets.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-5"
+      },
+      {
+        "prompt": "Devise a migration plan that preserves writes during regional failures within these budgets.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-6"
+      },
+      {
+        "prompt": "Identify an unstated assumption that makes this claimed proof invalid.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-7"
+      },
+      {
+        "prompt": "Analyze whether garbage collection can break this concurrent data structure.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-8"
+      },
+      {
+        "prompt": "Derive the conditions under which this consensus recovery procedure terminates.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-9"
+      },
+      {
+        "prompt": "Prove or disprove that this recurrence always reaches a fixed point.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-10"
+      },
+      {
+        "prompt": "Locate the flaw in the supplied verification argument for this scheduler.",
+        "label": "frontier_reasoning",
+        "group": "fresh-102-model_routing-frontier_reasoning-11"
+      }
+    ],
+    "banking_support": [
+      {
+        "prompt": "Any news on the debit card you are posting to me?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-0"
+      },
+      {
+        "prompt": "My new plastic has not shown up in the mail yet.",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-1"
+      },
+      {
+        "prompt": "I ordered a replacement last Tuesday. When should the envelope reach me?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-2"
+      },
+      {
+        "prompt": "Can you check the shipping progress of my card order?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-3"
+      },
+      {
+        "prompt": "The app said it was dispatched but my mailbox is still empty.",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-4"
+      },
+      {
+        "prompt": "How many business days should I allow for card delivery?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-5"
+      },
+      {
+        "prompt": "I am leaving on holiday soon and need my ordered card to arrive first.",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-6"
+      },
+      {
+        "prompt": "Where can I see an estimated arrival date for my new card?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-7"
+      },
+      {
+        "prompt": "It has been a fortnight since I requested a card and nothing has come.",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-8"
+      },
+      {
+        "prompt": "Is the card package still with the courier?",
+        "label": "card_arrival",
+        "group": "fresh-102-banking_support-card_arrival-9"
+      },
+      {
+        "prompt": "My wallet disappeared on the train and the bank card was inside.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-0"
+      },
+      {
+        "prompt": "I cannot find my debit card anywhere. Help me stop anyone using it.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-1"
+      },
+      {
+        "prompt": "Someone took my handbag with my card in it.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-2"
+      },
+      {
+        "prompt": "I left my card at a cafe and it was gone when I returned.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-3"
+      },
+      {
+        "prompt": "My existing card has vanished from my desk.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-4"
+      },
+      {
+        "prompt": "I have misplaced the card I normally use for purchases.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-5"
+      },
+      {
+        "prompt": "A pickpocket got my wallet. How can I protect my account?",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-6"
+      },
+      {
+        "prompt": "The card was in my coat pocket but I have lost the coat.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-7"
+      },
+      {
+        "prompt": "My debit card was stolen while I was shopping.",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-8"
+      },
+      {
+        "prompt": "I think I dropped my card outside. What should I do now?",
+        "label": "lost_or_stolen_card",
+        "group": "fresh-102-banking_support-lost_or_stolen_card-9"
+      },
+      {
+        "prompt": "Why did taking cash out yesterday include an extra fee?",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-0"
+      },
+      {
+        "prompt": "The ATM gave me fifty pounds but my account shows a surcharge.",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-1"
+      },
+      {
+        "prompt": "I was billed for using a cash machine abroad. Is that expected?",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-2"
+      },
+      {
+        "prompt": "Where did the commission on my cash withdrawal come from?",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-3"
+      },
+      {
+        "prompt": "There is an additional charge beside the ATM transaction.",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-4"
+      },
+      {
+        "prompt": "I thought cash withdrawals were free. Why have I been charged?",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-5"
+      },
+      {
+        "prompt": "The cashpoint operator deducted a fee and I want to understand it.",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-6"
+      },
+      {
+        "prompt": "Does the extra amount for withdrawing euros belong to your bank?",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-7"
+      },
+      {
+        "prompt": "Please explain the service charge on my cash withdrawal.",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-8"
+      },
+      {
+        "prompt": "I withdrew money twice and both withdrawals have a separate charge.",
+        "label": "cash_withdrawal_charge",
+        "group": "fresh-102-banking_support-cash_withdrawal_charge-9"
+      }
+    ],
+    "sms_triage": [
+      {
+        "prompt": "Congratulations on your new job! Drinks at ours on Friday?",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-0"
+      },
+      {
+        "prompt": "Your parcel arrived here by mistake. I will bring it round tonight.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-1"
+      },
+      {
+        "prompt": "Can you call Mum? She left her keys at my place.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-2"
+      },
+      {
+        "prompt": "The cinema tickets cost twelve each. Pay me when you get here.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-3"
+      },
+      {
+        "prompt": "Free after lunch? We could walk by the river.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-4"
+      },
+      {
+        "prompt": "You won our office quiz, collect your chocolate from my desk!",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-5"
+      },
+      {
+        "prompt": "I found the phone number you asked for in my old address book.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-6"
+      },
+      {
+        "prompt": "Please reply when you know whether you can make dinner.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-7"
+      },
+      {
+        "prompt": "Claim your seat on the sofa before the dog takes it haha.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-8"
+      },
+      {
+        "prompt": "Our train is delayed twenty minutes. See you at the station.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-9"
+      },
+      {
+        "prompt": "I owe you ten pounds for the taxi. Remind me tomorrow.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-10"
+      },
+      {
+        "prompt": "Here is the meeting link from the team calendar, same as last week.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-11"
+      },
+      {
+        "prompt": "Do not forget the appointment at half past three.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-12"
+      },
+      {
+        "prompt": "Thanks for the birthday gift, it was just what I wanted.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-13"
+      },
+      {
+        "prompt": "Buy some milk if you pass the shop please.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-14"
+      },
+      {
+        "prompt": "The plumber said he can come between nine and eleven.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-15"
+      },
+      {
+        "prompt": "Could you send the photos from our camping trip?",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-16"
+      },
+      {
+        "prompt": "We are giving away the old sofa if your brother wants it.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-17"
+      },
+      {
+        "prompt": "Missed your call, battery died. Is everything okay?",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-18"
+      },
+      {
+        "prompt": "I booked the table under my name for seven tonight.",
+        "label": "ham",
+        "group": "fresh-102-sms_triage-legitimate-19"
+      },
+      {
+        "prompt": "WINNER NOTICE! Your number has been drawn for a cash reward. Call now to redeem.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-0"
+      },
+      {
+        "prompt": "Exclusive mobile offer! Reply YES to activate paid daily horoscope messages.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-1"
+      },
+      {
+        "prompt": "You have an unclaimed prize waiting. Send your details to the award hotline today.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-2"
+      },
+      {
+        "prompt": "Guaranteed approval on instant loans! Apply by replying CASH to this message.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-3"
+      },
+      {
+        "prompt": "Congratulations! You were selected for a luxury holiday. Ring the claims desk now.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-4"
+      },
+      {
+        "prompt": "URGENT reward expires tonight! Text CLAIM to receive your winning voucher.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-5"
+      },
+      {
+        "prompt": "Get cheap pills delivered discreetly. Order now from our special offer hotline.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-6"
+      },
+      {
+        "prompt": "Your mobile number qualifies for a free upgrade. Call our premium booking line.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-7"
+      },
+      {
+        "prompt": "Join our paid dating alerts! Reply DATE for daily introductions, charges apply.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-8"
+      },
+      {
+        "prompt": "FINAL NOTICE: collect your jackpot payment before the deadline. Call immediately.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-9"
+      },
+      {
+        "prompt": "Lowest insurance prices! Send your name and postcode for an instant sales callback.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-10"
+      },
+      {
+        "prompt": "Claim a shopping gift card worth hundreds. Register at the promotional address now.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-11"
+      },
+      {
+        "prompt": "Special offer for selected customers! Reply SUB to start weekly paid tips.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-12"
+      },
+      {
+        "prompt": "Earn cash from home with no experience! Contact our recruitment offer line today.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-13"
+      },
+      {
+        "prompt": "You have won concert passes. Phone the prize office to pay the handling fee.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-14"
+      },
+      {
+        "prompt": "Bonus credit awaits! Text TOPUP to subscribe to our exclusive mobile service.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-15"
+      },
+      {
+        "prompt": "Hot singles nearby want to chat. Reply MEET now, premium message rates apply.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-16"
+      },
+      {
+        "prompt": "Limited discount on designer watches! Call our order line before midnight.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-17"
+      },
+      {
+        "prompt": "Award confirmation required! Provide your bank information to receive the reward.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-18"
+      },
+      {
+        "prompt": "Become a daily prize club member. Reply JOIN, weekly subscription charges apply.",
+        "label": "spam",
+        "group": "fresh-102-sms_triage-spam-19"
+      }
+    ]
+  }
+}
