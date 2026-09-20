@@ -56,6 +56,12 @@ operation described by the example dataset is executed.
 The model example applies a stated routing policy. It does not make claims about
 specific language models' capabilities or call any of those models.
 
+For numeric state, the [Paperclips restocking example](../gaming/PAPERCLIPS_TEACHING.md)
+uses two real observations plus 22 authored lessons, 48 calibration cases and
+16 evaluation cases. It demonstrates a saved skill's supervised use in the actual
+game. Its 14/16 correct suggestions include an accepted boundary error, so it is
+development evidence and is not part of the qualified primary results below.
+
 ## The teaching step
 
 All four use the same existing API:

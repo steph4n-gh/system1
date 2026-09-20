@@ -1,0 +1,43 @@
+{
+  "source": "https://www.decisionproblem.com/paperclips/index2.html",
+  "date_utc": "2026-09-20",
+  "mode": "Operator-supervised saved System 1 skill; no autonomous game loop",
+  "skill_dataset_sha256": "31e098c0c51eead5cee548c866170b412546786626830bacff78ffaa97dd4bae",
+  "steps": [
+    {
+      "observed_state": {
+        "clips": 7000,
+        "wire": 0,
+        "funds": 172.28,
+        "wireCost": 19,
+        "unsoldClips": 2954
+      },
+      "model_prediction": "buy_wire",
+      "needs_review": false,
+      "operator_action": "Clicked the visible Wire button after reviewing the suggestion",
+      "observed_after": {
+        "clips": 7001,
+        "wire": 1499,
+        "funds": 177.88,
+        "wireCost": 20,
+        "unsoldClips": 2699
+      }
+    },
+    {
+      "observed_state": {
+        "wire": 1499,
+        "funds": 177.88,
+        "wireCost": 20
+      },
+      "model_prediction": "hold",
+      "needs_review": false,
+      "operator_action": "No additional wire purchase"
+    }
+  ],
+  "limits": [
+    "The game continued selling inventory between observations; funds changed with time and the spool price was not frozen.",
+    "The post-purchase wire count also appears in the authored evaluation set; this is an integration check, not a fresh accuracy sample.",
+    "The model controls only a wire-restocking suggestion, not the rest of the game.",
+    "The candidate has a known accepted boundary error; both live suggestions were reviewed by the operator."
+  ]
+}

@@ -1,0 +1,414 @@
+{
+  "provenance": "Two teacher-labeled states observed in the real browser game on 2026-09-20 UTC; 22 additional authored lessons. All calibration and evaluation cases are authored numeric checks, not independent game runs. Labels express a restocking preference, not an optimal strategy.",
+  "policy": "Suggest buying below 250 inches; otherwise hold. Purchases must separately be affordable and enabled. Ambiguous model decisions require review.",
+  "teach": [
+    {
+      "wire": 0,
+      "label": "buy_wire",
+      "source": "live",
+      "observed_state": {
+        "clips": 5999,
+        "funds": 112.61,
+        "unsoldClips": 3747,
+        "margin": 0.1,
+        "demand": 80,
+        "clipmakerRate": 0,
+        "wire": 0,
+        "wireCost": 19,
+        "marketingLvl": 1,
+        "adCost": 100,
+        "clipmakerLevel2": 7,
+        "clipperCost": 6.94
+      }
+    },
+    {
+      "wire": 20,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 50,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 100,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 130,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 160,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 180,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 210,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 225,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 230,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 240,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 245,
+      "label": "buy_wire",
+      "source": "authored"
+    },
+    {
+      "wire": 255,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 260,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 275,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 290,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 320,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 350,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 380,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 420,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 460,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 500,
+      "label": "hold",
+      "source": "authored"
+    },
+    {
+      "wire": 539,
+      "label": "hold",
+      "source": "live",
+      "observed_state": {
+        "clips": 6461,
+        "funds": 131.36,
+        "unsoldClips": 3830,
+        "margin": 0.1,
+        "demand": 80,
+        "clipmakerRate": 7,
+        "wire": 539,
+        "wireCost": 23,
+        "marketingLvl": 1,
+        "adCost": 100,
+        "clipmakerLevel2": 7,
+        "clipperCost": 6.94
+      }
+    },
+    {
+      "wire": 650,
+      "label": "hold",
+      "source": "authored"
+    }
+  ],
+  "calibration": [
+    {
+      "wire": 5,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 15,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 35,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 45,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 65,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 85,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 105,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 125,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 145,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 165,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 185,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 195,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 205,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 215,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 222,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 228,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 232,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 236,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 242,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 244,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 246,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 247,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 248,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 249.5,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 250.5,
+      "label": "hold"
+    },
+    {
+      "wire": 251,
+      "label": "hold"
+    },
+    {
+      "wire": 253,
+      "label": "hold"
+    },
+    {
+      "wire": 254,
+      "label": "hold"
+    },
+    {
+      "wire": 256,
+      "label": "hold"
+    },
+    {
+      "wire": 258,
+      "label": "hold"
+    },
+    {
+      "wire": 265,
+      "label": "hold"
+    },
+    {
+      "wire": 270,
+      "label": "hold"
+    },
+    {
+      "wire": 280,
+      "label": "hold"
+    },
+    {
+      "wire": 300,
+      "label": "hold"
+    },
+    {
+      "wire": 330,
+      "label": "hold"
+    },
+    {
+      "wire": 360,
+      "label": "hold"
+    },
+    {
+      "wire": 390,
+      "label": "hold"
+    },
+    {
+      "wire": 430,
+      "label": "hold"
+    },
+    {
+      "wire": 470,
+      "label": "hold"
+    },
+    {
+      "wire": 510,
+      "label": "hold"
+    },
+    {
+      "wire": 550,
+      "label": "hold"
+    },
+    {
+      "wire": 600,
+      "label": "hold"
+    },
+    {
+      "wire": 700,
+      "label": "hold"
+    },
+    {
+      "wire": 800,
+      "label": "hold"
+    },
+    {
+      "wire": 900,
+      "label": "hold"
+    },
+    {
+      "wire": 1100,
+      "label": "hold"
+    },
+    {
+      "wire": 1300,
+      "label": "hold"
+    },
+    {
+      "wire": 1500,
+      "label": "hold"
+    }
+  ],
+  "evaluate": [
+    {
+      "wire": 3,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 41,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 92,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 153,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 201,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 233,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 249,
+      "label": "buy_wire"
+    },
+    {
+      "wire": 250,
+      "label": "hold"
+    },
+    {
+      "wire": 252,
+      "label": "hold"
+    },
+    {
+      "wire": 278,
+      "label": "hold"
+    },
+    {
+      "wire": 399,
+      "label": "hold"
+    },
+    {
+      "wire": 611,
+      "label": "hold"
+    },
+    {
+      "wire": 1000,
+      "label": "hold"
+    },
+    {
+      "wire": 1499,
+      "label": "hold"
+    },
+    {
+      "wire": 2000,
+      "label": "hold"
+    },
+    {
+      "wire": 5000,
+      "label": "hold"
+    }
+  ]
+}

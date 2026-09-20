@@ -112,19 +112,28 @@ Keep three uses of examples separate:
 2. **Calibrate:** separate examples used to assess uncertainty.
 3. **Evaluate:** unseen examples used to measure the finished skill.
 
-The compiler reserves about 25% of the supplied unique prompts for calibration by
+The compiler reserves about 25% of the supplied unique inputs for calibration by
 default. For categorical and Boolean fields it divides that portion again between temperature
 and conformal calibration; MultiChoice also separates temperature fitting from
-its joint assignment score. Each normalized prompt is one evidence unit. Repeated prompts, ignoring whitespace and case, stay
-in the same partition. It does not detect paraphrases, related customer threads,
-or shared source documents.
+its joint assignment score. An input is the normalized prompt plus its optional
+numeric telemetry. Repeated inputs, ignoring prompt whitespace and case and
+mapping key order, stay in the same partition. A repeated question with a different
+numeric state can be a different example. This does not establish independence:
+the compiler does not detect paraphrases, related customer threads, shared source
+documents, or adjacent observations from one game run.
 
 For related examples, split those groups yourself before compilation. Pass
 `calibration_exemplars=held_out_examples` in Python, or
 `--calibration-dataset calibration.json` in the CLI. Keep the final evaluation
-examples outside both files. Explicit teaching and calibration prompts must be
+examples outside both files. Explicit teaching and calibration inputs must be
 disjoint. A Python `calibration_split=0` produces an uncalibrated skill;
 strict mode then asks for review.
+
+For a concrete numeric example, run
+`python examples/gaming/teach_paperclips_wire.py` from the repository root.
+Its [lesson file](../../examples/teaching/paperclips_wire.json) teaches the same
+question with different wire supplies; its [walkthrough](../../examples/gaming/PAPERCLIPS_TEACHING.md)
+shows the saved skill, a supervised live purchase, and the remaining boundary errors.
 
 Check both accuracy and how often the skill can answer without review. Examine
 mistakes by label, especially costly mistakes. A small calibration set or a weak

@@ -843,6 +843,17 @@ class SystemOneCompiler:
     def _prompt_key(prompt: str) -> str:
         return " ".join(prompt.casefold().split())
 
+    def _sample_key(self, row: Sequence[Any]) -> tuple:
+        """Identify the input, including numeric state when the question repeats."""
+        telemetry = row[2] if len(row) > 2 else None
+        vector = ()
+        if telemetry is not None:
+            values, _ = self.telemetry_projector.extract_vector(telemetry)
+            if not np.all(np.isfinite(values)):
+                raise ValueError("Teaching telemetry must contain finite numbers")
+            vector = tuple(float(value) for value in values)
+        return self._prompt_key(row[0]), telemetry is not None, vector
+
     def _validate_exemplars(self, dataset: Mapping[str, Sequence]) -> Dict[str, list]:
         if not isinstance(dataset, Mapping):
             raise ValueError("Examples must map schema field names to labeled samples")
@@ -869,13 +880,14 @@ class SystemOneCompiler:
                     label = field_def.validate_value(label)
                 except (TypeError, ValueError) as exc:
                     raise ValueError(f"Invalid label for {name}[{index}]: {exc}") from exc
+                self._sample_key(row)
                 validated[name].append((prompt, label, *row[2:]))
         return validated
 
     def _split_samples(self, samples: list, field_def: Optional[DecisionField], fraction: float) -> Tuple[list, list]:
-        groups: Dict[str, list] = {}
+        groups: Dict[tuple, list] = {}
         for row in samples:
-            groups.setdefault(self._prompt_key(row[0]), []).append(row)
+            groups.setdefault(self._sample_key(row), []).append(row)
         # Stratify discrete fields, retaining at least one training group per class.
         strata: Dict[Any, list] = {}
         for key, rows in groups.items():
@@ -888,8 +900,8 @@ class SystemOneCompiler:
             rng.shuffle(keys)
             count = min(len(keys) - 1, max(1, int(len(keys) * fraction))) if fraction else 0
             held_out.update(keys[:count])
-        training = [row for row in samples if self._prompt_key(row[0]) not in held_out]
-        calibration = [row for row in samples if self._prompt_key(row[0]) in held_out]
+        training = [row for row in samples if self._sample_key(row) not in held_out]
+        calibration = [row for row in samples if self._sample_key(row) in held_out]
         return training, calibration
 
     def compile(
@@ -906,7 +918,8 @@ class SystemOneCompiler:
 
         Set ``augment=False`` to teach only from the examples you supply.
         Supply ``calibration_exemplars`` to control the held-out calibration set,
-        or reserve a fraction of unique prompts with ``calibration_split``.
+        or reserve a fraction of unique inputs with ``calibration_split``.
+        An input is the normalized prompt plus its optional numeric telemetry.
         A zero split produces an uncalibrated model; it never calibrates on training data.
         Related paraphrases/workflows should be split by the caller before compilation.
         """
@@ -930,10 +943,10 @@ class SystemOneCompiler:
             if calibration_exemplars is not None else None
         )
         if calibration_data is not None:
-            training_prompts = {self._prompt_key(row[0]) for rows in dataset.values() for row in rows}
-            calibration_prompts = {self._prompt_key(row[0]) for rows in calibration_data.values() for row in rows}
-            if training_prompts & calibration_prompts:
-                raise ValueError("Training and calibration prompts must be disjoint")
+            training_inputs = {self._sample_key(row) for rows in dataset.values() for row in rows}
+            calibration_inputs = {self._sample_key(row) for rows in calibration_data.values() for row in rows}
+            if training_inputs & calibration_inputs:
+                raise ValueError("Training and calibration inputs must be disjoint")
 
         compiled_heads: Dict[str, CompiledHeadWeights] = {}
         sample_counts: Dict[str, Dict[str, int]] = {}
@@ -960,7 +973,7 @@ class SystemOneCompiler:
                 )
                 continue
 
-            # Teaching from examples keeps repeated prompts in one partition.
+            # Teaching from examples keeps repeated inputs in one partition.
             # Preserve the existing synthetic-demo recipe for compatibility.
             if calibration_data is not None:
                 calibration_samples = list(calibration_data.get(field_name, []))
@@ -1043,9 +1056,9 @@ class SystemOneCompiler:
                             samples.append(high_synth[idx % len(high_synth)])
 
 
-                # Synthetic templates must not duplicate held-out prompts either.
-                held_out = {self._prompt_key(row[0]) for row in calibration_samples}
-                samples = [row for row in samples if self._prompt_key(row[0]) not in held_out]
+                # Synthetic templates must not duplicate held-out inputs either.
+                held_out = {self._sample_key(row) for row in calibration_samples}
+                samples = [row for row in samples if self._sample_key(row) not in held_out]
             if not samples:
                 raise ValueError(f"No training examples remain for field {field_name!r}")
             generated_count = len(samples) - real_training_count
@@ -1054,7 +1067,7 @@ class SystemOneCompiler:
                 samples = [samples[i] for i in rng.permutation(len(samples))]
                 count = max(1, int(len(samples) * calibration_split)) if calibration_split and len(samples) >= 4 else 0
                 samples, calibration_samples = samples[:len(samples) - count], samples[len(samples) - count:]
-            # Temperature and conformal calibration also need disjoint prompts.
+            # Temperature and conformal calibration also need disjoint inputs.
             num_temperature = 0
             if isinstance(f_def, ChoiceField) and not augment:
                 temperature_samples, conformal_samples = self._split_samples(calibration_samples, None, 0.5)

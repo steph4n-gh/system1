@@ -1,0 +1,195 @@
+{
+  "provenance": "Two teacher-labeled states observed in the real browser game on 2026-09-20 UTC; 22 additional authored lessons. All calibration and evaluation cases are authored numeric checks, not independent game runs. Labels express a restocking preference, not an optimal strategy.",
+  "policy": "Suggest buying below 250 inches; otherwise hold. Purchases must separately be affordable and enabled. Ambiguous model decisions require review.",
+  "dataset_sha256": "31e098c0c51eead5cee548c866170b412546786626830bacff78ffaa97dd4bae",
+  "counts": {
+    "teach": 24,
+    "calibration": 48,
+    "evaluate": 16
+  },
+  "teaching_ms": 38.927917019464076,
+  "skill_bytes": 2455,
+  "correct": 14,
+  "accepted": 15,
+  "accepted_correct": 14,
+  "decision_median_ms": 0.23693751427344978,
+  "results": [
+    {
+      "wire": 3,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.7227499736472964
+    },
+    {
+      "wire": 41,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.47150003956630826
+    },
+    {
+      "wire": 92,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.32466696575284004
+    },
+    {
+      "wire": 153,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.24449999909847975
+    },
+    {
+      "wire": 201,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.23399997735396028
+    },
+    {
+      "wire": 233,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.23829203564673662
+    },
+    {
+      "wire": 249,
+      "label": "buy_wire",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.2347499830648303
+    },
+    {
+      "wire": 250,
+      "label": "hold",
+      "prediction": "buy_wire",
+      "action": "buy_wire",
+      "needs_review": false,
+      "prediction_set": [
+        "buy_wire"
+      ],
+      "latency_ms": 0.22674998035654426
+    },
+    {
+      "wire": 252,
+      "label": "hold",
+      "prediction": "buy_wire",
+      "action": "review",
+      "needs_review": true,
+      "prediction_set": [
+        "buy_wire",
+        "hold"
+      ],
+      "latency_ms": 0.22687501041218638
+    },
+    {
+      "wire": 278,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.23270898964256048
+    },
+    {
+      "wire": 399,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.23383402731269598
+    },
+    {
+      "wire": 611,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.250167038757354
+    },
+    {
+      "wire": 1000,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.2350840368308127
+    },
+    {
+      "wire": 1499,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.24850002955645323
+    },
+    {
+      "wire": 2000,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.23558299290016294
+    },
+    {
+      "wire": 5000,
+      "label": "hold",
+      "prediction": "hold",
+      "action": "hold",
+      "needs_review": false,
+      "prediction_set": [
+        "hold"
+      ],
+      "latency_ms": 0.23933302145451307
+    }
+  ]
+}

@@ -80,6 +80,48 @@ def test_duplicate_prompts_cannot_cross_calibration_boundary():
     assert {key(row[0]) for row in temp}.isdisjoint(key(row[0]) for row in conformal)
 
 
+def test_same_question_with_different_telemetry_can_be_taught_and_calibrated(tmp_path):
+    question = "Should we restock wire?"
+    compiler = SystemOneCompiler(Route, dimension=32)
+    examples = {"team": [(question, "billing", {"wire": .1, "unit": 1}),
+                         (question, "support", {"wire": .8, "unit": 1})]}
+    calibration = {"team": [(question, "billing", {"wire": .15, "unit": 1}),
+                            (question, "support", {"wire": .9, "unit": 1})]}
+    skill = compiler.compile(examples, augment=False, calibration_exemplars=calibration)
+    assert skill.metadata["sample_counts"]["team"]["calibration"] == 2
+    path = tmp_path / "numeric.s1m"
+    skill.save(path)
+    restored = CompiledSystemOneModel.load(path)
+    for state in ({"wire": .12, "unit": 1}, {"wire": .85, "unit": 1}):
+        before = skill.forward_single(question, telemetry=state)
+        after = restored.forward_single(question, telemetry=state)
+        assert before.fields["team"].selected_value == after.fields["team"].selected_value
+    assert restored.forward_single(question, telemetry={"wire": .12, "unit": 1}).fields["team"].selected_value == "billing"
+    assert restored.forward_single(question, telemetry={"wire": .85, "unit": 1}).fields["team"].selected_value == "support"
+
+
+def test_numeric_duplicates_stay_together_and_cannot_leak_into_calibration():
+    compiler = SystemOneCompiler(Route, dimension=32)
+    rows = [("Same question", label, {"wire": wire, "unit": 1})
+            for label, values in (("billing", (.1, .2, .3)), ("support", (.7, .8, .9)))
+            for wire in values]
+    rows += [("  SAME question  ", "billing", {"unit": 1.0, "wire": .1})]
+    fit, held_out = compiler._split_samples(rows, Route().fields["team"], .4)
+    assert len(held_out) >= 2
+    assert {compiler._sample_key(row) for row in fit}.isdisjoint(
+        compiler._sample_key(row) for row in held_out)
+    with pytest.raises(ValueError, match="disjoint"):
+        compiler.compile({"team": rows}, augment=False,
+                         calibration_exemplars={"team": [rows[-1]]})
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+def test_nonfinite_teaching_telemetry_is_rejected(value):
+    with pytest.raises(ValueError, match="finite"):
+        SystemOneCompiler(Route).compile(
+            {"team": [("Question", "billing", {"value": value})]}, augment=False)
+
+
 def test_unchecked_skill_remains_uncalibrated_after_loading(tmp_path):
     path = tmp_path / "route.s1m"
     skill = SystemOneCompiler(Route, dimension=128).compile(EXAMPLES, augment=False, calibration_split=0)
