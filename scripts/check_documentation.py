@@ -55,6 +55,7 @@ def main():
     labels = {
         "README.md": r"\*\*Version ([\d.]+):",
         "docs/README.md": r"stable runtime: \*\*([\d.]+)\*\*",
+        "docs/deployment.md": r"System 1 ([\d.]+)",
         "docs/architecture/technical_specification.md": r"System 1 ([\d.]+)",
         "docs/paper/system1_whitepaper.md": r"System 1 ([\d.]+)",
         "docs/paper/system1_technical_brief.md": r"System 1 ([\d.]+)",

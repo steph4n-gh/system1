@@ -1,7 +1,9 @@
 # System 1 documentation
 
 Current stable runtime: **1.0.2**. Reviewed 19 September 2026.
-System 1 is not an LLM. The product loop is **teach or observe → validate → run locally → save and reuse**.
+System 1 is not an LLM. Start with one journey: **choose a decision → show
+examples → check answers → save and reuse → improve**. A person or a running
+teacher can supply the examples.
 GitHub can contain documentation and evaluation tools added after the published
 package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes.
 
@@ -14,6 +16,8 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | [Teaching guide](guides/training_experts.md) | Label formats, separate evidence, compilation and corrections |
 | [Teacher observation](typesafe.md) | Callback contract, actual Jev/Gemini evidence, promotion and reuse |
 | [Example catalog](../examples/README.md) | Every example's role and supported or experimental scope |
+| [Application integrations](integrations.md) | Connect a checked skill to LangChain, MCP, ASGI, gRPC or monitoring |
+| [Tool permissions](guides/policy_guard.md) | Add an explicit permission rule when an answer would trigger an action |
 | [Deployment boundaries](deployment.md) | Permissions, identity, audit, network paths and service limits |
 | [Observability](observability/README.md) | Optional metrics/tracing and dashboard |
 | [Container templates](../deploy/README.md) | Experimental local Docker/Kubernetes starting points |

@@ -2,7 +2,7 @@
 
 ## 1.0.2 — 2026-09-19
 
-- Add a beginner walkthrough and editable teaching file explaining labels, corrections and readiness. Let the minimal example read custom lessons, try a supplied message and save a separate candidate.
+- Add a beginner walkthrough and editable teaching file explaining labels, corrections and readiness. Let the minimal example read custom lessons, try a supplied message and save a separate candidate. Organize the README and documentation around that journey; keep advanced policy/integration examples in linked guides.
 
 - Add opt-in `PromotionPolicy(min_accepted_agreement=.95)`: require point agreement and an exact lower bound among accepted validation groups, sharing the repeated-attempt confidence budget. Preserve the original default policy.
 - Expose the compiler's existing regularization parameter through sync/async observation clients; retain its default of 1.0.

@@ -91,28 +91,6 @@ to save a candidate separately while keeping the previous skill.
 For a different job, define different output choices as described in the
 [teaching API guide](training_experts.md#teach-your-data).
 
-## What does correcting a mistake mean?
-
-Suppose a new message says **“The payment page crashes when I open it.”** and
-System 1 suggests `billing`. Under our rule the right answer is `support`: the
-problem is broken software, even though it mentions payment.
-
-Add this pair to your lessons, remembering the comma between JSON entries:
-
-```json
-["The payment page crashes when I open it.", "support"]
-```
-
-If that exact message is already present with the wrong answer, **replace the
-wrong answer**. Do not leave two conflicting lessons. Add a few different real
-examples of the same distinction, rather than copying the same sentence many
-times. Keep ordinary billing and ordinary support messages too.
-
-Rerun the teaching command. Then try **different** messages, such as “The checkout
-screen freezes” and “Why was I billed twice?” Showing that the corrected sentence
-now works is useful, but it does not show that the skill handles new cases.
-A correction can also affect other decisions, so check both teams again.
-
 ## How do I know it is ready?
 
 Keep some real messages out of the lessons. Decide their correct teams yourself,
@@ -146,6 +124,48 @@ is missing. Never teach from your final check and still call that same check new
 If many answers need review, gather more varied lessons and separate checking
 examples. If confident answers are wrong, revisit the rule and the lessons before
 allowing automatic decisions. Reteaching changes the skill, so check it again.
+
+## Reuse the saved skill
+
+After the first run, the saved file can answer new messages without reading the
+lesson file or calling a teacher:
+
+```python
+from system1 import CompiledSystemOneModel, System1Engine
+
+skill = CompiledSystemOneModel.load(".system1/support-route.s1m")
+engine = System1Engine(skill.schema, model=skill, strict_mode=True)
+answer = engine.decide("Please refund this payment", record_receipt=False)
+print(answer.values["team"])
+print("Needs review:", answer.is_ambiguous)
+```
+
+The starter still needs review. Saving and reopening a skill preserves that
+behavior; it does not approve the answer. Your application chooses what to do
+when review is requested. Keep the earlier file while checking a revised
+candidate, then choose which saved skill your application loads.
+
+## What does correcting a mistake mean?
+
+Suppose a new message says **“The payment page crashes when I open it.”** and
+System 1 suggests `billing`. Under our rule the right answer is `support`: the
+problem is broken software, even though it mentions payment.
+
+Add this pair to your lessons, remembering the comma between JSON entries:
+
+```json
+["The payment page crashes when I open it.", "support"]
+```
+
+If that exact message is already present with the wrong answer, **replace the
+wrong answer**. Do not leave two conflicting lessons. Add a few different real
+examples of the same distinction, rather than copying the same sentence many
+times. Keep ordinary billing and ordinary support messages too.
+
+Rerun the teaching command. Then try **different** messages, such as “The checkout
+screen freezes” and “Why was I billed twice?” Showing that the corrected sentence
+now works is useful, but it does not show that the skill handles new cases.
+A correction can also affect other decisions, so check both teams again.
 
 ## Can someone else supply the lessons?
 

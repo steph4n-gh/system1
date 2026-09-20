@@ -12,15 +12,23 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_readme_policy_quickstart_runs_outside_checkout(tmp_path):
-    blocks = re.findall(r"```python\n(.*?)```", (ROOT / "README.md").read_text(), re.S)
-    for _ in range(2):  # The persistent signing identity must also work on a second run.
-        result = subprocess.run(
-            [sys.executable, "-c", blocks[0]], cwd=tmp_path,
-            capture_output=True, text=True, timeout=30,
-        )
-        assert result.returncode == 0, result.stderr
-        assert "system1-demo" in result.stdout
+def test_readme_and_policy_quickstarts_run_outside_checkout(tmp_path):
+    # Follow the README's first lesson before reopening its saved skill.
+    taught = subprocess.run(
+        [sys.executable, str(ROOT / 'examples/teach_skill.py')], cwd=tmp_path,
+        capture_output=True, text=True, timeout=30,
+    )
+    assert taught.returncode == 0, taught.stderr
+    for page, expected in [('README.md', 'Needs review: True'),
+                           ('docs/guides/policy_guard.md', 'system1-demo')]:
+        blocks = re.findall(r"```python\n(.*?)```", (ROOT / page).read_text(), re.S)
+        for _ in range(2):  # Saved uncertainty and persistent signing identity survive reuse.
+            result = subprocess.run(
+                [sys.executable, "-c", blocks[0]], cwd=tmp_path,
+                capture_output=True, text=True, timeout=30,
+            )
+            assert result.returncode == 0, result.stderr
+            assert expected in result.stdout
 
 
 def test_quality_benchmark_failure_sets_exit_status(tmp_path, monkeypatch):
