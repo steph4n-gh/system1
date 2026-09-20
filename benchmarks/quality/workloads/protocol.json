@@ -1,0 +1,83 @@
+{
+  "purpose": "Measure three fixed bounded workloads, distinguish supervised teaching from automatic teacher takeover, and retain all failures. Frozen before the first assistant/SMS model evaluation.",
+  "baseline_commit": "91db9c9b89528042d5458c35b9a53b338e23157d",
+  "targets": {
+    "accepted_accuracy": 0.95,
+    "acceptance_rate": 0.8
+  },
+  "teaching_settings": {
+    "dimension": 2048,
+    "regularization": 0.1,
+    "augment": false,
+    "alpha": 0.05,
+    "strict": true,
+    "backend": "numpy",
+    "cache": false,
+    "receipts": false
+  },
+  "classical_baseline": {
+    "library": "scikit-learn==1.9.1",
+    "vectorizer": "TfidfVectorizer(ngram_range=(1,2), sublinear_tf=True)",
+    "classifier": "LogisticRegression(C=1.0, max_iter=1000, solver=\"lbfgs\")",
+    "calibration": "LAC scores on the same conformal half used by System 1; no temperature fitting. No test tuning."
+  },
+  "takeover": {
+    "dimension": 2048,
+    "backend": "numpy",
+    "strict": true,
+    "augment": false,
+    "compiler_regularization": 1.0,
+    "max_observations": 1000,
+    "stream_order": "Sort teaching and calibration rows together by SHA-256 of workload name, colon, normalized group digest; use at most the first 1000. Stop on promotion.",
+    "promotion": "Unchanged default policy: 80% agreement and 80% local acceptance with exact statistical lower bounds, fresh validation blocks and repeated-attempt error budget. Post-takeover independent test targets remain 95% accepted correctness / 80% acceptance.",
+    "teachers": [
+      "original dataset label lookup",
+      "actual Jev HTTPS responses",
+      "actual Gemini 2.5 Flash HTTPS responses"
+    ],
+    "test_teacher_calls": 0,
+    "cache": false,
+    "gemini_settings": {
+      "model": "gemini-2.5-flash",
+      "temperature": 0,
+      "thinkingBudget": 0,
+      "maxOutputTokens": 256,
+      "output": "JSON object containing one enumerated intent label"
+    }
+  },
+  "workloads": {
+    "banking_support": {
+      "path": "examples/teaching/banking_support.json",
+      "sha256": "d1bc96779a6ff92ad1bc21cad725b0f1b8bc08db81ee6d129485490165f4d06a",
+      "counts": {
+        "teach": 287,
+        "calibration": 125,
+        "evaluate": 120
+      }
+    },
+    "assistant_commands": {
+      "path": ".system1/workloads/data/assistant_commands.json",
+      "sha256": "98c5f3afc79acbf850f3586d732d755cc2140aaa55c807041880965f21b582e5",
+      "counts": {
+        "teach": 600,
+        "calibration": 120,
+        "evaluate": 180
+      }
+    },
+    "sms_triage": {
+      "path": ".system1/workloads/data/sms_triage.json",
+      "sha256": "1da11cf4e93ba7f9650c61e3b1b9bb54010b61e0fd72ba0db19b47e2ec36c1de",
+      "counts": {
+        "teach": 3061,
+        "calibration": 1068,
+        "evaluate": 1001
+      }
+    }
+  },
+  "limits": [
+    "BANKING77 is a replication of the already published three-intent result. Assistant and SMS are first evaluations for this project.",
+    "Assistant task covers six named CLINC150 intents only; no out-of-scope detector claim.",
+    "SMS uses normalized-deduplicated historical messages split by a fixed group hash; near-duplicate campaigns can still cross splits.",
+    "All thresholds, scope, model settings, and cohorts remain fixed after testing. No promise of universal accuracy, superiority or production readiness follows from a small set of workloads."
+  ]
+}
