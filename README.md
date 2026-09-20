@@ -15,7 +15,29 @@ A teacher can be a person, a JSON file, a rule, Jev, Gemini or another API. An L
 
 **Version 1.0.2:** explicit quality requirements for accepted decisions, fuller SMS observation, and an honest teaching-quality evaluation. The core remains teaching bounded decisions, validated local takeover, portable skills, and explicit tool policies. See the [results and remaining limits](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.2.md) and [1.0 migration guide](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.md).
 
-[Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [All documentation](https://github.com/steph4n-gh/system1/blob/main/docs/README.md) · [Limits and deployment](https://github.com/steph4n-gh/system1/blob/main/docs/deployment.md) · [Contributing](https://github.com/steph4n-gh/system1/blob/main/CONTRIBUTING.md)
+[Performance](#why-it-is-fast) · [Quickstart](#quickstart) · [Policy guard](#policy-guard) · [Integrations](#integrations) · [Benchmarks](#benchmarks) · [All documentation](https://github.com/steph4n-gh/system1/blob/main/docs/README.md) · [Limits and deployment](https://github.com/steph4n-gh/system1/blob/main/docs/deployment.md) · [Contributing](https://github.com/steph4n-gh/system1/blob/main/CONTRIBUTING.md)
+
+## Why it is fast
+
+**Small skills make fast local decisions.** After teaching, System 1 applies a
+compact numerical decision head. Each request avoids a teacher API round trip
+and language-model token generation. The saved skill needs no language-model
+weights or model server.
+
+| Benefit | Measured on our three public-data workloads |
+|---|---|
+| **Sub-millisecond decisions** | **0.34–0.44 ms** median per local decision |
+| **Small, portable skills** | **20.4–47.0 KiB** saved `.s1m` files |
+| **Quick teaching** | **0.23–1.77 seconds** to teach and calibrate once labeled examples exist |
+| **No ongoing teacher calls** | **Zero teacher API calls** during local evaluation |
+
+These are NumPy CPU measurements on an Apple M4 Pro, excluding startup, receipt
+signing and downstream work. Skill-file sizes exclude the installed runtime and
+dependencies. Optional MLX supports Apple Silicon acceleration; its speed benefit
+depends on the workload. See the [reproducible results and quality limits](https://github.com/steph4n-gh/system1/blob/main/benchmarks/quality/workloads/README.md).
+
+The payoff is useful for repeated routing, classification and structured choices.
+Quality depends on the taught task; uncertain answers still need review.
 
 ## What it does
 
