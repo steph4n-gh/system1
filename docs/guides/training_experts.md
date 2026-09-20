@@ -1,5 +1,9 @@
 # Teaching a decision skill
 
+If you are new to labeling examples or correcting a skill, start with
+[Teach your first skill](first_skill.md). It explains those terms using a copyable
+message-and-answer file. This page covers the underlying API and data contracts.
+
 System 1 learns a particular decision from labeled examples, saves it as a small
 `.s1m` file, and applies it locally. A person, an existing system, or a reasoning
 model can supply the examples. An LLM is not required.

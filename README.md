@@ -85,7 +85,9 @@ specific workload; representative data and independent evaluation still matter.
 
 ## Teach a skill
 
-Give System 1 labeled examples of one task, save the resulting `.s1m` skill, and reuse it locally. A person or System 2 can supply the examples; teaching does not require an LLM. The existing compiler fits a small decision head using NumPy.
+Show System 1 an input and the answer you want: “Refund my payment” → `billing`. That answer is what “label” means. Save the resulting `.s1m` skill and reuse it locally. A person or System 2 can supply the examples; teaching does not require an LLM. The existing compiler fits a small decision head using NumPy.
+
+**New to teaching?** The [first-skill walkthrough](https://github.com/steph4n-gh/system1/blob/main/docs/guides/first_skill.md) explains the editable teaching file, correcting a mistake, review requests, and checking whether a skill is ready.
 
 ```bash
 python examples/support_triage.py

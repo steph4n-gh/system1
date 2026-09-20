@@ -1,0 +1,12 @@
+{
+  "team": [
+    ["Refund my payment", "billing"],
+    ["Correct the invoice", "billing"],
+    ["Subscription charged twice", "billing"],
+    ["Payment receipt requested", "billing"],
+    ["Debug this exception", "support"],
+    ["Fix a software crash", "support"],
+    ["API request fails", "support"],
+    ["Investigate error logs", "support"]
+  ]
+}

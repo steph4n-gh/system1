@@ -9,7 +9,7 @@ The [teaching guide](../docs/guides/training_experts.md) and
 
 | Example | What it demonstrates |
 |---|---|
-| [teach_skill.py](teach_skill.py) | Minimal eight-example API introduction; little evidence deliberately requires review |
+| [teach_skill.py](teach_skill.py) | Eight editable lessons; custom lesson file, message and saved path; [beginner walkthrough](../docs/guides/first_skill.md) |
 | [support_triage.py](support_triage.py) | Taught department routing, calibration, saved/reloaded evaluation |
 | [model_routing.py](model_routing.py) | A stated routing policy; does not call downstream models |
 | [agent_guard.py](agent_guard.py) | Operation classification plus a separate explicit permission/audit example |

@@ -47,6 +47,23 @@ def test_teaching_example_saves_and_reuses_a_skill(tmp_path):
     assert "Suggested team: billing" in result.stdout
     assert "Needs review: True" in result.stdout
     assert (tmp_path / ".system1" / "support-route.s1m").is_file()
+    original = (tmp_path / ".system1" / "support-route.s1m").read_bytes()
+    # Editing the answers, rather than an embedded rule, must teach the policy.
+    lessons = json.loads((ROOT / 'examples/teaching/first_skill.json').read_text())
+    for pair in lessons['team']:
+        pair[1] = 'support' if pair[1] == 'billing' else 'billing'
+    lesson_path = tmp_path / 'my-lessons.json'
+    lesson_path.write_text(json.dumps(lessons))
+    result = subprocess.run(
+        [sys.executable, str(ROOT / 'examples/teach_skill.py'),
+         '--lessons', str(lesson_path), '--prompt', 'Please refund this payment',
+         '--output', 'candidate.s1m'],
+        cwd=tmp_path, capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+    assert 'Suggested team: support' in result.stdout
+    assert (tmp_path / 'candidate.s1m').is_file()
+    assert (tmp_path / '.system1/support-route.s1m').read_bytes() == original
 
 
 def test_proto_assets_do_not_require_optional_grpc_dependencies(tmp_path):

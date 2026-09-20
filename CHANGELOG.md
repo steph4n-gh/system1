@@ -2,6 +2,8 @@
 
 ## 1.0.2 — 2026-09-19
 
+- Add a beginner walkthrough and editable teaching file explaining labels, corrections and readiness. Let the minimal example read custom lessons, try a supplied message and save a separate candidate.
+
 - Add opt-in `PromotionPolicy(min_accepted_agreement=.95)`: require point agreement and an exact lower bound among accepted validation groups, sharing the repeated-attempt confidence budget. Preserve the original default policy.
 - Expose the compiler's existing regularization parameter through sync/async observation clients; retain its default of 1.0.
 - Publish a fuller original-label SMS observation run: 2,961 observations, 954/980 correct accepted old-test decisions (97.3%). Preserve stricter banking/assistant deferrals and the new authored SMS failure.

@@ -10,6 +10,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | Start here | Purpose |
 |---|---|
 | [README quickstart](../README.md#quickstart) | Install System 1 and run a complete taught skill |
+| [Your first skill](guides/first_skill.md) | What an example means, an editable lesson file, corrections and readiness |
 | [Teaching guide](guides/training_experts.md) | Label formats, separate evidence, compilation and corrections |
 | [Teacher observation](typesafe.md) | Callback contract, actual Jev/Gemini evidence, promotion and reuse |
 | [Example catalog](../examples/README.md) | Every example's role and supported or experimental scope |

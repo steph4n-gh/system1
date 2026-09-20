@@ -1,5 +1,8 @@
 # Teach a bounded skill
 
+New to teaching? Start with the [first-skill walkthrough](../../docs/guides/first_skill.md)
+and its eight editable [message-and-answer pairs](first_skill.json).
+
 Each example teaches one decision, saves a `.s1m` skill, reloads it, and checks
 new inputs. Everything runs locally using the existing NumPy compiler. There
 are no API keys, downloads, language model calls, or additional dependencies.
