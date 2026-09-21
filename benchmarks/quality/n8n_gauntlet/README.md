@@ -37,6 +37,14 @@ adapter responses match selection, with zero teacher calls or runtime errors.
 The higher raw head accuracy does not improve useful coverage. All incumbents
 remain; banking quality and independent full-scope confirmation are unresolved.
 
+The next [taught nonlinear feature comparison](results/shallow-heads.md) also
+fails to advance. A 128-unit feature transform leaves CLINC raw correctness
+unchanged at 2,864/2,995 and reduces banking from 1,787 to 1,782 out of 1,960.
+Its best simple-threshold coverage is 75.03% / 63.83%, below 80%. All 5,055 new
+outcomes, both saved bundles and fixed-budget teaching warnings are retained.
+No encoder weights, core runtime or current candidate changed; there is no new
+adapter timing or qualification claim.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.

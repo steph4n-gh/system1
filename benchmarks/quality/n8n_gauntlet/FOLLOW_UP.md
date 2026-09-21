@@ -43,6 +43,13 @@ p95. All 3,095 saved-runtime outcomes match selection, but coverage loses to the
 incumbent. This avenue has not resolved either workload's failed qualification;
 all four current selections remain unchanged.
 
+The [subsequent nonlinear feature experiment](results/shallow-heads.md) teaches
+a small 128-unit transform from the same fitting labels, keeping the encoders
+fixed. CLINC gains no raw correct decisions and banking loses five. Neither
+condition passes the preregistered advancement rule; both exact saved candidates
+and all 5,055 outcomes are retained without building another review adapter.
+Adding this nonlinear transform has not earned a core implementation.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product
