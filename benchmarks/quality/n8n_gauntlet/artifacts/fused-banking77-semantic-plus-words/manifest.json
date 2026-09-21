@@ -1,0 +1,28 @@
+{
+  "status": "unqualified-fused-feature-head-comparison",
+  "dataset": "banking77",
+  "condition": "semantic-plus-words",
+  "dimension": 2432,
+  "encoder": {
+    "name": "bge-small",
+    "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+    "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+    "model_bytes": 133093490,
+    "pooling": "cls",
+    "tokenizer_bytes": 711396,
+    "runtime": "1.30.0",
+    "threads": 4,
+    "provider": "CPUExecutionProvider"
+  },
+  "projector_digest": "08655b9e2121af4b82600eb3b3411eea391400c07a6e47a22db7fc3ec465492c",
+  "protocol_sha256": "29dd2f63042b875ccab244db2e7b0e694381a07716a4bce4389e31325e3ece56",
+  "regularization": 0.01,
+  "alpha": 0.075,
+  "fit_rows": 6950,
+  "original_fit_rows": 6026,
+  "earlier_generated_supported": 924,
+  "files": {
+    "intent.s1m": "558900df0e1ada38a32b51ad13a514b5959a11e2942de36211e91a762f724c81",
+    "lexical.json": "4c62d55300747495570381e3a4f36470d6cf8330ebd9a20dcbee7f14c2cc62ae"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "status": "unqualified-fused-feature-head-comparison",
+  "dataset": "banking77",
+  "condition": "semantic-control",
+  "dimension": 384,
+  "encoder": {
+    "name": "bge-small",
+    "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+    "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+    "model_bytes": 133093490,
+    "pooling": "cls",
+    "tokenizer_bytes": 711396,
+    "runtime": "1.30.0",
+    "threads": 4,
+    "provider": "CPUExecutionProvider"
+  },
+  "projector_digest": "3ca2441770d76f2cb72138e34d1225d5f82e0ed6da9442ab9a5126c5ff354011",
+  "protocol_sha256": "29dd2f63042b875ccab244db2e7b0e694381a07716a4bce4389e31325e3ece56",
+  "regularization": 0.01,
+  "alpha": 0.075,
+  "fit_rows": 6950,
+  "original_fit_rows": 6026,
+  "earlier_generated_supported": 924,
+  "files": {
+    "intent.s1m": "d2ae03b69f1e0497421f9d802cb3c228c73256fdfb7ebfa31e101ecbabb0591b",
+    "lexical.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+  }
+}

@@ -28,6 +28,14 @@ the same unfamiliar development input still escapes review. All 12,380 measured
 decisions survive a post-measurement reporting failure, recovered without another
 timing run. No test or human reserve was scored, and banking remains unchanged.
 
+The later [semantic-plus-word head comparison](results/fused-heads.md) improves
+CLINC raw correctness by 25 development requests but loses 14 on banking. Its
+fixed advancement rule permits a subsequent complete review/adapter comparison
+for CLINC only; the banking candidate is rejected. This does not narrow the
+gauntlet: the original banking accuracy failure remains unresolved. Simple
+confidence/margin policies still fail coverage, and all current complete
+adapter selections remain unchanged. No encoder weights or core APIs changed.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product

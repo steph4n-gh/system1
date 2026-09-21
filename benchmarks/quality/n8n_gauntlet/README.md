@@ -22,6 +22,14 @@ and no routing differences after saving. A report-writer failure after measureme
 was recovered from the original journal without repeating timings. This does not
 resolve either full-workload failure or supply independent confirmation.
 
+The subsequent [semantic-plus-word head comparison](results/fused-heads.md) has
+mixed results: raw CLINC correctness improves from 2,864 to 2,889 out of 2,995,
+while banking falls from 1,787 to 1,773 out of 1,960. All 10,110 development
+outcomes and four saved heads are retained. Only CLINC advances to a separately
+declared full review comparison; simple confidence/margin policies still fail
+80% coverage at the quality targets. No current adapter is replaced and no new
+complete-adapter latency or qualification is claimed.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.
