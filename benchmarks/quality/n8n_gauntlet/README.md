@@ -5,13 +5,18 @@ classification skill, independently qualify it, connect that exact saved skill
 to self-hosted n8n, and record the teacher being disconnected. This directory
 does not yet contain a passing final evaluation or an integration recording.
 
-The latest [frozen regression audit](results/observed-regression.md) also fails:
-the updated skills accept 86.93% / 81.98% of supported CLINC / banking requests,
-but accepted accuracy is 98.70% / 98.73%, below 99%. CLINC falsely accepts 41 of
-1,000 unfamiliar requests, above the unchanged limit of 10. Complete p95 is
-2.85 / 3.64 ms. These are the already-observed original cohorts, not fresh
-qualification. All 17,160 System1/baseline decisions and the original failure
-are retained; the development improvements below must be read with this result.
+The latest [frozen regression check](results/latest-regression.md), after the
+boundary, interaction and input-feature experiments, still fails. CLINC System1
+accepts 3,956/4,500 supported requests, gets 3,903/3,956 correct (98.66%), and falsely
+accepts 46/1,000 unfamiliar requests (4.6%). Banking gets 2,492/2,524 accepted
+requests correct (98.73%) at 81.95% coverage. Complete p95 is 2.65/3.48 ms. The
+stronger baselines accept 59.33%/54.29%, below 80%, and the CLINC baseline also
+fails unfamiliar rejection. All 17,160 outcomes are retained. These are already
+observed original cohorts, not fresh qualification.
+
+The [earlier regression failure](results/observed-regression.md) and original
+held-out failure remain unchanged. Development gains below have not resolved
+the full quality objective.
 
 The next [declared boundary-teaching round](results/boundary-teaching.md) records
 227 real Gemini calls and 3,287 retained teaching examples across the full scope.

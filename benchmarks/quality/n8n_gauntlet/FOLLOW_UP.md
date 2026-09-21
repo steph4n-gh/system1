@@ -13,6 +13,13 @@ unfamiliar acceptances; banking accepted accuracy is 98.73%. Both meet coverage
 and latency targets. This regression evidence supersedes any impression that
 the development passes below resolved quality. It is not independent confirmation.
 
+The [latest experiment-2h regression](results/latest-regression.md) checks the
+current selections after experiments 2e–2g. It also fails: CLINC supported
+accepted accuracy is 98.66% with 46/1,000 unfamiliar acceptances; banking remains
+at 98.73%. Both meet coverage and latency. The newer development gains did not
+resolve the larger-cohort quality problem. All four candidates and 147 files were
+frozen before this full 17,160-decision observed-test run.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product
@@ -100,11 +107,11 @@ incumbent, and both stronger baseline incumbents remain. All 10,110 saved-runtim
 responses match selection. This offers a small development selection gain, not
 proof that the observed-test deficiencies have been resolved.
 
-The latest saved choices now need a separately declared regression check before
-further changes, preserving every original test label and distinguishing that
-already-observed evidence from qualification. The missing independent full-scope
-confirmation source remains a separate requirement. Do not keep tuning the
-same development set and describe its point estimates as new confirmation.
+Those selections were then frozen and checked in the latest regression above;
+the observed quality deficiencies remain. Further work must justify a better
+teaching or representation change with evidence, rather than continue small
+review-feature tweaks or tune directly against observed test outcomes. The
+missing independent full-scope confirmation source is a separate requirement.
 
 Before any new run, pin the additional data and a small fixed set of review-policy
 settings in a separate experiment protocol. Any new teacher call must retain its
