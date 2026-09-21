@@ -73,7 +73,11 @@ Original labels, final classifiers and full-workload targets stay fixed.
 The next [declared correction comparison](CORRECTION_PROTOCOL.md) tests only the
 seven proposed fitting-label changes in both methods, with every calibration
 and development label unchanged. It must reproduce the published controls before
-evaluating corrected candidates. No quality improvement is claimed before it runs.
+evaluating corrected candidates. Its first attempt stopped on a banking control
+score mismatch; the failed checkpoint is retained. A declared repair restores
+the incumbent's original batched final-head teaching features, which reproduce
+its weights exactly. Completed CLINC fits are reused; banking and complete
+runtime comparisons remain pending. No replacement has been selected.
 
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved

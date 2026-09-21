@@ -1,0 +1,17 @@
+{
+  "scope": "Banking unchanged-control reconstruction diagnostic, no corrected labels or new runtime timing",
+  "caches": {
+    "augmented": {
+      "path": ".system1/n8n-gauntlet/features-9321ddc4a534e2c00d8fd9f5e9d1282ddc99e4cefc84c1ae58649158a459c2e4.npy",
+      "sha256": "0a69e19e1b937923e85ec71daae9e32a44d8b7d43f6a966e8535e71fc7f06771"
+    },
+    "calibration": {
+      "path": ".system1/n8n-gauntlet/features-820c667ec03f6111951e22dc9b8a1a004ff5eb2c374503f33f351633c0051eff.npy",
+      "sha256": "47b945f6faa0ae88569739058847e20b468b00cf24760f406fe70a745c13a7de"
+    }
+  },
+  "prototypes_exact": true,
+  "max_weight_difference": 0.0,
+  "max_bias_difference": 0.0,
+  "temperature_difference": 0.0
+}

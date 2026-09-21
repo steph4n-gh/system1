@@ -92,3 +92,41 @@ After committing, from the repository root:
 sandbox-exec -p '(version 1)(allow default)(deny network*)' .venv/bin/python benchmarks/quality/n8n_gauntlet/corrected_teaching.py fit --folder .system1/n8n-gauntlet/corrected-teaching-development
 sandbox-exec -p '(version 1)(allow default)(deny network*)' .venv/bin/python benchmarks/quality/n8n_gauntlet/corrected_teaching.py measure --folder .system1/n8n-gauntlet/corrected-teaching-development
 ```
+
+
+## Control reconstruction repair, declared before resuming banking
+
+The first attempt at `ce75301` stopped on its fifth fit: the unchanged banking
+System1 control reproduced every decision but exceeded the fixed score tolerance
+(maximum confidence difference 0.000967707; review difference 0.000811984).
+The complete [failed checkpoint](results/corrected-teaching-attempt1.json) is
+retained. No runtime measurement was started and no replacement was selected.
+
+The runner mistakenly rebuilt the final banking head/prototypes using single
+request features. The incumbent's original `bank_runtime_probe.py` used cached
+batch features from BGE with one thread for teaching, then served with four
+threads. Later review folds used single requests. The
+[reconstruction diagnostic](results/corrected-teaching-control-diagnostic.json)
+rebuilds the unchanged head from those original, hash-bound teaching caches and
+reproduces weights, biases, temperature and prototypes exactly. This diagnosis
+uses no corrected label, test or reserve and reports no inference timing.
+
+Restore those exact final-head/calibration teaching caches and final prototypes
+for both banking control and corrected condition. Keep single-request review
+folds, review calibration/development and four-thread serving, the seven label
+proposals, all parameters, thresholds and the <=1e-4 reproduction tolerance.
+The original single-request statement above was inaccurate for the incumbent's
+final banking teaching path; this repair restores the comparison it specified.
+
+Commit the repair before running the remaining banking comparisons. Reuse the
+four completed CLINC fitting records and two saved adapters byte-for-byte;
+record their first-attempt provenance. Rebuild the failed banking control and
+only advance if it passes the original tolerance. Use an exclusive new folder;
+preserve the first attempt unchanged. The final report contains eight fits,
+with the first four explicitly reused. Measure the four corrected adapters
+once only after all four controls pass. No retiming or target change.
+
+```sh
+sandbox-exec -p '(version 1)(allow default)(deny network*)' .venv/bin/python benchmarks/quality/n8n_gauntlet/corrected_teaching.py fit --folder .system1/n8n-gauntlet/corrected-teaching-repaired --resume-from .system1/n8n-gauntlet/corrected-teaching-development
+sandbox-exec -p '(version 1)(allow default)(deny network*)' .venv/bin/python benchmarks/quality/n8n_gauntlet/corrected_teaching.py measure --folder .system1/n8n-gauntlet/corrected-teaching-repaired
+```

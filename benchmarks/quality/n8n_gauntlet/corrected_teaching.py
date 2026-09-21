@@ -9,6 +9,7 @@ import importlib.metadata
 import json
 from pathlib import Path
 import platform
+import shutil
 
 import numpy as np
 from scipy import sparse
@@ -34,6 +35,8 @@ from teach_boundaries import HERE, ROOT, committed, digest
 PROTOCOL = HERE / "CORRECTION_PROTOCOL.md"
 PROPOSALS = HERE / "results/teaching-correction-proposals.json"
 COMPARISON = HERE / "results/human-only-runtime.json"
+ATTEMPT = HERE / "results/corrected-teaching-attempt1.json"
+DIAGNOSTIC = HERE / "results/corrected-teaching-control-diagnostic.json"
 
 
 def corrected_rows(dataset, rows, apply):
@@ -119,6 +122,20 @@ def fit_one(dataset, kind, corrected, folder):
         cross_guesses[valid] = p.argmax(axis=1)
     started = time.perf_counter()
     if neural:
+        if bank:
+            # Reproduce the incumbent's original final-head/prototype features.
+            # Review fold heads and actual serving still use single requests.
+            teaching_encoder = Encoder("bge-small")
+            batch = {}
+            diagnostic = json.loads(DIAGNOSTIC.read_text())
+            for key, rows in dict(augmented=original + extra, calibration=calibration).items():
+                cache = diagnostic["caches"][key]
+                assert digest(ROOT / cache["path"]) == cache["sha256"]
+                batch[key] = features(rows, teaching_encoder, single=False, evidence=extraction)
+            final_prepared = PreparedFeatures(augmented + calibration,
+                np.concatenate([batch["augmented"], batch["calibration"]]), teaching_encoder)
+            compiler = SystemOneCompiler(schema, projector=final_prepared, choice_solver="logistic", regularization=.01)
+            x["augmented"] = batch["augmented"]
         taught = compile_head(compiler, augmented, calibration)
         model = CompiledSystemOneModel(taught.schema, taught.heads, dimension=384, projector=encoder, metadata=taught.metadata, use_cache=False)
         engine = System1Engine(model.schema, model=model, strict_mode=True, use_cache=False)
@@ -206,7 +223,7 @@ def fit_one(dataset, kind, corrected, folder):
                 class_offsets=np.concatenate([[0], np.cumsum(np.bincount(ya, minlength=len(labels)))]),
                 mean=scaler.mean_, scale=scaler.scale_, weights=review.coef_[0, :core_width], bias=review.intercept_[0])
             manifest.update(encoder=encoder.identity, guard="category-reliability", alpha=alpha, regularization=.01 if bank else .1,
-                reliability_threshold=threshold, teaching_projection="single-request", files={name: digest(saved / name) for name in ("intent.s1m", "scope.npz")})
+                reliability_threshold=threshold, teaching_projection="final-head-and-prototypes-batch32; review-folds-and-serving-single" if bank else "single-request", files={name: digest(saved / name) for name in ("intent.s1m", "scope.npz")})
         else:
             (saved / "vocabulary.json").write_text(json.dumps(lexical.vocabulary_, sort_keys=True) + "\n")
             np.savez_compressed(saved / "weights.npz", weights=model.coef_, bias=model.intercept_, idf=lexical.idf_, labels=np.asarray(labels),
@@ -225,11 +242,11 @@ def fit_one(dataset, kind, corrected, folder):
     return result
 
 
-def fit(folder):
+def fit(folder, resume_from=None):
     sources = [PROTOCOL, PROPOSALS, Path(__file__).resolve(), HERE / "correction_runtime.py", COMPARISON,
         HERE / "human_only.py", HERE / "human_only_runtime.py", HERE / "results/teaching-consistency.json",
         HERE / "results/contrast-lessons.json", HERE / "results/boundary-teaching/lessons.json",
-        HERE / "manifest.json", HERE / "review-data-manifest.json"] + [HERE / "results" / name for name in ("context-runtime.json", "polynomial-runtime.json", "boundary-runtime.json")]
+        HERE / "manifest.json", HERE / "review-data-manifest.json", ATTEMPT, DIAGNOSTIC] + [HERE / "results" / name for name in ("context-runtime.json", "polynomial-runtime.json", "boundary-runtime.json")]
     revision = committed(sources)
     frozen(False)
     folder.mkdir(parents=True, exist_ok=False)
@@ -238,11 +255,32 @@ def fit(folder):
         protocol_sha256=digest(PROTOCOL), proposals_sha256=digest(PROPOSALS), comparison_report_sha256=digest(COMPARISON),
         os_network_denial_errno=deny_network_control(), teacher_calls=0, new_api_cost=0,
         independent_annotations=False, proposal_authoring_cost="Assistant-session cost not measured", results=[])
+    if resume_from is not None:
+        assert digest(resume_from / "development.json") == digest(ATTEMPT)
+        previous = json.loads(ATTEMPT.read_text())
+        assert previous["failure"]["error"] == "AssertionError" and len(previous["results"]) == 5
+        assert previous["results"][-1]["dataset"] == "banking77" and previous["results"][-1]["condition"] == "unchanged-control"
+        for item in previous["results"][:4]:
+            assert item["dataset"] == "clinc150"
+            if item["condition"] == "unchanged-control":
+                check = item["control_reproduction"]
+                assert not check["route_mismatches"] and max(check["max_score_difference"], check["max_confidence_difference"]) <= 1e-4
+            else:
+                saved = resume_from / item["folder"]
+                assert digest(saved / "manifest.json") == item["manifest_sha256"]
+                for name, expected in item["manifest"]["files"].items():
+                    assert digest(saved / name) == expected
+                shutil.copytree(saved, folder / item["folder"])
+            report["results"].append(item)
+        report["resumed_from"] = dict(report_sha256=digest(ATTEMPT), source_revision=previous["source_revision"], reused_results=4,
+            reason="Preserve completed CLINC fits; rebuild banking control with its original batched final-head features")
     with threadpool_limits(limits=1):
         try:
             for dataset in ("clinc150", "banking77"):
                 for kind in ("system1", "baseline"):
                     for corrected in (False, True):
+                        if any((r["dataset"], r["kind"], r["condition"] == "corrected") == (dataset, kind, corrected) for r in report["results"]):
+                            continue
                         result = fit_one(dataset, kind, corrected, folder)
                         report["results"].append(result)
                         (folder / "development.json").write_text(json.dumps(report, indent=2) + "\n")
@@ -337,5 +375,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("fit", "measure"))
     parser.add_argument("--folder", type=Path, required=True)
+    parser.add_argument("--resume-from", type=Path)
     args = parser.parse_args()
-    (fit if args.action == "fit" else measure)(args.folder)
+    if args.action == "fit":
+        fit(args.folder, args.resume_from)
+    else:
+        assert args.resume_from is None
+        measure(args.folder)
