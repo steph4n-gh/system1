@@ -1,0 +1,32 @@
+{
+  "scope": "saved input-context System1 development artifacts; not qualification or new timing",
+  "qualified": false,
+  "runtime_report_sha256": "66f977427d266e99de53d4c9ab150fe90b28420c3ae443ed86153c4053297984",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "condition": "input-context",
+      "manifest_sha256": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "condition": "input-context",
+      "manifest_sha256": "b1bb0a964a1680b7d53d7859cf98499c10640002a77ad7f89704c5734e16de3f",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

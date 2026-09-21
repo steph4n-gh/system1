@@ -1,0 +1,39 @@
+{
+  "scope": "development arithmetic, lineage and saved-artifact audit; no model evaluation",
+  "qualified": false,
+  "source_sha256": "d66a8765dadb4110b25d20633847e01af08a320bec51c01013238e41fb7ec348",
+  "runtime_sha256": "66f977427d266e99de53d4c9ab150fe90b28420c3ae443ed86153c4053297984",
+  "frozen_files_unchanged": 125,
+  "recorded_source_files_unchanged": 9,
+  "stronger_incumbents_preserved": true,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "rows": 3095,
+      "source_labels_groups_routing_artifacts_and_metrics_verified": true,
+      "max_selection_runtime_score_difference": 3.1647876482243653e-06
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "rows": 3095,
+      "source_labels_groups_routing_artifacts_and_metrics_verified": true,
+      "max_selection_runtime_score_difference": 6.106226635438361e-16
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "rows": 1960,
+      "source_labels_groups_routing_artifacts_and_metrics_verified": true,
+      "max_selection_runtime_score_difference": 5.890804932962013e-06
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "rows": 1960,
+      "source_labels_groups_routing_artifacts_and_metrics_verified": true,
+      "max_selection_runtime_score_difference": 5.551115123125783e-16
+    }
+  ]
+}

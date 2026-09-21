@@ -1,0 +1,10 @@
+{
+  "scope": "single separate full-import preflight; no candidate loaded or classified; not decision latency",
+  "qualified": false,
+  "full_child_process_wall_ms": 728.0897500459105,
+  "full_module_import_and_network_preflight_ms": 652.2915830137208,
+  "os_network_denial_errno": 1,
+  "teacher_calls": 0,
+  "original_report_field": "process_import_preflight_ms excludes context_review imports preceding polynomial_review; retain as partial shared-module preflight only",
+  "method": "Fresh Python subprocess: start internal timer before importing context_review; verify OS denial; exit. Parent wall time additionally includes interpreter startup and shutdown."
+}

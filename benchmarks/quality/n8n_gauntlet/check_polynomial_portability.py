@@ -1,5 +1,6 @@
 """Replay development responses with fitting libraries blocked; no timing claim."""
 import errno
+import argparse
 import gc
 import importlib.abc
 import json
@@ -25,7 +26,8 @@ from polynomial_runtime import PolynomialCandidate
 HERE = Path(__file__).resolve().parent
 
 
-def main():
+def main(*, report_name="polynomial-runtime.json", artifact_prefix="polynomial-", candidate_class=PolynomialCandidate,
+         scope="saved System1 development artifacts after numerical import repair; not qualification or new timing"):
     with socket.socket() as connection:
         try:
             connection.connect(("127.0.0.1", 9))
@@ -34,15 +36,15 @@ def main():
             denied = exc.errno
         else:
             raise AssertionError("Networking is enabled")
-    report_path = HERE / "results/polynomial-runtime.json"
+    report_path = HERE / "results" / report_name
     report = json.loads(report_path.read_text())
     results = []
     with threadpool_limits(limits=1):
         for measured in report["results"]:
             if measured["kind"] != "system1":
                 continue
-            folder = HERE / "artifacts" / ("polynomial-" + measured["folder"])
-            candidate = PolynomialCandidate(folder)
+            folder = HERE / "artifacts" / (artifact_prefix + measured["folder"])
+            candidate = candidate_class(folder)
             assert candidate.identity == measured["candidate_sha256"]
             rows = load_splits(measured["dataset"])["development"]
             payload = {key: candidate.manifest[key] for key in ("categories", "instructions")}
@@ -68,10 +70,17 @@ def main():
             del candidate
             gc.collect()
     assert not any(name.split(".")[0] in {"sklearn", "scipy"} for name in sys.modules)
-    print(json.dumps(dict(scope="saved System1 development artifacts after numerical import repair; not qualification or new timing", qualified=False,
+    print(json.dumps(dict(scope=scope, qualified=False,
         runtime_report_sha256=digest(report_path), os_network_denial_errno=denied,
         blocked_imports=["scipy", "sklearn"], results=results), indent=2))
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--context", action="store_true")
+    if parser.parse_args().context:
+        from context_runtime import ContextCandidate
+        main(report_name="context-runtime.json", artifact_prefix="", candidate_class=ContextCandidate,
+             scope="saved input-context System1 development artifacts; not qualification or new timing")
+    else:
+        main()

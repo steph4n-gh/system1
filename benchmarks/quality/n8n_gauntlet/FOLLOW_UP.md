@@ -90,11 +90,21 @@ A [saved-prediction disagreement diagnostic](results/review-disagreement.md)
 completed that check without fitting or running models. A consensus veto catches
 four of 15 banking mistakes but removes 82 correct decisions, dropping coverage
 to 76.28%. Agreement alone also accepts 6/100 unfamiliar CLINC requests. No
-ensemble was implemented. A next bounded comparison can give the existing review
-head the input features already computed by its classifier, instead of adding a
-second classifier. This is still a hypothesis requiring prospective declaration
-and measured comparison. The missing independent full-scope confirmation source
-remains a separate requirement.
+ensemble was implemented.
+
+The subsequent [input-feature review comparison](results/context-review.md)
+reuses each classifier's existing feature vector. CLINC accepts 16 additional
+development requests, with one additional mistake and the same 1/100 unfamiliar
+acceptance; supported accepted accuracy is only just above 99%. Banking ties its
+incumbent, and both stronger baseline incumbents remain. All 10,110 saved-runtime
+responses match selection. This offers a small development selection gain, not
+proof that the observed-test deficiencies have been resolved.
+
+The latest saved choices now need a separately declared regression check before
+further changes, preserving every original test label and distinguishing that
+already-observed evidence from qualification. The missing independent full-scope
+confirmation source remains a separate requirement. Do not keep tuning the
+same development set and describe its point estimates as new confirmation.
 
 Before any new run, pin the additional data and a small fixed set of review-policy
 settings in a separate experiment protocol. Any new teacher call must retain its

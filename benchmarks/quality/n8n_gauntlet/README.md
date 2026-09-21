@@ -38,6 +38,14 @@ to 76.28%, while agreement without learned review accepts 6/100 unfamiliar CLINC
 requests. It reuses recorded development responses and makes no joint-latency or
 qualification claim; no ensemble was added.
 
+The latest [input-feature review comparison](results/context-review.md) adds no
+encoder or teacher call. CLINC System1 gains 16 accepted development cases, but
+also one mistake: 2,584/2,610 correct (99.0038%), with 1/100 unfamiliar acceptance
+and 2.78 ms p95. Banking ties its incumbent; stronger baseline incumbents remain.
+All four artifacts and 10,110 runtime decisions are retained. This modest
+selection gain does not resolve the observed-test failure or establish fresh
+qualification.
+
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local
