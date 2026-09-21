@@ -61,6 +61,12 @@ decisions. Both candidates fail 80% coverage; all incumbents remain. Complete
 p95 is 4.38 / 0.68 ms, with all 3,920 routes matching selection, zero runtime
 errors and zero teacher calls. Exact artifacts and offline replay are retained.
 
+The next [declared teaching-consistency diagnostic](TEACHING_CONSISTENCY_PROTOCOL.md)
+checks original fitting examples with predictions made outside their teaching
+folds. It also inspects the current development errors. Model agreement can
+flag examples for review; it cannot establish corrected labels or qualify a
+replacement classifier. Original labels and full-workload targets stay fixed.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.
