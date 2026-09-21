@@ -1,0 +1,23 @@
+{
+  "scope": "review teaching development, reserve never scored",
+  "sources": {
+    "data_oos_plus.json": {
+      "url": "https://raw.githubusercontent.com/clinc/oos-eval/828f8093932c8fe6ca7936c3d2e52903b1c523de/data/data_oos_plus.json",
+      "sha256": "bfcca9ae515623541dc1983c94c4ed7cae9d26b42ae47d74b972e51bb6f7a21f"
+    },
+    "binary_wiki_aug.json": {
+      "url": "https://raw.githubusercontent.com/clinc/oos-eval/828f8093932c8fe6ca7936c3d2e52903b1c523de/data/binary_wiki_aug.json",
+      "sha256": "0e059889d4771dd50463f4332374d8de8389c5828cb4d85b754b4ce8339b8544"
+    }
+  },
+  "files": {
+    "negative-fit": {
+      "rows": 2000,
+      "sha256": "1488d1e4c3c3afeaee3cbb6e004ec3b7727639289497fdc7b4cec788e079600f"
+    },
+    "human-oos-reserve": {
+      "rows": 151,
+      "sha256": "b6d23221000dd0f2da96a0c907761853c41b35dda691d753861549c9a4b25833"
+    }
+  }
+}
