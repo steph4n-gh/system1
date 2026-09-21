@@ -78,3 +78,26 @@ remain unchanged. The GUI uses fresh model calls, not these recorded traces.
 This is a positive result for a deliberately designed skill decomposition in a
 small synthetic world. It does not show that System1 discovers that decomposition,
 learns arbitrary navigation, or outperforms other modular-learning approaches.
+
+
+## Objective teaching follow-up
+
+A separate round retains the original model and adds local observations of
+returning with key, open gate and cargo: **104 fitting and 45 calibration labels**.
+No thresholds changed. On fresh seeds **6000–6039**, stopping before every flagged
+action improved successful completion from **22/40 to 31/40**, and from **19/40 to
+28/40** with the corrected terrain lesson. Both versions still completed 40/40
+when flagged predictions were executed; all those action trajectories were unchanged.
+
+The remaining review stops are real. Empty conformal sets can occur even when the
+highest-scoring class is correct; per-decision calibration does not guarantee an
+entire mission. This round improves useful acceptance without establishing reliable
+unattended operation. Development used seeds 5000–5009; added lessons are isolated
+inventory-state observations, not complete trajectories through the withheld mission.
+
+Run `python -m examples.gaming.skill_playground.quality` to reproduce this round.
+The [follow-up summary](results/quality-summary.json) and
+[hashed lessons, skills and traces](results/quality-evidence.zip) preserve strict
+stops and the unchanged original comparison. The original evidence above remains
+frozen. The next [Pokémon teaching experiment](../pokemon_teaching/README.md) tests
+isolated correction in a second workload, with broader and targeted battle families.

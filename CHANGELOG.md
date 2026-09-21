@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add a two-skill Pokémon teaching lab with live healing correction, equal-budget original/corrected single-model baselines, strict review runs and retained regressions. Include a bounded real Red/Blue ROM controller with observed RAM facts and no demo defaults; add Pillow to the optional gameboy extra for its live screen.
+- Improve the courier objective lesson and measure strict completion on a fresh cohort: 22/40 → 31/40, and 19/40 → 28/40 with corrected terrain. Preserve the original experiment and its evidence.
+
 - Bound an existing concurrent reader/writer regression workload so a writer timeout cannot leave CI waiting forever for unbounded readers. Use synchronized startup, 1,024 reads and all 30 checked updates.
 
 - Add an experimental courier teaching playground: three saved skills, live isolated terrain corrections, held-out mission composition, matched retained-label baselines and complete recorded evidence. Preserve the initial danger-penalty failure and gate movement using learned terrain eligibility. Keep review limitations explicit; no new core API or runtime dependency.

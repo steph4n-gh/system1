@@ -11,3 +11,5 @@ include examples/inbox_zero/upstream/LICENSE examples/inbox_zero/upstream/system
 recursive-include examples/gaming/snake_arena/results *.gz
 
 recursive-include examples/gaming/skill_playground/results *.gz *.zip
+
+recursive-include examples/gaming/pokemon_teaching/results *.gz *.zip

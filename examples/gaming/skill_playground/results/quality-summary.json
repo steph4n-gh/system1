@@ -1,0 +1,140 @@
+{
+  "experiment": "Courier objective teaching, strict review follow-up",
+  "seed_start": 6000,
+  "seed_count": 40,
+  "development_seeds": [
+    5000,
+    5009
+  ],
+  "added_labels": {
+    "calibration": 45,
+    "teach": 104
+  },
+  "teaching_ms": 79.34520795242861,
+  "alpha": 0.05,
+  "results": {
+    "unseen": {
+      "before_execute_flagged": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 22,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1658,
+        "review_steps": 70,
+        "model_calls": 14922,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0116455086972564,
+        "p95_step_ms": 1.3470000121742487
+      },
+      "before_stop_on_review": {
+        "episodes": 40,
+        "successes": 22,
+        "successes_without_review_flags": 22,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 18,
+        "steps": 1345,
+        "review_steps": 18,
+        "model_calls": 12267,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9920000447891653,
+        "p95_step_ms": 1.3125419500283897
+      },
+      "after_execute_flagged": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 31,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1658,
+        "review_steps": 12,
+        "model_calls": 14922,
+        "teacher_calls": 0,
+        "median_step_ms": 1.003707991912961,
+        "p95_step_ms": 1.3310419744811952
+      },
+      "after_stop_on_review": {
+        "episodes": 40,
+        "successes": 31,
+        "successes_without_review_flags": 31,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 9,
+        "steps": 1373,
+        "review_steps": 9,
+        "model_calls": 12438,
+        "teacher_calls": 0,
+        "median_step_ms": 1.009208004688844,
+        "p95_step_ms": 1.334790955297649
+      }
+    },
+    "changed_terrain": {
+      "before_execute_flagged": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 19,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1566,
+        "review_steps": 80,
+        "model_calls": 14094,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9937080030795187,
+        "p95_step_ms": 1.3463340001180768
+      },
+      "before_stop_on_review": {
+        "episodes": 40,
+        "successes": 19,
+        "successes_without_review_flags": 19,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 21,
+        "steps": 1134,
+        "review_steps": 21,
+        "model_calls": 10395,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9969579987227917,
+        "p95_step_ms": 1.3347499771043658
+      },
+      "after_execute_flagged": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 28,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1566,
+        "review_steps": 19,
+        "model_calls": 14094,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0044790105894208,
+        "p95_step_ms": 1.321416988503188
+      },
+      "after_stop_on_review": {
+        "episodes": 40,
+        "successes": 28,
+        "successes_without_review_flags": 28,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 12,
+        "steps": 1209,
+        "review_steps": 12,
+        "model_calls": 10989,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0145840351469815,
+        "p95_step_ms": 1.33200001437217
+      }
+    }
+  },
+  "lessons_sha256": "5339257c8c14a836ff91ec4dc21cbfc45bc0d73c43bfa3f6403ebbc3f8322ef6",
+  "limitations": [
+    "Synthetic local inventory-state lessons; full mission still withheld.",
+    "Strict episodes stop on every review flag; stopped missions are not successes.",
+    "Empty conformal sets can occur even for correct high-scoring predictions.",
+    "No change to calibration thresholds or core System1 inference."
+  ]
+}
