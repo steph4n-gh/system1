@@ -53,11 +53,13 @@ retained. Saved-head p95 is 2.69 / 4.39 ms, excluding learned review and adapter
 validation. Those numbers are not complete-adapter qualification. Existing
 candidates remain selected and the full failures remain unresolved.
 
-The next [declared original-only banking comparison](HUMAN_ONLY_PROTOCOL.md)
-removes the 924 earlier synthetic lessons from both System1 and the conventional
-baseline. Encoder, numerical settings and quadratic review stay fixed; the
-complete saved adapters will be measured on the unchanged development cohort.
-No result or qualification is claimed before that comparison runs.
+The [completed original-only banking comparison](results/human-only.md) removes
+the 924 earlier synthetic lessons from both methods and reduces accepted coverage:
+System1 moves from 80.66% to 79.95%, and the baseline from 51.79% to 49.54%.
+System1 gains three raw correct decisions but loses fourteen accepted correct
+decisions. Both candidates fail 80% coverage; all incumbents remain. Complete
+p95 is 4.38 / 0.68 ms, with all 3,920 routes matching selection, zero runtime
+errors and zero teacher calls. Exact artifacts and offline replay are retained.
 
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
