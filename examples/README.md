@@ -61,7 +61,7 @@ statistical action label in any example does not itself grant a tool permission.
 | [gaming/paperclips_speedrun.py](gaming/paperclips_speedrun.py) | Handwritten three-phase policy with accelerated mock and optional Playwright controller |
 | [gaming/teach_paperclips_wire.py](gaming/teach_paperclips_wire.py) | Teach, save and check one numeric restocking skill; [live demonstration and limitations](gaming/PAPERCLIPS_TEACHING.md) |
 | [gaming/snake_arena/](gaming/snake_arena/README.md) | Three-player GUI: taught System1 skill vs real Laya-MLX and Jev; timed/equal-move runs, explicit planner hints and optional shield; [recordings and results](gaming/snake_arena/RESULTS.md) |
-| [gaming/pokemon_teaching/](gaming/pokemon_teaching/README.md) | Two taught battle skills, live healing correction, measured regressions and optional real Red/Blue ROM check |
+| [gaming/pokemon_teaching/](gaming/pokemon_teaching/README.md) | Two taught battle skills, isolated healing correction, real Red/Blue potion control and paired save-state evidence |
 | [gaming/skill_playground/](gaming/skill_playground/README.md) | Three taught skills, live terrain correction, held-out mission composition and measured single-model/rules baselines |
 | [gaming/__init__.py](gaming/__init__.py) | Package marker |
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add real Pokémon Red/Blue potion control, paired save-state replays in the teaching GUI, and 144 measured controller runs across 18 explicitly edited battle fixtures. Preserve the modest 6/18 → 7/18 gain, strict review results, resource costs and regression; keep the move skill and prior simulator evidence unchanged.
+
 - Add a two-skill Pokémon teaching lab with live healing correction, equal-budget original/corrected single-model baselines, strict review runs and retained regressions. Include a bounded real Red/Blue ROM controller with observed RAM facts and no demo defaults; add Pillow to the optional gameboy extra for its live screen.
 - Improve the courier objective lesson and measure strict completion on a fresh cohort: 22/40 → 31/40, and 19/40 → 28/40 with corrected terrain. Preserve the original experiment and its evidence.
 

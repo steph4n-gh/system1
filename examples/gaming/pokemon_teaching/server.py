@@ -5,6 +5,7 @@ from dataclasses import asdict
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
+from hashlib import sha256
 import statistics
 import time
 
@@ -75,10 +76,76 @@ class Lab:
         return {'settings':self.settings,'corrected':self.corrected,'teaching':self.teaching,'lanes':lanes}
 
 
+class RomPair:
+    """Two emulator instances restored from the same complete local checkpoint."""
+    def __init__(self, rom_path, directory, lab):
+        self.rom_path, self.directory, self.lab = rom_path, Path(directory), lab
+        self.lanes = {}
+        self.base = None
+        self.checkpoint = None
+
+    def start(self, settings):
+        from .red import RomBattle
+        from .rom_experiment import FIXTURES, make_checkpoint
+        if set(settings) - {'fixture', 'strict'}:
+            raise ValueError('Unknown ROM settings')
+        fixture, strict = settings.get('fixture', 'threat_slow-37'), settings.get('strict', True)
+        if fixture not in FIXTURES and fixture != 'starter':
+            raise ValueError('Unknown ROM fixture')
+        if type(strict) is not bool:
+            raise ValueError('Strict must be a boolean')
+        self.close()
+        try:
+            before = RomBattle(self.rom_path, self.directory, False, checkpoint=self.base, strict=strict)
+            self.lanes['before'] = before
+            if self.base is None:
+                self.base = before.save_checkpoint()
+            self.checkpoint = self.base if fixture == 'starter' else make_checkpoint(before, self.base, fixture)
+            before.fixture = None if fixture == 'starter' else fixture
+            before.restart(self.checkpoint)
+            self.lanes['current'] = RomBattle(self.rom_path, self.directory, self.lab.corrected,
+                                             checkpoint=self.checkpoint, strict=strict, fixture=before.fixture)
+            assert len({b.checkpoint_sha256 for b in self.lanes.values()}) == 1
+            return self.snapshot()
+        except Exception:
+            self.close()
+            raise
+
+    def correct(self):
+        if self.lanes:
+            current = self.lanes['current']
+            # Preserve the actual move-engine object across the correction.
+            current.agent.healing = self.lab.agents['network'].healing
+            current.agent.corrected = self.lab.corrected
+            filename = 'healing-corrected.s1m' if self.lab.corrected else 'healing.s1m'
+            current.skill_hashes = {'move.s1m': current.skill_hashes['move.s1m'],
+                                    filename: sha256((self.directory/filename).read_bytes()).hexdigest()}
+            for battle in self.lanes.values():
+                battle.restart(self.checkpoint)
+
+    def step(self):
+        for battle in self.lanes.values():
+            battle.step(screen=False)
+        if self.lanes and all(b.done for b in self.lanes.values()):
+            (self.directory/'rom-live-report.json').write_text(json.dumps(
+                {name:b.report() for name,b in self.lanes.items()}, indent=2)+'\n')
+        return self.snapshot()
+
+    def snapshot(self):
+        from .rom_experiment import FIXTURES
+        return {'available': self.rom_path is not None, 'fixtures': ['starter', *FIXTURES],
+                'corrected': self.lab.corrected, 'lanes': {name:b.snapshot() for name,b in self.lanes.items()}}
+
+    def close(self):
+        for battle in self.lanes.values():
+            battle.close()
+        self.lanes = {}
+
+
 def serve(directory, port=8790, rom_path=None):
     root = Path(directory)
     lab = Lab(root)
-    rom = None
+    rom = RomPair(rom_path, root, lab)
     html = Path(__file__).with_name('index.html').read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
@@ -103,11 +170,13 @@ def serve(directory, port=8790, rom_path=None):
             if self.path=='/api/lessons':
                 return self.reply(200,json.loads((root/'lessons.json').read_text()))
             if self.path=='/api/rom/state':
-                return self.reply(200,rom.snapshot() if rom else {'available':rom_path is not None,'started':False})
+                return self.reply(200,rom.snapshot())
+            if self.path=='/api/rom/report':
+                report = Path(__file__).with_name('results')/'rom-summary.json'
+                return self.reply(200,json.loads(report.read_text()) if report.exists() else {})
             return self.reply(404,{'error':'Not found'})
 
         def do_POST(self):
-            nonlocal rom
             host=self.headers.get('Host','')
             origin=self.headers.get('Origin')
             if host not in (f'127.0.0.1:{port}',f'localhost:{port}') or (origin and origin!=f'http://{host}'):
@@ -125,17 +194,11 @@ def serve(directory, port=8790, rom_path=None):
                     result=lab.step()
                 elif self.path=='/api/teach' and set(data)=={'enabled'}:
                     result=lab.correct(data['enabled'])
-                elif self.path=='/api/rom/start' and not data and rom_path is not None:
-                    from .red import RomBattle
-                    if rom:
-                        rom.close()
-                        rom=None
-                    rom=RomBattle(rom_path,root,corrected=lab.corrected)
-                    result=rom.snapshot()
-                elif self.path=='/api/rom/step' and not data and rom:
+                    rom.correct()
+                elif self.path=='/api/rom/start' and rom_path is not None:
+                    result=rom.start(data)
+                elif self.path=='/api/rom/step' and not data and rom.lanes:
                     result=rom.step()
-                    if rom.done:
-                        (root/'rom-live-report.json').write_text(json.dumps(rom.report(),indent=2)+'\n')
                 else:
                     return self.reply(404,{'error':'Unknown action'})
                 return self.reply(200,result)
@@ -151,5 +214,4 @@ def serve(directory, port=8790, rom_path=None):
     try:
         HTTPServer(('127.0.0.1',port),Handler).serve_forever()
     finally:
-        if rom:
-            rom.close()
+        rom.close()

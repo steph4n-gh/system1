@@ -250,8 +250,10 @@ example with explicit application wiring.
 
 The [Pokémon teaching lab](examples/gaming/pokemon_teaching/README.md) applies the
 same idea to move selection and healing. It includes live correction, a constructed
-survival test (13/60 → 44/60 wins), broader results and regressions, and a five-turn
-real Pokémon Red starter-battle check. This remains an experimental, bounded demo.
+survival test (13/60 → 44/60 wins), broader results and regressions, and real
+Pokémon Red potion control. Identical edited battle saves give a smaller real-engine
+gain: 6/18 → 7/18 wins, with one regression and more potion use. The GUI lets you
+replay the same save before and after teaching. This remains a bounded experiment.
 
 The [Snake arena](examples/gaming/snake_arena/README.md) puts System1, Laya-MLX
 and Jev side by side in a live GUI. Replay the published runs without an API key,

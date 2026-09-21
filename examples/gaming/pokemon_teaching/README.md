@@ -2,8 +2,8 @@
 
 This experimental lab composes two ordinary System1 skills: one scores available
 moves, then the other decides whether to attack or heal. A live GUI lets you run a
-battle, correct only the healing lesson, and try again. It also runs a bounded
-compatibility check in a user-supplied Pokémon Red/Blue ROM.
+battle, correct only the healing lesson, and try again. It also compares both healing lessons from identical saved battle states in a
+user-supplied Pokémon Red/Blue ROM, including actual potion-menu control.
 
 The useful result is local, isolated teaching. This is not a new neural architecture,
 a full-game player, or a demonstration of learning Pokémon from pixels.
@@ -40,7 +40,15 @@ python -m pip install -e '.[gameboy]'
 python -m examples.gaming.pokemon_teaching --serve --rom '/path/to/Pokemon Red.gb'
 ```
 
-Click **Start ROM**, then **Play next turn**. The optional `gameboy` extra includes
+In **The same save. One changed skill**, click **Load same battle**, then
+**Run comparison**. Initially both lanes use the original lesson. Click **Teach healing** in that section: both games reset to the identical starting save, and only
+the right lane’s healing engine changes. Run again. The default `threat_slow-37`
+illustrates a loss becoming a win; it was selected after evaluating the entire
+fixed suite. **Restore original healing** reverses it. The ROM section has its own
+**Stop for review** checkbox, enabled by default. Click **Load same battle** to
+apply a different fixture or review setting.
+
+The optional `gameboy` extra includes
 PyBoy and Pillow for the live screen. Unmodified English Red/Blue binaries are
 checked against the hashes published by
 [pret/pokered](https://github.com/pret/pokered/blob/master/roms.sha1).
@@ -131,20 +139,85 @@ The survival gain consumes more resources: **41 → 109 potions across 60 episod
 when flagged predictions are executed. The report includes turns, items, review
 flags, legal overrides, model calls, timing and per-seed changes for every baseline.
 
-## Actual ROM check
+## Actual cartridge battle experiment
 
-The recorded English Pokémon Red run reached the first rival through scripted
-intro navigation. After that, the saved skills selected actual controller inputs
-and defeated Bulbasaur in **five turns**, with Squirtle at **8/20 HP**, **zero review
-flags** and **zero teacher calls**. The move and healing files used are hashed in
-the report. This one starter battle contains no healing items, so it demonstrates
-real controller compatibility, not the healing improvement or full-game autonomy.
+The original, unmodified starter-rival compatibility run is retained: **five turns,
+8/20 HP remaining, no review flags and no teacher calls**. Select `starter` in the
+GUI for this encounter. It has no healing items.
+
+The new comparison uses **18 controlled save-state fixtures**: six conditions at
+three initial idle timings (37, 71 and 109 frames). The conditions are healthy,
+critical HP, a threatening slower opponent, a threatening faster opponent,
+Super Potion availability, and no items. Each fixture changes starting HP, bag
+contents, and enemy attack/speed in the first rival battle. The stronger opponent
+stats are artificial stress inputs, not legal level-5 stats or naturally reached
+campaign encounters. These are six conditions with timing variants, not 18
+independent real-world encounters.
+
+Every controller loads the **same complete emulator state**, including RNG and
+hardware timing, for each fixture. After setup there are no RAM writes: controllers
+press buttons, and the cartridge handles damage, misses, critical hits, stat
+changes, move order and item effects. Different button sequences can change later
+random draws. The existing saved skills are frozen; these fixtures are not used for
+fitting or calibration. The suite definition is in [rom_experiment.py](rom_experiment.py).
+
+| Controller | Wins / 18 | Turns played | Potions used | Review stops |
+|---|---:|---:|---:|---:|
+| Two skills, original | 6 | 75 | 5 | 0 (flags executed) |
+| Two skills, corrected | 7 | 135 | 20 | 0 (flags executed) |
+| Original, stop for review | 2 | 60 | 4 | 4 |
+| Corrected, stop for review | 6 | 132 | 20 | 1 |
+| Original handwritten rule | 6 | 75 | 5 | 0 |
+| Corrected handwritten rule | 7 | 135 | 20 | 0 |
+
+There are **two improvements (`threat_slow-37`, `threat_slow-71`) and one regression
+(`threat_slow-109`)**. Teaching transfers to real item use, but overall gains are
+small and consume more resources. Strict wins are wins completed without review,
+not a measure of classifier accuracy. Some losses remain confidently wrong as
+strategic choices; calibration cannot certify that a short-term policy wins games.
+
+Both frozen single-model baselines won **0/18**. The original stopped on an
+unavailable move in 12 cases and lost six battles; the corrected version stopped
+on an unavailable move in 15 cases and lost three. They were taught four-slot
+simulator encounters and do not reliably transfer to the starter’s two available
+moves. Unsupported outputs stop visibly, with no hidden replacement action.
+This exposes a limitation of these particular frozen baselines, not a general
+claim that multiple heads outperform all single models.
+
+The pair took about **0.6 ms per decision** in the first run; handwritten rules
+about **0.02 ms**, and single-model predictions about **0.4 ms**. These measure
+inference only, excluding emulation, rendering, setup and teaching. Exact measured
+timings accompany the results. All runs made zero teacher/API calls.
+
+### What the failures taught us
+
+In simulator seeds 8032 and 8055, the correction uses the second potion earlier.
+It delays attacking, changes the subsequent random sequence, and still loses to
+critical hits. In actual fixture `threat_slow-109`, earlier healing also produces
+a different battle trajectory: attacks make less progress while potions run out.
+The original wins when flags execute; the corrected lesson loses. We preserve
+these traces rather than teaching exceptions keyed to seed names.
+
+The lesson knows immediate estimated damage and HP; it does not plan several
+turns ahead or account fully for game-specific status and speed effects. In
+particular, a predicted finishing attack is not guaranteed to land before a faster
+opponent. That is a concrete boundary for the next teaching experiment, not a
+reason to grow the skill network yet.
+
+### Controller details
 
 The strict reader in [red.py](red.py) uses observed stats, types, moves, PP and bag
-contents. It does not use the older adapter's demo defaults. Menu handling is
-bounded, and unsupported actions stop visibly. RAM layouts follow
-[pret/pokered's battle structure](https://github.com/pret/pokered/blob/master/macros/ram.asm);
-emulation uses the [PyBoy API](https://docs.pyboy.dk/).
+contents. Enemy moves are privileged RAM facts. The controller chooses the same
+item preference exposed to the healing skill (Super Potion, otherwise Potion),
+finds it in the real bag, selects the active party member, and verifies that exactly
+one requested item was consumed. It handles shifted bag positions after use.
+Strict mode stops before sending buttons for a flagged decision. The GUI preserves
+the move-engine object and file when replacing the healing engine.
+
+RAM layouts and item effects follow
+[pret/pokered](https://github.com/pret/pokered/blob/master/engine/items/item_effects.asm);
+emulation uses the [PyBoy API](https://docs.pyboy.dk/). No ROM, emulator save, battery
+save or cartridge screenshot is published in the evidence archive.
 
 ## Evidence and reproduction
 
@@ -167,3 +240,23 @@ the narrowed policy on seeds 7000–7059 provided little broad gain and also had
 regression. Those results motivated the explicitly targeted survival experiment.
 The courier's separate uncertainty follow-up is documented
 [here](../skill_playground/RESULTS.md#objective-teaching-follow-up).
+
+Reproduce the real-engine comparison with a local ROM (optional gameboy extra):
+
+```bash
+python -m examples.gaming.pokemon_teaching --rom-suite --rom '/path/to/Pokemon Red.gb'
+```
+
+The command reuses the saved skills in `--output-dir`, or prepares them if absent.
+It writes the full report and local-only checkpoints there. It runs every declared
+fixture once for each of eight controllers; an error stops the command instead of
+retrying or substituting a successful result.
+
+[Real-engine summary](results/rom-summary.json) ·
+[144 battle traces, frozen skills and source hashes](results/rom-evidence.zip)
+
+Normal CI checks hashes, report totals, identical initial state across controllers,
+legal dispatch and review stops without requiring a ROM. For the optional actual
+emulator integration tests, set `SYSTEM1_TEST_POKEMON_ROM` to the local ROM path and
+run `python -m pytest -q tests/test_pokemon_rom.py`. Those tests exercise item use,
+isolated correction, checkpoint reuse and the retained regression.

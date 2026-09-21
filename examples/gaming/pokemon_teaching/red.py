@@ -64,7 +64,8 @@ def read_state(memory, rom):
 
 
 class RomBattle:
-    def __init__(self, rom_path, directory, corrected=True):
+    def __init__(self, rom_path, directory, corrected=True, *, checkpoint=None,
+                 mode='network', strict=False, fixture=None):
         from pyboy import PyBoy
         self.rom = Path(rom_path).read_bytes()
         if sha1(self.rom).hexdigest() not in SUPPORTED:
@@ -72,28 +73,51 @@ class RomBattle:
         # File-like inputs prevent reading or overwriting the user's battery save.
         self.emulator = PyBoy(BytesIO(self.rom), window='null', sound_emulated=False)
         self.emulator.set_emulation_speed(0)
-        self.agent = Agent(directory, corrected=corrected)
-        files = ['move.s1m', 'healing-corrected.s1m' if corrected else 'healing.s1m']
+        self.agent = Agent(directory, mode=mode, corrected=corrected, stop_on_review=strict)
+        files = (['move.s1m', 'healing-corrected.s1m' if corrected else 'healing.s1m'] if mode == 'network'
+                 else ['flat-corrected.s1m' if corrected else 'flat.s1m'] if mode == 'single' else [])
         self.skill_hashes = {name: sha256((Path(directory)/name).read_bytes()).hexdigest() for name in files}
+        self.fixture = fixture
         self.events = []
         self.done = False
         self.outcome = 'READY'
         self.started = time.perf_counter()
         try:
-            from ..pokemon_gameboy_gui import fast_forward_to_rival_battle
-            fast_forward_to_rival_battle(self.emulator)
-            for button in ('a','b','start','select','up','down','left','right'):
-                self.emulator.button_release(button)
-            self.advance_to_menu()
+            if checkpoint is None:
+                from ..pokemon_gameboy_gui import fast_forward_to_rival_battle
+                fast_forward_to_rival_battle(self.emulator)
+                for button in ('a','b','start','select','up','down','left','right'):
+                    self.emulator.button_release(button)
+                self.advance_to_menu()
+            else:
+                self.emulator.load_state(BytesIO(checkpoint))
+                if not self.at_menu():
+                    raise ValueError('Checkpoint must be at a battle menu')
             if self.done:
                 raise ValueError('Could not reach the rival battle menu')
-            self.initial = asdict(read_state(self.emulator.memory,self.rom))
+            self.restart()
         except Exception:
             self.close()
             raise
 
     def at_menu(self):
         return FIGHT in bytes(self.emulator.memory[0xc3a0:0xc508])
+
+    def save_checkpoint(self):
+        stream = BytesIO()
+        self.emulator.save_state(stream)
+        return stream.getvalue()
+
+    def restart(self, checkpoint=None):
+        if checkpoint is not None:
+            self.emulator.load_state(BytesIO(checkpoint))
+        if not self.at_menu():
+            raise ValueError('Checkpoint must be at a battle menu')
+        self.initial = asdict(read_state(self.emulator.memory, self.rom))
+        self.checkpoint_sha256 = sha256(self.save_checkpoint()).hexdigest()
+        self.events = []
+        self.done, self.outcome = False, 'READY'
+        self.started = time.perf_counter()
 
     def press(self, button, frames=8):
         self.emulator.button(button,4)
@@ -111,71 +135,127 @@ class RomBattle:
                 # Read the actual HP bytes, never infer victory from a screenshot.
                 if e.memory[0xcfe6] == e.memory[0xcfe7] == 0:
                     self.done, self.outcome = True, 'VICTORY'
+                    # HP is written before the bar/faint animation. Let the
+                    # display catch up without advancing text with a button.
+                    e.tick(240)
                     return
                 if e.memory[0xd015] == e.memory[0xd016] == 0:
                     self.done, self.outcome = True, 'DEFEAT'
+                    e.tick(240)
                     return
             if frame % 90 == 0:
                 self.press('a')
         raise RuntimeError('Timed out waiting for the battle menu')
 
-    def step(self):
+    def use_item(self, state):
+        # Match the explicit item preference used by healing_facts(). This is
+        # button dispatch, not a second policy deciding whether to heal.
+        item_id, name = (0x13, 'Super Potion') if state.inventory.get('Super Potion', 0) else (0x14, 'Potion')
+        memory = self.emulator.memory
+        if not state.inventory.get(name, 0) or state.player_pokemon.current_hp >= state.player_pokemon.max_hp:
+            raise ValueError('Selected healing item is unavailable or cannot help')
+        index = next(i for i in range(memory[0xd31d]) if memory[0xd31e+2*i] == item_id)
+        self.press('left'); self.press('down'); self.press('a', 30)
+        # Bag cursors are zero-based and include a scrolling offset.
+        for _ in range(25):
+            current = memory[0xcc26] + memory[0xcc36]
+            if current == index:
+                break
+            self.press('down' if current < index else 'up')
+        if memory[0xcc26] + memory[0xcc36] != index or self.at_menu():
+            raise RuntimeError('Bag menu did not reach the requested item')
+        self.press('a', 30)
+        # Use the item on the observed active party member, never a fixed slot.
+        active = memory[0xcc2f]
+        for _ in range(6):
+            current = memory[0xcc26]
+            if current == active:
+                break
+            self.press('down' if current < active else 'up')
+        if memory[0xcc26] != active:
+            raise RuntimeError('Party menu did not reach the active Pokemon')
+        self.press('a', 30)
+        return name
+
+    def step(self, *, screen=True):
         if self.done:
-            return self.snapshot()
+            return self.snapshot(screen=screen)
         if len(self.events) >= 30:
             self.done, self.outcome = True, 'TIMEOUT'
-            return self.snapshot()
+            return self.snapshot(screen=screen)
         state = read_state(self.emulator.memory, self.rom)
         start = time.perf_counter()
         decision = self.agent.decide(state)
         decision['latency_ms'] = (time.perf_counter()-start)*1000
         decision['before'] = asdict(state)
+        decision['executed'] = False
         self.events.append(decision)
-        # The introductory battle has no usable healing items. Unsupported menu
-        # actions stop visibly instead of being replaced by an invented action.
-        if decision['action'] != 'fight':
+        if decision['review'] and self.agent.stop_on_review:
+            self.done, self.outcome = True, 'REVIEW'
+            return self.snapshot(screen=screen)
+        if decision['action'] not in ('fight', 'use_item'):
             self.done, self.outcome = True, 'UNSUPPORTED_ACTION'
-            return self.snapshot()
-        if decision['chosen_move'] not in {m.slot for m in state.player_pokemon.moves if m.is_usable()}:
+            return self.snapshot(screen=screen)
+        if decision['action'] == 'fight' and decision['chosen_move'] not in {m.slot for m in state.player_pokemon.moves if m.is_usable()}:
             self.done, self.outcome = True, 'UNSUPPORTED_MOVE'
-            return self.snapshot()
-        # Navigate the actual battle menu and then the observed move cursor.
-        self.press('up'); self.press('left'); self.press('a',20)
-        target = int(decision['chosen_move'][-1])
-        for _ in range(4):
-            current = self.emulator.memory[0xcc26]
-            if current == target:
-                break
-            self.press('down' if current < target else 'up')
-        if self.emulator.memory[0xcc26] != target:
-            raise RuntimeError('Move menu did not reach the requested slot')
-        self.press('a',20)
+            return self.snapshot(screen=screen)
+        if decision['action'] == 'use_item':
+            if not any(state.inventory.values()) or state.player_pokemon.current_hp >= state.player_pokemon.max_hp:
+                self.done, self.outcome = True, 'UNSUPPORTED_ITEM'
+                return self.snapshot(screen=screen)
+            decision['item'] = self.use_item(state)
+        else:
+            # Navigate the actual battle menu and then the observed move cursor.
+            self.press('up'); self.press('left'); self.press('a',20)
+            target = int(decision['chosen_move'][-1])
+            for _ in range(4):
+                current = self.emulator.memory[0xcc26]
+                if current == target:
+                    break
+                self.press('down' if current < target else 'up')
+            if self.emulator.memory[0xcc26] != target:
+                raise RuntimeError('Move menu did not reach the requested slot')
+            self.press('a',20)
+        decision['executed'] = True
         self.advance_to_menu()
         decision['after_hp'] = self.emulator.memory[0xd015]*256+self.emulator.memory[0xd016]
         decision['after_enemy_hp'] = self.emulator.memory[0xcfe6]*256+self.emulator.memory[0xcfe7]
-        return self.snapshot()
+        decision['after_inventory'] = read_state(self.emulator.memory, self.rom).inventory
+        if decision['action'] == 'use_item':
+            name = decision['item']
+            if state.inventory[name] - decision['after_inventory'].get(name, 0) != 1:
+                raise RuntimeError('The game did not consume exactly one requested potion')
+        return self.snapshot(screen=screen)
 
     def png(self):
         stream = BytesIO()
         self.emulator.screen.image.save(stream,format='PNG')
         return stream.getvalue()
 
-    def snapshot(self):
-        return {'done':self.done,'outcome':self.outcome,'turns':len(self.events),
+    def snapshot(self, *, screen=True):
+        result = {'done':self.done,'outcome':self.outcome,'turns':sum(e['executed'] for e in self.events),
+                'potions':sum(e.get('item') is not None and e['executed'] for e in self.events),
                 'review_steps':sum(e['review'] for e in self.events),
                 'decision':self.events[-1] if self.events else None,
-                'screen':'data:image/png;base64,'+base64.b64encode(self.png()).decode()}
+                'fixture':self.fixture, 'corrected':self.agent.corrected, 'strict':self.agent.stop_on_review,
+                'checkpoint_sha256':self.checkpoint_sha256}
+        if screen:
+            result['screen'] = 'data:image/png;base64,'+base64.b64encode(self.png()).decode()
+        return result
 
     def report(self):
-        return {'experiment':'Actual English Pokemon Red/Blue starter rival battle',
+        return {'experiment':'Actual English Pokemon Red/Blue battle engine',
                 'rom_sha256':sha256(self.rom).hexdigest(), 'skill_sha256':self.skill_hashes, 'initial':self.initial,
-                'outcome':self.outcome,'turns':len(self.events),'events':self.events,
+                **self.snapshot(screen=False), 'events':self.events,
+                'mode':self.agent.mode, 'model_calls':sum(e['calls'] for e in self.events),
                 'review_steps':sum(e['review'] for e in self.events), 'teacher_calls':0,
                 'elapsed_seconds':time.perf_counter()-self.started,
                 'limitations':['Scripted intro navigation; taught controller starts at battle menu.',
                                'Reads RAM and move properties from ROM; not vision or full-game play.',
-                               'Review flags are displayed but executed in this compatibility check.',
-                               'No healing items in this scenario: this does not test the corrected healing policy.']}
+                               'Controlled fixtures edit the initial RAM only; subsequent turns use game physics.' if self.fixture else
+                               'Unmodified starter battle has no healing items.',
+                               'Stops before flagged actions.' if self.agent.stop_on_review else 'Flagged predictions execute and are counted.',
+                               'Same initial RNG state; different button/action sequences can cause different later random draws.']}
 
     def close(self):
         self.emulator.stop(save=False)
