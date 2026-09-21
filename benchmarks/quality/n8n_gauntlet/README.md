@@ -5,6 +5,14 @@ classification skill, independently qualify it, connect that exact saved skill
 to self-hosted n8n, and record the teacher being disconnected. This directory
 does not yet contain a passing final evaluation or an integration recording.
 
+The latest [frozen regression audit](results/observed-regression.md) also fails:
+the updated skills accept 86.93% / 81.98% of supported CLINC / banking requests,
+but accepted accuracy is 98.70% / 98.73%, below 99%. CLINC falsely accepts 41 of
+1,000 unfamiliar requests, above the unchanged limit of 10. Complete p95 is
+2.85 / 3.64 ms. These are the already-observed original cohorts, not fresh
+qualification. All 17,160 System1/baseline decisions and the original failure
+are retained; the development improvements below must be read with this result.
+
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local

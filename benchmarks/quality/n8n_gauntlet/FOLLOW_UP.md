@@ -6,6 +6,13 @@ CLINC scope, 77-intent banking scope, 80% coverage, 99% accepted accuracy, 1%
 CLINC unfamiliar false acceptance and sub-5-ms p95 remain required. The n8n
 workflow and disconnection recording remain unfinished deliverables.
 
+The later [experiment-2d regression audit](results/observed-regression.md) froze
+the updated saved candidates before scoring the already-observed original
+cohorts. It still fails: CLINC supported accepted accuracy is 98.70% with 41/1,000
+unfamiliar acceptances; banking accepted accuracy is 98.73%. Both meet coverage
+and latency targets. This regression evidence supersedes any impression that
+the development passes below resolved quality. It is not independent confirmation.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product
