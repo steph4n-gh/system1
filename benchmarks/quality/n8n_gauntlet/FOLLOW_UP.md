@@ -56,6 +56,13 @@ paraphrase supplement with 2,977 normalized groups absent from the original fold
 It covers only 35 numeric categories and has one unresolved label mapping; it is
 reserved unscored and does not supply the missing full-scope confirmation.
 
+The [matched baseline review comparison](results/baseline-review.md) subsequently
+gave TF-IDF the same review-teaching folds, category features and negative-data
+choices. Its development coverage improved to 29.45% / 44.39%, with faster
+sub-millisecond p95, but both workloads still missed the 80% coverage target.
+This closes the follow-up comparison gap; it does not supply independent
+confirmation for System1 or alter the original official results.
+
 ## Next bounded implementation experiment
 
 Teach the review decision with explicitly unsupported requests and difficult

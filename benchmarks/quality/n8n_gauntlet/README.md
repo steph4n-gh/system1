@@ -81,6 +81,13 @@ The strengthened TF-IDF baseline selects calibration-taught review models as
 well as probability and margin policies. Its best development coverage is 22.1%
 on CLINC and 42.0% on banking at the quality thresholds, still below 80%.
 
+The subsequent [matched review-teaching comparison](results/baseline-review.md)
+gives the baseline the same additional review information and 18 policy choices
+as System1's follow-up. Coverage improves to 29.45% / 44.39%, with 0.88 / 0.54 ms
+p95, while both baselines still miss the 80% coverage target. All configurations,
+saved review parameters, complete runtime decisions and failures are retained.
+These are development comparisons, not new official-test results.
+
 The [real n8n development workflow](N8N.md) already uses the exact saved CLINC
 candidate. It preserves item identity and explicit review, including when the
 local service is stopped. This is integration evidence, not the final qualified
