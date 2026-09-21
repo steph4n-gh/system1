@@ -1,0 +1,21 @@
+{
+  "scope": "prompt lineage only; no teacher call or model evaluation",
+  "request_manifest_sha256": "30bace80e5ce3c1f8953a2635b594bab2553cff74789b91c1c975a22c5f49c5d",
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "requests": 150,
+      "context_example_occurrences": 3300,
+      "all_context_texts_and_labels_match_only_original_fit": true
+    },
+    {
+      "dataset": "banking77",
+      "requests": 77,
+      "context_example_occurrences": 1078,
+      "all_context_texts_and_labels_match_only_original_fit": true
+    }
+  ],
+  "planned_api_calls": 227,
+  "supported_proposals": 2724,
+  "unsupported_proposals": 1200
+}
