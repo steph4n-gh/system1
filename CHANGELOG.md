@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add an experimental teach-by-doing document workspace: filing actions become explicit examples, corrections invalidate stale skills, separate checks calibrate review, and lessons/actions/skills export for reuse. Include complete authored sample evidence: 29/30 filing guesses correct, 27/27 accepted ordinary suggestions correct, and one of six unusual requests incorrectly accepted. No new core API or dependency.
+
 - Add real Pokémon Red/Blue potion control, paired save-state replays in the teaching GUI, and 144 measured controller runs across 18 explicitly edited battle fixtures. Preserve the modest 6/18 → 7/18 gain, strict review results, resource costs and regression; keep the move skill and prior simulator evidence unchanged.
 
 - Add a two-skill Pokémon teaching lab with live healing correction, equal-budget original/corrected single-model baselines, strict review runs and retained regressions. Include a bounded real Red/Blue ROM controller with observed RAM facts and no demo defaults; add Pillow to the optional gameboy extra for its live screen.

@@ -1,0 +1,678 @@
+{
+  "provenance": "Locally authored fictional text previews. No real documents, file contents, API responses or private data. Evaluation includes cross-topic titles; these are illustrative examples, not a public benchmark.",
+  "policy": "Finance: payments, receipts, accounting and budgets. People: hiring, employee leave, benefits and reviews. Projects: software bugs, designs, features and releases. Classify the work requested, not the department words in the title.",
+  "documents": [
+    {
+      "id": "teach-01",
+      "purpose": "teach",
+      "title": "Invoice from Cedar Print",
+      "excerpt": "Invoice 184. Payment for printed stationery is due next Friday.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-02",
+      "purpose": "teach",
+      "title": "March expense receipts",
+      "excerpt": "Expense reimbursement request with taxi and hotel receipts from the conference.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-03",
+      "purpose": "teach",
+      "title": "Bank reconciliation",
+      "excerpt": "Match the bank statement transactions to payments in the accounting ledger.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-04",
+      "purpose": "teach",
+      "title": "Quarterly tax worksheet",
+      "excerpt": "Tax calculation worksheet for quarterly business taxes and deductible expenses.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-05",
+      "purpose": "teach",
+      "title": "Supplier payment approval",
+      "excerpt": "Please approve payment of the supplier invoice and confirm the bank transfer.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-06",
+      "purpose": "teach",
+      "title": "Annual budget draft",
+      "excerpt": "Budget forecast showing revenue, spending and expected cash balance.",
+      "folder": "Finance"
+    },
+    {
+      "id": "teach-07",
+      "purpose": "teach",
+      "title": "Offer for a new designer",
+      "excerpt": "Employment offer letter with salary, start date and hiring manager approval.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-08",
+      "purpose": "teach",
+      "title": "Annual leave request",
+      "excerpt": "Employee requests annual leave for a family holiday in August.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-09",
+      "purpose": "teach",
+      "title": "Candidate interview notes",
+      "excerpt": "Interview feedback on a candidate for the open engineering position.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-10",
+      "purpose": "teach",
+      "title": "New employee onboarding",
+      "excerpt": "Onboarding checklist for a new employee: benefits, orientation and equipment.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-11",
+      "purpose": "teach",
+      "title": "Benefits enrollment",
+      "excerpt": "Employee benefits enrollment form with health insurance and pension selections.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-12",
+      "purpose": "teach",
+      "title": "Performance review",
+      "excerpt": "Employee performance review covering goals, feedback and career development.",
+      "folder": "People"
+    },
+    {
+      "id": "teach-13",
+      "purpose": "teach",
+      "title": "Checkout bug report",
+      "excerpt": "Bug report: the checkout button fails when the cart contains a discounted item.",
+      "folder": "Projects"
+    },
+    {
+      "id": "teach-14",
+      "purpose": "teach",
+      "title": "Mobile release plan",
+      "excerpt": "Release plan with testing milestones and the mobile application launch date.",
+      "folder": "Projects"
+    },
+    {
+      "id": "teach-15",
+      "purpose": "teach",
+      "title": "Dashboard design specification",
+      "excerpt": "Product design specification for a new dashboard with charts and filters.",
+      "folder": "Projects"
+    },
+    {
+      "id": "teach-16",
+      "purpose": "teach",
+      "title": "Search feature proposal",
+      "excerpt": "Feature proposal to add filtering and sorting to the product search interface.",
+      "folder": "Projects"
+    },
+    {
+      "id": "teach-17",
+      "purpose": "teach",
+      "title": "Sprint planning notes",
+      "excerpt": "Sprint backlog, engineering tasks and dependencies for the next development milestone.",
+      "folder": "Projects"
+    },
+    {
+      "id": "teach-18",
+      "purpose": "teach",
+      "title": "API integration checklist",
+      "excerpt": "Technical integration checklist for the API, including endpoints and automated tests.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-01",
+      "purpose": "check",
+      "title": "Hosting invoice",
+      "excerpt": "Monthly hosting invoice. Please arrange payment before the due date.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-02",
+      "purpose": "check",
+      "title": "Meal receipts",
+      "excerpt": "Receipts for business meals submitted for expense reimbursement.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-03",
+      "purpose": "check",
+      "title": "Transfer confirmation",
+      "excerpt": "Bank transfer confirmation for an approved supplier payment.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-04",
+      "purpose": "check",
+      "title": "Travel expense claim",
+      "excerpt": "Expense claim listing train tickets and accommodation costs.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-05",
+      "purpose": "check",
+      "title": "Tax return preparation",
+      "excerpt": "Collect deductions and transaction totals for the annual tax return.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-06",
+      "purpose": "check",
+      "title": "Cash forecast",
+      "excerpt": "Cash flow forecast comparing expected revenue with planned spending.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-07",
+      "purpose": "check",
+      "title": "Refund reconciliation",
+      "excerpt": "Reconcile refunded payments against the accounting ledger.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-08",
+      "purpose": "check",
+      "title": "Office supply bill",
+      "excerpt": "Supplier invoice for office supplies, with payment terms and bank details.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-09",
+      "purpose": "check",
+      "title": "Budget adjustment",
+      "excerpt": "Move unused budget from equipment spending into travel expenses.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-10",
+      "purpose": "check",
+      "title": "Payment reminder",
+      "excerpt": "Reminder that the outstanding invoice payment is now overdue.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-11",
+      "purpose": "check",
+      "title": "Credit note",
+      "excerpt": "Accounting credit note correcting the amount billed on an invoice.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-12",
+      "purpose": "check",
+      "title": "Account statement",
+      "excerpt": "Bank account statement showing deposits, payments and the closing balance.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-13",
+      "purpose": "check",
+      "title": "Audit receipts",
+      "excerpt": "Accounting audit requests receipts supporting last quarter expense claims.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-14",
+      "purpose": "check",
+      "title": "Revenue estimate",
+      "excerpt": "Budget worksheet estimating revenue and operating costs for next year.",
+      "folder": "Finance"
+    },
+    {
+      "id": "check-15",
+      "purpose": "check",
+      "title": "Leave balance",
+      "excerpt": "Employee asks for confirmation of the remaining annual leave balance.",
+      "folder": "People"
+    },
+    {
+      "id": "check-16",
+      "purpose": "check",
+      "title": "Recruiting feedback",
+      "excerpt": "Hiring manager feedback on candidate interviews for the sales position.",
+      "folder": "People"
+    },
+    {
+      "id": "check-17",
+      "purpose": "check",
+      "title": "Orientation schedule",
+      "excerpt": "New employee onboarding and orientation schedule for Monday.",
+      "folder": "People"
+    },
+    {
+      "id": "check-18",
+      "purpose": "check",
+      "title": "Pension choice",
+      "excerpt": "Employee benefits form confirming pension contribution selections.",
+      "folder": "People"
+    },
+    {
+      "id": "check-19",
+      "purpose": "check",
+      "title": "Interview invitation",
+      "excerpt": "Invite a candidate to interview for the open design role.",
+      "folder": "People"
+    },
+    {
+      "id": "check-20",
+      "purpose": "check",
+      "title": "Employment agreement",
+      "excerpt": "Employment agreement specifying salary, role and start date.",
+      "folder": "People"
+    },
+    {
+      "id": "check-21",
+      "purpose": "check",
+      "title": "Career goals",
+      "excerpt": "Performance review notes on employee career development goals.",
+      "folder": "People"
+    },
+    {
+      "id": "check-22",
+      "purpose": "check",
+      "title": "Holiday approval",
+      "excerpt": "Approve an employee annual leave request for the winter holiday.",
+      "folder": "People"
+    },
+    {
+      "id": "check-23",
+      "purpose": "check",
+      "title": "Benefits reminder",
+      "excerpt": "Reminder to complete employee health insurance benefits enrollment.",
+      "folder": "People"
+    },
+    {
+      "id": "check-24",
+      "purpose": "check",
+      "title": "Onboarding checklist",
+      "excerpt": "Checklist of orientation tasks for a newly hired employee.",
+      "folder": "People"
+    },
+    {
+      "id": "check-25",
+      "purpose": "check",
+      "title": "Recruitment shortlist",
+      "excerpt": "Candidate shortlist for an open engineering position and interview schedule.",
+      "folder": "People"
+    },
+    {
+      "id": "check-26",
+      "purpose": "check",
+      "title": "Team review meeting",
+      "excerpt": "Employee performance review meeting to discuss feedback and career goals.",
+      "folder": "People"
+    },
+    {
+      "id": "check-27",
+      "purpose": "check",
+      "title": "Leave policy",
+      "excerpt": "Employee handbook section explaining sick leave and annual leave.",
+      "folder": "People"
+    },
+    {
+      "id": "check-28",
+      "purpose": "check",
+      "title": "Offer acceptance",
+      "excerpt": "Candidate accepted the employment offer and confirmed the start date.",
+      "folder": "People"
+    },
+    {
+      "id": "check-29",
+      "purpose": "check",
+      "title": "Login issue",
+      "excerpt": "Bug report describing a login failure in the web application.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-30",
+      "purpose": "check",
+      "title": "Release checklist",
+      "excerpt": "Testing and deployment checklist for the upcoming software release.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-31",
+      "purpose": "check",
+      "title": "Product mockup",
+      "excerpt": "Design specification and mockup for the product settings interface.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-32",
+      "purpose": "check",
+      "title": "API test plan",
+      "excerpt": "Automated test plan for API endpoint integration.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-33",
+      "purpose": "check",
+      "title": "Sprint retrospective",
+      "excerpt": "Development team notes on completed sprint tasks and engineering blockers.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-34",
+      "purpose": "check",
+      "title": "Roadmap update",
+      "excerpt": "Product roadmap with feature priorities and launch milestones.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-35",
+      "purpose": "check",
+      "title": "Export feature",
+      "excerpt": "Feature proposal for exporting dashboard results to a spreadsheet.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-36",
+      "purpose": "check",
+      "title": "Search regression",
+      "excerpt": "Bug report for a regression in the search sorting interface.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-37",
+      "purpose": "check",
+      "title": "Mobile test results",
+      "excerpt": "Testing results and engineering tasks remaining before the mobile release.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-38",
+      "purpose": "check",
+      "title": "Navigation design",
+      "excerpt": "Design specification for application navigation and menu behavior.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-39",
+      "purpose": "check",
+      "title": "Integration issue",
+      "excerpt": "Technical bug in an API integration between two software services.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-40",
+      "purpose": "check",
+      "title": "Milestone dependencies",
+      "excerpt": "Sprint planning document listing dependencies for the release milestone.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-41",
+      "purpose": "check",
+      "title": "Accessibility feature",
+      "excerpt": "Product feature proposal for keyboard navigation in the web interface.",
+      "folder": "Projects"
+    },
+    {
+      "id": "check-42",
+      "purpose": "check",
+      "title": "Launch readiness",
+      "excerpt": "Engineering release checklist covering tests, deployment and launch readiness.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-01",
+      "purpose": "evaluate",
+      "title": "Translation project invoice",
+      "excerpt": "Invoice for translating the product documentation. Payment is due in ten days.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-02",
+      "purpose": "evaluate",
+      "title": "Interview travel receipts",
+      "excerpt": "Expense reimbursement for train tickets used to attend candidate interviews.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-03",
+      "purpose": "evaluate",
+      "title": "Cloud account reconciliation",
+      "excerpt": "Reconcile cloud hosting invoice payments with the bank statement.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-04",
+      "purpose": "evaluate",
+      "title": "Pension payment receipt",
+      "excerpt": "Bank transfer receipt for the monthly pension payment; file with accounting records.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-05",
+      "purpose": "evaluate",
+      "title": "Printing credit note",
+      "excerpt": "A credit note reduces the amount due on the stationery invoice.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-06",
+      "purpose": "evaluate",
+      "title": "Research spending forecast",
+      "excerpt": "Budget forecast of planned research spending and available cash.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-07",
+      "purpose": "evaluate",
+      "title": "Overdue subscription bill",
+      "excerpt": "Reminder to settle an unpaid software subscription invoice.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-08",
+      "purpose": "evaluate",
+      "title": "Tax deduction summary",
+      "excerpt": "Annual tax worksheet summarizing deductible business expenses.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-09",
+      "purpose": "evaluate",
+      "title": "Conference refund",
+      "excerpt": "Accounting record of a refunded conference payment and supporting receipt.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-10",
+      "purpose": "evaluate",
+      "title": "Deposit statement",
+      "excerpt": "Bank statement listing deposits, withdrawals and the current cash balance.",
+      "folder": "Finance"
+    },
+    {
+      "id": "evaluate-11",
+      "purpose": "evaluate",
+      "title": "Finance analyst candidate",
+      "excerpt": "Interview feedback for a candidate applying to the finance analyst position.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-12",
+      "purpose": "evaluate",
+      "title": "Project manager leave",
+      "excerpt": "Annual leave request from the project manager for a two-week holiday.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-13",
+      "purpose": "evaluate",
+      "title": "API developer offer",
+      "excerpt": "Employment offer for an API developer, including salary and start date.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-14",
+      "purpose": "evaluate",
+      "title": "Accounting hire onboarding",
+      "excerpt": "New employee onboarding checklist for an accounting team hire.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-15",
+      "purpose": "evaluate",
+      "title": "Engineer health insurance",
+      "excerpt": "Employee benefits enrollment confirming health insurance selections.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-16",
+      "purpose": "evaluate",
+      "title": "Designer career conversation",
+      "excerpt": "Performance review notes covering feedback and career development for a designer.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-17",
+      "purpose": "evaluate",
+      "title": "Recruiting coordinator interview",
+      "excerpt": "Candidate interview schedule for a recruiting coordinator position.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-18",
+      "purpose": "evaluate",
+      "title": "Medical leave request",
+      "excerpt": "Employee requests sick leave and asks how the leave policy applies.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-19",
+      "purpose": "evaluate",
+      "title": "New colleague orientation",
+      "excerpt": "Orientation schedule and benefits information for a new employee.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-20",
+      "purpose": "evaluate",
+      "title": "Offer start date amendment",
+      "excerpt": "Amend an employment offer to change the new hire start date.",
+      "folder": "People"
+    },
+    {
+      "id": "evaluate-21",
+      "purpose": "evaluate",
+      "title": "Invoice screen bug",
+      "excerpt": "Bug report: the application invoice screen crashes when the user sorts a column.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-22",
+      "purpose": "evaluate",
+      "title": "Benefits portal feature",
+      "excerpt": "Product feature proposal to add search filters to the employee benefits portal.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-23",
+      "purpose": "evaluate",
+      "title": "Budget dashboard design",
+      "excerpt": "Design specification for a budget dashboard, including charts and navigation.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-24",
+      "purpose": "evaluate",
+      "title": "Payments API tests",
+      "excerpt": "Technical test plan for the payments API integration and error handling.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-25",
+      "purpose": "evaluate",
+      "title": "Recruiting app release",
+      "excerpt": "Software release checklist for the recruiting application deployment.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-26",
+      "purpose": "evaluate",
+      "title": "Leave form interface",
+      "excerpt": "Product design mockup for the annual leave request interface.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-27",
+      "purpose": "evaluate",
+      "title": "Receipt export implementation",
+      "excerpt": "Engineering tasks for a feature that exports receipt records to a spreadsheet.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-28",
+      "purpose": "evaluate",
+      "title": "Onboarding software regression",
+      "excerpt": "Bug report: the onboarding application loses form data after login.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-29",
+      "purpose": "evaluate",
+      "title": "Tax tool milestone",
+      "excerpt": "Sprint planning notes for the next tax software release milestone.",
+      "folder": "Projects"
+    },
+    {
+      "id": "evaluate-30",
+      "purpose": "evaluate",
+      "title": "Bank connection integration",
+      "excerpt": "Technical API integration specification for connecting the application to a bank.",
+      "folder": "Projects"
+    },
+    {
+      "id": "challenge-01",
+      "purpose": "challenge",
+      "title": "Weekend plans",
+      "excerpt": "Meet at the park with sandwiches on Saturday afternoon.",
+      "folder": null
+    },
+    {
+      "id": "challenge-02",
+      "purpose": "challenge",
+      "title": "Kitchen notes",
+      "excerpt": "Add cumin and lentils, then simmer until the vegetables are tender.",
+      "folder": null
+    },
+    {
+      "id": "challenge-03",
+      "purpose": "challenge",
+      "title": "Two unrelated requests",
+      "excerpt": "Please pay this supplier invoice and schedule candidate interviews for tomorrow.",
+      "folder": null
+    },
+    {
+      "id": "challenge-04",
+      "purpose": "challenge",
+      "title": "Unclear follow-up",
+      "excerpt": "Could you handle the thing we discussed yesterday?",
+      "folder": null
+    },
+    {
+      "id": "challenge-05",
+      "purpose": "challenge",
+      "title": "合同草稿",
+      "excerpt": "请审阅本周签订的合同附件。",
+      "folder": null
+    },
+    {
+      "id": "challenge-06",
+      "purpose": "challenge",
+      "title": "A photograph",
+      "excerpt": "There is no text available for this image.",
+      "folder": null
+    }
+  ]
+}

@@ -13,6 +13,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 |---|---|
 | [README quickstart](../README.md#quickstart) | Install System 1 and run a complete taught skill |
 | [Your first skill](guides/first_skill.md) | What an example means, an editable lesson file, corrections and readiness |
+| [Teach by doing](../examples/teaching_by_doing/README.md) | File fictional documents to create lessons, correct choices and export a reusable local skill |
 | [Teaching guide](guides/training_experts.md) | Label formats, separate evidence, compilation and corrections |
 | [Teacher observation](typesafe.md) | Callback contract, actual Jev/Gemini evidence, promotion and reuse |
 | [Pokémon teaching lab](../examples/gaming/pokemon_teaching/README.md) | Correct one battle skill, compare baselines, and replay identical local ROM battles with real potion use |

@@ -1,0 +1,557 @@
+{
+  "provenance": "Locally authored fictional text previews. No real documents, file contents, API responses or private data. Evaluation includes cross-topic titles; these are illustrative examples, not a public benchmark.",
+  "policy": "Finance: payments, receipts, accounting and budgets. People: hiring, employee leave, benefits and reviews. Projects: software bugs, designs, features and releases. Classify the work requested, not the department words in the title.",
+  "actions_sha256": "1e9631b6d58b1bee1454f41b5caf63d2cdd77ef5c721fb8e61f2982e39d5ecb2",
+  "model_sha256": "97ace5902534d121d8cb2ebbf2f32e74064b2e32cb463efd587dee065a3434a1",
+  "teaching": {
+    "actions_sha256": "1e9631b6d58b1bee1454f41b5caf63d2cdd77ef5c721fb8e61f2982e39d5ecb2",
+    "fit": 18,
+    "checks": 42,
+    "conformal_checks": 21,
+    "milliseconds": 12.385333015117794
+  },
+  "skill_bytes": 15817,
+  "cases": 30,
+  "correct": 29,
+  "accepted": 27,
+  "accepted_correct": 27,
+  "challenge_cases": 6,
+  "challenges_sent_to_review": 5,
+  "median_decision_ms": 0.12670847354456782,
+  "teacher_calls_during_prediction": 0,
+  "rows": [
+    {
+      "id": "evaluate-01",
+      "title": "Translation project invoice",
+      "excerpt": "Invoice for translating the product documentation. Payment is due in ten days.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.4088330315425992,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-02",
+      "title": "Interview travel receipts",
+      "excerpt": "Expense reimbursement for train tickets used to attend candidate interviews.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.18874998204410076,
+      "destination": "Review",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-03",
+      "title": "Cloud account reconciliation",
+      "excerpt": "Reconcile cloud hosting invoice payments with the bank statement.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.15179195906966925,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-04",
+      "title": "Pension payment receipt",
+      "excerpt": "Bank transfer receipt for the monthly pension payment; file with accounting records.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.19833300029858947,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-05",
+      "title": "Printing credit note",
+      "excerpt": "A credit note reduces the amount due on the stationery invoice.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.18916698172688484,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-06",
+      "title": "Research spending forecast",
+      "excerpt": "Budget forecast of planned research spending and available cash.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.14820799697190523,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-07",
+      "title": "Overdue subscription bill",
+      "excerpt": "Reminder to settle an unpaid software subscription invoice.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.13354100519791245,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-08",
+      "title": "Tax deduction summary",
+      "excerpt": "Annual tax worksheet summarizing deductible business expenses.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.13041700003668666,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-09",
+      "title": "Conference refund",
+      "excerpt": "Accounting record of a refunded conference payment and supporting receipt.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.12895901454612613,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-10",
+      "title": "Deposit statement",
+      "excerpt": "Bank statement listing deposits, withdrawals and the current cash balance.",
+      "purpose": "evaluate",
+      "folder": "Finance",
+      "review": false,
+      "possibilities": [
+        "Finance"
+      ],
+      "milliseconds": 0.13516697799786925,
+      "destination": "Finance",
+      "expected": "Finance",
+      "correct": true
+    },
+    {
+      "id": "evaluate-11",
+      "title": "Finance analyst candidate",
+      "excerpt": "Interview feedback for a candidate applying to the finance analyst position.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12916600098833442,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-12",
+      "title": "Project manager leave",
+      "excerpt": "Annual leave request from the project manager for a two-week holiday.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.13129098806530237,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-13",
+      "title": "API developer offer",
+      "excerpt": "Employment offer for an API developer, including salary and start date.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12874999083578587,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-14",
+      "title": "Accounting hire onboarding",
+      "excerpt": "New employee onboarding checklist for an accounting team hire.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12699997751042247,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-15",
+      "title": "Engineer health insurance",
+      "excerpt": "Employee benefits enrollment confirming health insurance selections.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12445898028090596,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-16",
+      "title": "Designer career conversation",
+      "excerpt": "Performance review notes covering feedback and career development for a designer.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12708298163488507,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-17",
+      "title": "Recruiting coordinator interview",
+      "excerpt": "Candidate interview schedule for a recruiting coordinator position.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.3137500025331974,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-18",
+      "title": "Medical leave request",
+      "excerpt": "Employee requests sick leave and asks how the leave policy applies.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.1627089804969728,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-19",
+      "title": "New colleague orientation",
+      "excerpt": "Orientation schedule and benefits information for a new employee.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.12641696957871318,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-20",
+      "title": "Offer start date amendment",
+      "excerpt": "Amend an employment offer to change the new hire start date.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": false,
+      "possibilities": [
+        "People"
+      ],
+      "milliseconds": 0.1210839836858213,
+      "destination": "People",
+      "expected": "People",
+      "correct": true
+    },
+    {
+      "id": "evaluate-21",
+      "title": "Invoice screen bug",
+      "excerpt": "Bug report: the application invoice screen crashes when the user sorts a column.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.12383301509544253,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-22",
+      "title": "Benefits portal feature",
+      "excerpt": "Product feature proposal to add search filters to the employee benefits portal.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.13633299386128783,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-23",
+      "title": "Budget dashboard design",
+      "excerpt": "Design specification for a budget dashboard, including charts and navigation.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.11466699652373791,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-24",
+      "title": "Payments API tests",
+      "excerpt": "Technical test plan for the payments API integration and error handling.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.11737499153241515,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-25",
+      "title": "Recruiting app release",
+      "excerpt": "Software release checklist for the recruiting application deployment.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.11575000826269388,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-26",
+      "title": "Leave form interface",
+      "excerpt": "Product design mockup for the annual leave request interface.",
+      "purpose": "evaluate",
+      "folder": "People",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.11258304584771395,
+      "destination": "Review",
+      "expected": "Projects",
+      "correct": false
+    },
+    {
+      "id": "evaluate-27",
+      "title": "Receipt export implementation",
+      "excerpt": "Engineering tasks for a feature that exports receipt records to a spreadsheet.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.12037501437589526,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-28",
+      "title": "Onboarding software regression",
+      "excerpt": "Bug report: the onboarding application loses form data after login.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.12479198630899191,
+      "destination": "Review",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-29",
+      "title": "Tax tool milestone",
+      "excerpt": "Sprint planning notes for the next tax software release milestone.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.11370802531018853,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "evaluate-30",
+      "title": "Bank connection integration",
+      "excerpt": "Technical API integration specification for connecting the application to a bank.",
+      "purpose": "evaluate",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.11291698319837451,
+      "destination": "Projects",
+      "expected": "Projects",
+      "correct": true
+    },
+    {
+      "id": "challenge-01",
+      "title": "Weekend plans",
+      "excerpt": "Meet at the park with sandwiches on Saturday afternoon.",
+      "purpose": "challenge",
+      "folder": "People",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.11750002158805728,
+      "destination": "Review",
+      "expected_review": true
+    },
+    {
+      "id": "challenge-02",
+      "title": "Kitchen notes",
+      "excerpt": "Add cumin and lentils, then simmer until the vegetables are tender.",
+      "purpose": "challenge",
+      "folder": "Projects",
+      "review": false,
+      "possibilities": [
+        "Projects"
+      ],
+      "milliseconds": 0.1097090425901115,
+      "destination": "Projects",
+      "expected_review": true
+    },
+    {
+      "id": "challenge-03",
+      "title": "Two unrelated requests",
+      "excerpt": "Please pay this supplier invoice and schedule candidate interviews for tomorrow.",
+      "purpose": "challenge",
+      "folder": "Finance",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.11000002268701792,
+      "destination": "Review",
+      "expected_review": true
+    },
+    {
+      "id": "challenge-04",
+      "title": "Unclear follow-up",
+      "excerpt": "Could you handle the thing we discussed yesterday?",
+      "purpose": "challenge",
+      "folder": "Projects",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.11724996147677302,
+      "destination": "Review",
+      "expected_review": true
+    },
+    {
+      "id": "challenge-05",
+      "title": "合同草稿",
+      "excerpt": "请审阅本周签订的合同附件。",
+      "purpose": "challenge",
+      "folder": "Finance",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.1152500044554472,
+      "destination": "Review",
+      "expected_review": true
+    },
+    {
+      "id": "challenge-06",
+      "title": "A photograph",
+      "excerpt": "There is no text available for this image.",
+      "purpose": "challenge",
+      "folder": "Finance",
+      "review": true,
+      "possibilities": [],
+      "milliseconds": 0.10699999984353781,
+      "destination": "Review",
+      "expected_review": true
+    }
+  ],
+  "limitations": [
+    "Authored fictional previews, not a representative document benchmark.",
+    "Expected folders implement the displayed sample policy, not arbitrary personal preferences.",
+    "Check labels calibrate review behavior; only the separate new batch is evaluation.",
+    "A confident prediction can still be wrong; no production readiness claim.",
+    "No PDF extraction, OCR, filesystem actions or automatic desktop observation."
+  ],
+  "environment": {
+    "machine": "arm64",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.5",
+    "backend": "NumPy CPU; TF-IDF; cache off; receipts off",
+    "timing_scope": "Teaching measures projector fit plus compilation/calibration, excluding skill save/reload and human filing. Prediction includes text projection and strict decision; excludes startup, HTTP, browser rendering and downstream work.",
+    "numpy": "2.5.3"
+  }
+}

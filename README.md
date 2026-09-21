@@ -55,6 +55,12 @@ python -m pip install -e .
 
 On Windows, activate the environment with `.venv\Scripts\activate` instead.
 
+**Prefer to teach by doing?** Run `python -m examples.teaching_by_doing` and open
+http://127.0.0.1:8791/. File fictional document cards into folders; each choice
+becomes a lesson. Teach, try different documents, correct earlier choices and
+download the saved skill. The [document workspace](examples/teaching_by_doing/README.md)
+explains the flow and reports its sample results, including mistakes.
+
 ### 1. Choose one decision
 
 We will choose between `billing` and `support`. Payment questions go to billing;

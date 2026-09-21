@@ -10,6 +10,7 @@ The [teaching guide](../docs/guides/training_experts.md) and
 | Example | What it demonstrates |
 |---|---|
 | [teach_skill.py](teach_skill.py) | Eight editable lessons; custom lesson file, message and saved path; [beginner walkthrough](../docs/guides/first_skill.md) |
+| [teaching_by_doing/](teaching_by_doing/README.md) | Browser workspace: demonstrated filing choices become lessons, with corrections, separate checks, portable exports and retained sample failures |
 | [support_triage.py](support_triage.py) | Taught department routing, calibration, saved/reloaded evaluation |
 | [model_routing.py](model_routing.py) | A stated routing policy; does not call downstream models |
 | [agent_guard.py](agent_guard.py) | Operation classification plus a separate explicit permission/audit example |

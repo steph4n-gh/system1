@@ -7,6 +7,12 @@ job: choose the team that should receive a customer message.
 Our rule is simple: payment questions go to `billing`; broken software goes to
 `support`. You choose that rule. System 1 learns to apply it to other messages.
 
+If you prefer a visual first lesson, try the
+[document teaching workspace](../../examples/teaching_by_doing/README.md).
+You choose folders for fictional documents, and the page records those actions
+as examples. It also lets you correct a choice and download the learned skill.
+The walkthrough below teaches the same lifecycle using an editable JSON file.
+
 ## What is a label?
 
 A label is just **the answer you want**. These are three teaching examples:
