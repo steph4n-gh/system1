@@ -48,8 +48,12 @@ integration path. The main route continues with a fixed encoder and taught head.
 These are development results: thresholds/configurations were
 selected using development outcomes. They are **not** held-out qualifications,
 statistical guarantees or claims that a standard System1 install achieves these
-numbers. The official test splits have not been scored. The next step is to freeze
-the complete candidate and baseline, then run that independent test once.
+numbers. The official test splits have not been scored. The
+[candidate freeze and evaluation recipe](FREEZE.md) now binds the exact saved
+candidates, conventional baselines and source files before the first test run.
+The strengthened TF-IDF baseline selects calibration-taught review models as
+well as probability and margin policies. Its best development coverage is 22.1%
+on CLINC and 42.0% on banking at the quality thresholds, still below 80%.
 
 The [real n8n development workflow](N8N.md) already uses the exact saved CLINC
 candidate. It preserves item identity and explicit review, including when the
@@ -91,6 +95,8 @@ Retained results:
   [four](results/bank-runtime-development-4.json) encoder threads.
 - OS network-blocked replay of all [3,095 CLINC](results/runtime-isolation.json)
   and [1,960 banking](results/bank-runtime-isolation.json) development decisions.
+- [Frozen conventional baseline selection](results/baseline-development.json),
+  with all 20 attempted policies and complete saved-adapter development outcomes.
 
 Original examples come from the pinned fitting, calibration or development
 folds; the additional generated lessons are identified separately. Fitted feature vectors may be cached to avoid repeated preprocessing in
@@ -98,7 +104,8 @@ research runs; recorded single-input encoder timings execute the encoder again.
 There is no test-response cache. Head-fit timings exclude initial feature
 extraction. Exploratory encoder timings exclude the System1 engine and adapter,
 and some ran alongside other development processes; they cannot prove the latency
-gate. Final timings will follow the protocol on an otherwise idle machine.
+gate. Final timings follow the protocol without other experiment jobs; ordinary
+desktop applications remain open.
 
 ## Reproduce development
 
@@ -145,7 +152,9 @@ directory. Commands are `python benchmarks/quality/n8n_gauntlet/adapt_encoder.py
 banking77` and the corresponding `clinc150` run. They use only fitting labels for
 gradient updates; calibration remains separate. These slower experiments must
 not be described as instant teaching or as proof that language-model fine-tuning
-is required. No model files or credentials are committed.
+is required. No pretrained encoder weights or credentials are committed. The
+selected decision heads, review guards and conventional baselines are retained
+under `artifacts` for exact evaluation without refitting.
 
 ## Recorded contrast teaching
 
