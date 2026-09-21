@@ -1,0 +1,703 @@
+{
+  "scope": "exploratory development-only disagreement diagnostic; not qualification",
+  "qualified": false,
+  "sources": {
+    "polynomial": {
+      "path": "results/polynomial-runtime.json",
+      "sha256": "cbf7fb6580e3f0cd63509d64e0e75203d642dd1c39086804a5458ed53119648f"
+    },
+    "boundary": {
+      "path": "results/boundary-runtime.json",
+      "sha256": "5b7b8b4283fffc95cfcf49c3d1e5349a698eb0bd1b3c1fd8bc01e84b61abf285"
+    },
+    "clinc": {
+      "path": "results/consistent-review-runtime-development.json",
+      "sha256": "b6b8306f30633e046cba0dad79b08337735c51f64343fdfb459bb07d4b79115c"
+    }
+  },
+  "new_model_calls": 0,
+  "teacher_calls": 0,
+  "joint_runtime_measured": false,
+  "comparisons": [
+    {
+      "dataset": "clinc150",
+      "lexical_comparison": "matched-parent-labels",
+      "semantic_manifest_sha256": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+      "lexical_manifest_sha256": "666f1c5b1a5f05da60fec83b28dab7688a569b9ef8f7d51d66a5d5d09372e20b",
+      "counts": {
+        "supported": 2995,
+        "both_correct": 2636,
+        "only_semantic_correct": 228,
+        "only_lexical_correct": 56,
+        "neither_correct": 75,
+        "supported_agreements": 2668,
+        "wrong_supported_agreements": 32,
+        "current_accepted_supported_errors": 25,
+        "accepted_supported_errors_with_disagreement": 10,
+        "current_accepted_correct_supported": 2569,
+        "accepted_correct_supported_with_disagreement": 145,
+        "current_accepted_unfamiliar": 1,
+        "accepted_unfamiliar_with_disagreement": 0
+      },
+      "policies": {
+        "current-system1": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2594,
+              "denominator": 2995,
+              "fraction": 0.866110183639399,
+              "wilson95": [
+                0.8534442052683717,
+                0.8778382016590038
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2569,
+              "denominator": 2594,
+              "fraction": 0.9903623747108713,
+              "wilson95": [
+                0.9858110841778791,
+                0.9934634559839615
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 1,
+              "denominator": 100,
+              "fraction": 0.01,
+              "wilson95": [
+                0.0017674320641406505,
+                0.054486196178705315
+              ]
+            }
+          },
+          "development_quality_targets_pass": true,
+          "accepted_error_groups": [
+            "062f23b889f983eedeacfd5d05ed587e93e0a2dbc91218524c56fb2f491910e5",
+            "0694aacb66d62e742a92e8d5f1e82bd9d2a8ca1be88744201fbe63d0f5007502",
+            "14539f9a4c11cf9443cdb158d2b1cdf6838612fd38f6ae1d392bc8178ef1bc4c",
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "16620a80d15f8a493183ad1baac7ff5e497c53fa6d64446603dc0dee2d9d2ad9",
+            "1bfd2c5833dc2f8fda05c775951417e25706d797507156fffa7c3ca734ffdd0b",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "3c479afbcabb0fb48baa076640e3a792613d8d244af6a1d10454dc5e8591c03d",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "7c07e4d19792ce023b26631fdce72b149b5ffbcbc0cca96cd662331613a39254",
+            "7e8d00f6dca659a3423d33eb3f2ea5319f93563e7970d4d85a595904f50c7a4f",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "c2517c432235368e9d4da2c07a76e61898bf2ec00f668c54ffd4c12ca6123436",
+            "c2daa50a4c084259abcc4c88c815b8095b0f60644c8d8165f349cf6884c44f3a",
+            "cef661790e1fb3a5a1b38dd846851f630f249b8238e8770b2593bf818aa8bba4",
+            "d4dc39ec4cb0b5e6fc729ee440adf3f774e3fbfedc286bcd2d3abfcd90afde12",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f63cabca3a386b09d9fbfb08fdace54356679a06efe4af605050750783e12263",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        },
+        "current-with-agreement-veto": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2439,
+              "denominator": 2995,
+              "fraction": 0.8143572621035059,
+              "wilson95": [
+                0.8000326429358762,
+                0.8278765099342782
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2424,
+              "denominator": 2439,
+              "fraction": 0.993849938499385,
+              "wilson95": [
+                0.9898772771893237,
+                0.9962694051102997
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 1,
+              "denominator": 100,
+              "fraction": 0.01,
+              "wilson95": [
+                0.0017674320641406505,
+                0.054486196178705315
+              ]
+            }
+          },
+          "development_quality_targets_pass": true,
+          "accepted_error_groups": [
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "c2517c432235368e9d4da2c07a76e61898bf2ec00f668c54ffd4c12ca6123436",
+            "c2daa50a4c084259abcc4c88c815b8095b0f60644c8d8165f349cf6884c44f3a",
+            "cef661790e1fb3a5a1b38dd846851f630f249b8238e8770b2593bf818aa8bba4",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        },
+        "strict-agreement-only": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2631,
+              "denominator": 2995,
+              "fraction": 0.8784641068447412,
+              "wilson95": [
+                0.8662746500581205,
+                0.8896839529990433
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2605,
+              "denominator": 2631,
+              "fraction": 0.9901178259217027,
+              "wilson95": [
+                0.9855593156443164,
+                0.9932472047124387
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 6,
+              "denominator": 100,
+              "fraction": 0.06,
+              "wilson95": [
+                0.027786123963188192,
+                0.1247681544589592
+              ]
+            }
+          },
+          "development_quality_targets_pass": false,
+          "accepted_error_groups": [
+            "049660273a0f4cb4231bdc52622f7277731c10b74625c7ba252602971a3ae9c6",
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "38b39fa5cbd71b5a61b3024a0d910a061b7126c49a07d4264ca2fb3678977441",
+            "41a2debb9acbaa419e94b24761544625cd3f5999448ab06df63a7d3c44d81762",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "5791e9ac66f93706d30b7939c7e3e74c751f3b3b8ed3350b7a90c9d8ce6ec07d",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "797d0271e710d971ca4f22ad3121b809ed1cba7565f639c5b66dfec3b9d62441",
+            "7a933954cb3da42aba2fc446967532428354d99c0ef5705dab63ee949c6440fb",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "9be5b3ad265c18850118b2735217189bbd4d290187a353354e4607ee4b25e4f1",
+            "b64af2fa6b2fea60ef99fc0c2a8bd84e55807d0c3ef2f9d6fc9fe401e8f4cb44",
+            "bb8c436e6cebe958ab81c290317b97a8286bdc215d4508436e4b063b42fbfe56",
+            "c2517c432235368e9d4da2c07a76e61898bf2ec00f668c54ffd4c12ca6123436",
+            "c2daa50a4c084259abcc4c88c815b8095b0f60644c8d8165f349cf6884c44f3a",
+            "c55af44db93f782ad540ba6ea3e5427e324544e0b128a53c1394c00eb2952317",
+            "c89107a0c50c33b32ca6ab71fd2483a72a1000f435eb7dc9415daf9b0b5e99f5",
+            "cbff637a41129fae95aafc82d5b9f800cdd084588807bd077b9517332413570a",
+            "cef661790e1fb3a5a1b38dd846851f630f249b8238e8770b2593bf818aa8bba4",
+            "d5f5e213bb4e5b1921b19ded4da6d1a373d69e4d18a46feac070c21210256df9",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "df4f328b421d5c3c768ddc1b7748820efd944cd0b20fb4dccf41b7e1ffa14073",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "e6698a93f3514041f3b9befc9da4a19c31307acc85393dc7b5d282b43e46d9c7",
+            "ea59acafb743eed6ef70cf4575ca0e0b37e94cb74f5da6f58fe0a2b8007a65d5",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "lexical_comparison": "stronger-boundary-taught-baseline",
+      "semantic_manifest_sha256": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+      "lexical_manifest_sha256": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+      "counts": {
+        "supported": 2995,
+        "both_correct": 2658,
+        "only_semantic_correct": 206,
+        "only_lexical_correct": 62,
+        "neither_correct": 69,
+        "supported_agreements": 2687,
+        "wrong_supported_agreements": 29,
+        "current_accepted_supported_errors": 25,
+        "accepted_supported_errors_with_disagreement": 12,
+        "current_accepted_correct_supported": 2569,
+        "accepted_correct_supported_with_disagreement": 127,
+        "current_accepted_unfamiliar": 1,
+        "accepted_unfamiliar_with_disagreement": 0
+      },
+      "policies": {
+        "current-system1": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2594,
+              "denominator": 2995,
+              "fraction": 0.866110183639399,
+              "wilson95": [
+                0.8534442052683717,
+                0.8778382016590038
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2569,
+              "denominator": 2594,
+              "fraction": 0.9903623747108713,
+              "wilson95": [
+                0.9858110841778791,
+                0.9934634559839615
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 1,
+              "denominator": 100,
+              "fraction": 0.01,
+              "wilson95": [
+                0.0017674320641406505,
+                0.054486196178705315
+              ]
+            }
+          },
+          "development_quality_targets_pass": true,
+          "accepted_error_groups": [
+            "062f23b889f983eedeacfd5d05ed587e93e0a2dbc91218524c56fb2f491910e5",
+            "0694aacb66d62e742a92e8d5f1e82bd9d2a8ca1be88744201fbe63d0f5007502",
+            "14539f9a4c11cf9443cdb158d2b1cdf6838612fd38f6ae1d392bc8178ef1bc4c",
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "16620a80d15f8a493183ad1baac7ff5e497c53fa6d64446603dc0dee2d9d2ad9",
+            "1bfd2c5833dc2f8fda05c775951417e25706d797507156fffa7c3ca734ffdd0b",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "3c479afbcabb0fb48baa076640e3a792613d8d244af6a1d10454dc5e8591c03d",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "7c07e4d19792ce023b26631fdce72b149b5ffbcbc0cca96cd662331613a39254",
+            "7e8d00f6dca659a3423d33eb3f2ea5319f93563e7970d4d85a595904f50c7a4f",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "c2517c432235368e9d4da2c07a76e61898bf2ec00f668c54ffd4c12ca6123436",
+            "c2daa50a4c084259abcc4c88c815b8095b0f60644c8d8165f349cf6884c44f3a",
+            "cef661790e1fb3a5a1b38dd846851f630f249b8238e8770b2593bf818aa8bba4",
+            "d4dc39ec4cb0b5e6fc729ee440adf3f774e3fbfedc286bcd2d3abfcd90afde12",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f63cabca3a386b09d9fbfb08fdace54356679a06efe4af605050750783e12263",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        },
+        "current-with-agreement-veto": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2455,
+              "denominator": 2995,
+              "fraction": 0.8196994991652755,
+              "wilson95": [
+                0.805524551658314,
+                0.8330553887274246
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2442,
+              "denominator": 2455,
+              "fraction": 0.994704684317719,
+              "wilson95": [
+                0.990960874218272,
+                0.9969027358108974
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 1,
+              "denominator": 100,
+              "fraction": 0.01,
+              "wilson95": [
+                0.0017674320641406505,
+                0.054486196178705315
+              ]
+            }
+          },
+          "development_quality_targets_pass": true,
+          "accepted_error_groups": [
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "d4dc39ec4cb0b5e6fc729ee440adf3f774e3fbfedc286bcd2d3abfcd90afde12",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        },
+        "strict-agreement-only": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 2648,
+              "denominator": 2995,
+              "fraction": 0.8841402337228714,
+              "wilson95": [
+                0.8721825102355995,
+                0.8951138045568726
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 2626,
+              "denominator": 2648,
+              "fraction": 0.9916918429003021,
+              "wilson95": [
+                0.9874521805817473,
+                0.994506975135665
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 2864,
+              "denominator": 2995,
+              "fraction": 0.9562604340567613,
+              "wilson95": [
+                0.9483329194264574,
+                0.963019026826401
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 6,
+              "denominator": 100,
+              "fraction": 0.06,
+              "wilson95": [
+                0.027786123963188192,
+                0.1247681544589592
+              ]
+            }
+          },
+          "development_quality_targets_pass": false,
+          "accepted_error_groups": [
+            "049660273a0f4cb4231bdc52622f7277731c10b74625c7ba252602971a3ae9c6",
+            "15466696a87b28000d14b8dbef3a3f13414a348295f9389375e187f7164394db",
+            "26ee999c5032c2aaf19b17851adf94e04304b819362257e6d0a6195300573445",
+            "38b39fa5cbd71b5a61b3024a0d910a061b7126c49a07d4264ca2fb3678977441",
+            "41a2debb9acbaa419e94b24761544625cd3f5999448ab06df63a7d3c44d81762",
+            "4b87fe9cc16b91db463a57805652cc6503a586f471e6f7662d776209c1d6ae3c",
+            "5791e9ac66f93706d30b7939c7e3e74c751f3b3b8ed3350b7a90c9d8ce6ec07d",
+            "6791ae82aafff1ed95f0276bf44aa64ba550445f8e3d5fc72081791ecc1e2348",
+            "70a14a2f81115871374ec2765a320bb53e8c2e667ab95f6ada20e87a563d9310",
+            "76b41d60669bda5609187247935018972ae6e4b0b9d8229c88efd541cd00ca5e",
+            "797d0271e710d971ca4f22ad3121b809ed1cba7565f639c5b66dfec3b9d62441",
+            "7a933954cb3da42aba2fc446967532428354d99c0ef5705dab63ee949c6440fb",
+            "848061101e32a123c75f70964ad3565fc867cd70e89227cf82fa2b31be039d9b",
+            "92ae79a6d19cbe156d4668e9df05b2b8de720f58dd46813fcbb150ed6577b633",
+            "9be5b3ad265c18850118b2735217189bbd4d290187a353354e4607ee4b25e4f1",
+            "b64af2fa6b2fea60ef99fc0c2a8bd84e55807d0c3ef2f9d6fc9fe401e8f4cb44",
+            "bb8c436e6cebe958ab81c290317b97a8286bdc215d4508436e4b063b42fbfe56",
+            "c55af44db93f782ad540ba6ea3e5427e324544e0b128a53c1394c00eb2952317",
+            "c89107a0c50c33b32ca6ab71fd2483a72a1000f435eb7dc9415daf9b0b5e99f5",
+            "cbff637a41129fae95aafc82d5b9f800cdd084588807bd077b9517332413570a",
+            "d4dc39ec4cb0b5e6fc729ee440adf3f774e3fbfedc286bcd2d3abfcd90afde12",
+            "dc96372d6ac6ab6fb6ea641a8740ac0f69960142bc63d812bc2b02771dd00345",
+            "df4f328b421d5c3c768ddc1b7748820efd944cd0b20fb4dccf41b7e1ffa14073",
+            "e3131fdc88baa56f4df7431390f6627cab2dafb2667e6a17a112f49ef5835407",
+            "e55f1978156b0e5efb9f0c8c434be004bf0fb74098be26969662a31a753dc4bf",
+            "e6698a93f3514041f3b9befc9da4a19c31307acc85393dc7b5d282b43e46d9c7",
+            "f26f2c6c0054c9993cf7e507ab68fd2730009bf4033e2819532156f4b26620ec",
+            "f751b71f12bcbe62edf87d22738208aede03aac2af300741c67a2d3b2c085dd7"
+          ]
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "lexical_comparison": "matched-parent-labels",
+      "semantic_manifest_sha256": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+      "lexical_manifest_sha256": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+      "counts": {
+        "supported": 1960,
+        "both_correct": 1638,
+        "only_semantic_correct": 149,
+        "only_lexical_correct": 61,
+        "neither_correct": 112,
+        "supported_agreements": 1707,
+        "wrong_supported_agreements": 69,
+        "current_accepted_supported_errors": 15,
+        "accepted_supported_errors_with_disagreement": 4,
+        "current_accepted_correct_supported": 1566,
+        "accepted_correct_supported_with_disagreement": 82,
+        "current_accepted_unfamiliar": 0,
+        "accepted_unfamiliar_with_disagreement": 0
+      },
+      "policies": {
+        "current-system1": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 1581,
+              "denominator": 1960,
+              "fraction": 0.8066326530612244,
+              "wilson95": [
+                0.7885553131224532,
+                0.8235103883124337
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 1566,
+              "denominator": 1581,
+              "fraction": 0.9905123339658444,
+              "wilson95": [
+                0.984404824373316,
+                0.9942419616302024
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 1787,
+              "denominator": 1960,
+              "fraction": 0.911734693877551,
+              "wilson95": [
+                0.8983569340161818,
+                0.9235016700735915
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 0,
+              "denominator": 0,
+              "fraction": null,
+              "wilson95": null
+            }
+          },
+          "development_quality_targets_pass": true,
+          "accepted_error_groups": [
+            "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+            "438e7331367c35c7f2288e1914ee24215a65e72f98e61858e22e1f179879e8d5",
+            "3393b7b20747104b1086c43d8b59afd1bab99f7c3640505f32d5a28a71e9000f",
+            "6617bb07114c27f62b9719aae7e88ab8c4ff468463621087c1a2e157063db9e9",
+            "4db2ed4c29b13a84b27703128eea262192a60478a9188042968dbc67fdea5fa9",
+            "59a5cdfb14df098b1618c8c82a68978d663a3c63e1c627519ea78b343aeaedf5",
+            "3af6a31ceab6adceaa3a432380e9a8833bf308770e5ef9583c65df2b15acd549",
+            "487b52487ce9ec053d9c7204acd23c958682446f88d5a0342232a7c9b2a2bc16",
+            "50af12f96a4ac170972d2ab7c0e2961ce3710d7dcc66cbc961eef15bd21a1a31",
+            "76d32e1e0a322a0db71d0bac0601d35f39ade31794296694d7b0a4f957d3a9d6",
+            "5f8218d8c984e982da88fdafd077bfdec30037173fecb9224a5f75ab046c8178",
+            "4e6ba50826d5bd33f5e3a96316cc52d337377552173892035b7ce65232f20087",
+            "4d46d5fa690c35fc3f28b30be0194e64f6f6f7fdf4924d215471f519b37fe317",
+            "4387e74a499f2cb75125241abbe2373fabd5c1d476c3ce2ea157eb9a1693640e",
+            "529333c261144b7bedd59d0c08688c18349823d55c17c06263bb2226ee30bcdf"
+          ]
+        },
+        "current-with-agreement-veto": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 1495,
+              "denominator": 1960,
+              "fraction": 0.7627551020408163,
+              "wilson95": [
+                0.7434199037920113,
+                0.7810623528452048
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 1484,
+              "denominator": 1495,
+              "fraction": 0.9926421404682274,
+              "wilson95": [
+                0.98687249524071,
+                0.9958865493075864
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 1787,
+              "denominator": 1960,
+              "fraction": 0.911734693877551,
+              "wilson95": [
+                0.8983569340161818,
+                0.9235016700735915
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 0,
+              "denominator": 0,
+              "fraction": null,
+              "wilson95": null
+            }
+          },
+          "development_quality_targets_pass": false,
+          "accepted_error_groups": [
+            "3393b7b20747104b1086c43d8b59afd1bab99f7c3640505f32d5a28a71e9000f",
+            "6617bb07114c27f62b9719aae7e88ab8c4ff468463621087c1a2e157063db9e9",
+            "59a5cdfb14df098b1618c8c82a68978d663a3c63e1c627519ea78b343aeaedf5",
+            "3af6a31ceab6adceaa3a432380e9a8833bf308770e5ef9583c65df2b15acd549",
+            "487b52487ce9ec053d9c7204acd23c958682446f88d5a0342232a7c9b2a2bc16",
+            "50af12f96a4ac170972d2ab7c0e2961ce3710d7dcc66cbc961eef15bd21a1a31",
+            "76d32e1e0a322a0db71d0bac0601d35f39ade31794296694d7b0a4f957d3a9d6",
+            "5f8218d8c984e982da88fdafd077bfdec30037173fecb9224a5f75ab046c8178",
+            "4e6ba50826d5bd33f5e3a96316cc52d337377552173892035b7ce65232f20087",
+            "4387e74a499f2cb75125241abbe2373fabd5c1d476c3ce2ea157eb9a1693640e",
+            "529333c261144b7bedd59d0c08688c18349823d55c17c06263bb2226ee30bcdf"
+          ]
+        },
+        "strict-agreement-only": {
+          "metrics": {
+            "supported_coverage": {
+              "numerator": 1693,
+              "denominator": 1960,
+              "fraction": 0.8637755102040816,
+              "wilson95": [
+                0.8478759484040521,
+                0.8782519136975693
+              ]
+            },
+            "accepted_accuracy": {
+              "numerator": 1628,
+              "denominator": 1693,
+              "fraction": 0.9616066154754873,
+              "wilson95": [
+                0.9513597797999385,
+                0.9697633999025932
+              ]
+            },
+            "raw_supported_accuracy": {
+              "numerator": 1787,
+              "denominator": 1960,
+              "fraction": 0.911734693877551,
+              "wilson95": [
+                0.8983569340161818,
+                0.9235016700735915
+              ]
+            },
+            "oos_false_acceptance": {
+              "numerator": 0,
+              "denominator": 0,
+              "fraction": null,
+              "wilson95": null
+            }
+          },
+          "development_quality_targets_pass": false,
+          "accepted_error_groups": [
+            "3393b7b20747104b1086c43d8b59afd1bab99f7c3640505f32d5a28a71e9000f",
+            "5175fbb0ad8cff563dd02b51eb696c84f6de0a62220c46916d719d65169a4efa",
+            "59908bd605e8a7b7d9a82cab7bce77683bc829b4e6e9aed3d241919dedaacd6f",
+            "534fd94359775114b8d1fd90cf2e2b17e441dbae93bfb0f68b6061f353eaaaf8",
+            "57fa2f298b77773afbe186cebd90f58f14a9177aada6f22b79b090e80a26d4d8",
+            "37394c60c8c236b9d083aa02c5cb57edd439710a8ffcc1ec8f21cc0fc8a4d612",
+            "5507b5ff6b0c265058897d7aee35753c9548938dae8f9663b6f1bac27500af5b",
+            "6617bb07114c27f62b9719aae7e88ab8c4ff468463621087c1a2e157063db9e9",
+            "3ba61806361a5b817b29cdd7e408c1e07b8d6825970445b485a3740d6304a0ce",
+            "4fe3cc0003a15bb466302b3f8cd3ed2d8a23e9853098321129390354b3d6b39a",
+            "55dda9ca940a104b511bb1a2239cbe1283a9b1402f77b210c36371f91203571e",
+            "5dc541ce347dddbb44177e37688459d4581298f8d38aaba4c1c3605feb50f8c1",
+            "53abdff9a26261cab4dfaefd8338b661b14fc5b1079331d764da1323165fa8ea",
+            "5ac8311098868ea5beb5af9940f0a9e4cb7c7e81658fa2e1cc85d84debc0dbd5",
+            "61a4ebb8a60721bf2c64a9aea1100b3c409d49125eeacddcc32a70bd814c0c8f",
+            "52a3bf1a415520e74980d2d344c4e2bc9dcb91de9e7ce7e0da789143f15c96e6",
+            "4fe5ff7e1b5a83b236b39cdd1e8ba132c70b8243c035efe6f16d4b654f58306e",
+            "37e2b1fcd20c4bf4f75baaa57dadd8fb7542979099c1717626bf6506867d9f4a",
+            "680e6bca3ae717f0c9eb67b4691193fcb9267effbb33c4c7a4df6f28452207bf",
+            "2b5d1cd3d3db6ac01b80e15932917023f10e95207f15205e676a40364b3dad1e",
+            "59a5cdfb14df098b1618c8c82a68978d663a3c63e1c627519ea78b343aeaedf5",
+            "5f18ab54bf01240a68e53e997c3439889dd5f562d8e1d93f3f70a6ccb8629775",
+            "45925f9cb218e69c095b445f3590d74b75bdefb2afeb241d1daed32d9ead721f",
+            "4e1f7022a8aba2900f6d76afa20df73952e7576e910cd0bee3c744cef5884c0d",
+            "4193a50efb165a5bda7edf95e4763a50dedb71c5ef1b07d428fb62d87965c5d7",
+            "3101a0eacddd0cb92fb1b8484148dc2bbeba4727d3d9f14c8d709d64b90f57f1",
+            "5abfa30eb5b475c4e6cc35b621a96e7b2a979105082b9c8c6a7abbc2df5797b6",
+            "3af6a31ceab6adceaa3a432380e9a8833bf308770e5ef9583c65df2b15acd549",
+            "487b52487ce9ec053d9c7204acd23c958682446f88d5a0342232a7c9b2a2bc16",
+            "6af6ac0f4031048a2e542bf6d8d053bd9e7f16745ee94e01e47e7bf692a21c29",
+            "44db13f2a489628d0df74917e304941852426efc3ba40e54a3b89d5eedb6ed46",
+            "4baf02f4c17fbdd049880da733b19ac32fe9910756630467f2fae1ab986c7e73",
+            "50af12f96a4ac170972d2ab7c0e2961ce3710d7dcc66cbc961eef15bd21a1a31",
+            "76d32e1e0a322a0db71d0bac0601d35f39ade31794296694d7b0a4f957d3a9d6",
+            "534374b0afb14ca8a3d2b6ba1f6a669074f2906d911948d81380e7dbcba22ed7",
+            "68a294c2a80d973a1938075e01bc471c07d3de047bee37322ec47603efbdab4a",
+            "5c4643614e0f65cdcdba1b5810484d96b7eb068a9cf25ba77b8eaef162c66202",
+            "5f8218d8c984e982da88fdafd077bfdec30037173fecb9224a5f75ab046c8178",
+            "5a2cc02213927bc041f8397a36e765c931cd6b0d530eb8dfff34ce61b925b57b",
+            "5971deae102870ea81031ec2a06f15dcbcb2695e277f441b3b4f10638c9a5607",
+            "3851537d610100b30604265b456c800dcf39f587a32406817b26d2223c9257d5",
+            "4e6ba50826d5bd33f5e3a96316cc52d337377552173892035b7ce65232f20087",
+            "66c63c543877e8bc098ba522d4f63e3cf22256bdd105a155d8cd3e24cbf9cd0f",
+            "36f946310623fd31009322fa78683ea740e9223f3b07fc6c7b7b0a2957d413a3",
+            "63aba5ff16c10eba99aa8a8e8d7d376821c257f599ca3da5da813ee0b0557dc0",
+            "63b1187253f39a7270157d1d93be927ed6579add2acf582cbfa0e4bf77450c61",
+            "54209241056d2d66142875810fc1e8c4660e848acaaeac109c23b9ddf20129f1",
+            "4387e74a499f2cb75125241abbe2373fabd5c1d476c3ce2ea157eb9a1693640e",
+            "308772e8e25fc446bf22fc8a57df6fb2dd0b3b54cda4dd0326cac394b10785be",
+            "2f7f592b59fdd153e4a9b06b7a0bdfa0dfb972db1a7daca0a06abde4cd1cc9fc",
+            "4452410487e257aaeeeae95b7660fea70fcf4b287da1a6327a8ab120a97eeb00",
+            "4da2125fa0240b21ebe5bfa3adcf04574e19561facb05548956e159860e1ea27",
+            "529333c261144b7bedd59d0c08688c18349823d55c17c06263bb2226ee30bcdf",
+            "63e767a0ed882ac09db7fe6add6513cc8fb43e877ad25843d523a61b38a98b27",
+            "640906100e750d608fa6ca316db63b75e7eac425cffbb8c5b4b9b2fb87c27338",
+            "65ffe3c11b1e94f98fbacb287806ffc02516f1996cc8ca016cee15f6b7989f31",
+            "673fc1ba10eac2ce96daecd0225e3ca4724889867e05053b10395ec2d9c11b3f",
+            "47936946ceb2ef4c7362617d0bfdaf14601753517f96f3c64b264ebd4389130e",
+            "4f35438183b8b66cb5d00ef20ecd7f77b285ce4b34143a38974fa68ab1bb25db",
+            "553210b05462e803ea4e4009ce2db116af0b2505273aaca6efcc9af3d74532c6",
+            "362f291662bdb3c02e69b77f156c088f64041389641df615f243a610adefbe86",
+            "72aed12dd54e5b10ae4c3fc3ae3388048002af5405073aa538a052742138e9ae",
+            "4a50307ebb5cda886f2b66f72bcae552c7939792c36f1df43380b3b51d9faef1",
+            "4e88449922c078467d87778e9c843433d2cc9df3531b4c68026c4d782a2d340e",
+            "59cf552422523dacf2fbccee939ae7cfeeab4896d710fccf0114a7684981313e"
+          ]
+        }
+      }
+    }
+  ]
+}

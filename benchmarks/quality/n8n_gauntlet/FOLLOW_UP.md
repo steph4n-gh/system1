@@ -86,14 +86,15 @@ selection. The banking baseline improves from 44.39% to 51.79% coverage. All eig
 conditions, saved parameters and 20,220 runtime outcomes are retained. Neither
 result resolves the observed-test failure or supplies independent confirmation.
 
-Further implementation should first identify useful information missing from the
-current review decision, rather than assume that more examples or more feature
-products will solve the gap. A bounded diagnostic can compare the already-saved
-semantic and lexical predictions on development to establish whether their
-disagreements identify errors while preserving enough coverage. This is a
-diagnostic, not authorization to change thresholds from observed test outcomes
-or add an ensemble without evidence. The missing independent full-scope
-confirmation source remains a separate requirement.
+A [saved-prediction disagreement diagnostic](results/review-disagreement.md)
+completed that check without fitting or running models. A consensus veto catches
+four of 15 banking mistakes but removes 82 correct decisions, dropping coverage
+to 76.28%. Agreement alone also accepts 6/100 unfamiliar CLINC requests. No
+ensemble was implemented. A next bounded comparison can give the existing review
+head the input features already computed by its classifier, instead of adding a
+second classifier. This is still a hypothesis requiring prospective declaration
+and measured comparison. The missing independent full-scope confirmation source
+remains a separate requirement.
 
 Before any new run, pin the additional data and a small fixed set of review-policy
 settings in a separate experiment protocol. Any new teacher call must retain its

@@ -32,6 +32,12 @@ including the stronger boundary-taught baseline at 59.10%. No original test or
 reserved-human input was scored, and neither qualification nor the recording is
 complete.
 
+A subsequent [disagreement diagnostic](results/review-disagreement.md) also
+retains a failure: requiring semantic/lexical agreement reduces banking coverage
+to 76.28%, while agreement without learned review accepts 6/100 unfamiliar CLINC
+requests. It reuses recorded development responses and makes no joint-latency or
+qualification claim; no ensemble was added.
+
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local
