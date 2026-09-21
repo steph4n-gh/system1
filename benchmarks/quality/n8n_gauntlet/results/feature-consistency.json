@@ -1,0 +1,50 @@
+{
+  "scope": "development-only feature consistency diagnostic; no test/reserve rows",
+  "sample": "first 128 development rows per workload",
+  "results": [
+    {
+      "dataset": "clinc150",
+      "encoder": "minilm",
+      "batch_size": 16,
+      "rows": 128,
+      "single_repeat_max_absolute_difference": 0.0,
+      "max_feature_absolute_difference": 0.022818729281425476,
+      "mean_feature_l2_difference": 0.07114329934120178,
+      "max_probability_difference": 0.12268504490408605,
+      "changed_top_labels": 1
+    },
+    {
+      "dataset": "clinc150",
+      "encoder": "minilm",
+      "batch_size": 32,
+      "rows": 128,
+      "single_repeat_max_absolute_difference": 0.0,
+      "max_feature_absolute_difference": 0.023944251239299774,
+      "mean_feature_l2_difference": 0.07241261750459671,
+      "max_probability_difference": 0.11373253727485849,
+      "changed_top_labels": 1
+    },
+    {
+      "dataset": "banking77",
+      "encoder": "bge-small",
+      "batch_size": 16,
+      "rows": 128,
+      "single_repeat_max_absolute_difference": 0.0,
+      "max_feature_absolute_difference": 1.434236764907837e-07,
+      "mean_feature_l2_difference": 4.093521681625134e-07,
+      "max_probability_difference": 9.174106374021385e-07,
+      "changed_top_labels": 0
+    },
+    {
+      "dataset": "banking77",
+      "encoder": "bge-small",
+      "batch_size": 32,
+      "rows": 128,
+      "single_repeat_max_absolute_difference": 0.0,
+      "max_feature_absolute_difference": 1.434236764907837e-07,
+      "mean_feature_l2_difference": 4.4143880018054915e-07,
+      "max_probability_difference": 9.174106374021385e-07,
+      "changed_top_labels": 0
+    }
+  ]
+}
