@@ -1,0 +1,46 @@
+{
+  "jev": {
+    "status": "ok",
+    "response": {
+      "model": "jev-1.13.0",
+      "answers": {
+        "intent": {
+          "type": "choice",
+          "choice": "timer",
+          "confidence": 1.0,
+          "probabilities": {
+            "timer": 1.0,
+            "weather": 0.0,
+            "oos": 0.0
+          },
+          "value": "timer",
+          "conformal_set": null
+        }
+      },
+      "usage": {
+        "input_tokens": 331,
+        "output_tokens": 39,
+        "total_tokens": 370
+      }
+    },
+    "ms": 348.68320799432695
+  },
+  "gemini": {
+    "status": "ok",
+    "response": {
+      "model": "gemini-2.5-flash",
+      "answers": {
+        "intent": {
+          "type": "choice",
+          "choice": "timer"
+        }
+      },
+      "usage": {
+        "input_tokens": 35,
+        "output_tokens": 6,
+        "total_tokens": 41
+      }
+    },
+    "ms": 554.2908339994028
+  }
+}

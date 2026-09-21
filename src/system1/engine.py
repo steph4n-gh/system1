@@ -92,7 +92,7 @@ class DecisionResult:
     is_ambiguous: bool
     latency_ms: float
     alpha: float
-    receipt: DecisionWitnessReceipt
+    receipt: Optional[DecisionWitnessReceipt]
     margins: Dict[str, float] = field(default_factory=dict)
     margin_thresholds: Dict[str, float] = field(default_factory=dict)
     margin_gate_active: Dict[str, bool] = field(default_factory=dict)
@@ -125,7 +125,7 @@ class DecisionResult:
             "is_ambiguous": self.is_ambiguous,
             "latency_ms": self.latency_ms,
             "alpha": self.alpha,
-            "receipt": self.receipt.to_dict(),
+            "receipt": self.receipt.to_dict() if self.receipt is not None else None,
             "margins": self.margins,
             "margin_thresholds": self.margin_thresholds,
             "margin_gate_active": self.margin_gate_active,
@@ -484,7 +484,11 @@ class SystemOneEngine:
         strict: Optional[bool] = None,
         policy_scope: Optional[str] = None,
     ) -> DecisionResult:
-        """Evaluates prompt against schema in a single non-autoregressive pass."""
+        """Evaluate a prompt in one non-autoregressive pass.
+
+        With ``record_receipt=False``, skip receipt creation/signing and return
+        ``receipt=None``. This applies to both fresh decisions and cache hits.
+        """
         # A decision, its uncertainty, and its receipt use one model snapshot.
         with self._lock, getattr(self.model, "_lock", nullcontext()):
             version = getattr(self.model, "model_version", self.model_version)
@@ -544,13 +548,12 @@ class SystemOneEngine:
                         raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
                     truth_ledger_head = ""
 
-            # Precompute snapshot digests for context binding
-            m_dig = self._model_digest()
-            p_dig = self._projector_digest()
-            c_dig = self._calibration_digest()
-
             # 1. Cache lookup with request and model context
             if self.use_cache:
+                # These digests bind cache entries; uncached decisions do not use them.
+                m_dig = self._model_digest()
+                p_dig = self._projector_digest()
+                c_dig = self._calibration_digest()
                 cached = self.cache.get(
                     prompt,
                     embedding=embedding,
@@ -905,21 +908,23 @@ class SystemOneEngine:
                         raise LedgerWriteError(f"Fail-closed ledger inspection failed: {ex}") from ex
                     truth_ledger_head = ""
 
-            # Emit proof-carrying cryptographic receipt
-            receipt = create_decision_receipt(
-                schema_name=self.schema.schema_name,
-                schema_digest=self.schema.schema_digest(),
-                prompt=prompt,
-                values=safe_values,
-                confidences=safe_confidences,
-                conformal_sets=safe_conformal_sets,
-                probabilities=safe_probabilities,
-                latency_ms=total_latency_ms,
-                is_ambiguous=is_ambiguous,
-                truth_ledger_head=truth_ledger_head,
-                ledger_record_id=None,
-                signing_key=self.signing_key,
-            )
+            # Honor the same receipt setting on fresh decisions and cache hits.
+            receipt = None
+            if record_receipt:
+                receipt = create_decision_receipt(
+                    schema_name=self.schema.schema_name,
+                    schema_digest=self.schema.schema_digest(),
+                    prompt=prompt,
+                    values=safe_values,
+                    confidences=safe_confidences,
+                    conformal_sets=safe_conformal_sets,
+                    probabilities=safe_probabilities,
+                    latency_ms=total_latency_ms,
+                    is_ambiguous=is_ambiguous,
+                    truth_ledger_head=truth_ledger_head,
+                    ledger_record_id=None,
+                    signing_key=self.signing_key,
+                )
 
             # Commit receipt into ActionLedger audit log
             if active_ledger is not None and record_receipt:

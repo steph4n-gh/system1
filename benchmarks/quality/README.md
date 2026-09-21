@@ -1,5 +1,19 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+## Full-scope n8n gauntlet: unqualified
+
+The [gauntlet index](n8n_gauntlet/README.md) retains the preregistered protocol,
+all experiments and failures for 150 CLINC and 77 BANKING77 intents. Both workloads
+still miss accepted correctness in the latest full-scope regression; CLINC also
+misses unfamiliar-input rejection. The later development comparisons do not
+replace that evidence. Independent confirmation remains unavailable.
+
+The [n8n workflow](n8n_gauntlet/N8N.md) and
+[live-teacher disconnection rehearsal](n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
+demonstrate integration behavior with an unqualified saved skill. They do not
+satisfy the qualified-recording goal. Use a Git checkout for full research
+reproduction; raw results and research artifacts are excluded from distributions.
+
 ## Real public email, without mailbox access
 
 The [SpamAssassin experiment](public_email/README.md) downloads checksum-pinned

@@ -1,0 +1,22 @@
+{
+  "scope": "Original-only System1 saved adapter replay; no new timing or qualification",
+  "qualified": false,
+  "runtime_report_sha256": "f895ea4dd36dc1f28957e31103a9c3046adf2c71bb1514892ef023b296c962c0",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "banking77",
+      "condition": "human-only",
+      "manifest_sha256": "d4bf2478cb582f5e6325468fe31d8136887d48e42607cae536332886ba739892",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

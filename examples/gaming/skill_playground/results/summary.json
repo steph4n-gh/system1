@@ -1,0 +1,317 @@
+{
+  "experiment": "System1 compositional courier, v2 learned terrain gate",
+  "python": "3.13.5",
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "seed_start": 4000,
+  "seed_count": 40,
+  "lesson_generation_ms": 259.8260829690844,
+  "training": {
+    "objective": {
+      "fit": 545,
+      "calibration": 136,
+      "bytes": 14128,
+      "teaching_ms": 67.16645800042897,
+      "lessons_sha256": "010d1c92221ffbf606a8cfce836623763c0ea54f3c8ac2af8aec66291903bef5"
+    },
+    "terrain": {
+      "fit": 168,
+      "calibration": 88,
+      "bytes": 6493,
+      "teaching_ms": 26.888458989560604,
+      "lessons_sha256": "4b0d014a69ff339748db14b57ac923dc075cadc81f1f7d5e5de1ecab68562a03"
+    },
+    "movement": {
+      "fit": 49,
+      "calibration": 23,
+      "bytes": 3630,
+      "teaching_ms": 6.309166026767343,
+      "lessons_sha256": "2b1c7d6b19b759b59a44a1c72e095bce28f19a38a229477180e88b2d230a1740"
+    },
+    "flat": {
+      "fit": 762,
+      "calibration": 247,
+      "bytes": 34805,
+      "teaching_ms": 212.11641695117578,
+      "lessons_sha256": "ecc75f0cf56217001a04d46349589065cb1a5e97366fe057a56ff864512e1671"
+    }
+  },
+  "teaching_family": [
+    "unlocked_return",
+    "locked_collect"
+  ],
+  "held_out_family": "locked_return",
+  "results": {
+    "familiar_unlocked_return": {
+      "network": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 26,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1600,
+        "review_steps": 29,
+        "model_calls": 14400,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0068749834317714,
+        "p95_step_ms": 1.3704169541597366
+      },
+      "single": {
+        "episodes": 40,
+        "successes": 29,
+        "successes_without_review_flags": 0,
+        "deaths": 9,
+        "timeouts": 2,
+        "review_stops": 0,
+        "steps": 1499,
+        "review_steps": 581,
+        "model_calls": 1499,
+        "teacher_calls": 0,
+        "median_step_ms": 0.2103750011883676,
+        "p95_step_ms": 0.3028750070370734
+      },
+      "rules": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 40,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1512,
+        "review_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_step_ms": 0.0029579969123005867,
+        "p95_step_ms": 0.004417030140757561
+      },
+      "corrected": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 26,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1600,
+        "review_steps": 29,
+        "model_calls": 14400,
+        "teacher_calls": 0,
+        "median_step_ms": 1.013062515994534,
+        "p95_step_ms": 1.3461249764077365
+      }
+    },
+    "familiar_locked_collect": {
+      "network": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 34,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 494,
+        "review_steps": 6,
+        "model_calls": 4446,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9983125200960785,
+        "p95_step_ms": 1.3467909884639084
+      },
+      "single": {
+        "episodes": 40,
+        "successes": 37,
+        "successes_without_review_flags": 7,
+        "deaths": 2,
+        "timeouts": 1,
+        "review_stops": 0,
+        "steps": 809,
+        "review_steps": 272,
+        "model_calls": 809,
+        "teacher_calls": 0,
+        "median_step_ms": 0.2092909999191761,
+        "p95_step_ms": 0.3361669951118529
+      },
+      "rules": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 40,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 494,
+        "review_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_step_ms": 0.0032500247471034527,
+        "p95_step_ms": 0.004040950443595648
+      },
+      "corrected": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 34,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 494,
+        "review_steps": 6,
+        "model_calls": 4446,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9902085002977401,
+        "p95_step_ms": 1.2866660254076123
+      }
+    },
+    "unseen_locked_return": {
+      "network": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 23,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1644,
+        "review_steps": 51,
+        "model_calls": 14796,
+        "teacher_calls": 0,
+        "median_step_ms": 0.9957914880942553,
+        "p95_step_ms": 1.2826249585486948
+      },
+      "single": {
+        "episodes": 40,
+        "successes": 0,
+        "successes_without_review_flags": 0,
+        "deaths": 2,
+        "timeouts": 38,
+        "review_stops": 0,
+        "steps": 6866,
+        "review_steps": 6309,
+        "model_calls": 6866,
+        "teacher_calls": 0,
+        "median_step_ms": 0.20552048226818442,
+        "p95_step_ms": 0.27970800874754786
+      },
+      "rules": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 40,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1552,
+        "review_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_step_ms": 0.002834014594554901,
+        "p95_step_ms": 0.004125002305954695
+      },
+      "corrected": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 23,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1644,
+        "review_steps": 51,
+        "model_calls": 14796,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0305625037290156,
+        "p95_step_ms": 1.3572080060839653
+      }
+    },
+    "changed_purple_rule": {
+      "network": {
+        "episodes": 40,
+        "successes": 0,
+        "successes_without_review_flags": 0,
+        "deaths": 40,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 360,
+        "review_steps": 6,
+        "model_calls": 3240,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0243334691040218,
+        "p95_step_ms": 1.3162920367904007
+      },
+      "single": {
+        "episodes": 40,
+        "successes": 0,
+        "successes_without_review_flags": 0,
+        "deaths": 2,
+        "timeouts": 38,
+        "review_stops": 0,
+        "steps": 6866,
+        "review_steps": 6309,
+        "model_calls": 6866,
+        "teacher_calls": 0,
+        "median_step_ms": 0.20820798818022013,
+        "p95_step_ms": 0.26408297708258033
+      },
+      "rules": {
+        "episodes": 40,
+        "successes": 0,
+        "successes_without_review_flags": 0,
+        "deaths": 40,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 360,
+        "review_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_step_ms": 0.0029579969123005867,
+        "p95_step_ms": 0.003500026650726795
+      },
+      "corrected": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 19,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1502,
+        "review_steps": 78,
+        "model_calls": 13518,
+        "teacher_calls": 0,
+        "median_step_ms": 1.0093955206684768,
+        "p95_step_ms": 1.347541983705014
+      },
+      "updated_rules": {
+        "episodes": 40,
+        "successes": 40,
+        "successes_without_review_flags": 40,
+        "deaths": 0,
+        "timeouts": 0,
+        "review_stops": 0,
+        "steps": 1388,
+        "review_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_step_ms": 0.003125052899122238,
+        "p95_step_ms": 0.004166038706898689
+      }
+    }
+  },
+  "correction": {
+    "new_fit_labels": 8,
+    "new_calibration_labels": 22,
+    "teaching_ms": 25.266790995374322,
+    "unchanged_skill_predictions": {
+      "objective": true,
+      "movement": true
+    }
+  },
+  "caveats": [
+    "Synthetic structured world and rule-generated labels; not language understanding.",
+    "Equal retained label counts, but intermediate labels and representation differ; rule-generated candidate labels are free, not billed teacher calls.",
+    "Local argmax executes on review flags in this simulator; success is not an autonomy guarantee.",
+    "Visit memory, target-coordinate lookup, a learned-terrain eligibility gate and argmax are explicit application wiring.",
+    "The objective interface deliberately omits the mission termination flag; the flat model receives it.",
+    "Review flags and score intervals do not certify an entire mission or the ranking of scores.",
+    "Whole-mission combinations are held out; familiar local facts and skills may recur."
+  ],
+  "source_sha256": "aae243d93e18588acc734a0d59d91f8ac78f62af6b6643482aeb7036221ac1e8",
+  "skill_sha256": {
+    "terrain-corrected.s1m": "5877ee1dd435fa837fd10bda9e6e6270bb75dd423ebf4f3868e6f56f8a364fb3",
+    "objective.s1m": "d3c61716f0b9cdd85a7f6ae8067dd0d286a7d316e7605975f2dbf2e6841f9615",
+    "terrain.s1m": "e0526b0fb22c48d9e568604226152de67d9793afd9e1a4d7ecb8b90ef5888599",
+    "flat.s1m": "0cf00d70859ae501bc022a8493943d628988845491869e355265ad4a51b02b67",
+    "movement.s1m": "761da2825b165fffacbf3e777f17d60c3e2ec90e4a7441a3183b4b8650b09f3c"
+  }
+}

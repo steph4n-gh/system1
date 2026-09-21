@@ -1,0 +1,12 @@
+{
+  "scope": "development artifact replay, not qualification",
+  "dataset": "banking77",
+  "manifest_sha256": "88ce86d3c9ea3a1257eb4acf73d413098382b40e50d2bcc44f2b98517caee9f3",
+  "os_network_denial_errno": 1,
+  "identical_complete_decisions": 1960,
+  "changed_contracts_reviewed": 2,
+  "malformed_requests_rejected": 6,
+  "changed_artifact_rejected": true,
+  "teacher_calls": 0,
+  "response_cache": false
+}

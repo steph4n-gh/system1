@@ -1,0 +1,41 @@
+{
+  "scope": "independent arithmetic and source preservation audit; no model re-evaluation",
+  "freeze_commit": "41a0d3634831ec00f104bcd33540a9b613007184",
+  "report_sha256": "a94d8a138f257790f8774788f9aa8203fb148026e6e7b7488d334192889e5969",
+  "frozen_files_unchanged": 109,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "original_rows_preserved": 5500,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "counts_errors_and_p95_recomputed": true,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "original_rows_preserved": 5500,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "counts_errors_and_p95_recomputed": true,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "original_rows_preserved": 3080,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "counts_errors_and_p95_recomputed": true,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "original_rows_preserved": 3080,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "counts_errors_and_p95_recomputed": true,
+      "teacher_calls": 0
+    }
+  ],
+  "all_system1_targets_pass": false
+}

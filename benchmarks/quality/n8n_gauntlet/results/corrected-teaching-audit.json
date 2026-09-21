@@ -1,0 +1,57 @@
+{
+  "scope": "correction overlay, control and complete-runtime audit; no fitting or inference",
+  "qualified": false,
+  "source_sha256": "1c6841f27f7a725c288ae8f60f935276cc9da00f0f44d491bd47cd4aa9f0d2e5",
+  "runtime_sha256": "f7421cb4079ec1cab0951b9431a326017a2a75f2c006723125ba8a1802cd8d1b",
+  "frozen_files_unchanged": 147,
+  "declared_sources_verified": 17,
+  "complete_outcomes_verified": 10110,
+  "controls": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "outcomes": 3095,
+      "route_mismatches": [],
+      "max_score_difference": 3.1647876482243653e-06,
+      "max_confidence_difference": 3.7862091490925565e-06,
+      "retimed": false
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "outcomes": 3095,
+      "route_mismatches": [],
+      "max_score_difference": 3.3306690738754696e-16,
+      "max_confidence_difference": 0.0,
+      "retimed": false
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "outcomes": 1960,
+      "route_mismatches": [],
+      "max_score_difference": 7.1597816271862236e-06,
+      "max_confidence_difference": 2.8787655620421404e-06,
+      "retimed": false
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "outcomes": 1960,
+      "route_mismatches": [],
+      "max_score_difference": 3.3306690738754696e-16,
+      "max_confidence_difference": 0.0,
+      "retimed": false
+    }
+  ],
+  "overlay_changes_per_method": {
+    "clinc150": 6,
+    "banking77": 1
+  },
+  "evaluation_label_changes": 0,
+  "retained_failed_attempt_sha256": "fe3a08aaab2807bdd4e137190527ce2b212c37e93ffafb339f471bc902333b5b",
+  "reused_clinc_fits": 4,
+  "historical_source_files_verified": 15,
+  "original_banking_teaching_caches_verified": 2,
+  "max_selection_runtime_review_difference": 7.3581605123385074e-06
+}

@@ -30,8 +30,9 @@ computation, acceptance without review and correctness separately. A teacher can
 be a rule, file, API or LLM; teaching a decision head does not fine-tune an LLM.
 
 Run `python scripts/check_documentation.py` from a Git checkout. This offline
-check covers local Markdown links/anchors and current version labels; CI runs it
-too. It does not establish external-link availability or correctness of prose.
+check covers local Markdown links/anchors, links to this repository's `main`
+branch, and current version labels; CI and release checks run it too. It does not
+establish external-link availability or correctness of prose.
 Run changed executable examples as appropriate. Documentation-only edits do not
 require new classifier evaluations or live API calls.
 
@@ -40,6 +41,7 @@ require new classifier evaluations or live API calls.
 ```bash
 uv lock --check
 uv build
+python scripts/check_distributions.py dist
 uvx twine check --strict dist/*
 ```
 

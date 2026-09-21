@@ -1,0 +1,28 @@
+{
+  "status": "unqualified-fused-feature-head-comparison",
+  "dataset": "clinc150",
+  "condition": "semantic-control",
+  "dimension": 384,
+  "encoder": {
+    "name": "minilm",
+    "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+    "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "model_bytes": 23026053,
+    "pooling": "mean",
+    "tokenizer_bytes": 466247,
+    "runtime": "1.30.0",
+    "threads": 1,
+    "provider": "CPUExecutionProvider"
+  },
+  "projector_digest": "0c5c9a6fedaec485430e4b88aa4b5b8a76ea51566fa9b39188b8bc3faea6b7b6",
+  "protocol_sha256": "29dd2f63042b875ccab244db2e7b0e694381a07716a4bce4389e31325e3ece56",
+  "regularization": 0.1,
+  "alpha": 0.05,
+  "fit_rows": 12019,
+  "original_fit_rows": 12019,
+  "earlier_generated_supported": 0,
+  "files": {
+    "intent.s1m": "157c2f0a9587fa38cc490681fcd9373b9921a8898009989850dd627d9e972229",
+    "lexical.json": "38e0b9de817f645c4bec37c0d4a3e58baecccb040f5718dc069a72c7385a0bed"
+  }
+}

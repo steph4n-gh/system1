@@ -1,0 +1,34 @@
+{
+  "scope": "Published matched baseline artifacts; no fitting or official/reserve scoring",
+  "network_denial_errno": 1,
+  "results": [
+    {
+      "dataset": "clinc150",
+      "manifest_sha256": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+      "public_replay_identical": 3095,
+      "changed_contracts_reviewed": 2,
+      "malformed_rejected": 6,
+      "artifact_mutations_rejected": 2,
+      "independent_refit_same_manifest_values": true,
+      "independent_refit_byte_identical": false,
+      "independent_refit_sha256": "1aa2e2f4d4f963a74668ad82061bff073d73c78df1af19e20d5f7e6beb28b5db",
+      "independent_refit_same_decisions_and_scores": true,
+      "serialization_difference": "JSON key order only; measured public artifacts unchanged"
+    },
+    {
+      "dataset": "banking77",
+      "manifest_sha256": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+      "public_replay_identical": 1960,
+      "changed_contracts_reviewed": 2,
+      "malformed_rejected": 6,
+      "artifact_mutations_rejected": 2,
+      "independent_refit_same_manifest_values": true,
+      "independent_refit_byte_identical": false,
+      "independent_refit_sha256": "1a5fe300f5389f639039fa59d51c96a3702f857c9792b83bb8b91f523562f029",
+      "independent_refit_same_decisions_and_scores": true,
+      "serialization_difference": "JSON key order only; measured public artifacts unchanged"
+    }
+  ],
+  "original_frozen_files_unchanged": 109,
+  "implementation_sha256": "87d705f4df83c379ee757a7454c42605e373817a8deda7f91e70e2b7a7b4555b"
+}

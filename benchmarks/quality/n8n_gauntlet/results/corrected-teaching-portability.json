@@ -1,0 +1,32 @@
+{
+  "scope": "200 saved correction-adapter responses with fitting imports and networking blocked; no new timing or qualification",
+  "qualified": false,
+  "runtime_report_sha256": "f7421cb4079ec1cab0951b9431a326017a2a75f2c006723125ba8a1802cd8d1b",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "condition": "corrected",
+      "manifest_sha256": "53da8338f56b6853d468e48174c4cc7ece5bd9e6bffe877bf3bec50adaa01dab",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "condition": "corrected",
+      "manifest_sha256": "f1ec08c2d5859d29b09686176a7d29df1059dbd195597b2cbe77b34e4da9aaae",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

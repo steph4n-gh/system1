@@ -1,0 +1,27 @@
+{
+  "scope": "recorded original-only ablation audit; no inference or test access",
+  "qualified": false,
+  "source_sha256": "ceb17698b3a9c2e54ba057398dc619d4c6ab5b893a806f46005dd834dd193ba5",
+  "runtime_sha256": "f895ea4dd36dc1f28957e31103a9c3046adf2c71bb1514892ef023b296c962c0",
+  "frozen_files_unchanged": 147,
+  "declared_sources_verified": 11,
+  "outcomes_verified": 3920,
+  "original_fit_rows_per_method": 6026,
+  "generated_fit_rows": 0,
+  "control_outcomes_reproduced": 3920,
+  "paired_changes": [
+    {
+      "kind": "system1",
+      "raw_fixed": 17,
+      "raw_broken": 14,
+      "shared_accepted_mistakes": 14
+    },
+    {
+      "kind": "baseline",
+      "raw_fixed": 24,
+      "raw_broken": 38,
+      "shared_accepted_mistakes": 6
+    }
+  ],
+  "max_selection_runtime_review_difference": 7.991603228868494e-06
+}

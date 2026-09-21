@@ -1,0 +1,32 @@
+{
+  "repository": "sentence-transformers/all-MiniLM-L12-v2",
+  "revision": "a50ef00143b4d5391434df20ae11632588ac25be",
+  "license": "Apache-2.0",
+  "model_card": "https://huggingface.co/sentence-transformers/all-MiniLM-L12-v2/blob/a50ef00143b4d5391434df20ae11632588ac25be/README.md",
+  "files": {
+    "config.json": {
+      "bytes": 615,
+      "sha256": "bc451f333af67312ba0de5018ef1c9ba663cb18549443e568f0bd35262dc1c48"
+    },
+    "tokenizer.json": {
+      "bytes": 466247,
+      "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+    },
+    "tokenizer_config.json": {
+      "bytes": 352,
+      "sha256": "fba7637034542f691ef4b1ad735d664971e8d9723012a1973d4ee985742e8e72"
+    },
+    "README.md": {
+      "bytes": 10514,
+      "sha256": "a9c5a266121350036e45a733802ac6a8567604be365de01e40aa4b43e5ee594d"
+    },
+    "1_Pooling/config.json": {
+      "bytes": 190,
+      "sha256": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23"
+    },
+    "onnx/model_qint8_arm64.onnx": {
+      "bytes": 34118638,
+      "sha256": "d37479e69ddcb2f7af2ae225a41cb57b0b6fd547dd8740aef4f0c8e5b41d4fcf"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "scope": "standalone baseline format preflight on existing development responses; no fitting or new teacher calls",
+  "os_network_denial_errno": 1,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "responses_identical_except_format_identity": 16
+    },
+    {
+      "dataset": "banking77",
+      "responses_identical_except_format_identity": 16
+    }
+  ]
+}

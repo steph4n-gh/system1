@@ -1,0 +1,32 @@
+{
+  "scope": "recorded teacher replay and input-exclusion audit; no API calls or model evaluation",
+  "requests": 227,
+  "responses": 227,
+  "all_payloads_match_committed_requests": true,
+  "all_lessons_and_rejections_reproduced": true,
+  "usage_recomputed": {
+    "promptTokenCount": 252684,
+    "candidatesTokenCount": 80778,
+    "totalTokenCount": 333462
+  },
+  "retained_lessons": 3287,
+  "rejections": 637,
+  "rejection_reasons": {
+    "duplicate_group": 637
+  },
+  "models": [
+    "gemini-2.5-flash"
+  ],
+  "api_latency_ms": {
+    "p50": 2405.908833956346,
+    "p95": 3153.3781499369065,
+    "sum": 515561.0426767962
+  },
+  "wall_seconds": 515.990814447403,
+  "credential_values_absent": true,
+  "files": {
+    "lessons.json": "39bf1328bfa95a11bede0fd93dff521437cb2ba4528830405d94541cb4afef18",
+    "summary.json": "bb6aaa5a9061d8544c6597dfb4f35ad3ba3bae4837a1b008c591a973ac487d19",
+    "teacher.json": "daf64736ebca748940b47643785aaf7af55834b347a1e4aeedc67d4ca5789a30"
+  }
+}

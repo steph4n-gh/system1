@@ -1,0 +1,89 @@
+{
+  "scope": "teaching-consistency record and cached-neighbor audit; no fits or model inference",
+  "qualified": false,
+  "report_sha256": "56b069d4c12b0ef22b74ca27b069050ab46283b77db8e013d2f44c3ecc6c783f",
+  "frozen_files_unchanged": 147,
+  "declared_sources_verified": 9,
+  "cache_files": [
+    {
+      "path": ".system1/n8n-gauntlet/features-f7146615e9b304a1977406191d1e04df23d261db4bbbeb3027b63c6ec7aacea6.npy",
+      "sha256": "6bca14fa940acb3a15c7aedfb36ae32d25936273a2916269d797192f08f5fe31",
+      "rows": 12019
+    },
+    {
+      "path": ".system1/n8n-gauntlet/features-145f4f8f7e373e5623761242d82734c6738bce212d4b1199b0eddaee3cbebdc6.npy",
+      "sha256": "825e365cf483a0799d7aaae57d860774f12cc084f3f0f9b0d32003712f1ebec4",
+      "rows": 27
+    },
+    {
+      "path": ".system1/n8n-gauntlet/features-4669bf6326095aa4f92c3fda760590c8217319f6ffc4b8d9e475d4ff57a4f3ef.npy",
+      "sha256": "50ea7a0026bac2e2b79dc64a14edfc12e57a64f26c33394841fb3a2bead4c18b",
+      "rows": 6026
+    },
+    {
+      "path": ".system1/n8n-gauntlet/features-f7588d07f7e756b0b27f069c621b47d5cab52331434e2083e97a083f63dd619c.npy",
+      "sha256": "eb21da1c0d14952a9aefa316bc4fabe01cb730953dadb7e2b8eefb6c88845d5b",
+      "rows": 15
+    }
+  ],
+  "source_lineage": [
+    {
+      "dataset": "clinc150",
+      "filename": "clinc.json",
+      "sha256": "36923c3705a59e08fe9c3883d8bc2dd966ef93e22cb78ac41171782a698d56e0",
+      "url": "https://raw.githubusercontent.com/clinc/oos-eval/828f8093932c8fe6ca7936c3d2e52903b1c523de/data/data_full.json",
+      "sections_decoded": [
+        "train",
+        "oos_train",
+        "val",
+        "oos_val"
+      ],
+      "rows_verified": 18134,
+      "import_label_mismatches": 0
+    },
+    {
+      "dataset": "banking77",
+      "filename": "banking-train.csv",
+      "sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+      "url": "https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/57ec275d8078af65b7731c2a98be812d844a6d6b/banking_data/train.csv",
+      "sections_decoded": [
+        "train"
+      ],
+      "rows_verified": 9946,
+      "import_label_mismatches": 0
+    }
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "fitting_outcomes": 12019,
+      "prioritized_examples": 50,
+      "development_errors": 27,
+      "summary": {
+        "rows": 12019,
+        "semantic_disagreements": 430,
+        "lexical_disagreements": 967,
+        "consensus_disagreements": 121
+      }
+    },
+    {
+      "dataset": "banking77",
+      "fitting_outcomes": 6026,
+      "prioritized_examples": 50,
+      "development_errors": 15,
+      "summary": {
+        "rows": 6026,
+        "semantic_disagreements": 477,
+        "lexical_disagreements": 978,
+        "consensus_disagreements": 182
+      }
+    }
+  ],
+  "independent_annotations": false,
+  "labels_changed": 0,
+  "correction_proposals": {
+    "sha256": "db56ea4ebabb4e073629130ed8401cef3f52953e18bf6e4d11305ba187038a9a",
+    "verified_fitting_sources": 7,
+    "applied": false
+  }
+}

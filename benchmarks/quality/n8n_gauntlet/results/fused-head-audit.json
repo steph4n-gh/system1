@@ -1,0 +1,176 @@
+{
+  "scope": "recorded head comparison audit; not qualification or adapter measurement",
+  "qualified": false,
+  "report_sha256": "b6fc39442513711c47423dee5ae7835c2fc5348910fa31f001fb909169d5ddfa",
+  "frozen_files_unchanged": 147,
+  "declared_sources_verified": 8,
+  "saved_artifacts_verified": 4,
+  "development_outcomes_verified": 10110,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "original_development_rows": 3095,
+      "raw_control": {
+        "numerator": 2864,
+        "denominator": 2995,
+        "fraction": 0.9562604340567613,
+        "wilson95": [
+          0.9483329194264574,
+          0.963019026826401
+        ]
+      },
+      "raw_fused": {
+        "numerator": 2889,
+        "denominator": 2995,
+        "fraction": 0.9646076794657763,
+        "wilson95": [
+          0.9573727578839598,
+          0.9706522938619985
+        ]
+      },
+      "matching_labels_baseline_raw": {
+        "numerator": 2692,
+        "denominator": 2995,
+        "fraction": 0.8988313856427379,
+        "wilson95": [
+          0.8875156242138031,
+          0.9091253562465256
+        ]
+      },
+      "matching_labels_baseline_source_sha256": "754a0caed9c362a238106cc0d7b69eb984bf51b1b83e39cc6130342d074446d8",
+      "stronger_retained_baseline": {
+        "folder": "clinc150-baseline-positive-and-unsupported",
+        "candidate_sha256": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+        "metrics": {
+          "supported_coverage": {
+            "numerator": 1770,
+            "denominator": 2995,
+            "fraction": 0.5909849749582637,
+            "wilson95": [
+              0.5732714216697511,
+              0.6084654282050413
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1762,
+            "denominator": 1770,
+            "fraction": 0.9954802259887006,
+            "wilson95": [
+              0.9911064147319084,
+              0.9977079977839174
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 2720,
+            "denominator": 2995,
+            "fraction": 0.9081803005008348,
+            "wilson95": [
+              0.8973088586899299,
+              0.918005999922671
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 1,
+            "denominator": 100,
+            "fraction": 0.01,
+            "wilson95": [
+              0.0017674320641406505,
+              0.054486196178705315
+            ]
+          }
+        },
+        "latency": {
+          "requests": 3095,
+          "warmups": 100,
+          "p50_ms": 0.7060420466586947,
+          "p95_ms": 0.8688294677995142
+        },
+        "source": "positive-and-unsupported"
+      },
+      "selected_baseline_extra_positive_lessons": 1696,
+      "raw_gain": 25,
+      "proceed_to_review": true
+    },
+    {
+      "dataset": "banking77",
+      "original_development_rows": 1960,
+      "raw_control": {
+        "numerator": 1787,
+        "denominator": 1960,
+        "fraction": 0.911734693877551,
+        "wilson95": [
+          0.8983569340161818,
+          0.9235016700735915
+        ]
+      },
+      "raw_fused": {
+        "numerator": 1773,
+        "denominator": 1960,
+        "fraction": 0.9045918367346939,
+        "wilson95": [
+          0.8907832005602437,
+          0.9168176334461878
+        ]
+      },
+      "matching_labels_baseline_raw": {
+        "numerator": 1699,
+        "denominator": 1960,
+        "fraction": 0.8668367346938776,
+        "wilson95": [
+          0.8510756161591188,
+          0.8811627188353633
+        ]
+      },
+      "matching_labels_baseline_source_sha256": "754a0caed9c362a238106cc0d7b69eb984bf51b1b83e39cc6130342d074446d8",
+      "stronger_retained_baseline": {
+        "folder": "banking77-baseline-quadratic",
+        "candidate_sha256": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+        "metrics": {
+          "supported_coverage": {
+            "numerator": 1015,
+            "denominator": 1960,
+            "fraction": 0.5178571428571429,
+            "wilson95": [
+              0.4957224160638487,
+              0.5399220091445058
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1005,
+            "denominator": 1015,
+            "fraction": 0.9901477832512315,
+            "wilson95": [
+              0.9819596628811005,
+              0.9946397789513015
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1699,
+            "denominator": 1960,
+            "fraction": 0.8668367346938776,
+            "wilson95": [
+              0.8510756161591188,
+              0.8811627188353633
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "latency": {
+          "requests": 1960,
+          "warmups": 100,
+          "p50_ms": 0.48387504648417234,
+          "p95_ms": 0.6231683713849633
+        },
+        "source": "quadratic"
+      },
+      "selected_baseline_extra_positive_lessons": 0,
+      "raw_gain": -14,
+      "proceed_to_review": false
+    }
+  ]
+}

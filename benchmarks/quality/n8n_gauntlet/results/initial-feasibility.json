@@ -1,0 +1,26 @@
+{
+  "scope": "development validation only, 150 intents plus explicit out-of-scope label; not an n8n integration or LLM teacher result",
+  "fit": 12036,
+  "calibration": 3020,
+  "validation": 3000,
+  "correct": 2435,
+  "accepted": 1981,
+  "accepted_correct": 1911,
+  "ood_cases": 100,
+  "ood_review_or_other": 83,
+  "compile_ms": 534.4815840362571,
+  "median_decision_ms": 3.0745004769414663,
+  "environment": {
+    "python": "3.13.5",
+    "numpy": "2.5.3",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O"
+  },
+  "limits": [
+    "Development feasibility probe, not a preregistered benchmark or production qualification.",
+    "Official test split was not evaluated.",
+    "Original dataset labels supplied teaching; no LLM observations or live n8n workflow.",
+    "TF-IDF vocabulary 2048; ridge regularization 0.1; strict review alpha 0.05; cache and receipts off.",
+    "Fixed 20 hash-ordered training examples per label reserved for calibration; normalized train duplicates and validation overlaps removed.",
+    "In-scope acceptance excludes explicit oos predictions; unfamiliar queries are counted as safely deferred only if ambiguous or predicted oos."
+  ]
+}

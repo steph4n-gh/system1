@@ -1,0 +1,80 @@
+{
+  "scope": "source inventory only; no candidate scoring or new teaching",
+  "original_test_status": "observed in experiment 1; never fresh again",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/clinc/oos-eval/828f8093932c8fe6ca7936c3d2e52903b1c523de/data/data_oos_plus.json",
+      "sha256": "bfcca9ae515623541dc1983c94c4ed7cae9d26b42ae47d74b972e51bb6f7a21f",
+      "bytes": 2509789,
+      "splits": {
+        "oos_val": {
+          "rows": 100,
+          "unique_groups": 100,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "val": {
+          "rows": 3000,
+          "unique_groups": 3000,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "train": {
+          "rows": 15000,
+          "unique_groups": 14972,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "oos_test": {
+          "rows": 1000,
+          "unique_groups": 1000,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "test": {
+          "rows": 4500,
+          "unique_groups": 4499,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "oos_train": {
+          "rows": 250,
+          "unique_groups": 250,
+          "new_groups_vs_all_original_folds": 151,
+          "labels_of_new_rows": {
+            "oos": 151
+          }
+        }
+      },
+      "new_unique_groups_total": 151
+    },
+    {
+      "url": "https://raw.githubusercontent.com/clinc/oos-eval/828f8093932c8fe6ca7936c3d2e52903b1c523de/data/binary_wiki_aug.json",
+      "sha256": "0e059889d4771dd50463f4332374d8de8389c5828cb4d85b754b4ce8339b8544",
+      "bytes": 3788866,
+      "splits": {
+        "train": {
+          "rows": 30000,
+          "unique_groups": 29431,
+          "new_groups_vs_all_original_folds": 14359,
+          "labels_of_new_rows": {
+            "oos": 14900
+          }
+        },
+        "test": {
+          "rows": 5500,
+          "unique_groups": 5499,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        },
+        "val": {
+          "rows": 3100,
+          "unique_groups": 3100,
+          "new_groups_vs_all_original_folds": 0,
+          "labels_of_new_rows": {}
+        }
+      },
+      "new_unique_groups_total": 14359
+    }
+  ]
+}

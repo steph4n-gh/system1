@@ -1,0 +1,637 @@
+{
+  "scope": "development only; optional pretrained encoder, no final test opened",
+  "encoder": {
+    "name": "bge-small",
+    "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+    "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+    "model_bytes": 133093490,
+    "pooling": "cls",
+    "tokenizer_bytes": 711396,
+    "runtime": "1.30.0",
+    "threads": 1,
+    "provider": "CPUExecutionProvider"
+  },
+  "load_ms": 276.54525003163144,
+  "results": [
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 0.01
+      },
+      "fit_ms": 552.9380419757217,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2751,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1090,
+          "accepted_correct": 1087,
+          "accepted_accuracy": 0.9972477064220183,
+          "coverage": 0.3639398998330551,
+          "oos_false_accept": 1,
+          "threshold": 0.9992504715919495
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2351,
+          "accepted_accuracy": 0.9812186978297162,
+          "coverage": 0.8,
+          "oos_false_accept": 19,
+          "threshold": 0.8432328701019287
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2751,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1072,
+          "accepted_correct": 1070,
+          "accepted_accuracy": 0.9981343283582089,
+          "coverage": 0.3579298831385643,
+          "oos_false_accept": 1,
+          "threshold": 0.9991333484649658
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2352,
+          "accepted_accuracy": 0.9816360601001669,
+          "coverage": 0.8,
+          "oos_false_accept": 19,
+          "threshold": 0.7626327276229858
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 0.1
+      },
+      "fit_ms": 134.78004198987037,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2747,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1059,
+          "accepted_correct": 1056,
+          "accepted_accuracy": 0.9971671388101983,
+          "coverage": 0.35358931552587647,
+          "oos_false_accept": 1,
+          "threshold": 0.9992638230323792
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2350,
+          "accepted_accuracy": 0.9808013355592654,
+          "coverage": 0.8,
+          "oos_false_accept": 19,
+          "threshold": 0.8327031135559082
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2747,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1047,
+          "accepted_correct": 1046,
+          "accepted_accuracy": 0.9990448901623686,
+          "coverage": 0.34958263772954923,
+          "oos_false_accept": 1,
+          "threshold": 0.9991464614868164
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2352,
+          "accepted_accuracy": 0.9816360601001669,
+          "coverage": 0.8,
+          "oos_false_accept": 20,
+          "threshold": 0.7496640086174011
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 1.0
+      },
+      "fit_ms": 114.37099997419864,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2759,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 879,
+          "accepted_correct": 879,
+          "accepted_accuracy": 1.0,
+          "coverage": 0.2934891485809683,
+          "oos_false_accept": 1,
+          "threshold": 0.9991173148155212
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2350,
+          "accepted_accuracy": 0.9808013355592654,
+          "coverage": 0.8,
+          "oos_false_accept": 21,
+          "threshold": 0.7655903697013855
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2759,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 864,
+          "accepted_correct": 864,
+          "accepted_accuracy": 1.0,
+          "coverage": 0.28848080133555926,
+          "oos_false_accept": 1,
+          "threshold": 0.998971164226532
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2352,
+          "accepted_accuracy": 0.9816360601001669,
+          "coverage": 0.8,
+          "oos_false_accept": 21,
+          "threshold": 0.6701838374137878
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-frozen-encoder-logistic",
+        "encoder": "bge-small",
+        "C": 1.0
+      },
+      "fit_ms": 262.04299996607006,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2861,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2185,
+          "accepted_correct": 2170,
+          "accepted_accuracy": 0.9931350114416476,
+          "coverage": 0.7295492487479132,
+          "oos_false_accept": 1,
+          "threshold": 0.37795472145080566
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2371,
+          "accepted_accuracy": 0.9895659432387313,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.32846057415008545
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2861,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2201,
+          "accepted_correct": 2193,
+          "accepted_accuracy": 0.9963652885052249,
+          "coverage": 0.7348914858096828,
+          "oos_false_accept": 1,
+          "threshold": 0.28433987498283386
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2383,
+          "accepted_accuracy": 0.9945742904841403,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.2204790711402893
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-frozen-encoder-logistic",
+        "encoder": "bge-small",
+        "C": 10.0
+      },
+      "fit_ms": 434.95925003662705,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2891,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2154,
+          "accepted_correct": 2149,
+          "accepted_accuracy": 0.9976787372330548,
+          "coverage": 0.7191986644407345,
+          "oos_false_accept": 1,
+          "threshold": 0.8138322234153748
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.7415211200714111
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2891,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2183,
+          "accepted_correct": 2179,
+          "accepted_accuracy": 0.9981676591846084,
+          "coverage": 0.728881469115192,
+          "oos_false_accept": 1,
+          "threshold": 0.7421664595603943
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2388,
+          "accepted_accuracy": 0.996661101836394,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.6600300073623657
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "nearest-teaching-embedding",
+        "encoder": "bge-small"
+      },
+      "similarity": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2739,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1018,
+          "accepted_correct": 1008,
+          "accepted_accuracy": 0.9901768172888016,
+          "coverage": 0.3398998330550918,
+          "oos_false_accept": 0,
+          "threshold": 0.9439843893051147
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2286,
+          "accepted_accuracy": 0.9540901502504173,
+          "coverage": 0.8,
+          "oos_false_accept": 1,
+          "threshold": 0.845060408115387
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2739,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1021,
+          "accepted_correct": 1018,
+          "accepted_accuracy": 0.9970617042115573,
+          "coverage": 0.3409015025041736,
+          "oos_false_accept": 1,
+          "threshold": 0.11505371332168579
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2345,
+          "accepted_accuracy": 0.9787145242070117,
+          "coverage": 0.8,
+          "oos_false_accept": 19,
+          "threshold": 0.03723078966140747
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 0.01
+      },
+      "fit_ms": 306.0528750065714,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1703,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 853,
+          "accepted_correct": 845,
+          "accepted_accuracy": 0.9906213364595545,
+          "coverage": 0.43520408163265306,
+          "oos_false_accept": 0,
+          "threshold": 0.9979786276817322
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1493,
+          "accepted_accuracy": 0.9521683673469388,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8089327216148376
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1703,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 856,
+          "accepted_correct": 848,
+          "accepted_accuracy": 0.9906542056074766,
+          "coverage": 0.43673469387755104,
+          "oos_false_accept": 0,
+          "threshold": 0.9973335862159729
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1495,
+          "accepted_accuracy": 0.9534438775510204,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7294926643371582
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 0.1
+      },
+      "fit_ms": 55.676708987448364,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1704,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 830,
+          "accepted_correct": 822,
+          "accepted_accuracy": 0.9903614457831326,
+          "coverage": 0.42346938775510207,
+          "oos_false_accept": 0,
+          "threshold": 0.9979597330093384
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1485,
+          "accepted_accuracy": 0.9470663265306123,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7978583574295044
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1704,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 857,
+          "accepted_correct": 849,
+          "accepted_accuracy": 0.9906651108518086,
+          "coverage": 0.4372448979591837,
+          "oos_false_accept": 0,
+          "threshold": 0.9968336224555969
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1488,
+          "accepted_accuracy": 0.9489795918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7173347473144531
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-frozen-encoder-ridge",
+        "encoder": "bge-small",
+        "regularization": 1.0
+      },
+      "fit_ms": 55.09583302773535,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1707,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 819,
+          "accepted_correct": 811,
+          "accepted_accuracy": 0.9902319902319903,
+          "coverage": 0.41785714285714287,
+          "oos_false_accept": 0,
+          "threshold": 0.9959577918052673
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1468,
+          "accepted_accuracy": 0.9362244897959183,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7616965770721436
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1707,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 671,
+          "accepted_correct": 665,
+          "accepted_accuracy": 0.9910581222056631,
+          "coverage": 0.3423469387755102,
+          "oos_false_accept": 0,
+          "threshold": 0.9981597661972046
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1474,
+          "accepted_accuracy": 0.9400510204081632,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6502560377120972
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-frozen-encoder-logistic",
+        "encoder": "bge-small",
+        "C": 1.0
+      },
+      "fit_ms": 147.7579579805024,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1739,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 821,
+          "accepted_correct": 813,
+          "accepted_accuracy": 0.9902557856272838,
+          "coverage": 0.4188775510204082,
+          "oos_false_accept": 0,
+          "threshold": 0.49687349796295166
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1487,
+          "accepted_accuracy": 0.9483418367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.26455703377723694
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1739,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 959,
+          "accepted_correct": 950,
+          "accepted_accuracy": 0.9906152241918665,
+          "coverage": 0.48928571428571427,
+          "oos_false_accept": 0,
+          "threshold": 0.36216071248054504
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1503,
+          "accepted_accuracy": 0.9585459183673469,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.13276472687721252
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-frozen-encoder-logistic",
+        "encoder": "bge-small",
+        "C": 10.0
+      },
+      "fit_ms": 264.62366699706763,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1783,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1305,
+          "accepted_correct": 1292,
+          "accepted_accuracy": 0.9900383141762452,
+          "coverage": 0.6658163265306123,
+          "oos_false_accept": 0,
+          "threshold": 0.7625675797462463
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1524,
+          "accepted_accuracy": 0.9719387755102041,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6242140531539917
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1783,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1342,
+          "accepted_correct": 1329,
+          "accepted_accuracy": 0.9903129657228018,
+          "coverage": 0.6846938775510204,
+          "oos_false_accept": 0,
+          "threshold": 0.6516602039337158
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.47907087206840515
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "nearest-teaching-embedding",
+        "encoder": "bge-small"
+      },
+      "similarity": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 239,
+          "accepted_correct": 237,
+          "accepted_accuracy": 0.9916317991631799,
+          "coverage": 0.12193877551020409,
+          "oos_false_accept": 0,
+          "threshold": 0.9837701320648193
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1497,
+          "accepted_accuracy": 0.954719387755102,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9154390692710876
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1471,
+          "accepted_correct": 1457,
+          "accepted_accuracy": 0.990482664853841,
+          "coverage": 0.7505102040816326,
+          "oos_false_accept": 0,
+          "threshold": 0.04126256704330444
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1543,
+          "accepted_accuracy": 0.9840561224489796,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.03349727392196655
+        }
+      }
+    }
+  ],
+  "encoder_only_latency": {
+    "clinc150": {
+      "requests": 500,
+      "p50_ms": 2.7648330142255872,
+      "p95_ms": 3.5078872198937456
+    },
+    "banking77": {
+      "requests": 500,
+      "p50_ms": 3.1136870093178004,
+      "p95_ms": 5.4678372136550015
+    }
+  }
+}

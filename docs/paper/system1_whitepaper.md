@@ -1,8 +1,11 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.0.3 · 20 September 2026**
+**steph4n-gh · System 1 1.0.3 + current source changes · 21 September 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
+
+This document follows the source checkout. [Unreleased changes](../../CHANGELOG.md#unreleased)
+are separate from the published 1.0.3 package.
 
 System 1 is **not an LLM**. Its built-in local path fits small numerical decision
 heads and requires no language-model download, token generation or GPU. It can
@@ -19,6 +22,8 @@ explicitly taught skills meet fixed 95% accepted-correctness and 80% acceptance
 point targets across 1,301 held-out cases. Actual Jev and Gemini observations each
 enable automatic local takeover on a six-intent assistant task. Banking and SMS
 observation tests expose limits, retained alongside the successful results.
+The later full-scope n8n gauntlet remains unqualified; its teacher-disconnection
+rehearsal establishes integration behavior, not successful quality qualification.
 
 ## 1. Problem and scope
 
@@ -45,14 +50,19 @@ projector creates SHA-256-derived lexical and subword features, defaulting to 38
 dimensions. An optional hybrid projector adds a seeded local subword table with
 curated semantic anchors. Neither path downloads a pretrained language model.
 An optional fitted TF-IDF projector now supplies word unigram/bigram features
-for taught text tasks. It retains the existing ridge head and saves its frozen
+for taught text tasks. It uses the same numerical heads and saves its frozen
 vocabulary and IDF weights in the skill; NumPy remains sufficient at runtime.
 Numerical telemetry can contribute features for structured state.
 
 For explicit teaching, `SystemOneCompiler(...).compile(examples, augment=False)`
-fits regularized linear heads. The implementation augments features with a bias,
-computes regularized normal equations using NumPy, and retains calibration
+fits regularized linear heads. The default ridge implementation augments features
+with a bias, computes regularized normal equations using NumPy, and retains calibration
 metadata. Temperature fitting and conformal scoring use separate examples.
+The source compiler additionally offers opt-in `choice_solver="logistic"` for
+choice fields: SciPy minimizes cross-entropy with L2-regularized weights and an
+unpenalized bias during teaching. It saves the existing NumPy head format. Ridge
+remains the default, including automatic observation. See the
+[teaching guide](../guides/training_experts.md#optional-classification-fitting).
 The inference path returns typed values, probabilities and review signals.
 Detailed defaults and code links are in the
 [architecture reference](../architecture/technical_specification.md).
@@ -70,6 +80,11 @@ temperature and score semantics. Tests check values, probabilities, sets and
 review behavior across saving and loading. The current reader also understands
 legacy v1 artifacts. A smaller skill file does not include the Python runtime or
 installed dependencies.
+
+Optional research adapters may supply features from fixed pretrained text
+encoders. Those require separate encoder weights and execution, even though the
+decision head does not generate language or update the encoder. Their reports
+count both parts; the default projector measurements cannot be applied to them.
 
 ## 3. Automatic teacher observation
 
@@ -221,15 +236,27 @@ claim is made here.
 
 Public datasets may have appeared in provider pretraining. Related paraphrases
 and SMS campaigns can remain correlated despite duplicate checks. Task subsets
-do not evaluate all BANKING77/CLINC150 intents or out-of-scope detection, and
+above do not evaluate all BANKING77/CLINC150 intents or out-of-scope detection, and
 historical SMS data does not measure modern phishing. Scripted gaming gains are
 separate [first-use policy evidence](../../benchmarks/quality/zero_shot/README.md),
 not learned strategic competence or verified speed records.
 
-The next quality work is to make promotion match the application's required
-accepted accuracy, teach the documented confusing routing cases, and reevaluate
-on fresh representative data. The existing compiler, callback and evaluation
-workflow can support that work without a new provider or training framework.
+The later [full-scope n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md)
+does evaluate all 150 CLINC and 77 BANKING77 intents. The latest full-scope
+regression still fails accepted accuracy on both and unfamiliar rejection on
+CLINC, despite meeting coverage and latency targets. Subsequent development
+comparisons do not supersede those failures. Independently labeled full-scope
+confirmation remains missing, as documented in the
+[source inventory](../../benchmarks/quality/n8n_gauntlet/CONFIRMATION_SOURCES.md).
+The [real teacher-disconnection rehearsal](../../benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
+uses an unqualified saved development artifact. It does not complete the promised
+qualified recording.
+
+The [document workspace](../../examples/teaching_by_doing/README.md) makes teaching
+an ordinary filing action, with explicit corrections, separate checks and skill
+export. Courier and Pokémon labs demonstrate bounded skill composition and
+retain baselines and regressions. Their scopes and results are indexed in the
+[example catalog](../../examples/README.md); they do not establish general agency.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
 local reuse*, version 1.0.3. Cite the source revision and linked evidence when

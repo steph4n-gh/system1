@@ -271,8 +271,8 @@ class CompiledSystemOneModel:
 
         # Check Tier 0 Semantic System 1 Cache
         cur_version = getattr(self, "model_version", 1)
-        schema_dig = self.schema.schema_digest()
         if self.use_cache:
+            schema_dig = self.schema.schema_digest()
             hit = self.cache.get(
                 prompt,
                 embedding=emb,
@@ -667,13 +667,16 @@ class CompiledSystemOneModel:
 
 
 class SystemOneCompiler:
-    """The System 1 Closed-Form Distillation & Compilation Engine.
+    """Teach and compile small decision heads.
 
     Takes a DecisionSchema and training exemplars (or generates synthetic exemplars),
     fits closed-form Ridge Regression hyperplanes:
         W* = (X^T X + lambda I)^(-1) X^T Y
     calibrates temperature scaling and conformal prediction bounds, and serializes
-    the resulting model to a compact .s1m binary.
+    the resulting model to a compact .s1m binary. ``choice_solver="logistic"``
+    optionally fits ChoiceField heads with cross-entropy using SciPy at teaching
+    time. Saved heads still run with NumPy; other field types keep their existing
+    fitting methods.
     """
 
     def __init__(
@@ -688,6 +691,7 @@ class SystemOneCompiler:
         relative_odds_ratio: float = 1.5,
         confidence_floor_tau0: float = 0.15,
         recency_weighted: bool = False,
+        choice_solver: str = "ridge",
     ) -> None:
         if isinstance(schema, type) and issubclass(schema, DecisionSchema):
             self.schema = schema()
@@ -703,6 +707,9 @@ class SystemOneCompiler:
         self.regularization = float(regularization)
         if not math.isfinite(self.regularization) or self.regularization <= 0:
             raise ValueError("regularization must be finite and positive")
+        if choice_solver not in ("ridge", "logistic"):
+            raise ValueError("choice_solver must be 'ridge' or 'logistic'")
+        self.choice_solver = choice_solver
         self.backend = backend
         self.forgetting_factor = float(forgetting_factor)
         self.relative_odds_ratio = float(relative_odds_ratio)
@@ -718,6 +725,50 @@ class SystemOneCompiler:
                 recency_weighted=self.recency_weighted,
             )
         self.telemetry_projector = TelemetryProjector(embedding_dim=self.dimension)
+
+    @staticmethod
+    def _solve_logistic(X: np.ndarray, Y: np.ndarray, regularization: float):
+        """Fit sum cross-entropy + lambda/2 * ||W||², with an unpenalized bias.
+
+        The runtime divides choice logits by .25, so scale the stored coefficients
+        by .25. Calibration then sees the fitted logits, including for two choices.
+        No optimizer object or dependency is serialized into the skill.
+        """
+        try:
+            from scipy.optimize import minimize
+        except ImportError as exc:
+            raise ImportError("Logistic teaching requires pip install 'system1[teaching]'") from exc
+
+        X = np.asarray(X, dtype=np.float64)
+        Y = np.asarray(Y, dtype=np.float64)
+        n, dimension = X.shape
+        choices = Y.shape[1]
+        if not np.all(np.isfinite(X)) or not np.all(np.isfinite(Y)):
+            raise ValueError("Logistic teaching requires finite features and targets")
+        if np.any(Y.sum(axis=0) == 0):
+            raise ValueError("Logistic teaching needs fitting examples for every choice")
+
+        def objective(flat):
+            parameters = flat.reshape(choices, dimension + 1)
+            weights, biases = parameters[:, :-1], parameters[:, -1]
+            logits = X @ weights.T + biases
+            shifted = logits - logits.max(axis=1, keepdims=True)
+            exp = np.exp(shifted)
+            total = exp.sum(axis=1, keepdims=True)
+            loss = (np.log(total).sum() - np.sum(Y * shifted)
+                    + .5 * regularization * np.sum(weights * weights)) / n
+            residual = exp / total - Y
+            gradient = np.empty_like(parameters)
+            gradient[:, :-1] = (residual.T @ X + regularization * weights) / n
+            gradient[:, -1] = residual.mean(axis=0)
+            return float(loss), gradient.ravel()
+
+        result = minimize(objective, np.zeros(choices * (dimension + 1)), jac=True,
+                          method="L-BFGS-B", options={"maxiter": 1000, "gtol": 1e-6, "ftol": 1e-10})
+        if not result.success or not np.all(np.isfinite(result.x)):
+            raise RuntimeError("Logistic teaching did not converge; no skill was compiled")
+        parameters = result.x.reshape(choices, dimension + 1)
+        return (.25 * parameters[:, :-1]).astype(np.float32), (.25 * parameters[:, -1]).astype(np.float32)
 
     def generate_synthetic_exemplars(
         self,
@@ -1234,10 +1285,13 @@ class SystemOneCompiler:
                 Y_train = Y_all[:num_train]
                 Y_calib = Y_all[num_train:]
 
-                # Solve closed-form Ridge Regression
-                weights, biases, P_mat, B_mat = self._solve_ridge(
-                    X_train, Y_train, self.regularization, regularize_bias=augment, return_covariance=True
-                )
+                if self.choice_solver == "logistic":
+                    weights, biases = self._solve_logistic(X_train, Y_train, self.regularization)
+                    P_mat = B_mat = None
+                else:
+                    weights, biases, P_mat, B_mat = self._solve_ridge(
+                        X_train, Y_train, self.regularization, regularize_bias=augment, return_covariance=True
+                    )
 
                 # Calibrate temperature and conformal bounds on independent held-out folds
                 logits_calib = (X_calib @ weights.T + biases) / 0.25
@@ -1490,6 +1544,7 @@ class SystemOneCompiler:
             recency_weighted=self.recency_weighted,
             metadata={
                 "regularization": self.regularization,
+                "choice_solver": self.choice_solver,
                 "teacher": teacher if augment else None,
                 "teaching_mode": "schema_augmented" if augment else "examples",
                 "sample_counts": sample_counts,

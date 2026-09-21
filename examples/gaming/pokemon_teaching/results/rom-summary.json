@@ -1,0 +1,294 @@
+{
+  "experiment": "Controlled initial RAM fixtures in the real Red/Blue battle engine",
+  "conditions": {
+    "healthy": [
+      20,
+      10,
+      10,
+      [
+        [
+          20,
+          1
+        ]
+      ]
+    ],
+    "critical": [
+      3,
+      10,
+      10,
+      [
+        [
+          20,
+          1
+        ]
+      ]
+    ],
+    "threat_slow": [
+      6,
+      28,
+      8,
+      [
+        [
+          20,
+          2
+        ]
+      ]
+    ],
+    "threat_fast": [
+      6,
+      28,
+      16,
+      [
+        [
+          11,
+          1
+        ],
+        [
+          20,
+          2
+        ]
+      ]
+    ],
+    "super_potion": [
+      7,
+      32,
+      16,
+      [
+        [
+          20,
+          1
+        ],
+        [
+          19,
+          1
+        ]
+      ]
+    ],
+    "no_items": [
+      6,
+      28,
+      16,
+      []
+    ]
+  },
+  "fixtures": {
+    "healthy-37": {
+      "condition": "healthy",
+      "idle_frames": 37
+    },
+    "healthy-71": {
+      "condition": "healthy",
+      "idle_frames": 71
+    },
+    "healthy-109": {
+      "condition": "healthy",
+      "idle_frames": 109
+    },
+    "critical-37": {
+      "condition": "critical",
+      "idle_frames": 37
+    },
+    "critical-71": {
+      "condition": "critical",
+      "idle_frames": 71
+    },
+    "critical-109": {
+      "condition": "critical",
+      "idle_frames": 109
+    },
+    "threat_slow-37": {
+      "condition": "threat_slow",
+      "idle_frames": 37
+    },
+    "threat_slow-71": {
+      "condition": "threat_slow",
+      "idle_frames": 71
+    },
+    "threat_slow-109": {
+      "condition": "threat_slow",
+      "idle_frames": 109
+    },
+    "threat_fast-37": {
+      "condition": "threat_fast",
+      "idle_frames": 37
+    },
+    "threat_fast-71": {
+      "condition": "threat_fast",
+      "idle_frames": 71
+    },
+    "threat_fast-109": {
+      "condition": "threat_fast",
+      "idle_frames": 109
+    },
+    "super_potion-37": {
+      "condition": "super_potion",
+      "idle_frames": 37
+    },
+    "super_potion-71": {
+      "condition": "super_potion",
+      "idle_frames": 71
+    },
+    "super_potion-109": {
+      "condition": "super_potion",
+      "idle_frames": 109
+    },
+    "no_items-37": {
+      "condition": "no_items",
+      "idle_frames": 37
+    },
+    "no_items-71": {
+      "condition": "no_items",
+      "idle_frames": 71
+    },
+    "no_items-109": {
+      "condition": "no_items",
+      "idle_frames": 109
+    }
+  },
+  "paired_changes": {
+    "improved": [
+      "threat_slow-37",
+      "threat_slow-71"
+    ],
+    "regressed": [
+      "threat_slow-109"
+    ]
+  },
+  "results": {
+    "before": {
+      "episodes": 18,
+      "wins": 6,
+      "wins_without_review": 2,
+      "outcomes": {
+        "VICTORY": 6,
+        "DEFEAT": 12
+      },
+      "turns": 75,
+      "potions": 5,
+      "review_steps": 7,
+      "model_calls": 225,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.6300419918261468
+    },
+    "after": {
+      "episodes": 18,
+      "wins": 7,
+      "wins_without_review": 6,
+      "outcomes": {
+        "VICTORY": 7,
+        "DEFEAT": 11
+      },
+      "turns": 135,
+      "potions": 20,
+      "review_steps": 1,
+      "model_calls": 405,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.6199579802341759
+    },
+    "before_strict": {
+      "episodes": 18,
+      "wins": 2,
+      "wins_without_review": 2,
+      "outcomes": {
+        "REVIEW": 4,
+        "VICTORY": 2,
+        "DEFEAT": 12
+      },
+      "turns": 60,
+      "potions": 4,
+      "review_steps": 4,
+      "model_calls": 192,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.6108959787525237
+    },
+    "after_strict": {
+      "episodes": 18,
+      "wins": 6,
+      "wins_without_review": 6,
+      "outcomes": {
+        "VICTORY": 6,
+        "REVIEW": 1,
+        "DEFEAT": 11
+      },
+      "turns": 132,
+      "potions": 20,
+      "review_steps": 1,
+      "model_calls": 399,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.6295000202953815
+    },
+    "rules": {
+      "episodes": 18,
+      "wins": 6,
+      "wins_without_review": 6,
+      "outcomes": {
+        "VICTORY": 6,
+        "DEFEAT": 12
+      },
+      "turns": 75,
+      "potions": 5,
+      "review_steps": 0,
+      "model_calls": 0,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.022833002731204033
+    },
+    "updated_rules": {
+      "episodes": 18,
+      "wins": 7,
+      "wins_without_review": 7,
+      "outcomes": {
+        "VICTORY": 7,
+        "DEFEAT": 11
+      },
+      "turns": 135,
+      "potions": 20,
+      "review_steps": 0,
+      "model_calls": 0,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.022499996703118086
+    },
+    "single": {
+      "episodes": 18,
+      "wins": 0,
+      "wins_without_review": 0,
+      "outcomes": {
+        "UNSUPPORTED_MOVE": 12,
+        "DEFEAT": 6
+      },
+      "turns": 6,
+      "potions": 0,
+      "review_steps": 18,
+      "model_calls": 18,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.4507915291469544
+    },
+    "updated_single": {
+      "episodes": 18,
+      "wins": 0,
+      "wins_without_review": 0,
+      "outcomes": {
+        "UNSUPPORTED_MOVE": 15,
+        "DEFEAT": 3
+      },
+      "turns": 16,
+      "potions": 12,
+      "review_steps": 22,
+      "model_calls": 31,
+      "teacher_calls": 0,
+      "median_decision_ms": 0.441625015810132
+    }
+  },
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "python": "3.13.5",
+  "pyboy": "2.7.0",
+  "limitations": [
+    "18 fixtures are six constructed conditions at three idle timings, not 18 independent campaign encounters.",
+    "Initial HP, bag, enemy attack and speed are edited; the cartridge handles all subsequent battle effects.",
+    "Enemy stats are controlled stress inputs, not a claim of legal level-5 opponent stats.",
+    "Privileged RAM observations include opponent moves; no visual reasoning or navigation learning.",
+    "Identical complete machine states before every controller; action timing can change later RNG draws.",
+    "Existing saved skills are frozen; this set is not used for teaching or calibration.",
+    "Strict controllers stop before flagged actions; other runs execute and count review flags.",
+    "Different game logic and random draws mean simulator traces cannot predict these outcomes."
+  ]
+}

@@ -1,0 +1,641 @@
+{
+  "scope": "development only; lexical + frozen encoder, no test split opened",
+  "results": [
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.25,
+        "C": 10.0
+      },
+      "fit_ms": 10337.380083976313,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2873,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2353,
+          "accepted_correct": 2343,
+          "accepted_accuracy": 0.9957501062473438,
+          "coverage": 0.7856427378964942,
+          "oos_false_accept": 1,
+          "threshold": 0.800939806166497
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.7851013404980766
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2873,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2362,
+          "accepted_correct": 2351,
+          "accepted_accuracy": 0.9953429297205758,
+          "coverage": 0.7886477462437396,
+          "oos_false_accept": 1,
+          "threshold": 0.7242307865314408
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.7040230950901585
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.25,
+        "C": 100.0
+      },
+      "fit_ms": 9894.460582989268,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2868,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2060,
+          "accepted_correct": 2054,
+          "accepted_accuracy": 0.9970873786407767,
+          "coverage": 0.6878130217028381,
+          "oos_false_accept": 1,
+          "threshold": 0.9710945010227274
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2384,
+          "accepted_accuracy": 0.994991652754591,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.9263136387654839
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2868,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2043,
+          "accepted_correct": 2037,
+          "accepted_accuracy": 0.9970631424375918,
+          "coverage": 0.6821368948247079,
+          "oos_false_accept": 1,
+          "threshold": 0.956708121807867
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2384,
+          "accepted_accuracy": 0.994991652754591,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.8840185945260396
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.5,
+        "C": 10.0
+      },
+      "fit_ms": 9653.601750032976,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2886,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2207,
+          "accepted_correct": 2201,
+          "accepted_accuracy": 0.9972813774354327,
+          "coverage": 0.7368948247078464,
+          "oos_false_accept": 1,
+          "threshold": 0.8439309137103308
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.7844468182733102
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2886,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2195,
+          "accepted_correct": 2190,
+          "accepted_accuracy": 0.9977220956719818,
+          "coverage": 0.7328881469115192,
+          "oos_false_accept": 1,
+          "threshold": 0.7997044699017758
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.7069626944481169
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.5,
+        "C": 100.0
+      },
+      "fit_ms": 7862.850499979686,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2879,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2090,
+          "accepted_correct": 2086,
+          "accepted_accuracy": 0.9980861244019139,
+          "coverage": 0.6978297161936561,
+          "oos_false_accept": 1,
+          "threshold": 0.9681633878092933
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.9274665176170374
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2879,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2124,
+          "accepted_correct": 2118,
+          "accepted_accuracy": 0.9971751412429378,
+          "coverage": 0.7091819699499166,
+          "oos_false_accept": 1,
+          "threshold": 0.9465830441335025
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.8893943232745118
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 1.0,
+        "C": 10.0
+      },
+      "fit_ms": 9354.38408399932,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2892,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2275,
+          "accepted_correct": 2267,
+          "accepted_accuracy": 0.9964835164835165,
+          "coverage": 0.7595993322203672,
+          "oos_false_accept": 1,
+          "threshold": 0.7913550533583412
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.7419238949705661
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2892,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2208,
+          "accepted_correct": 2201,
+          "accepted_accuracy": 0.9968297101449275,
+          "coverage": 0.737228714524207,
+          "oos_false_accept": 1,
+          "threshold": 0.7608474847335532
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2389,
+          "accepted_accuracy": 0.9970784641068448,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.6625267093419918
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 1.0,
+        "C": 100.0
+      },
+      "fit_ms": 8530.323209008202,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2877,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2237,
+          "accepted_correct": 2229,
+          "accepted_accuracy": 0.9964237818506929,
+          "coverage": 0.7469115191986644,
+          "oos_false_accept": 1,
+          "threshold": 0.9427990739911811
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.9125526021055742
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2877,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2183,
+          "accepted_correct": 2176,
+          "accepted_accuracy": 0.9967934035730646,
+          "coverage": 0.728881469115192,
+          "oos_false_accept": 1,
+          "threshold": 0.9280594195046636
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2385,
+          "accepted_accuracy": 0.9954090150250418,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.8682009992352827
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.25,
+        "C": 10.0
+      },
+      "fit_ms": 4442.737500008661,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1779,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1278,
+          "accepted_correct": 1266,
+          "accepted_accuracy": 0.9906103286384976,
+          "coverage": 0.6520408163265307,
+          "oos_false_accept": 0,
+          "threshold": 0.8247701136299529
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1536,
+          "accepted_accuracy": 0.9795918367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6684485426664395
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1779,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1325,
+          "accepted_correct": 1312,
+          "accepted_accuracy": 0.990188679245283,
+          "coverage": 0.6760204081632653,
+          "oos_false_accept": 0,
+          "threshold": 0.7243813680054241
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1538,
+          "accepted_accuracy": 0.9808673469387755,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5290527743979867
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.25,
+        "C": 100.0
+      },
+      "fit_ms": 5437.618124997243,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1775,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1307,
+          "accepted_correct": 1294,
+          "accepted_accuracy": 0.990053557765876,
+          "coverage": 0.6668367346938775,
+          "oos_false_accept": 0,
+          "threshold": 0.9577552949250062
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1538,
+          "accepted_accuracy": 0.9808673469387755,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8733128891358621
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1775,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1306,
+          "accepted_correct": 1293,
+          "accepted_accuracy": 0.9900459418070444,
+          "coverage": 0.6663265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.9326353545879388
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1540,
+          "accepted_accuracy": 0.9821428571428571,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.797518272527594
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.5,
+        "C": 10.0
+      },
+      "fit_ms": 4468.669500027318,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1778,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1251,
+          "accepted_correct": 1239,
+          "accepted_accuracy": 0.9904076738609112,
+          "coverage": 0.638265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.8293057252540921
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1536,
+          "accepted_accuracy": 0.9795918367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6603838187314344
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1778,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1324,
+          "accepted_correct": 1311,
+          "accepted_accuracy": 0.9901812688821753,
+          "coverage": 0.6755102040816326,
+          "oos_false_accept": 0,
+          "threshold": 0.7223506817793865
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1537,
+          "accepted_accuracy": 0.9802295918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5255935282735213
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 0.5,
+        "C": 100.0
+      },
+      "fit_ms": 4403.912667010445,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1778,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1303,
+          "accepted_correct": 1290,
+          "accepted_accuracy": 0.990023023791251,
+          "coverage": 0.664795918367347,
+          "oos_false_accept": 0,
+          "threshold": 0.952082492269378
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1537,
+          "accepted_accuracy": 0.9802295918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8625143116783655
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1778,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1275,
+          "accepted_correct": 1263,
+          "accepted_accuracy": 0.9905882352941177,
+          "coverage": 0.6505102040816326,
+          "oos_false_accept": 0,
+          "threshold": 0.9349745222799714
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1536,
+          "accepted_accuracy": 0.9795918367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7911322904834653
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 1.0,
+        "C": 10.0
+      },
+      "fit_ms": 3680.6678749853745,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1774,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1232,
+          "accepted_correct": 1220,
+          "accepted_accuracy": 0.9902597402597403,
+          "coverage": 0.6285714285714286,
+          "oos_false_accept": 0,
+          "threshold": 0.8107827779703382
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6214346075744874
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1774,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1218,
+          "accepted_correct": 1206,
+          "accepted_accuracy": 0.9901477832512315,
+          "coverage": 0.6214285714285714,
+          "oos_false_accept": 0,
+          "threshold": 0.7558652376352336
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1532,
+          "accepted_accuracy": 0.9770408163265306,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.4842077758544313
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-hybrid-logistic",
+        "encoder": "minilm",
+        "lexical_features": 4096,
+        "lexical_weight": 1.0,
+        "C": 100.0
+      },
+      "fit_ms": 4474.767790990882,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1783,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1202,
+          "accepted_correct": 1190,
+          "accepted_accuracy": 0.9900166389351082,
+          "coverage": 0.613265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.955999253070847
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1530,
+          "accepted_accuracy": 0.9757653061224489,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8237153566592459
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1783,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1203,
+          "accepted_correct": 1191,
+          "accepted_accuracy": 0.9900249376558603,
+          "coverage": 0.6137755102040816,
+          "oos_false_accept": 0,
+          "threshold": 0.9358941635993611
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.741508710455703
+        }
+      }
+    }
+  ]
+}

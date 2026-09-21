@@ -1,0 +1,67 @@
+{
+  "scope": "complete development evidence and artifact-copy audit; no model rerun",
+  "qualified": false,
+  "new_teacher_calls": 0,
+  "decisions_checked": 16300,
+  "frozen_files_unchanged": 125,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "condition": "positive-only",
+      "rows": 3095,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "condition": "positive-and-unsupported",
+      "rows": 3095,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "condition": "positive-only",
+      "rows": 3095,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "condition": "positive-and-unsupported",
+      "rows": 3095,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "condition": "positive-only",
+      "rows": 1960,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "condition": "positive-only",
+      "rows": 1960,
+      "labels_groups_decisions_metrics_and_timings_verified": true,
+      "original_only_review_folds": true
+    }
+  ],
+  "published_new_selected_artifacts": [
+    {
+      "folder": "clinc150-baseline-positive-and-unsupported",
+      "manifest_sha256": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98"
+    }
+  ],
+  "reports": {
+    "boundary-development.json": "5e7702109c1ce8b9eb22fb9c269e26d499387f82da3bc5d99aa61e07a8a92d0d",
+    "boundary-runtime.json": "5b7b8b4283fffc95cfcf49c3d1e5349a698eb0bd1b3c1fd8bc01e84b61abf285"
+  }
+}

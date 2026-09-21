@@ -1,0 +1,88 @@
+{
+  "scope": "arithmetic, original-source and saved-artifact audit; no model evaluation",
+  "qualified": false,
+  "report_sha256": "df824efe58abd43077e2dccd70ad219cbe342337fa88a854a494c4077d2687c2",
+  "freeze_sha256": "c4778711ace9ff7044a5f6370612477d3fc9b985f990114f60b2fbad283e4d5f",
+  "freeze_commit": "8d80e476e9e7261fe1f845a8bb7a3065943870d8",
+  "frozen_files_unchanged": 147,
+  "original_failed_report_sha256": "a94d8a138f257790f8774788f9aa8203fb148026e6e7b7488d334192889e5969",
+  "prior_observed_failure_sha256": "4924dc076ed85b0ba4fe2238e2c6a81e8585ca31b9c8a8e2e4c809e790808652",
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "original_rows_preserved": 5500,
+      "original_texts_groups_labels_preserved": true,
+      "all_counts_intervals_and_timing_percentiles_recomputed": true,
+      "public_artifacts_and_sizes_verified": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 3903,
+        "denominator": 4002,
+        "fraction": 0.9752623688155923,
+        "wilson95": [
+          0.9699751101799604,
+          0.9796381081923625
+        ]
+      },
+      "teacher_calls": 0,
+      "runtime_errors": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "original_rows_preserved": 5500,
+      "original_texts_groups_labels_preserved": true,
+      "all_counts_intervals_and_timing_percentiles_recomputed": true,
+      "public_artifacts_and_sizes_verified": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 2652,
+        "denominator": 2695,
+        "fraction": 0.9840445269016698,
+        "wilson95": [
+          0.9785782164727824,
+          0.9881328852382637
+        ]
+      },
+      "teacher_calls": 0,
+      "runtime_errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "original_rows_preserved": 3080,
+      "original_texts_groups_labels_preserved": true,
+      "all_counts_intervals_and_timing_percentiles_recomputed": true,
+      "public_artifacts_and_sizes_verified": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 2492,
+        "denominator": 2524,
+        "fraction": 0.9873217115689382,
+        "wilson95": [
+          0.9821572531270136,
+          0.9910050436681564
+        ]
+      },
+      "teacher_calls": 0,
+      "runtime_errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "original_rows_preserved": 3080,
+      "original_texts_groups_labels_preserved": true,
+      "all_counts_intervals_and_timing_percentiles_recomputed": true,
+      "public_artifacts_and_sizes_verified": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 1663,
+        "denominator": 1672,
+        "fraction": 0.9946172248803827,
+        "wilson95": [
+          0.9898013482036597,
+          0.9971655222567092
+        ]
+      },
+      "teacher_calls": 0,
+      "runtime_errors": 0
+    }
+  ]
+}

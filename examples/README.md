@@ -10,6 +10,7 @@ The [teaching guide](../docs/guides/training_experts.md) and
 | Example | What it demonstrates |
 |---|---|
 | [teach_skill.py](teach_skill.py) | Eight editable lessons; custom lesson file, message and saved path; [beginner walkthrough](../docs/guides/first_skill.md) |
+| [teaching_by_doing/](teaching_by_doing/README.md) | Browser workspace: demonstrated filing choices become lessons, with corrections, separate checks, portable exports and retained sample failures |
 | [support_triage.py](support_triage.py) | Taught department routing, calibration, saved/reloaded evaluation |
 | [model_routing.py](model_routing.py) | A stated routing policy; does not call downstream models |
 | [agent_guard.py](agent_guard.py) | Operation classification plus a separate explicit permission/audit example |
@@ -32,6 +33,7 @@ No live credentials are needed for the commands above.
 
 | Example | Scope and evidence boundary |
 |---|---|
+| [n8n development workflow](../benchmarks/quality/n8n_gauntlet/N8N.md) | Importable workflow with local decisions, item pairing and review; its full-scope quality gauntlet remains unqualified |
 | [core_standalone_evaluator.py](core_standalone_evaluator.py) | NumPy-only core and typed outputs; sample predictions are not a quality benchmark |
 | [train_expert.py](train_expert.py) | Legacy name for synthetic/supplied examples, correction and composition; these are optional teaching mechanisms |
 | [four_levers_benchmark.py](four_levers_benchmark.py) | Cache, online correction, margins and numerical telemetry; repeated scripted feedback is not generalization evidence |
@@ -61,6 +63,8 @@ statistical action label in any example does not itself grant a tool permission.
 | [gaming/paperclips_speedrun.py](gaming/paperclips_speedrun.py) | Handwritten three-phase policy with accelerated mock and optional Playwright controller |
 | [gaming/teach_paperclips_wire.py](gaming/teach_paperclips_wire.py) | Teach, save and check one numeric restocking skill; [live demonstration and limitations](gaming/PAPERCLIPS_TEACHING.md) |
 | [gaming/snake_arena/](gaming/snake_arena/README.md) | Three-player GUI: taught System1 skill vs real Laya-MLX and Jev; timed/equal-move runs, explicit planner hints and optional shield; [recordings and results](gaming/snake_arena/RESULTS.md) |
+| [gaming/pokemon_teaching/](gaming/pokemon_teaching/README.md) | Two taught battle skills, isolated healing correction, real Red/Blue potion control and paired save-state evidence |
+| [gaming/skill_playground/](gaming/skill_playground/README.md) | Three taught skills, live terrain correction, held-out mission composition and measured single-model/rules baselines |
 | [gaming/__init__.py](gaming/__init__.py) | Package marker |
 
 See [game commands and limits](../docs/SPEEDRUN_SHOWDOWN_WORLD_RECORDS.md).

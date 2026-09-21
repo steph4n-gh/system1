@@ -1,5 +1,10 @@
 # Benchmarks
 
+The [full-scope n8n gauntlet](quality/n8n_gauntlet/README.md) covers all 150 CLINC
+and 77 BANKING77 intents. Quality gates still fail; development improvements and
+the real teacher-disconnection rehearsal do not establish qualification. Full
+artifacts and raw results stay in Git and are excluded from Python distributions.
+
 The [1.0.2 quality round](quality/quality_round/README.md) adds stricter qualification,
 a measured SMS takeover improvement and fresh authored failures. System 1 remains
 a small local decision runtime, not an LLM.

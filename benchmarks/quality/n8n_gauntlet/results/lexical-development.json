@@ -1,0 +1,635 @@
+{
+  "scope": "development only; optimistic frontiers are not qualification",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "sklearn": "1.9.1"
+  },
+  "results": [
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 2048,
+        "regularization": 0.1,
+        "augmentation": false
+      },
+      "fit_ms": 513.008083042223,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2429,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 700,
+          "accepted_correct": 698,
+          "accepted_accuracy": 0.9971428571428571,
+          "coverage": 0.2337228714524207,
+          "oos_false_accept": 1,
+          "threshold": 0.9999070167541504
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2189,
+          "accepted_accuracy": 0.9136060100166945,
+          "coverage": 0.8,
+          "oos_false_accept": 25,
+          "threshold": 0.6947827339172363
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2429,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 679,
+          "accepted_correct": 677,
+          "accepted_accuracy": 0.9970544918998527,
+          "coverage": 0.22671118530884807,
+          "oos_false_accept": 1,
+          "threshold": 0.9999063014984131
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2189,
+          "accepted_accuracy": 0.9136060100166945,
+          "coverage": 0.8,
+          "oos_false_accept": 26,
+          "threshold": 0.5728896260261536
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 2048,
+        "regularization": 1.0,
+        "augmentation": false
+      },
+      "fit_ms": 464.3614580272697,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2441,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1007,
+          "accepted_correct": 1003,
+          "accepted_accuracy": 0.9960278053624627,
+          "coverage": 0.3362270450751252,
+          "oos_false_accept": 1,
+          "threshold": 0.9997941851615906
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2209,
+          "accepted_accuracy": 0.9219532554257095,
+          "coverage": 0.8,
+          "oos_false_accept": 20,
+          "threshold": 0.7410973310470581
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2441,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 978,
+          "accepted_correct": 974,
+          "accepted_accuracy": 0.9959100204498977,
+          "coverage": 0.32654424040066776,
+          "oos_false_accept": 1,
+          "threshold": 0.9997852444648743
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2208,
+          "accepted_accuracy": 0.9215358931552587,
+          "coverage": 0.8,
+          "oos_false_accept": 22,
+          "threshold": 0.6401617527008057
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 4096,
+        "regularization": 0.1,
+        "augmentation": false
+      },
+      "fit_ms": 1142.1373330522329,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2495,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 580,
+          "accepted_correct": 579,
+          "accepted_accuracy": 0.9982758620689656,
+          "coverage": 0.19365609348914858,
+          "oos_false_accept": 1,
+          "threshold": 0.9999104738235474
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2245,
+          "accepted_accuracy": 0.9369782971619366,
+          "coverage": 0.8,
+          "oos_false_accept": 23,
+          "threshold": 0.7952194213867188
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2495,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 571,
+          "accepted_correct": 570,
+          "accepted_accuracy": 0.9982486865148862,
+          "coverage": 0.19065108514190318,
+          "oos_false_accept": 1,
+          "threshold": 0.999907374382019
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2248,
+          "accepted_accuracy": 0.9382303839732888,
+          "coverage": 0.8,
+          "oos_false_accept": 26,
+          "threshold": 0.7259762287139893
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 4096,
+        "regularization": 1.0,
+        "augmentation": false
+      },
+      "fit_ms": 1027.5653750286438,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2523,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1154,
+          "accepted_correct": 1148,
+          "accepted_accuracy": 0.9948006932409013,
+          "coverage": 0.38530884808013355,
+          "oos_false_accept": 1,
+          "threshold": 0.9997603297233582
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2258,
+          "accepted_accuracy": 0.9424040066777963,
+          "coverage": 0.8,
+          "oos_false_accept": 17,
+          "threshold": 0.8376944065093994
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2523,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1130,
+          "accepted_correct": 1124,
+          "accepted_accuracy": 0.9946902654867257,
+          "coverage": 0.3772954924874791,
+          "oos_false_accept": 1,
+          "threshold": 0.999751627445221
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2252,
+          "accepted_accuracy": 0.9398998330550918,
+          "coverage": 0.8,
+          "oos_false_accept": 17,
+          "threshold": 0.7837510108947754
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-tfidf-logistic",
+        "features": 27253,
+        "C": 1.0,
+        "max_iter": 1000
+      },
+      "fit_ms": 3759.426250006072,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2603,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 144,
+          "accepted_correct": 144,
+          "accepted_accuracy": 1.0,
+          "coverage": 0.048080133555926545,
+          "oos_false_accept": 1,
+          "threshold": 0.8372681086168097
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2243,
+          "accepted_accuracy": 0.9361435726210351,
+          "coverage": 0.8,
+          "oos_false_accept": 14,
+          "threshold": 0.1098814105264214
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2603,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 141,
+          "accepted_correct": 141,
+          "accepted_accuracy": 1.0,
+          "coverage": 0.04707846410684474,
+          "oos_false_accept": 1,
+          "threshold": 0.8282848352047905
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2278,
+          "accepted_accuracy": 0.9507512520868113,
+          "coverage": 0.8,
+          "oos_false_accept": 19,
+          "threshold": 0.0537963263767505
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "sklearn-tfidf-logistic",
+        "features": 27253,
+        "C": 10.0,
+        "max_iter": 1000
+      },
+      "fit_ms": 7339.513125014491,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2692,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 312,
+          "accepted_correct": 311,
+          "accepted_accuracy": 0.9967948717948718,
+          "coverage": 0.10417362270450752,
+          "oos_false_accept": 1,
+          "threshold": 0.9848091368039122
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2317,
+          "accepted_accuracy": 0.9670283806343907,
+          "coverage": 0.8,
+          "oos_false_accept": 8,
+          "threshold": 0.44858779126537035
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2692,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 349,
+          "accepted_correct": 348,
+          "accepted_accuracy": 0.997134670487106,
+          "coverage": 0.11652754590984975,
+          "oos_false_accept": 1,
+          "threshold": 0.9804438371068751
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2336,
+          "accepted_accuracy": 0.9749582637729549,
+          "coverage": 0.8,
+          "oos_false_accept": 13,
+          "threshold": 0.3225140532651871
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 2048,
+        "regularization": 0.1,
+        "augmentation": false
+      },
+      "fit_ms": 297.7847500005737,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1510,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 679,
+          "accepted_correct": 673,
+          "accepted_accuracy": 0.9911634756995582,
+          "coverage": 0.3464285714285714,
+          "oos_false_accept": 0,
+          "threshold": 0.9937428832054138
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1355,
+          "accepted_accuracy": 0.8641581632653061,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.46532493829727173
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1510,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 655,
+          "accepted_correct": 649,
+          "accepted_accuracy": 0.9908396946564886,
+          "coverage": 0.33418367346938777,
+          "oos_false_accept": 0,
+          "threshold": 0.9933687448501587
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1363,
+          "accepted_accuracy": 0.8692602040816326,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.28746068477630615
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 2048,
+        "regularization": 1.0,
+        "augmentation": false
+      },
+      "fit_ms": 281.9500840269029,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1533,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 677,
+          "accepted_correct": 671,
+          "accepted_accuracy": 0.9911373707533235,
+          "coverage": 0.3454081632653061,
+          "oos_false_accept": 0,
+          "threshold": 0.9965384006500244
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1370,
+          "accepted_accuracy": 0.8737244897959183,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5071783661842346
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1533,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 702,
+          "accepted_correct": 695,
+          "accepted_accuracy": 0.99002849002849,
+          "coverage": 0.35816326530612247,
+          "oos_false_accept": 0,
+          "threshold": 0.9947062730789185
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1373,
+          "accepted_accuracy": 0.8756377551020408,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.3285622298717499
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 4096,
+        "regularization": 0.1,
+        "augmentation": false
+      },
+      "fit_ms": 792.842417024076,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1530,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 341,
+          "accepted_correct": 338,
+          "accepted_accuracy": 0.9912023460410557,
+          "coverage": 0.1739795918367347,
+          "oos_false_accept": 0,
+          "threshold": 0.9990471005439758
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1375,
+          "accepted_accuracy": 0.8769132653061225,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5218394994735718
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1530,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 439,
+          "accepted_correct": 435,
+          "accepted_accuracy": 0.9908883826879271,
+          "coverage": 0.2239795918367347,
+          "oos_false_accept": 0,
+          "threshold": 0.9979754686355591
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1378,
+          "accepted_accuracy": 0.8788265306122449,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.3823193907737732
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "system1-tfidf-ridge",
+        "features": 4096,
+        "regularization": 1.0,
+        "augmentation": false
+      },
+      "fit_ms": 728.562125004828,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1575,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 643,
+          "accepted_correct": 637,
+          "accepted_accuracy": 0.9906687402799378,
+          "coverage": 0.3280612244897959,
+          "oos_false_accept": 0,
+          "threshold": 0.9984315037727356
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1405,
+          "accepted_accuracy": 0.8960459183673469,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5606757402420044
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1575,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 663,
+          "accepted_correct": 657,
+          "accepted_accuracy": 0.9909502262443439,
+          "coverage": 0.338265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.997818648815155
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1411,
+          "accepted_accuracy": 0.8998724489795918,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.3984360098838806
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-tfidf-logistic",
+        "features": 17775,
+        "C": 1.0,
+        "max_iter": 1000
+      },
+      "fit_ms": 2190.3915419825353,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1605,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 377,
+          "accepted_correct": 374,
+          "accepted_accuracy": 0.9920424403183024,
+          "coverage": 0.1923469387755102,
+          "oos_false_accept": 0,
+          "threshold": 0.4739604531215679
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1385,
+          "accepted_accuracy": 0.8832908163265306,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.09895949209926633
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1605,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 445,
+          "accepted_correct": 441,
+          "accepted_accuracy": 0.9910112359550561,
+          "coverage": 0.22704081632653061,
+          "oos_false_accept": 0,
+          "threshold": 0.38264941935957975
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1413,
+          "accepted_accuracy": 0.9011479591836735,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.030558844348468096
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "sklearn-tfidf-logistic",
+        "features": 17775,
+        "C": 10.0,
+        "max_iter": 1000
+      },
+      "fit_ms": 3776.245334011037,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1685,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 600,
+          "accepted_correct": 594,
+          "accepted_accuracy": 0.99,
+          "coverage": 0.30612244897959184,
+          "oos_false_accept": 0,
+          "threshold": 0.8660165085609095
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1464,
+          "accepted_accuracy": 0.9336734693877551,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.342436488439241
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1685,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 653,
+          "accepted_correct": 647,
+          "accepted_accuracy": 0.9908116385911179,
+          "coverage": 0.33316326530612245,
+          "oos_false_accept": 0,
+          "threshold": 0.8155557291397977
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1482,
+          "accepted_accuracy": 0.9451530612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.1909891719596373
+        }
+      }
+    }
+  ]
+}

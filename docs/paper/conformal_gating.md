@@ -1,6 +1,9 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.0.3 · 20 September 2026 · Implementation notes, not new theorems**
+**System 1 1.0.3 + current source changes · 21 September 2026 · Implementation notes, not new theorems**
+
+This note follows the source checkout, including the
+[unreleased optional teaching method](../../CHANGELOG.md#unreleased).
 
 This note describes the mathematics used by the runtime and the assumptions
 needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the
@@ -62,6 +65,10 @@ New examples-only categorical/Boolean skills use LAC. Legacy and schema-augmente
 skills use APS. Format-v2 artifacts record this choice, while v1 files retain
 legacy APS semantics. Both score functions lie in $[0,1]$ for valid normalized
 probabilities; insufficient evidence conservatively includes all labels.
+
+The current source computes p-value tail counts using left insertion into sorted
+calibration scores. Equal scores remain included, preserving the prior inclusive
+tail-count definition for both LAC and APS.
 
 The compiler separates temperature fitting from conformal scoring so that the
 probability transformation is not fitted on the same labels used to claim set
@@ -161,6 +168,13 @@ artifacts. Strict inference requests review until separate recalibration. A
 teacher label is fallible supervision, so one correction should not be described
 as making every unseen related case correct.
 
+The source compiler's optional logistic choice fit instead minimizes summed
+cross-entropy plus $\lambda\|W\|_F^2/2$, with an unpenalized bias, using SciPy
+L-BFGS-B at teaching time. Stored coefficients are scaled by 0.25 to match the
+runtime's choice-logit scaling. NumPy inference and separate calibration are
+unchanged. The ridge batch-equivalence formulas above do not describe incremental
+logistic fitting: retain corrections and recompile to preserve that objective.
+
 ## 5. Reading the evidence
 
 The [three-workload report](../../benchmarks/quality/workloads/README.md) records
@@ -168,3 +182,7 @@ measured quality, errors, timings, baseline behavior and failed takeovers.
 It does not experimentally prove exchangeability or the conditions of the
 prototype identity. Deterministic tool permissions and signed audit records are
 separate software mechanisms; see [deployment boundaries](../deployment.md).
+The [n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md) is a separate
+selective-classification experiment with learned review policies and failed
+quality gates. Its development scores are not conformal guarantees or independent
+confirmation of accepted correctness or unfamiliar-input rejection.

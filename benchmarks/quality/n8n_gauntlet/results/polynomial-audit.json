@@ -1,0 +1,108 @@
+{
+  "scope": "record arithmetic, source and artifact audit; no model evaluation",
+  "qualified": false,
+  "original_run_source_revision": "05951d27521407bf602346e19ab181f3921c8362",
+  "source_sha256": "f1f1db5f7264cde6b152b26405dba66e7e9aba06d0eaba688bed06b78403fb7b",
+  "runtime_sha256": "cbf7fb6580e3f0cd63509d64e0e75203d642dd1c39086804a5458ed53119648f",
+  "frozen_files_unchanged": 125,
+  "numerical_functions_unchanged_after_ci_import_repair": true,
+  "stronger_prior_baseline_comparisons_preserved": true,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "condition": "linear-control",
+      "original_development_rows": 3095,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 3.155336445015422e-06,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "condition": "quadratic",
+      "original_development_rows": 3095,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 4.783543357644859e-06,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "condition": "linear-control",
+      "original_development_rows": 3095,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 3.885780586188048e-16,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "condition": "quadratic",
+      "original_development_rows": 3095,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 3.3306690738754696e-16,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "condition": "linear-control",
+      "original_development_rows": 1960,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 5.883697608455307e-06,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "condition": "quadratic",
+      "original_development_rows": 1960,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 7.1597816271862236e-06,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "condition": "linear-control",
+      "original_development_rows": 1960,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 3.3306690738754696e-16,
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "condition": "quadratic",
+      "original_development_rows": 1960,
+      "all_groups_labels_routing_and_counts_preserved": true,
+      "intervals_and_latencies_recomputed": true,
+      "public_child_and_parent_hashes_verified": true,
+      "max_selection_runtime_score_difference": 3.3306690738754696e-16,
+      "teacher_calls": 0,
+      "errors": 0
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "scope": "real n8n development integration; no quality qualification or teacher-disconnection claim",
+  "n8n_version": "2.39.10",
+  "service_down": true,
+  "scenarios": [
+    {
+      "name": "service_unavailable",
+      "inputs": [
+        {
+          "id": "timer",
+          "text": "Please set a timer for seven minutes."
+        },
+        {
+          "id": "translate",
+          "text": "Translate good morning into French."
+        }
+      ],
+      "outputs": [
+        {
+          "id": "timer",
+          "text": "Please set a timer for seven minutes.",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        },
+        {
+          "id": "translate",
+          "text": "Translate good morning into French.",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        }
+      ],
+      "total_round_trip_ms": 47.66408400610089
+    }
+  ],
+  "unauthorized_status": 403
+}

@@ -1,0 +1,83 @@
+{
+  "scope": "arithmetic and source preservation audit; no model evaluation",
+  "qualified": false,
+  "report_sha256": "4924dc076ed85b0ba4fe2238e2c6a81e8585ca31b9c8a8e2e4c809e790808652",
+  "freeze_commit": "9a8e90f590db02ba4a39fd0c5dcec5a05ac59739",
+  "frozen_files_unchanged": 125,
+  "original_frozen_files_unchanged": 109,
+  "original_failed_report_sha256": "a94d8a138f257790f8774788f9aa8203fb148026e6e7b7488d334192889e5969",
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "original_rows_preserved": 5500,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "all_counts_intervals_gates_and_timings_recomputed": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 3861,
+        "denominator": 3953,
+        "fraction": 0.976726536807488,
+        "wilson95": [
+          0.9715432086002767,
+          0.980984214907695
+        ]
+      },
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "original_rows_preserved": 5500,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "all_counts_intervals_gates_and_timings_recomputed": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 1354,
+        "denominator": 1365,
+        "fraction": 0.991941391941392,
+        "wilson95": [
+          0.985627366681905,
+          0.9954942901365863
+        ]
+      },
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "original_rows_preserved": 3080,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "all_counts_intervals_gates_and_timings_recomputed": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 2493,
+        "denominator": 2525,
+        "fraction": 0.9873267326732673,
+        "wilson95": [
+          0.982164297914229,
+          0.9910086115285276
+        ]
+      },
+      "teacher_calls": 0,
+      "errors": 0
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "original_rows_preserved": 3080,
+      "all_labels_and_texts_identical_to_pinned_test": true,
+      "all_counts_intervals_gates_and_timings_recomputed": true,
+      "all_accepted_accuracy_including_unfamiliar": {
+        "numerator": 1415,
+        "denominator": 1422,
+        "fraction": 0.9950773558368495,
+        "wilson95": [
+          0.9898736194133808,
+          0.997613447461887
+        ]
+      },
+      "teacher_calls": 0,
+      "errors": 0
+    }
+  ]
+}

@@ -58,6 +58,7 @@ jobs:
       - name: Build and validate distributions
         run: |
           uv build
+          python scripts/check_distributions.py dist
           uvx twine check --strict dist/*
       - name: Smoke test installed wheel outside the checkout
         run: |

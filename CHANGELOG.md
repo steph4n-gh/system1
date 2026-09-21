@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+- Sync the current guides, papers and indexes with the teaching labs and unqualified n8n results. Distinguish source-only features and encoder-backed experiments from the published default runtime; validate repository-main links and distribution contents in release checks as well as CI.
+- Keep the full n8n research artifacts and raw results in Git, outside Python distributions. Validate archive contents and size in CI, including the runnable teaching example in the source distribution.
+- Add experimental n8n workflows with item pairing, explicit review, local-service failure handling and a real teacher-disconnection rehearsal. The [full-scope quality gauntlet](benchmarks/quality/n8n_gauntlet/README.md) remains unqualified: accepted accuracy and unfamiliar-input rejection still fail. Preserve all experiments, exact artifacts, matched baselines, costs and failures; no independent confirmation or qualified recording is claimed.
+- Add opt-in `choice_solver="logistic"` to the Python compiler for choice skills. SciPy is an optional teaching dependency; saved heads retain the existing NumPy runtime, calibration and portable format. Keep ridge as the default and record failed full-scope development experiments for the n8n quality gauntlet.
+- Honor `record_receipt=False` on fresh decisions as well as cache hits, serialize absent receipts as null, and skip unused cache digests. Compute conformal tail counts by binary search while preserving inclusive ties and prediction sets.
+
+- Add an experimental teach-by-doing document workspace: filing actions become explicit examples, corrections invalidate stale skills, separate checks calibrate review, and lessons/actions/skills export for reuse. Include complete authored sample evidence: 29/30 filing guesses correct, 27/27 accepted ordinary suggestions correct, and one of six unusual requests incorrectly accepted. No new core API or dependency.
+
+- Make the takeover lifecycle test fail on any post-promotion teacher call, replacing a brittle single-call wall-clock limit. Retain the separate warm-latency checks.
+
+- Add real Pokémon Red/Blue potion control, paired save-state replays in the teaching GUI, and 144 measured controller runs across 18 explicitly edited battle fixtures. Preserve the modest 6/18 → 7/18 gain, strict review results, resource costs and regression; keep the move skill and prior simulator evidence unchanged.
+
+- Add a two-skill Pokémon teaching lab with live healing correction, equal-budget original/corrected single-model baselines, strict review runs and retained regressions. Include a bounded real Red/Blue ROM controller with observed RAM facts and no demo defaults; add Pillow to the optional gameboy extra for its live screen.
+- Improve the courier objective lesson and measure strict completion on a fresh cohort: 22/40 → 31/40, and 19/40 → 28/40 with corrected terrain. Preserve the original experiment and its evidence.
+
+- Bound an existing concurrent reader/writer regression workload so a writer timeout cannot leave CI waiting forever for unbounded readers. Use synchronized startup, 1,024 reads and all 30 checked updates.
+
+- Add an experimental courier teaching playground: three saved skills, live isolated terrain corrections, held-out mission composition, matched retained-label baselines and complete recorded evidence. Preserve the initial danger-penalty failure and gate movement using learned terrain eligibility. Keep review limitations explicit; no new core API or runtime dependency.
+
 - Add a three-player Snake GUI comparing a taught System1 skill, real Laya-MLX and Jev. Include timed and equal-move modes, explicit planner/shield accounting, replay without API access, and four complete measured traces.
 - Add a reproducible public SpamAssassin teaching recipe requiring no mailbox or API credentials. Freeze source hashes and disjoint group splits, compare a conventional baseline offline, and retain both the failed collection-shift result (89.9% accepted correctness) and the subsequent representative split (603/618 accepted answers correct, 0.216 ms median). Keep this binary task distinct from the seven-category Inbox Zero pilot.
 

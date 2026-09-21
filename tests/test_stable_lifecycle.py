@@ -130,6 +130,46 @@ def test_cache_receipts_bind_the_current_request_and_respect_opt_out():
     assert engine.decide("different request", embedding=embedding, record_receipt=False).receipt is None
 
 
+def test_uncached_receipt_opt_out_skips_signing_and_cache_digests(monkeypatch):
+    import json
+    import system1.engine as engine_module
+
+    skill = constant_skill()
+    engine = System1Engine(skill.schema, model=skill, use_cache=False)
+
+    def unexpected(*args, **kwargs):
+        raise AssertionError("Disabled receipt/cache work was executed")
+
+    monkeypatch.setattr(engine, "_model_digest", unexpected)
+    monkeypatch.setattr(engine, "_projector_digest", unexpected)
+    monkeypatch.setattr(engine, "_calibration_digest", unexpected)
+    monkeypatch.setattr(engine_module, "create_decision_receipt", unexpected)
+    result = engine.decide("fresh request", record_receipt=False)
+    assert result.receipt is None
+    assert result.to_dict()["receipt"] is None
+    assert json.loads(result.to_json())["receipt"] is None
+    assert result.values["route"] == "billing"
+
+
+@pytest.mark.parametrize("method", ["lac", "aps"])
+def test_conformal_tail_counts_preserve_ties_and_option_order(method):
+    predictor = ConformalPredictor("route", ["last", "first", "middle"], score_method=method)
+    predictor.calibration_scores = np.array([0, .25, .25, .5, .75, .75, 1.0])
+    predictor.is_calibrated = True
+    for probabilities in ([.25, .5, .25], [0, 1, 0], [1 / 3] * 3):
+        order = np.argsort(-np.asarray(probabilities))
+        cumulative = {}
+        mass = 0.0
+        for i in order:
+            mass += probabilities[i]
+            cumulative[i] = mass
+        expected = {}
+        for i, option in enumerate(predictor.options):
+            score = 1 - probabilities[i] if method == "lac" else cumulative[i]
+            expected[option] = (1 + sum(value >= score for value in predictor.calibration_scores)) / 8
+        assert predictor.predict_set(probabilities, strict=True).p_values == expected
+
+
 def test_new_artifacts_record_scoring_format_and_legacy_aps_still_loads():
     import json
     import struct

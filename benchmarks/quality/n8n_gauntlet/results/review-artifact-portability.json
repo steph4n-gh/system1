@@ -1,0 +1,26 @@
+{
+  "scope": "public saved review-artifact portability checks; development inputs only",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "manifest_sha256": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+      "identical_reloaded_decisions": 100,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "manifest_sha256": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+      "identical_reloaded_decisions": 100,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

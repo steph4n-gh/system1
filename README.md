@@ -6,8 +6,9 @@
 
 **System 1 is not an LLM.** Show it examples of a repeatable decision—such as
 which team should receive a message—then check the skill and reuse it locally.
-It uses small numerical decision heads: no language-model weights to download,
-no token generation, and no GPU required. Optional **MLX support** runs
+Its default path uses small numerical decision heads and fixed text features:
+no language-model weights to download, no token generation, and no GPU required.
+Optional **MLX support** runs
 decision-head matrix operations on Apple Silicon.
 
 **Choose a decision → show examples → check answers → save and reuse → improve.**
@@ -23,8 +24,10 @@ decision-head matrix operations on Apple Silicon.
 
 **Small skills make fast local decisions.** After teaching, System 1 applies a
 compact numerical decision head. Each request avoids a teacher API round trip
-and language-model token generation. The saved skill needs no language-model
-weights or model server.
+and language-model token generation. The default saved skill needs no
+language-model weights or model server. Some optional research adapters use
+pretrained text encoders; their reports count those separate weights and encoding
+costs. They still produce bounded decisions rather than generated text.
 
 | Benefit | Measured on our three public-data workloads |
 |---|---|
@@ -54,6 +57,12 @@ python -m pip install -e .
 ```
 
 On Windows, activate the environment with `.venv\Scripts\activate` instead.
+
+**Prefer to teach by doing?** Run `python -m examples.teaching_by_doing` and open
+http://127.0.0.1:8791/. File fictional document cards into folders; each choice
+becomes a lesson. Teach, try different documents, correct earlier choices and
+download the saved skill. The [document workspace](examples/teaching_by_doing/README.md)
+explains the flow and reports its sample results, including mistakes.
 
 ### 1. Choose one decision
 
@@ -241,6 +250,38 @@ for identity, network and enforcement responsibilities.
 
 ## Examples and research
 
+Run these labs from a repository checkout. Full n8n research artifacts and raw
+results remain in Git and are excluded from the Python package distributions.
+
+The [n8n experiment](benchmarks/quality/n8n_gauntlet/README.md) tests all 150 CLINC
+and 77 BANKING77 intents against preregistered quality, review and latency targets.
+Its [real n8n development workflow](benchmarks/quality/n8n_gauntlet/N8N.md) loads a
+saved skill and preserves explicit review on uncertainty or service failure.
+The [first held-out evaluation](benchmarks/quality/n8n_gauntlet/results/official-test.md)
+failed qualification: CLINC accepted too many unfamiliar requests, and banking
+missed the accepted-accuracy target. Both passed coverage and latency. The
+[later full-scope regression](benchmarks/quality/n8n_gauntlet/results/latest-regression.md)
+still misses accepted accuracy on both workloads and unfamiliar rejection on
+CLINC. Subsequent development gains do not establish qualification; independent
+confirmation and the qualified recording remain outstanding. A
+[development rehearsal](benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
+now verifies real Gemini fallback, then local decisions and explicit review after
+the teacher process is stopped. It does not establish quality qualification.
+
+The [teaching playground](examples/gaming/skill_playground/README.md) combines
+three saved skills into a courier agent. Teach a terrain correction live and
+watch it reuse its other abilities on a withheld mission. The
+[40-map experiment](examples/gaming/skill_playground/RESULTS.md) reports
+composition, correction, baselines and review limits; it is an experimental
+example with explicit application wiring.
+
+The [Pokémon teaching lab](examples/gaming/pokemon_teaching/README.md) applies the
+same idea to move selection and healing. It includes live correction, a constructed
+survival test (13/60 → 44/60 wins), broader results and regressions, and real
+Pokémon Red potion control. Identical edited battle saves give a smaller real-engine
+gain: 6/18 → 7/18 wins, with one regression and more potion use. The GUI lets you
+replay the same save before and after teaching. This remains a bounded experiment.
+
 The [Snake arena](examples/gaming/snake_arena/README.md) puts System1, Laya-MLX
 and Jev side by side in a live GUI. Replay the published runs without an API key,
 or run fresh comparisons. In the recorded 30-second race, System1 filled the board
@@ -259,6 +300,11 @@ not peer-reviewed publications. Established numerical methods power the product;
 the practical value is the complete path from examples to a checked local skill.
 
 ## Release and development
+
+This README follows the current source checkout. The document workspace, optional
+logistic teaching method and latest experimental labs are source changes listed
+under [Unreleased](CHANGELOG.md#unreleased); merging them does not publish a new
+PyPI version.
 
 **Version 1.0.3:** authenticated audit receipts, checked ledger inclusion, bounded
 saved-skill loading and registered gRPC schemas. Includes the numeric teaching

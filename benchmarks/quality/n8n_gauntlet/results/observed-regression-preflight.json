@@ -1,0 +1,3359 @@
+{
+  "scope": "development evaluator preflight",
+  "qualified": false,
+  "independent_confirmation": false,
+  "all_system1_point_targets_pass": false,
+  "freeze_commit": null,
+  "freeze_sha256": "07d914688cb90fbed5bfbdb3fea46574feb709fd2a56e5f5f90a49e8a0754f4d",
+  "criteria": {
+    "supported_coverage_min": 0.8,
+    "accepted_accuracy_min": 0.99,
+    "clinc_oos_false_acceptance_max": 0.01,
+    "warm_adapter_p95_ms_strict_max": 5
+  },
+  "environment": {
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.5",
+    "cpu": "Apple M4 Pro"
+  },
+  "packages": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "onnxruntime": "1.30.0",
+    "tokenizers": "0.22.2",
+    "threadpoolctl": "3.7.0"
+  },
+  "process_import_preflight_ms": 700.3908749902621,
+  "os_network_denial_errno": 1,
+  "results": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "candidate_sha256": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+      "manifest": {
+        "status": "unqualified-development-review-candidate",
+        "dataset": "clinc150",
+        "encoder": {
+          "name": "minilm",
+          "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+          "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+          "model_bytes": 23026053,
+          "pooling": "mean",
+          "tokenizer_bytes": 466247,
+          "runtime": "1.30.0",
+          "threads": 1,
+          "provider": "CPUExecutionProvider"
+        },
+        "files": {
+          "intent.s1m": "d0d757e7bd3d88e352cb930f3305e942de1baef496de5124e5c7223244ee7cca",
+          "scope.npz": "a25cf3b30a16bc2ae5fe0ee76210f98bd5ed61f3b3d61cf537a10225e9b303e2"
+        },
+        "categories": {
+          "accept_reservations": "accept reservations",
+          "account_blocked": "account blocked",
+          "alarm": "alarm",
+          "application_status": "application status",
+          "apr": "apr",
+          "are_you_a_bot": "are you a bot",
+          "balance": "balance",
+          "bill_balance": "bill balance",
+          "bill_due": "bill due",
+          "book_flight": "book flight",
+          "book_hotel": "book hotel",
+          "calculator": "calculator",
+          "calendar": "calendar",
+          "calendar_update": "calendar update",
+          "calories": "calories",
+          "cancel": "cancel",
+          "cancel_reservation": "cancel reservation",
+          "car_rental": "car rental",
+          "card_declined": "card declined",
+          "carry_on": "carry on",
+          "change_accent": "change accent",
+          "change_ai_name": "change ai name",
+          "change_language": "change language",
+          "change_speed": "change speed",
+          "change_user_name": "change user name",
+          "change_volume": "change volume",
+          "confirm_reservation": "confirm reservation",
+          "cook_time": "cook time",
+          "credit_limit": "credit limit",
+          "credit_limit_change": "credit limit change",
+          "credit_score": "credit score",
+          "current_location": "current location",
+          "damaged_card": "damaged card",
+          "date": "date",
+          "definition": "definition",
+          "direct_deposit": "direct deposit",
+          "directions": "directions",
+          "distance": "distance",
+          "do_you_have_pets": "do you have pets",
+          "exchange_rate": "exchange rate",
+          "expiration_date": "expiration date",
+          "find_phone": "find phone",
+          "flight_status": "flight status",
+          "flip_coin": "flip coin",
+          "food_last": "food last",
+          "freeze_account": "freeze account",
+          "fun_fact": "fun fact",
+          "gas": "gas",
+          "gas_type": "gas type",
+          "goodbye": "goodbye",
+          "greeting": "greeting",
+          "how_busy": "how busy",
+          "how_old_are_you": "how old are you",
+          "improve_credit_score": "improve credit score",
+          "income": "income",
+          "ingredient_substitution": "ingredient substitution",
+          "ingredients_list": "ingredients list",
+          "insurance": "insurance",
+          "insurance_change": "insurance change",
+          "interest_rate": "interest rate",
+          "international_fees": "international fees",
+          "international_visa": "international visa",
+          "jump_start": "jump start",
+          "last_maintenance": "last maintenance",
+          "lost_luggage": "lost luggage",
+          "make_call": "make call",
+          "maybe": "maybe",
+          "meal_suggestion": "meal suggestion",
+          "meaning_of_life": "meaning of life",
+          "measurement_conversion": "measurement conversion",
+          "meeting_schedule": "meeting schedule",
+          "min_payment": "min payment",
+          "mpg": "mpg",
+          "new_card": "new card",
+          "next_holiday": "next holiday",
+          "next_song": "next song",
+          "no": "no",
+          "nutrition_info": "nutrition info",
+          "oil_change_how": "oil change how",
+          "oil_change_when": "oil change when",
+          "oos": "oos",
+          "order": "order",
+          "order_checks": "order checks",
+          "order_status": "order status",
+          "pay_bill": "pay bill",
+          "payday": "payday",
+          "pin_change": "pin change",
+          "play_music": "play music",
+          "plug_type": "plug type",
+          "pto_balance": "pto balance",
+          "pto_request": "pto request",
+          "pto_request_status": "pto request status",
+          "pto_used": "pto used",
+          "recipe": "recipe",
+          "redeem_rewards": "redeem rewards",
+          "reminder": "reminder",
+          "reminder_update": "reminder update",
+          "repeat": "repeat",
+          "replacement_card_duration": "replacement card duration",
+          "report_fraud": "report fraud",
+          "report_lost_card": "report lost card",
+          "reset_settings": "reset settings",
+          "restaurant_reservation": "restaurant reservation",
+          "restaurant_reviews": "restaurant reviews",
+          "restaurant_suggestion": "restaurant suggestion",
+          "rewards_balance": "rewards balance",
+          "roll_dice": "roll dice",
+          "rollover_401k": "rollover 401k",
+          "routing": "routing",
+          "schedule_maintenance": "schedule maintenance",
+          "schedule_meeting": "schedule meeting",
+          "share_location": "share location",
+          "shopping_list": "shopping list",
+          "shopping_list_update": "shopping list update",
+          "smart_home": "smart home",
+          "spelling": "spelling",
+          "spending_history": "spending history",
+          "sync_device": "sync device",
+          "taxes": "taxes",
+          "tell_joke": "tell joke",
+          "text": "text",
+          "thank_you": "thank you",
+          "time": "time",
+          "timer": "timer",
+          "timezone": "timezone",
+          "tire_change": "tire change",
+          "tire_pressure": "tire pressure",
+          "todo_list": "todo list",
+          "todo_list_update": "todo list update",
+          "traffic": "traffic",
+          "transactions": "transactions",
+          "transfer": "transfer",
+          "translate": "translate",
+          "travel_alert": "travel alert",
+          "travel_notification": "travel notification",
+          "travel_suggestion": "travel suggestion",
+          "uber": "uber",
+          "update_playlist": "update playlist",
+          "user_name": "user name",
+          "vaccines": "vaccines",
+          "w2": "w2",
+          "weather": "weather",
+          "what_are_your_hobbies": "what are your hobbies",
+          "what_can_i_ask_you": "what can i ask you",
+          "what_is_your_name": "what is your name",
+          "what_song": "what song",
+          "where_are_you_from": "where are you from",
+          "whisper_mode": "whisper mode",
+          "who_do_you_work_for": "who do you work for",
+          "who_made_you": "who made you",
+          "yes": "yes"
+        },
+        "instructions": "Choose one supported intent. Unfamiliar requests require review.",
+        "alpha": 0.05,
+        "guard": "category-reliability",
+        "predicted_class_feature": true,
+        "reliability_threshold": 0.8990646761770904,
+        "base_intent_manifest_sha256": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+        "review_protocol_sha256": "00be02cbb0f4000e235d3afab2719aafacbb32af70641075053be05e84caac1c",
+        "review_config": {
+          "extra_negatives": 2000,
+          "predicted_class_feature": true,
+          "C": 0.1
+        },
+        "teaching_projection": "single-request"
+      },
+      "load_ms": 293.1599160656333,
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 2.1801459370180964,
+        "p95_ms": 2.585749956779182,
+        "max_ms": 2.681374899111688
+      },
+      "point_gates": {
+        "coverage_at_least_80": true,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": true,
+      "qualified": false,
+      "errors": 0,
+      "teacher_calls": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 17361680,
+      "external_encoder_bytes": 23492300,
+      "per_intent": {
+        "apr": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "change_language": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "direct_deposit": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "directions": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "gas_type": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meal_suggestion": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "measurement_conversion": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meeting_schedule": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "new_card": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_holiday": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_song": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_balance": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_used": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "timer": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "tire_pressure": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "w2": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "000d32d351934fcc1345ac0ed28834d7368e30846c33df0ad4e971b806179b9c",
+          "text": "switch language for me",
+          "truth": "change_language",
+          "latency_ms": 1.92641606554389,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "change_language",
+          "suggestion": "change_language",
+          "confidence": 0.9997929499898286,
+          "predictionSet": [
+            "change_language"
+          ],
+          "reliability": 0.997596523890971,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "0017e5a82724e761e388433f69b724ea1a976a60164a7cbbfc5726903a46418d",
+          "text": "how many pto days are available",
+          "truth": "pto_balance",
+          "latency_ms": 2.1711249137297273,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "pto_balance",
+          "suggestion": "pto_balance",
+          "confidence": 0.8043541254865628,
+          "predictionSet": [
+            "pto_balance"
+          ],
+          "reliability": 0.9643768926432951,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "00224bbd1367371db0a325c8828d1620b395752710a38586edbb06047eea5075",
+          "text": "how do i get to new york by bus",
+          "truth": "directions",
+          "latency_ms": 2.2470830008387566,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "directions",
+          "suggestion": "directions",
+          "confidence": 0.9969514023018203,
+          "predictionSet": [
+            "directions"
+          ],
+          "reliability": 0.9792579620955298,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "005b31d73e295d7f6669c586ef9d436753aba5fcb01ac3fd29eb181afbc7fa1c",
+          "text": "where's my w-2 tax form",
+          "truth": "w2",
+          "latency_ms": 2.1358750527724624,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "w2",
+          "suggestion": "w2",
+          "confidence": 0.9999706171895366,
+          "predictionSet": [
+            "w2"
+          ],
+          "reliability": 0.9996073796557935,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "006649b611bf70f4c388f6d4116c5afc1ab639cdede6eb633eabdbcbbc339cb0",
+          "text": "what kind of gas does my car need",
+          "truth": "gas_type",
+          "latency_ms": 2.057082951068878,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "gas_type",
+          "suggestion": "gas_type",
+          "confidence": 0.9998405914553868,
+          "predictionSet": [
+            "gas_type"
+          ],
+          "reliability": 0.9996721869334292,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "0075a5e2c78e9d65a5449fde26f5f7ec8adacadf7fbb0025430e87443b6c3cff",
+          "text": "what is the total number of pints in two quarts",
+          "truth": "measurement_conversion",
+          "latency_ms": 2.55387497600168,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "measurement_conversion",
+          "suggestion": "measurement_conversion",
+          "confidence": 0.9854317303326979,
+          "predictionSet": [
+            "measurement_conversion"
+          ],
+          "reliability": 0.9931489646067446,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "0083b1f18b98bfb10d9ef587a23ed3622a5c8d5d8a8409d82e64766451285fd2",
+          "text": "what kind of meal should i eat from thailand",
+          "truth": "meal_suggestion",
+          "latency_ms": 2.3065420100465417,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "meal_suggestion",
+          "suggestion": "meal_suggestion",
+          "confidence": 0.9961775676601258,
+          "predictionSet": [
+            "meal_suggestion"
+          ],
+          "reliability": 0.9977992287460281,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "00854d60091573b5e24f53565f22e7000ad234d1e1cacd90520f1e9d402c31ee",
+          "text": "needing you to play the next song",
+          "truth": "next_song",
+          "latency_ms": 1.941166934557259,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "next_song",
+          "suggestion": "next_song",
+          "confidence": 0.9931091688244598,
+          "predictionSet": [
+            "next_song"
+          ],
+          "reliability": 0.9953514172740089,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "00c053d435db7052caff8f821ddc486e3c6f9200b95ec3d6621ad44af145b83e",
+          "text": "how many days have i taken off",
+          "truth": "pto_used",
+          "latency_ms": 2.1300000371411443,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "pto_used",
+          "suggestion": "pto_used",
+          "confidence": 0.999272583569019,
+          "predictionSet": [
+            "pto_used"
+          ],
+          "reliability": 0.9991632605870119,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "00c56508548847230b47fb6761ce97cbcaf8e50379354f47403311d9cf2aa30b",
+          "text": "what is my card's apr",
+          "truth": "apr",
+          "latency_ms": 2.0933339837938547,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "apr",
+          "suggestion": "apr",
+          "confidence": 0.9999327015461682,
+          "predictionSet": [
+            "apr"
+          ],
+          "reliability": 0.9997051041424141,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "00dbfcf112a849cebe9bd2ec0f75759a8261ed3e5f8ccae44aec1c3efd3a017f",
+          "text": "i want to know when is the next holiday here",
+          "truth": "next_holiday",
+          "latency_ms": 2.1891669603064656,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "next_holiday",
+          "suggestion": "next_holiday",
+          "confidence": 0.9998167147123617,
+          "predictionSet": [
+            "next_holiday"
+          ],
+          "reliability": 0.9996191967293169,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "00df5514a2aae064dbf2fb9b4a888ecddeb00a4d101c24a0eb993fbd11171867",
+          "text": "how do i go about getting direct deposit in my usaa account",
+          "truth": "direct_deposit",
+          "latency_ms": 2.4093749234452844,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "direct_deposit",
+          "suggestion": "direct_deposit",
+          "confidence": 0.9922309473028826,
+          "predictionSet": [
+            "direct_deposit"
+          ],
+          "reliability": 0.9877738328882559,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "00e479413d687c792e57ec29177475604004443c3aaaea34e4c459180069943b",
+          "text": "could you set up a timer for me",
+          "truth": "timer",
+          "latency_ms": 2.1564170019701123,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.999095789474058,
+          "predictionSet": [
+            "timer"
+          ],
+          "reliability": 0.9992887001001018,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "00f16f24b194c712daf331c5c6b0f1896be53daa7c11bf2277a6efb884712ff6",
+          "text": "please check my tires and let me know if i have sufficient air in them",
+          "truth": "tire_pressure",
+          "latency_ms": 2.681374899111688,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "tire_pressure",
+          "suggestion": "tire_pressure",
+          "confidence": 0.998760236485483,
+          "predictionSet": [
+            "tire_pressure"
+          ],
+          "reliability": 0.9976091817010715,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "013b6a0dfbbf206862cb82e5a9f04f5e269309ba37c503901b8e9acf9bfb2346",
+          "text": "i would like to know more about getting a new credit card",
+          "truth": "new_card",
+          "latency_ms": 2.2321250289678574,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "new_card",
+          "suggestion": "new_card",
+          "confidence": 0.9968748007017483,
+          "predictionSet": [
+            "new_card"
+          ],
+          "reliability": 0.9976411867823168,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "0145ea42a25b4338ab385e8b6ebedf616982c0935e3dd88240622018dffd2f0f",
+          "text": "do i have any meetings coming up with dan",
+          "truth": "meeting_schedule",
+          "latency_ms": 2.2484170040115714,
+          "candidate": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+          "needsReview": false,
+          "category": "meeting_schedule",
+          "suggestion": "meeting_schedule",
+          "confidence": 0.9887206625501638,
+          "predictionSet": [
+            "meeting_schedule"
+          ],
+          "reliability": 0.9884592454347315,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "candidate_sha256": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+      "manifest": {
+        "status": "unqualified-development-matched-review-baseline",
+        "dataset": "clinc150",
+        "kind": "sklearn-tfidf-logistic",
+        "C": 10.0,
+        "policy": "reliability",
+        "gate_C": 1.0,
+        "threshold": 0.9972362156051668,
+        "fit_rows": 12019,
+        "calibration_rows": 3020,
+        "fit_ms": 7560.055166948587,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true,
+        "max_iter": 1000,
+        "categories": {
+          "accept_reservations": "accept reservations",
+          "account_blocked": "account blocked",
+          "alarm": "alarm",
+          "application_status": "application status",
+          "apr": "apr",
+          "are_you_a_bot": "are you a bot",
+          "balance": "balance",
+          "bill_balance": "bill balance",
+          "bill_due": "bill due",
+          "book_flight": "book flight",
+          "book_hotel": "book hotel",
+          "calculator": "calculator",
+          "calendar": "calendar",
+          "calendar_update": "calendar update",
+          "calories": "calories",
+          "cancel": "cancel",
+          "cancel_reservation": "cancel reservation",
+          "car_rental": "car rental",
+          "card_declined": "card declined",
+          "carry_on": "carry on",
+          "change_accent": "change accent",
+          "change_ai_name": "change ai name",
+          "change_language": "change language",
+          "change_speed": "change speed",
+          "change_user_name": "change user name",
+          "change_volume": "change volume",
+          "confirm_reservation": "confirm reservation",
+          "cook_time": "cook time",
+          "credit_limit": "credit limit",
+          "credit_limit_change": "credit limit change",
+          "credit_score": "credit score",
+          "current_location": "current location",
+          "damaged_card": "damaged card",
+          "date": "date",
+          "definition": "definition",
+          "direct_deposit": "direct deposit",
+          "directions": "directions",
+          "distance": "distance",
+          "do_you_have_pets": "do you have pets",
+          "exchange_rate": "exchange rate",
+          "expiration_date": "expiration date",
+          "find_phone": "find phone",
+          "flight_status": "flight status",
+          "flip_coin": "flip coin",
+          "food_last": "food last",
+          "freeze_account": "freeze account",
+          "fun_fact": "fun fact",
+          "gas": "gas",
+          "gas_type": "gas type",
+          "goodbye": "goodbye",
+          "greeting": "greeting",
+          "how_busy": "how busy",
+          "how_old_are_you": "how old are you",
+          "improve_credit_score": "improve credit score",
+          "income": "income",
+          "ingredient_substitution": "ingredient substitution",
+          "ingredients_list": "ingredients list",
+          "insurance": "insurance",
+          "insurance_change": "insurance change",
+          "interest_rate": "interest rate",
+          "international_fees": "international fees",
+          "international_visa": "international visa",
+          "jump_start": "jump start",
+          "last_maintenance": "last maintenance",
+          "lost_luggage": "lost luggage",
+          "make_call": "make call",
+          "maybe": "maybe",
+          "meal_suggestion": "meal suggestion",
+          "meaning_of_life": "meaning of life",
+          "measurement_conversion": "measurement conversion",
+          "meeting_schedule": "meeting schedule",
+          "min_payment": "min payment",
+          "mpg": "mpg",
+          "new_card": "new card",
+          "next_holiday": "next holiday",
+          "next_song": "next song",
+          "no": "no",
+          "nutrition_info": "nutrition info",
+          "oil_change_how": "oil change how",
+          "oil_change_when": "oil change when",
+          "oos": "oos",
+          "order": "order",
+          "order_checks": "order checks",
+          "order_status": "order status",
+          "pay_bill": "pay bill",
+          "payday": "payday",
+          "pin_change": "pin change",
+          "play_music": "play music",
+          "plug_type": "plug type",
+          "pto_balance": "pto balance",
+          "pto_request": "pto request",
+          "pto_request_status": "pto request status",
+          "pto_used": "pto used",
+          "recipe": "recipe",
+          "redeem_rewards": "redeem rewards",
+          "reminder": "reminder",
+          "reminder_update": "reminder update",
+          "repeat": "repeat",
+          "replacement_card_duration": "replacement card duration",
+          "report_fraud": "report fraud",
+          "report_lost_card": "report lost card",
+          "reset_settings": "reset settings",
+          "restaurant_reservation": "restaurant reservation",
+          "restaurant_reviews": "restaurant reviews",
+          "restaurant_suggestion": "restaurant suggestion",
+          "rewards_balance": "rewards balance",
+          "roll_dice": "roll dice",
+          "rollover_401k": "rollover 401k",
+          "routing": "routing",
+          "schedule_maintenance": "schedule maintenance",
+          "schedule_meeting": "schedule meeting",
+          "share_location": "share location",
+          "shopping_list": "shopping list",
+          "shopping_list_update": "shopping list update",
+          "smart_home": "smart home",
+          "spelling": "spelling",
+          "spending_history": "spending history",
+          "sync_device": "sync device",
+          "taxes": "taxes",
+          "tell_joke": "tell joke",
+          "text": "text",
+          "thank_you": "thank you",
+          "time": "time",
+          "timer": "timer",
+          "timezone": "timezone",
+          "tire_change": "tire change",
+          "tire_pressure": "tire pressure",
+          "todo_list": "todo list",
+          "todo_list_update": "todo list update",
+          "traffic": "traffic",
+          "transactions": "transactions",
+          "transfer": "transfer",
+          "translate": "translate",
+          "travel_alert": "travel alert",
+          "travel_notification": "travel notification",
+          "travel_suggestion": "travel suggestion",
+          "uber": "uber",
+          "update_playlist": "update playlist",
+          "user_name": "user name",
+          "vaccines": "vaccines",
+          "w2": "w2",
+          "weather": "weather",
+          "what_are_your_hobbies": "what are your hobbies",
+          "what_can_i_ask_you": "what can i ask you",
+          "what_is_your_name": "what is your name",
+          "what_song": "what song",
+          "where_are_you_from": "where are you from",
+          "whisper_mode": "whisper mode",
+          "who_do_you_work_for": "who do you work for",
+          "who_made_you": "who made you",
+          "yes": "yes"
+        },
+        "instructions": "Choose one supported intent. Unfamiliar requests require review.",
+        "files": {
+          "weights.npz": "af9e304fabac6275a74ca0c2f3eb09eec94969659a3bfc745093b524681d422f",
+          "vocabulary.json": "6564da59af1ec7f82a5749e0252470fc1c4e0c285ec0d0353aa41968fcd74115",
+          "prototypes.npz": "48d4a73c295573448accfd224ccbbc9796364ca1f72d2c927554a191b2f4ae92"
+        },
+        "parent_manifest_sha256": "fb844a77b105441a71a90b375cd73b0d37191a1d09f52149a6aa2dee533dcdb5",
+        "review_protocol_sha256": "b0ff03c2866f1a55cebd12fc0946145149be71522f973e73c5b4f969aa7e6c1a",
+        "predicted_class_feature": true,
+        "review_config": {
+          "kind": "matched-review",
+          "extra_negatives": 0,
+          "predicted_class_feature": true,
+          "C": 1.0
+        },
+        "base_artifact": "../clinc150-baseline",
+        "review_parameters": {
+          "mean": [
+            1.568076222527016,
+            0.6868410292327962,
+            1.5589704389011108,
+            0.5790220330305692,
+            0.21803837541357413,
+            0.43854010694470813,
+            0.19608367606090113
+          ],
+          "scale": [
+            1.9184937742764319,
+            0.3053335102591796,
+            1.36805142555671,
+            0.18739589333584128,
+            0.21972242705454814,
+            0.15195291077314102,
+            0.16026135127488716
+          ],
+          "gate_weights": [
+            [
+              2.0706631278590377,
+              1.2125877486921848,
+              1.2172377530571352,
+              0.40679733390000833,
+              0.4590424486145274,
+              -0.5846227956109081,
+              0.050448182399131486,
+              0.2365162738888441,
+              -0.6457918207117459,
+              0.4242522126814838,
+              0.2812359479124425,
+              0.15038512502841028,
+              -1.1911805062040162,
+              -0.3792024919524953,
+              0.5797879615570959,
+              0.04721795723080592,
+              0.6330330823283716,
+              -0.10553586012019944,
+              -0.7491618533335263,
+              0.037320764006963436,
+              0.05961608669787469,
+              0.29616630612216877,
+              -0.4147096869377956,
+              -0.0949538428688007,
+              0.5184789476902487,
+              0.6749841984865623,
+              0.3713161721248394,
+              0.054776053690711424,
+              1.3784757074142826,
+              0.6837433895654936,
+              -0.6328873837984458,
+              -0.1146604090046793,
+              0.4585815228852159,
+              -0.09385500528213525,
+              -0.29982678232003734,
+              -0.08823129056329775,
+              1.059852829486446,
+              0.18943049707948612,
+              -0.7937891938566755,
+              0.016323065261204552,
+              0.47543434313412175,
+              0.35957721083392313,
+              0.3930434702194827,
+              0.5356915252057075,
+              -0.1427025178492647,
+              -0.14915464308708018,
+              1.1860494461413729,
+              -0.06067337759518906,
+              -0.13528048227599374,
+              0.5599634662449318,
+              0.5421711902275002,
+              0.976632165758592,
+              -0.349822846031124,
+              -0.4032069825917409,
+              -0.29255989210418204,
+              -0.029810400582102714,
+              -0.328479445652826,
+              -0.5243703645396711,
+              1.1401071745538967,
+              -0.40301124945373856,
+              0.9816809786497529,
+              -0.5755149641045244,
+              0.3873528755267154,
+              -0.0076597424809961906,
+              0.31738147221284707,
+              -0.16772629801983335,
+              0.07619438725600318,
+              0.40766393181973415,
+              0.2418379733129053,
+              -0.1044974283727533,
+              -0.5713099901200996,
+              1.2011644793302547,
+              -0.6577510999537138,
+              -0.6107060222227015,
+              -0.40212077615859537,
+              -0.5106386269644021,
+              -0.8725795214713087,
+              -0.12148712931521398,
+              -0.2387737941589322,
+              0.8759572671260619,
+              0.08750692715363262,
+              -0.8452671008104186,
+              -0.6420775434969208,
+              -1.1182214092552474,
+              1.1470029682414116,
+              -0.20176031715168594,
+              -0.09260327309765518,
+              -4.183132588009243,
+              0.34027778136927816,
+              0.5781634566938881,
+              0.48211388250014564,
+              -0.4434233754112407,
+              0.04233217629886616,
+              0.5225450248901417,
+              -0.1741636252290808,
+              0.6624079752625013,
+              -1.0837660827743898,
+              1.2036070596811481,
+              -0.49599164167390286,
+              -0.4599012632431577,
+              0.44443714754617314,
+              1.0734254902785092,
+              -0.6163723250740514,
+              -1.1380452446738993,
+              -0.4167907262873852,
+              0.2407872977454279,
+              1.6310863364038422,
+              0.03790566734530399,
+              0.20620311474889336,
+              -0.7569569246973142,
+              0.6608116124767982,
+              -0.7845139934770492,
+              -0.4214345488213189,
+              0.6351522004112101,
+              0.044489556509369366,
+              0.41253640316329704,
+              1.1535931828636423,
+              -0.3880602421113381,
+              1.251127337479979,
+              -0.7428459994738558,
+              0.2256888914837579,
+              0.38745508401521356,
+              0.5806460863464813,
+              -0.13119484046224802,
+              0.45758725368316083,
+              1.2951015643710986,
+              0.3673359454903982,
+              0.9580627163228329,
+              -0.6546053042547078,
+              -1.00406965901514,
+              0.20910787371542408,
+              0.9624081067134304,
+              -0.6152210852974968,
+              1.2906351396501348,
+              0.03599672367042362,
+              -0.2588758436055674,
+              0.6389317393114566,
+              -0.14513874782776007,
+              -0.2185078118205275,
+              -0.5436952917181702,
+              -0.010182382741496692,
+              -0.00912166355661358,
+              -0.11834383978250394,
+              0.5252479560965799,
+              -1.13239070190228,
+              -0.4477726295739525,
+              0.25096328594923273,
+              -0.7164736095434634,
+              0.29242561440956044,
+              0.6190500357368444,
+              -0.5039953347110725,
+              -0.5356218390824223,
+              -0.732592283409968,
+              -1.2934256357180123,
+              0.5510324131505181,
+              0.09081256166582444,
+              -1.4090748832905609,
+              -0.25462376028083544
+            ]
+          ],
+          "gate_bias": [
+            4.482045293470992
+          ]
+        }
+      },
+      "load_ms": 88.52491690777242,
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 5,
+          "denominator": 16,
+          "fraction": 0.3125,
+          "wilson95": [
+            0.14164643854782039,
+            0.5559564416525933
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 5,
+          "denominator": 5,
+          "fraction": 1.0,
+          "wilson95": [
+            0.5655175352168251,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 15,
+          "denominator": 16,
+          "fraction": 0.9375,
+          "wilson95": [
+            0.7167126242970107,
+            0.9888806552353576
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 0.6550204707309604,
+        "p95_ms": 0.7747292402200401,
+        "max_ms": 0.8027920266613364
+      },
+      "point_gates": {
+        "coverage_at_least_80": false,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "errors": 0,
+      "teacher_calls": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 28709983,
+      "external_encoder_bytes": 0,
+      "per_intent": {
+        "apr": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "change_language": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "direct_deposit": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "directions": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "gas_type": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meal_suggestion": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "measurement_conversion": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meeting_schedule": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "new_card": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_holiday": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_song": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_balance": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_used": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "timer": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "tire_pressure": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "w2": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "000d32d351934fcc1345ac0ed28834d7368e30846c33df0ad4e971b806179b9c",
+          "text": "switch language for me",
+          "truth": "change_language",
+          "latency_ms": 0.8027920266613364,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "change_language",
+          "confidence": 0.8161640088620216,
+          "acceptance_score": 0.996507153643742,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "0017e5a82724e761e388433f69b724ea1a976a60164a7cbbfc5726903a46418d",
+          "text": "how many pto days are available",
+          "truth": "pto_balance",
+          "latency_ms": 0.602666987106204,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "pto_balance",
+          "confidence": 0.7063413418956659,
+          "acceptance_score": 0.8721083326523558,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "00224bbd1367371db0a325c8828d1620b395752710a38586edbb06047eea5075",
+          "text": "how do i get to new york by bus",
+          "truth": "directions",
+          "latency_ms": 0.6702500395476818,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": false,
+          "category": "directions",
+          "suggestion": "directions",
+          "confidence": 0.9516381846463359,
+          "acceptance_score": 0.9975313373133143,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "005b31d73e295d7f6669c586ef9d436753aba5fcb01ac3fd29eb181afbc7fa1c",
+          "text": "where's my w-2 tax form",
+          "truth": "w2",
+          "latency_ms": 0.584124936722219,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "w2",
+          "confidence": 0.9658102484968812,
+          "acceptance_score": 0.9951516078210336,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "006649b611bf70f4c388f6d4116c5afc1ab639cdede6eb633eabdbcbbc339cb0",
+          "text": "what kind of gas does my car need",
+          "truth": "gas_type",
+          "latency_ms": 0.676166033372283,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": false,
+          "category": "gas_type",
+          "suggestion": "gas_type",
+          "confidence": 0.9924714948953861,
+          "acceptance_score": 0.999645213062433,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "0075a5e2c78e9d65a5449fde26f5f7ec8adacadf7fbb0025430e87443b6c3cff",
+          "text": "what is the total number of pints in two quarts",
+          "truth": "measurement_conversion",
+          "latency_ms": 0.7132500177249312,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "calories",
+          "confidence": 0.10049771928906856,
+          "acceptance_score": 0.5768219487028354,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "0083b1f18b98bfb10d9ef587a23ed3622a5c8d5d8a8409d82e64766451285fd2",
+          "text": "what kind of meal should i eat from thailand",
+          "truth": "meal_suggestion",
+          "latency_ms": 0.6542500341311097,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "meal_suggestion",
+          "confidence": 0.3074538469121918,
+          "acceptance_score": 0.8848494970880586,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "00854d60091573b5e24f53565f22e7000ad234d1e1cacd90520f1e9d402c31ee",
+          "text": "needing you to play the next song",
+          "truth": "next_song",
+          "latency_ms": 0.655790907330811,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "next_song",
+          "confidence": 0.9723112183480371,
+          "acceptance_score": 0.9970728893031157,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "00c053d435db7052caff8f821ddc486e3c6f9200b95ec3d6621ad44af145b83e",
+          "text": "how many days have i taken off",
+          "truth": "pto_used",
+          "latency_ms": 0.6088330410420895,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": false,
+          "category": "pto_used",
+          "suggestion": "pto_used",
+          "confidence": 0.9905716258473849,
+          "acceptance_score": 0.9992019389174912,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "00c56508548847230b47fb6761ce97cbcaf8e50379354f47403311d9cf2aa30b",
+          "text": "what is my card's apr",
+          "truth": "apr",
+          "latency_ms": 0.7653749780729413,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": false,
+          "category": "apr",
+          "suggestion": "apr",
+          "confidence": 0.99345803741108,
+          "acceptance_score": 0.9997787777203785,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "00dbfcf112a849cebe9bd2ec0f75759a8261ed3e5f8ccae44aec1c3efd3a017f",
+          "text": "i want to know when is the next holiday here",
+          "truth": "next_holiday",
+          "latency_ms": 0.6651669973507524,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "next_holiday",
+          "confidence": 0.9541290096975332,
+          "acceptance_score": 0.9921933394619548,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "00df5514a2aae064dbf2fb9b4a888ecddeb00a4d101c24a0eb993fbd11171867",
+          "text": "how do i go about getting direct deposit in my usaa account",
+          "truth": "direct_deposit",
+          "latency_ms": 0.6523749325424433,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "direct_deposit",
+          "confidence": 0.6623080094626029,
+          "acceptance_score": 0.9856426961769089,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "00e479413d687c792e57ec29177475604004443c3aaaea34e4c459180069943b",
+          "text": "could you set up a timer for me",
+          "truth": "timer",
+          "latency_ms": 0.6317079532891512,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.9410810502618316,
+          "acceptance_score": 0.9977221658733234,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "00f16f24b194c712daf331c5c6b0f1896be53daa7c11bf2277a6efb884712ff6",
+          "text": "please check my tires and let me know if i have sufficient air in them",
+          "truth": "tire_pressure",
+          "latency_ms": 0.6687080021947622,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "tire_pressure",
+          "confidence": 0.589365823991501,
+          "acceptance_score": 0.9840549331361946,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "013b6a0dfbbf206862cb82e5a9f04f5e269309ba37c503901b8e9acf9bfb2346",
+          "text": "i would like to know more about getting a new credit card",
+          "truth": "new_card",
+          "latency_ms": 0.6470419466495514,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "new_card",
+          "confidence": 0.35144672376310937,
+          "acceptance_score": 0.891894673688618,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "0145ea42a25b4338ab385e8b6ebedf616982c0935e3dd88240622018dffd2f0f",
+          "text": "do i have any meetings coming up with dan",
+          "truth": "meeting_schedule",
+          "latency_ms": 0.5830830195918679,
+          "candidate": "4ba07476da4405070812155e3153738d469df184c3e7ec0d56943aee63558c29",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "meeting_schedule",
+          "confidence": 0.7417326240358928,
+          "acceptance_score": 0.9929034296863388,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "candidate_sha256": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+      "manifest": {
+        "status": "unqualified-development-review-candidate",
+        "dataset": "banking77",
+        "guard": "category-reliability",
+        "encoder": {
+          "name": "bge-small",
+          "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+          "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+          "model_bytes": 133093490,
+          "pooling": "cls",
+          "tokenizer_bytes": 711396,
+          "runtime": "1.30.0",
+          "threads": 4,
+          "provider": "CPUExecutionProvider"
+        },
+        "files": {
+          "intent.s1m": "107041dae2446cc824b03a6d6497ac9df310eb3ca6ca1a657c4e5d2aeadff16c",
+          "scope.npz": "18198900de6acb32e9ae5d5ae45a452cdd761f33fcebfc4ae158b4239ade44f4"
+        },
+        "categories": {
+          "Refund_not_showing_up": "Refund not showing up",
+          "activate_my_card": "activate my card",
+          "age_limit": "age limit",
+          "apple_pay_or_google_pay": "apple pay or google pay",
+          "atm_support": "atm support",
+          "automatic_top_up": "automatic top up",
+          "balance_not_updated_after_bank_transfer": "balance not updated after bank transfer",
+          "balance_not_updated_after_cheque_or_cash_deposit": "balance not updated after cheque or cash deposit",
+          "beneficiary_not_allowed": "beneficiary not allowed",
+          "cancel_transfer": "cancel transfer",
+          "card_about_to_expire": "card about to expire",
+          "card_acceptance": "card acceptance",
+          "card_arrival": "card arrival",
+          "card_delivery_estimate": "card delivery estimate",
+          "card_linking": "card linking",
+          "card_not_working": "card not working",
+          "card_payment_fee_charged": "card payment fee charged",
+          "card_payment_not_recognised": "card payment not recognised",
+          "card_payment_wrong_exchange_rate": "card payment wrong exchange rate",
+          "card_swallowed": "card swallowed",
+          "cash_withdrawal_charge": "cash withdrawal charge",
+          "cash_withdrawal_not_recognised": "cash withdrawal not recognised",
+          "change_pin": "change pin",
+          "compromised_card": "compromised card",
+          "contactless_not_working": "contactless not working",
+          "country_support": "country support",
+          "declined_card_payment": "declined card payment",
+          "declined_cash_withdrawal": "declined cash withdrawal",
+          "declined_transfer": "declined transfer",
+          "direct_debit_payment_not_recognised": "direct debit payment not recognised",
+          "disposable_card_limits": "disposable card limits",
+          "edit_personal_details": "edit personal details",
+          "exchange_charge": "exchange charge",
+          "exchange_rate": "exchange rate",
+          "exchange_via_app": "exchange via app",
+          "extra_charge_on_statement": "extra charge on statement",
+          "failed_transfer": "failed transfer",
+          "fiat_currency_support": "fiat currency support",
+          "get_disposable_virtual_card": "get disposable virtual card",
+          "get_physical_card": "get physical card",
+          "getting_spare_card": "getting spare card",
+          "getting_virtual_card": "getting virtual card",
+          "lost_or_stolen_card": "lost or stolen card",
+          "lost_or_stolen_phone": "lost or stolen phone",
+          "order_physical_card": "order physical card",
+          "passcode_forgotten": "passcode forgotten",
+          "pending_card_payment": "pending card payment",
+          "pending_cash_withdrawal": "pending cash withdrawal",
+          "pending_top_up": "pending top up",
+          "pending_transfer": "pending transfer",
+          "pin_blocked": "pin blocked",
+          "receiving_money": "receiving money",
+          "request_refund": "request refund",
+          "reverted_card_payment?": "reverted card payment?",
+          "supported_cards_and_currencies": "supported cards and currencies",
+          "terminate_account": "terminate account",
+          "top_up_by_bank_transfer_charge": "top up by bank transfer charge",
+          "top_up_by_card_charge": "top up by card charge",
+          "top_up_by_cash_or_cheque": "top up by cash or cheque",
+          "top_up_failed": "top up failed",
+          "top_up_limits": "top up limits",
+          "top_up_reverted": "top up reverted",
+          "topping_up_by_card": "topping up by card",
+          "transaction_charged_twice": "transaction charged twice",
+          "transfer_fee_charged": "transfer fee charged",
+          "transfer_into_account": "transfer into account",
+          "transfer_not_received_by_recipient": "transfer not received by recipient",
+          "transfer_timing": "transfer timing",
+          "unable_to_verify_identity": "unable to verify identity",
+          "verify_my_identity": "verify my identity",
+          "verify_source_of_funds": "verify source of funds",
+          "verify_top_up": "verify top up",
+          "virtual_card_not_working": "virtual card not working",
+          "visa_or_mastercard": "visa or mastercard",
+          "why_verify_identity": "why verify identity",
+          "wrong_amount_of_cash_received": "wrong amount of cash received",
+          "wrong_exchange_rate_for_cash_withdrawal": "wrong exchange rate for cash withdrawal"
+        },
+        "instructions": "Choose one supported banking intent. Uncertain requests require review.",
+        "alpha": 0.075,
+        "reliability_threshold": 0.9140639654123148,
+        "predicted_class_feature": true,
+        "base_intent_manifest_sha256": "88ce86d3c9ea3a1257eb4acf73d413098382b40e50d2bcc44f2b98517caee9f3",
+        "review_protocol_sha256": "a1f91d3ce64bfc5f8005e7cd1324c8a9a73c0662b237282f6bec28b2e246831c",
+        "review_config": {
+          "extra_negatives": 0,
+          "predicted_class_feature": true,
+          "C": 0.1
+        }
+      },
+      "load_ms": 386.33816700894386,
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 13,
+          "denominator": 16,
+          "fraction": 0.8125,
+          "wilson95": [
+            0.5699111903802586,
+            0.9340840092857187
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 12,
+          "denominator": 13,
+          "fraction": 0.9230769230769231,
+          "wilson95": [
+            0.6668604907890041,
+            0.9862895787574435
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 14,
+          "denominator": 16,
+          "fraction": 0.875,
+          "wilson95": [
+            0.639771727342413,
+            0.9650225122567595
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 2.9703329782932997,
+        "p95_ms": 4.875802027527243,
+        "max_ms": 4.919584025628865
+      },
+      "point_gates": {
+        "coverage_at_least_80": true,
+        "accepted_accuracy_at_least_99": false,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "errors": 0,
+      "teacher_calls": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 10049185,
+      "external_encoder_bytes": 133804886,
+      "per_intent": {
+        "Refund_not_showing_up": {
+          "supported_coverage": {
+            "numerator": 13,
+            "denominator": 16,
+            "fraction": 0.8125,
+            "wilson95": [
+              0.5699111903802586,
+              0.9340840092857187
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 12,
+            "denominator": 13,
+            "fraction": 0.9230769230769231,
+            "wilson95": [
+              0.6668604907890041,
+              0.9862895787574435
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 14,
+            "denominator": 16,
+            "fraction": 0.875,
+            "wilson95": [
+              0.639771727342413,
+              0.9650225122567595
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.316166996024549,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "request_refund",
+          "suggestion": "request_refund",
+          "confidence": 0.7353189584939978,
+          "predictionSet": [
+            "request_refund"
+          ],
+          "reliability": 0.9627796860227299,
+          "teacherCalls": 0
+        }
+      ],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "3a28c28e73199948c94282c6fa0b7ff1d6fc44610d6e107c0ed19810c79dc052",
+          "text": "Card refund is not showing up in my statement.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.823959104716778,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9971287696418061,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.998924374248748,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "3c9d7b7c81b212248f76bcd3454fa0b4f59c499c9c7a7dd1976ec2346fcfbe71",
+          "text": "Why isn't my refund showing in my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.7312079910188913,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.999643470134413,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9999149505804757,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "3d8bb76c21209c5bbc2d7c0c5e7a26c64a0dbf0c8c5a8458d1723b910172284e",
+          "text": "I have received my statement but I do not see my refund, why is that?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 3.0280830105766654,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.999458899380371,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9995447095526603,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "3fb4ea464cb2dfa91423af469873b32d6fc33e880122999db17c8f670da09ec5",
+          "text": "When do I see my recent refund in my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.97495792619884,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9988040747952291,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9996535358052941,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.316166996024549,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "request_refund",
+          "suggestion": "request_refund",
+          "confidence": 0.7353189584939978,
+          "predictionSet": [
+            "request_refund"
+          ],
+          "reliability": 0.9627796860227299,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "433e16ac9c47bf9edd21fdb3d41b8d856232bf4962a54a42ef4e870b91ad50d4",
+          "text": "I cannot see a refund in my account",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.5537500623613596,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9992705343167225,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9996558499593746,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "445461c308f5f3878d6d4649d60f1bbde626f7ef33b35b8a98df8ca7615be157",
+          "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted. Can you confirm to me that all of my money was truly returned to me?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.550917074084282,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "reverted_card_payment?",
+          "confidence": 0.6214874324359217,
+          "predictionSet": [
+            "reverted_card_payment?"
+          ],
+          "reliability": 0.43636203847373956,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "47edc29ef60a61e49a97c8303ff1166d00715f2ea8b671e684e1a510eda83597",
+          "text": "My refund has not yet been credited on my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.565499977208674,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9990454209918853,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9993228748146871,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "4a6e729f749a63d12eb88edf5b721cf02292e179758f9aa548472047946df962",
+          "text": "Three months ago I bought a new house for my cat, fluffy.  Unfortunately Fluffy was not a fan of the house and it had to be returned to Pet Smart last week.  They said they have sent a refund but it's not there, can you tell me where it is?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.919584025628865,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.42641822311624267,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.6314795185792245,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "4b594f00de4cbb188095854465f7cfd53d47f711fe3041f5db35cc5e6dfafc83",
+          "text": "My refund is still pending",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.3541669361293316,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9058576358645911,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9648130159902181,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "4bcf0c7dbc08cdb99b434272e360b2296e91002a7297d63c63727e7d21761578",
+          "text": "How can I check if I have received a refund if it is not yet on my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.965708030387759,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9964864754062522,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9973331843474752,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "4cbdc992f647ee5e18390d29a5e05709435a672f65d3b6de8ef12163568d0d5f",
+          "text": "How will I know when I get my refund?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.6588329346850514,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9817893375121332,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9909229020877529,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "503885e7ef3ee3c756fe8b6076ac2f9e178d90998f7e7bfcb6497bf644a3cf72",
+          "text": "I did all that was asked of me and I am rather frustrated. I don't understand why you just won't credit me my money back. I have contacted the seller and nothing has been done. It's been a week!",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.861208028160036,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.36235916205591184,
+          "predictionSet": [],
+          "reliability": 0.558744318610656,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "51b4d1b67c4fe58a99626fc78649e498bb2c0f08b0bcdfe1310025cbbc0dfbe3",
+          "text": "I was told I would be getting a refund but I have yet to see it",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 3.1855000415816903,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9972497072893077,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9955230336997408,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "52e51f3e8fb8ab6e5af8267496c8ca8963d41f6e761503b18110beb7480d550b",
+          "text": "I have checked my statements multiple times, but my refund that I requested a while back is not showing on my account. Is there a reason for this? Can I get some help getting my money back from this transaction?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.684374900534749,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9983960185491705,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9982094605666608,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "52e5feb28efd31b4f6d14a33d46664d1e6b4e48f32d789dfe531523104824560",
+          "text": "I requested a refund from a seller a while ago, but when I check my statements it doesn't show up. Can you help me get my refund.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.222457995638251,
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9956984023784526,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9964420981311867,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "candidate_sha256": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+      "manifest": {
+        "status": "unqualified-development-matched-review-baseline",
+        "dataset": "banking77",
+        "kind": "sklearn-tfidf-logistic",
+        "C": 10.0,
+        "policy": "reliability",
+        "gate_C": 0.1,
+        "threshold": 0.9794645954944641,
+        "fit_rows": 6950,
+        "calibration_rows": 1960,
+        "fit_ms": 4342.67695795279,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true,
+        "max_iter": 1000,
+        "categories": {
+          "Refund_not_showing_up": "Refund not showing up",
+          "activate_my_card": "activate my card",
+          "age_limit": "age limit",
+          "apple_pay_or_google_pay": "apple pay or google pay",
+          "atm_support": "atm support",
+          "automatic_top_up": "automatic top up",
+          "balance_not_updated_after_bank_transfer": "balance not updated after bank transfer",
+          "balance_not_updated_after_cheque_or_cash_deposit": "balance not updated after cheque or cash deposit",
+          "beneficiary_not_allowed": "beneficiary not allowed",
+          "cancel_transfer": "cancel transfer",
+          "card_about_to_expire": "card about to expire",
+          "card_acceptance": "card acceptance",
+          "card_arrival": "card arrival",
+          "card_delivery_estimate": "card delivery estimate",
+          "card_linking": "card linking",
+          "card_not_working": "card not working",
+          "card_payment_fee_charged": "card payment fee charged",
+          "card_payment_not_recognised": "card payment not recognised",
+          "card_payment_wrong_exchange_rate": "card payment wrong exchange rate",
+          "card_swallowed": "card swallowed",
+          "cash_withdrawal_charge": "cash withdrawal charge",
+          "cash_withdrawal_not_recognised": "cash withdrawal not recognised",
+          "change_pin": "change pin",
+          "compromised_card": "compromised card",
+          "contactless_not_working": "contactless not working",
+          "country_support": "country support",
+          "declined_card_payment": "declined card payment",
+          "declined_cash_withdrawal": "declined cash withdrawal",
+          "declined_transfer": "declined transfer",
+          "direct_debit_payment_not_recognised": "direct debit payment not recognised",
+          "disposable_card_limits": "disposable card limits",
+          "edit_personal_details": "edit personal details",
+          "exchange_charge": "exchange charge",
+          "exchange_rate": "exchange rate",
+          "exchange_via_app": "exchange via app",
+          "extra_charge_on_statement": "extra charge on statement",
+          "failed_transfer": "failed transfer",
+          "fiat_currency_support": "fiat currency support",
+          "get_disposable_virtual_card": "get disposable virtual card",
+          "get_physical_card": "get physical card",
+          "getting_spare_card": "getting spare card",
+          "getting_virtual_card": "getting virtual card",
+          "lost_or_stolen_card": "lost or stolen card",
+          "lost_or_stolen_phone": "lost or stolen phone",
+          "order_physical_card": "order physical card",
+          "passcode_forgotten": "passcode forgotten",
+          "pending_card_payment": "pending card payment",
+          "pending_cash_withdrawal": "pending cash withdrawal",
+          "pending_top_up": "pending top up",
+          "pending_transfer": "pending transfer",
+          "pin_blocked": "pin blocked",
+          "receiving_money": "receiving money",
+          "request_refund": "request refund",
+          "reverted_card_payment?": "reverted card payment?",
+          "supported_cards_and_currencies": "supported cards and currencies",
+          "terminate_account": "terminate account",
+          "top_up_by_bank_transfer_charge": "top up by bank transfer charge",
+          "top_up_by_card_charge": "top up by card charge",
+          "top_up_by_cash_or_cheque": "top up by cash or cheque",
+          "top_up_failed": "top up failed",
+          "top_up_limits": "top up limits",
+          "top_up_reverted": "top up reverted",
+          "topping_up_by_card": "topping up by card",
+          "transaction_charged_twice": "transaction charged twice",
+          "transfer_fee_charged": "transfer fee charged",
+          "transfer_into_account": "transfer into account",
+          "transfer_not_received_by_recipient": "transfer not received by recipient",
+          "transfer_timing": "transfer timing",
+          "unable_to_verify_identity": "unable to verify identity",
+          "verify_my_identity": "verify my identity",
+          "verify_source_of_funds": "verify source of funds",
+          "verify_top_up": "verify top up",
+          "virtual_card_not_working": "virtual card not working",
+          "visa_or_mastercard": "visa or mastercard",
+          "why_verify_identity": "why verify identity",
+          "wrong_amount_of_cash_received": "wrong amount of cash received",
+          "wrong_exchange_rate_for_cash_withdrawal": "wrong exchange rate for cash withdrawal"
+        },
+        "instructions": "Choose one supported banking intent. Uncertain requests require review.",
+        "files": {
+          "weights.npz": "fcfe2485d6ad4dd36825de7d62cc0ce6db03fe6367d4562e1cdf0ff1978cf829",
+          "vocabulary.json": "47d45b264ac5dc26a1767a1d2a7c197638d86766d8bc7305318265fba4e96491",
+          "prototypes.npz": "6f2459b94ab537c2c508af80cc6239e5c7251a67ed37f2c9d22115f8379d3c01"
+        },
+        "parent_manifest_sha256": "760578b5c4c74ad832cf6a70df0fceb7a565e60824fa0a9c1bc49805bd64f608",
+        "review_protocol_sha256": "b0ff03c2866f1a55cebd12fc0946145149be71522f973e73c5b4f969aa7e6c1a",
+        "predicted_class_feature": true,
+        "review_config": {
+          "kind": "matched-review",
+          "extra_negatives": 0,
+          "predicted_class_feature": true,
+          "C": 0.1
+        },
+        "base_artifact": "../banking77-baseline",
+        "review_parameters": {
+          "mean": [
+            0.6727526270920231,
+            0.5278574896998318,
+            1.8812722944060611,
+            0.48511993424480293,
+            0.10632468006189015,
+            0.3465818528036747,
+            0.10465682734335845
+          ],
+          "scale": [
+            1.648917083177802,
+            0.3233590877808106,
+            1.1560189032120758,
+            0.17850042633217036,
+            0.1993744345473455,
+            0.12394546442645195,
+            0.12423431089297901
+          ],
+          "gate_weights": [
+            [
+              1.3870687643405548,
+              1.2947184247043608,
+              0.7370150803579151,
+              0.09366344892801717,
+              0.22803298749039783,
+              -0.31740038823383476,
+              0.152231212583228,
+              0.19241993489725703,
+              0.18731773803954033,
+              0.38400008107679057,
+              0.09495806414662232,
+              0.08839680978875925,
+              0.50330541402361,
+              -0.3246498778273557,
+              -0.07795085607758546,
+              0.2569403991397476,
+              0.2773317134305222,
+              -0.09939323267168323,
+              -0.12329542951205098,
+              -0.2827944688307851,
+              0.059553133022506095,
+              -0.06134769370355433,
+              -0.2830555524446224,
+              0.08623306935869272,
+              -0.2221059735584732,
+              -0.13742183186047005,
+              0.32690269871306243,
+              3.006705972502207e-05,
+              -0.04667601386074297,
+              0.1368845540807417,
+              -0.1435286044168867,
+              0.2624526712207217,
+              0.0951790302418073,
+              -0.1270748931968667,
+              -0.19755979186200495,
+              0.13624298740302215,
+              0.0577301045900513,
+              -0.07869562696687601,
+              0.2883882045471839,
+              -0.3706269072972761,
+              0.02073087733254824,
+              -0.2959284460731167,
+              -0.3103308328244819,
+              -0.2152776479058395,
+              0.05226136805365058,
+              0.22727871238672112,
+              -0.05290556774475248,
+              0.1370784348979429,
+              -0.23183148302181636,
+              -0.1805076488041589,
+              -0.010018152548667508,
+              -0.17303916844965184,
+              0.19002174711147685,
+              -0.04934201039309192,
+              0.3561199307265415,
+              0.14597953961006432,
+              -0.2843050407255907,
+              -0.21138216715760824,
+              -0.035217442829668086,
+              0.13651417727956625,
+              -0.05501981886278309,
+              -0.29985737943332236,
+              0.14013121042589027,
+              0.09280675039211404,
+              0.10592485072735336,
+              -0.12507511400136706,
+              -0.1040924659732164,
+              0.2257883393362652,
+              -0.009603135545226713,
+              -0.13636161909405478,
+              0.24500110250215454,
+              0.33147189928413234,
+              -0.16217456798339866,
+              -0.2279407219488799,
+              -0.3193517864839126,
+              0.008891133130422406,
+              0.2465783889653238,
+              0.13384048198823464,
+              0.3448315463880582,
+              0.2567005046130262,
+              -0.03730764735555454,
+              -0.3033401623157105,
+              -0.09033421928849397,
+              0.03228455343596294
+            ]
+          ],
+          "gate_bias": [
+            2.9253224537490685
+          ]
+        }
+      },
+      "load_ms": 32.112832996062934,
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 9,
+          "denominator": 16,
+          "fraction": 0.5625,
+          "wilson95": [
+            0.331785563988119,
+            0.7690134759450765
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 9,
+          "denominator": 9,
+          "fraction": 1.0,
+          "wilson95": [
+            0.7008549515804559,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 15,
+          "denominator": 16,
+          "fraction": 0.9375,
+          "wilson95": [
+            0.7167126242970107,
+            0.9888806552353576
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 0.5218745209276676,
+        "p95_ms": 0.6484479818027467,
+        "max_ms": 0.6752919871360064
+      },
+      "point_gates": {
+        "coverage_at_least_80": false,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "errors": 0,
+      "teacher_calls": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 11482669,
+      "external_encoder_bytes": 0,
+      "per_intent": {
+        "Refund_not_showing_up": {
+          "supported_coverage": {
+            "numerator": 9,
+            "denominator": 16,
+            "fraction": 0.5625,
+            "wilson95": [
+              0.331785563988119,
+              0.7690134759450765
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 9,
+            "denominator": 9,
+            "fraction": 1.0,
+            "wilson95": [
+              0.7008549515804559,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 15,
+            "denominator": 16,
+            "fraction": 0.9375,
+            "wilson95": [
+              0.7167126242970107,
+              0.9888806552353576
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "3a28c28e73199948c94282c6fa0b7ff1d6fc44610d6e107c0ed19810c79dc052",
+          "text": "Card refund is not showing up in my statement.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.6300410022959113,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9660667066721927,
+          "acceptance_score": 0.9973903866088474,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "3c9d7b7c81b212248f76bcd3454fa0b4f59c499c9c7a7dd1976ec2346fcfbe71",
+          "text": "Why isn't my refund showing in my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.6752919871360064,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9872757600172872,
+          "acceptance_score": 0.9988961664954115,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "3d8bb76c21209c5bbc2d7c0c5e7a26c64a0dbf0c8c5a8458d1723b910172284e",
+          "text": "I have received my statement but I do not see my refund, why is that?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5667500663548708,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9434469073563806,
+          "acceptance_score": 0.9963712079747854,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "3fb4ea464cb2dfa91423af469873b32d6fc33e880122999db17c8f670da09ec5",
+          "text": "When do I see my recent refund in my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4799590678885579,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9238656833406665,
+          "acceptance_score": 0.9954666213154436,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.45116699766367674,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9861152029434725,
+          "acceptance_score": 0.9985667367920043,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "433e16ac9c47bf9edd21fdb3d41b8d856232bf4962a54a42ef4e870b91ad50d4",
+          "text": "I cannot see a refund in my account",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.43295801151543856,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9477999409471668,
+          "acceptance_score": 0.9977103762516408,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "445461c308f5f3878d6d4649d60f1bbde626f7ef33b35b8a98df8ca7615be157",
+          "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted. Can you confirm to me that all of my money was truly returned to me?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5409580189734697,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.41119433820123236,
+          "acceptance_score": 0.8508255574034237,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "47edc29ef60a61e49a97c8303ff1166d00715f2ea8b671e684e1a510eda83597",
+          "text": "My refund has not yet been credited on my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.436166999861598,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9313321644056101,
+          "acceptance_score": 0.9959887777688102,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "4a6e729f749a63d12eb88edf5b721cf02292e179758f9aa548472047946df962",
+          "text": "Three months ago I bought a new house for my cat, fluffy.  Unfortunately Fluffy was not a fan of the house and it had to be returned to Pet Smart last week.  They said they have sent a refund but it's not there, can you tell me where it is?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5355000030249357,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.1897820457435371,
+          "acceptance_score": 0.7145144157401978,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "4b594f00de4cbb188095854465f7cfd53d47f711fe3041f5db35cc5e6dfafc83",
+          "text": "My refund is still pending",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4277080297470093,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.8419410246095771,
+          "acceptance_score": 0.9789167029054954,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "4bcf0c7dbc08cdb99b434272e360b2296e91002a7297d63c63727e7d21761578",
+          "text": "How can I check if I have received a refund if it is not yet on my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.6394999800249934,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.6028531661637221,
+          "acceptance_score": 0.9603554683679166,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "4cbdc992f647ee5e18390d29a5e05709435a672f65d3b6de8ef12163568d0d5f",
+          "text": "How will I know when I get my refund?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5352500593289733,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.7841111934685349,
+          "acceptance_score": 0.9838448549602754,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "503885e7ef3ee3c756fe8b6076ac2f9e178d90998f7e7bfcb6497bf644a3cf72",
+          "text": "I did all that was asked of me and I am rather frustrated. I don't understand why you just won't credit me my money back. I have contacted the seller and nothing has been done. It's been a week!",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5349579732865095,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "reverted_card_payment?",
+          "confidence": 0.1398615630099765,
+          "acceptance_score": 0.5387510473939524,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "51b4d1b67c4fe58a99626fc78649e498bb2c0f08b0bcdfe1310025cbbc0dfbe3",
+          "text": "I was told I would be getting a refund but I have yet to see it",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.44662493746727705,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.693001988713826,
+          "acceptance_score": 0.9733219932234726,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "52e51f3e8fb8ab6e5af8267496c8ca8963d41f6e761503b18110beb7480d550b",
+          "text": "I have checked my statements multiple times, but my refund that I requested a while back is not showing on my account. Is there a reason for this? Can I get some help getting my money back from this transaction?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5087910685688257,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.47858456358647333,
+          "acceptance_score": 0.9098664053186029,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "52e5feb28efd31b4f6d14a33d46664d1e6b4e48f32d789dfe531523104824560",
+          "text": "I requested a refund from a seller a while ago, but when I check my statements it doesn't show up. Can you help me get my refund.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.49491599202156067,
+          "candidate": "4d0cc90e08a7423e299e233e38122556723f03e45437c46dcf4cc246dba471be",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9791525363188581,
+          "acceptance_score": 0.9984726587551442,
+          "teacherCalls": 0
+        }
+      ]
+    }
+  ]
+}

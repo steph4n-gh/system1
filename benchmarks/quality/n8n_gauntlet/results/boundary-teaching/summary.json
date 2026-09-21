@@ -1,0 +1,3874 @@
+{
+  "scope": "experiment 2e unverified synthetic teaching, not independent quality evidence",
+  "request_manifest_sha256": "e1df0d39283811b11e2c600ec0b7cd8b6f2e5b9a0eeb5e8f3ebfa8c8d3a16aeb",
+  "protocol_sha256": "4c1ed5ff8b981a805a276601c8aebaf92daada9f319f8f5a173a012638493320",
+  "planned_calls": 227,
+  "calls": 227,
+  "responses": 227,
+  "unfinished_or_unattempted_slots": 0,
+  "usage": {
+    "promptTokenCount": 252684,
+    "candidatesTokenCount": 80778,
+    "totalTokenCount": 333462
+  },
+  "calls_without_usage": 0,
+  "labels_independently_verified": false,
+  "excluded_source_hashes": {
+    "clinc150-fit.json": "3d6fdd52b71ae17be34a44eeff6047e523404ea9f86e88b05883e3cc894c0803",
+    "clinc150-calibration.json": "78ff8a286123037c2d6b4f7db9f3888c9e67bed25f06304905b7ea25dd20c5d8",
+    "clinc150-development.json": "48fc7746cbb5ad0985b2a6fc798be6c37b08078c3587d9321ce27446690b36ff",
+    "clinc150-test.json": "4207db331df343dd11bdf0ea89e2e5c6e1ae33fc6db4b5d37807005b08225277",
+    "banking77-fit.json": "7813426e0bdd2d1c8b99e280a005be136c8e7afec10efe7e76dd8c4e57900c79",
+    "banking77-calibration.json": "186904e276791f52106d1e911aab0143786f986c34ae349f8e659e87dc46fabe",
+    "banking77-development.json": "9825728e09b34073ab00710dc04c1f16581ca7fb1ddfa7193b56c5dafadedc8c",
+    "banking77-test.json": "e63da6ac0a64fa2685fec932dc0ce67f00cc29d021b5d08dc585987322fab739",
+    "contrast-lessons.json": "db967ed965e42f433346a5eed64c54f221c0ea8defd98882b5766833ccc7f2ae",
+    "review-negative-fit.json": "1488d1e4c3c3afeaee3cbb6e004ec3b7727639289497fdc7b4cec788e079600f",
+    "review-human-oos-reserve.json": "b6d23221000dd0f2da96a0c907761853c41b35dda691d753861549c9a4b25833",
+    "clinc-human-paraphrases-reserve.csv": "06966b017684e7dce0fd3a360025f7c05526a15831a87c3ce92fccca09402cac"
+  },
+  "lessons": {
+    "clinc150": {
+      "supported": 1696,
+      "unsupported": 674
+    },
+    "banking77": {
+      "supported": 917,
+      "unsupported": 0
+    }
+  },
+  "rejections": [
+    {
+      "id": "clinc150-account_blocked",
+      "index": 18,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-apr",
+      "index": 13,
+      "group": "dd80ad37a5eece015a00efadb72c09d6fc13018ae568fcdbf44be06afe2cbfcb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 0,
+      "group": "1418159c2948a187bc1bba083bd3c4ef2c24563deb79965b6c56208d2c5e2490",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 1,
+      "group": "5e20622e5dfad6c09e54dff247e33a9296bf209779ba8eae4beb612956453d47",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 4,
+      "group": "5e003ecfb0411c14e6081424f642da7f0717bf160201f98b0c7f8ef807acc2b2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 13,
+      "group": "b159e4062f5342d82915f6c6598f8c0d26a62f90961c21715fc7c27a71ba417a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 17,
+      "group": "a64dd332d5a1c63501cc2d504987e157cf64f8e6685b73153deaebc52c473983",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 18,
+      "group": "ddea491723dfba11b6b85c06df803ca60fb38a4eb35e3fa6cc6ffcd5f0479c2b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-are_you_a_bot",
+      "index": 19,
+      "group": "046169357d81e2fb885a26b7612c7af4abd2e32610827f305d51c5db37de2f7d",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-balance",
+      "index": 16,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_balance",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_balance",
+      "index": 14,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_balance",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_due",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_due",
+      "index": 18,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-bill_due",
+      "index": 19,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-book_flight",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-book_flight",
+      "index": 15,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-book_flight",
+      "index": 16,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-book_flight",
+      "index": 18,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-book_hotel",
+      "index": 18,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calculator",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calculator",
+      "index": 17,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calculator",
+      "index": 18,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar",
+      "index": 13,
+      "group": "17792df7ecf9e38dd19bbba531bd98f338093501266e27d42edf6657aee1c798",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar_update",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar_update",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar_update",
+      "index": 16,
+      "group": "4c216839c0f845634fbf69106dd086c681779eb58a82a16acadde1d17deedbaf",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calendar_update",
+      "index": 19,
+      "group": "978b4896598e132aecb729111b992a73567381ec4cc8ee6b7273c3b134d791e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calories",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calories",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calories",
+      "index": 15,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-calories",
+      "index": 16,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel",
+      "index": 0,
+      "group": "4a0b6e4414ae6733feff55d0e0605de12ea80d2b187b227521230d1c1229a334",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel",
+      "index": 19,
+      "group": "b0569226d34c9890eb09211692b8cb5407b30bb83c4180107844f92f7d093456",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 12,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 14,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 15,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 16,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 17,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 18,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cancel_reservation",
+      "index": 19,
+      "group": "3930cf2fa6d239cf9364bc390a5ac4f13c8d33083343df165a21432db274d894",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-car_rental",
+      "index": 13,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-car_rental",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-car_rental",
+      "index": 17,
+      "group": "4581c99c6a5b431419d99b133de545ccd3eef2330c7bee36a2421746cf098b9c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-card_declined",
+      "index": 13,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-card_declined",
+      "index": 16,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-card_declined",
+      "index": 18,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-carry_on",
+      "index": 16,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_accent",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_accent",
+      "index": 13,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_accent",
+      "index": 15,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_accent",
+      "index": 16,
+      "group": "b0569226d34c9890eb09211692b8cb5407b30bb83c4180107844f92f7d093456",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_accent",
+      "index": 17,
+      "group": "99d6ff491e3165dc1615d58c4db2611c7411e60f2297b4aa3f1e3b1622af078c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_ai_name",
+      "index": 12,
+      "group": "134db2677022e79d073ad98a0bc1c589ed33c4e3e323864b406f2a2eb5de7454",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_ai_name",
+      "index": 14,
+      "group": "d5affa5f62f7f09049578afcdb6fcdd296bd191f6e6aa8ff0614b9e948f76fb0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_ai_name",
+      "index": 15,
+      "group": "90e6418586eb09e52bc772f928c5f229938d89791bc6fd9b980240bbfd44db50",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_ai_name",
+      "index": 18,
+      "group": "1de061d876849def1beb62f8c69b864cf203704cd4f4bd7460504bcbc3578865",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_language",
+      "index": 12,
+      "group": "978b4896598e132aecb729111b992a73567381ec4cc8ee6b7273c3b134d791e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_language",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_language",
+      "index": 17,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 5,
+      "group": "37738a67bceb7ecf8cffd48993023e1a5ae964aeb1f1e78912ee9d71af6224c3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 16,
+      "group": "5ed05a20e6b5f3931982541c7906241cf323197e2e19dc35bdb2cb7ab9d3b4b5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_speed",
+      "index": 18,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 13,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 14,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 15,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 17,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 18,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_user_name",
+      "index": 19,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 2,
+      "group": "84776d21fa6cf41c72986b354d6f154c917725a164834759cabd77fbd67f2053",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 13,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 14,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 15,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 16,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-change_volume",
+      "index": 18,
+      "group": "edd575367f6aa5dd03627e35f2d9216aaad2bda2ef295bdffe1aa220303169d5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-confirm_reservation",
+      "index": 12,
+      "group": "ad2c80095d137a79f3e5d9d45fb0d49584bcc2770ab5091c1b530c872d1fb68f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-confirm_reservation",
+      "index": 14,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-confirm_reservation",
+      "index": 18,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cook_time",
+      "index": 4,
+      "group": "e0e58206bcc9ee8ec38a4aa868cc704b0cc589f57720980138403cbb0f42e303",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cook_time",
+      "index": 13,
+      "group": "d14543f9cdfd6961876ea5f6a2a24403e53cb0f12e5ad217cbb731b18d0b9eff",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cook_time",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-cook_time",
+      "index": 19,
+      "group": "cd120cebdc756f809e909be905525cf7dd3745691dac0de0679024d191a0fcb6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_limit",
+      "index": 16,
+      "group": "5190d3d51e02d9c77c273f80a167d6281374bb4d2eff7919975b5d8ab4cf3d1f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_limit",
+      "index": 18,
+      "group": "2faaf15b566f09ab0fb9a4301147c9b910c87bf2f9e60858c673b6d56033179c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 1,
+      "group": "9713339e3ad95121eec702a8e7a3e9a19330c0cac694d97e8e7ffad559df612c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 2,
+      "group": "0351023c25f248ea724974070eed49cc59aacbff718f1b4f2545b5042578c3e8",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 3,
+      "group": "893aed113fe3bfbdc6f9a2ea70d89afbfcfc0f54dc45e4fd7b776ddd967d41fe",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 5,
+      "group": "8403aac46770e08723ed70ba575eaf31601880d865cdce05e52076bdb2e1cd2e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 7,
+      "group": "76b00f2fe17f57e3251c36628f5dc0493aaf8365ce20063163aaa9933f6ca55b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 13,
+      "group": "179674c7b36baee1f615fb86ad44965fe4e76f7b406f043e36606fae1b1072b8",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-credit_score",
+      "index": 17,
+      "group": "e7bd8a878c85c741623ba5e1c52b10cf9c2c49bbdebbb183c77545a2c87777b3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 3,
+      "group": "29a715459884c162026f5fd98ce82214126e7428252abfcc59ad4e464b3ac962",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 13,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 14,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-current_location",
+      "index": 16,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-damaged_card",
+      "index": 14,
+      "group": "dd80ad37a5eece015a00efadb72c09d6fc13018ae568fcdbf44be06afe2cbfcb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-damaged_card",
+      "index": 16,
+      "group": "258704b2c534ae4bcb90e049aa75d7b7f16c1712175c99317c7ad32486b60152",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 0,
+      "group": "2fe6624f42668fbe932265608c03c6c343bbce1de71d18228cbd512d91fc8869",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 1,
+      "group": "94cd30e5a750696e66862f8b94ce626d68516042e5b964d7228c8f884a27195c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 2,
+      "group": "c09703ee489aa515a40f90219ec35fc4d7b2bc82468e6e55e63cab57a7ab4779",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 4,
+      "group": "9b8e2bbd290e1aaed95de94125984c6bcc5540c2d551f6ecd536289768852c41",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 13,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 14,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 16,
+      "group": "c2c84b2d24a9a18697350187eae7e63abd6914a4abc635383b4062435798e294",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 17,
+      "group": "86ca1c65ba653c87c095803e50925660b8541121cb0bc86e939ef21497c07dd4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-date",
+      "index": 18,
+      "group": "c15bac870eef3cdca873d4ba183608e88dd0b01d4c2eb5ebf169f9833f58b85a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-definition",
+      "index": 2,
+      "group": "f8807ded765f9a9ce0d651d686a0c59fc6a341f02bac9c8af033647567dc5d80",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-definition",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-definition",
+      "index": 16,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-definition",
+      "index": 18,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-definition",
+      "index": 19,
+      "group": "710eba0085a3b7774ec8cc320e935c5950ef6e0c65c81ebe434278980f1a5ccc",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 15,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 16,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 17,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 18,
+      "group": "edd575367f6aa5dd03627e35f2d9216aaad2bda2ef295bdffe1aa220303169d5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-direct_deposit",
+      "index": 19,
+      "group": "64898a1047afc12300092f749372198ef5d45b13a0208c02ae76af5ed1832c24",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 0,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 13,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 15,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 16,
+      "group": "8eeac231e87e3a7b3dfa0512f4d875adef03b204cd9e668b91ca0d4f9370a323",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 17,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-directions",
+      "index": 18,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-distance",
+      "index": 15,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-distance",
+      "index": 16,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-distance",
+      "index": 19,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-do_you_have_pets",
+      "index": 16,
+      "group": "7eac793f4f5bfaa25bce608712d29afafe067d3908bcb2c6b2a4314c754a5092",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-expiration_date",
+      "index": 19,
+      "group": "6ed66104fa98579afe9fd271df1ef3db30d40e81ab7875059a281df66c02f57b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-find_phone",
+      "index": 3,
+      "group": "eeac56496914a8c954fd05cc1be7702969a311c25466530d37807bcb46373f19",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-find_phone",
+      "index": 17,
+      "group": "e86c36649554286e528b97cf49152f77e3979e49fae65da2e67fd4774f1d0264",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 0,
+      "group": "63041151740e8b038444ddbf28f4def25d177d16b7850bb490b6decdea4eb4d0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 2,
+      "group": "3959aac8b7191c97d64f669ef76e75aab1b55bda393b9b97d67065e890566767",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 3,
+      "group": "cecbd5ca665e16ab94392fea928418fe22da13f2c4f68037718315a0536990df",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 14,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 15,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 16,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-flip_coin",
+      "index": 19,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-freeze_account",
+      "index": 13,
+      "group": "7fb4c978b60232f68d9be30b057ac0a1f29c28a33afaae7ccb7786aac6bd7ff0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-freeze_account",
+      "index": 16,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-fun_fact",
+      "index": 15,
+      "group": "6fb16d4e1713c0ac9934b605eddb39f52776b919617fa35878d6629a403f11a3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-fun_fact",
+      "index": 16,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-fun_fact",
+      "index": 18,
+      "group": "24c875c732c3f4349b4b49421ce92017e2f8c7e512645a56a0677810160eebcd",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-gas",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-gas",
+      "index": 15,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-gas",
+      "index": 16,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-gas_type",
+      "index": 12,
+      "group": "24c875c732c3f4349b4b49421ce92017e2f8c7e512645a56a0677810160eebcd",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 0,
+      "group": "060d92100a9ea37d7c8fbf6a3b572257d6b07f1517b29459262c76fdd8024f90",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 1,
+      "group": "5385f38a63a33aee1af7fdc54780c05c08aadb0e6d1ad57fbc327a4deea2a7b3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 4,
+      "group": "99c39b3fac92dbab73d0603a64f37668264dabd3f54a6b703f0c89851bc431d2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 5,
+      "group": "ea9ec272c474defcce427fabbd92e960e38730422f456d4cbede98440649acb9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 7,
+      "group": "c313efd476fc865d15f733487f4dd6f05d613977565c15b3aa617f5a55337de2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 9,
+      "group": "d8542114d7d40f3c82fc0919efc644df30f4e827c2bd6b83b9dbec8358b2fbc4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 13,
+      "group": "116617528fc02e56550c0bb8d337cabc4278fc9bdf0954688d84ca86523804b7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-goodbye",
+      "index": 14,
+      "group": "7c6b175c22b4261f9dbc0b94ee2f4595aabf07efccf2df498098af42200581c9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 0,
+      "group": "12998c017066eb0d2a70b94e6ed3192985855ce390f321bbdb832022888bd251",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 1,
+      "group": "fa690b82061edfd2852629aeba8a8977b57e40fcb77d1a7a28b26cba62591204",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 3,
+      "group": "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 6,
+      "group": "33df69eff5a099a65c290a34ad9e5f97c326b598dd01b22bb72606fee9e74000",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 9,
+      "group": "1b2393b1cd37a2e96ef33d810120ab58f410b8427f527dbf84fedaefcebf7017",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 10,
+      "group": "3ffcb1378dcc6f4e8e19ae542124e17f854c76fdb99bfd1c5b80a83dcd03ce1e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 14,
+      "group": "e64d743f228459aceefe004d6430e1e676623c6af6939e73d92d97c21ea26f0f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 16,
+      "group": "cbe649f8e0039474b8f9860b9c39e740883affb4f1c0ac850404572172a08a9a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 18,
+      "group": "24c875c732c3f4349b4b49421ce92017e2f8c7e512645a56a0677810160eebcd",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-greeting",
+      "index": 19,
+      "group": "99d6ff491e3165dc1615d58c4db2611c7411e60f2297b4aa3f1e3b1622af078c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_busy",
+      "index": 14,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_busy",
+      "index": 16,
+      "group": "e8b545cb32faea173bc0abc8fb1f1b57851d050ff2d4a471c41e8116fb6b8082",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_busy",
+      "index": 18,
+      "group": "1375d1f009a197104b347a741c094c01adbc8d7bcc8a777190031d12bc08d274",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_busy",
+      "index": 19,
+      "group": "5cb1323c4c5402f9b1df4387837fa60c809a31f001878b8e2f4bbf98dec5d1a1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 1,
+      "group": "1544c326ebc397daad1cfd8d04c4c58fcdaf8fe657368f07bf886e548f6a00fa",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 2,
+      "group": "0978ef5f4a5dbc3c411aba2f97a360a7456c01092868e50a2a6e19ac1de6426a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 5,
+      "group": "eb7854e01798b45ff91205015c0bcc3c3cb6003f46695f7083ef47fe7c65c756",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 8,
+      "group": "ede0aeeda176de4193ac5104eba3a1140c85a3fd1514460eee5bd4f102a902bf",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 9,
+      "group": "5948a8703baae815e1baae51298c00d21f6fa59d54b4f86d197221a1bf0621e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 13,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-how_old_are_you",
+      "index": 14,
+      "group": "c2c84b2d24a9a18697350187eae7e63abd6914a4abc635383b4062435798e294",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-improve_credit_score",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-improve_credit_score",
+      "index": 15,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-improve_credit_score",
+      "index": 18,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-improve_credit_score",
+      "index": 19,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-income",
+      "index": 13,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-income",
+      "index": 14,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-income",
+      "index": 15,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-income",
+      "index": 16,
+      "group": "c340b3e49f9affa220bf9cb9b4dc37cbee8cb55f0f1b5bd01dd134fcadf9b34e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-income",
+      "index": 17,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 13,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 14,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 15,
+      "group": "500c9ca87786b8596c6dcf1a1ca8dd00b25e7aca5fd4f0bc2c77e1ef3469e775",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 16,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 17,
+      "group": "5ed05a20e6b5f3931982541c7906241cf323197e2e19dc35bdb2cb7ab9d3b4b5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-ingredients_list",
+      "index": 19,
+      "group": "32abb339ca337b8291f4cfd727efcca7c4d6d7a00766e722a8f70d7d6c750406",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-insurance",
+      "index": 0,
+      "group": "6edbbb7750e812694690e3f599ac35eaf258d911c1f2630418720eaff91c0eeb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-insurance",
+      "index": 18,
+      "group": "55f50df229c6d6c71ee5099bf80bf6bfb747e00dc68ea8a0087911439888bc3b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-insurance_change",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-interest_rate",
+      "index": 15,
+      "group": "15392ebec6154fd963c1348f0399375033f845e534f6b99e9c40cafeb081a8e0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-interest_rate",
+      "index": 17,
+      "group": "55f50df229c6d6c71ee5099bf80bf6bfb747e00dc68ea8a0087911439888bc3b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 13,
+      "group": "c340b3e49f9affa220bf9cb9b4dc37cbee8cb55f0f1b5bd01dd134fcadf9b34e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 14,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 15,
+      "group": "c9c122e2ee45217202c1f8d4fc40803ad4d2d6317a0c9d75cf5964a2328128ec",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 16,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 17,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-international_fees",
+      "index": 19,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 2,
+      "group": "aa5332d930ada3241d9323bea5dd2a78c8607b618b798671099df18e745f531f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 5,
+      "group": "894adcea1ae775424723a5748e6a14338aad87d166b5ffa7dce0d15a7afc65e4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 12,
+      "group": "45b2ecdb4add3b84001fb5424c860a6f2ef85a2305ee24911d8c3381aeea9bf6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 14,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-last_maintenance",
+      "index": 16,
+      "group": "a30b7630de08178339a348fd37e5a2b40a7f14e7c9f73e592278ef70d8ff1a8f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-make_call",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-make_call",
+      "index": 13,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-make_call",
+      "index": 14,
+      "group": "c13b497bf1bca05a86a5e2f6a2c44e97c1a75a087cf628fbafc2d3ac69056721",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-make_call",
+      "index": 19,
+      "group": "7ad1bcebe6ffdd89f6ef17e9a5daa07ac79b199dd45e64f1dffa10d4b46f3e95",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-maybe",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-maybe",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-maybe",
+      "index": 15,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-maybe",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 14,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 16,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 18,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meal_suggestion",
+      "index": 19,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 14,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 15,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 16,
+      "group": "244270303cab4cb1bf9b2da64ed2f2441400d96342be4d5edee70ff32cc4203a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 17,
+      "group": "eb75e9f084cd8e5c9984688a8502ff45608342a2114c14363fcc9663c8f74de0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 18,
+      "group": "5d09b4cd48544c015b159abcbae4e04d08ab3813d313a837bfa52f53e4ac57e9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meaning_of_life",
+      "index": 19,
+      "group": "3dab16c81e0ca1bfb4614eb6fe683bc8103353d19c5fc43dfa8e20459413854b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-measurement_conversion",
+      "index": 3,
+      "group": "ec021a0aefda02f4e49317ead8af08bc6a124a338243700b1261ebc25b9ad6d5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-measurement_conversion",
+      "index": 13,
+      "group": "64898a1047afc12300092f749372198ef5d45b13a0208c02ae76af5ed1832c24",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-measurement_conversion",
+      "index": 15,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-measurement_conversion",
+      "index": 17,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-measurement_conversion",
+      "index": 19,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 3,
+      "group": "073587fde3a08a3893f68f8a04ec80ee4e7fa139517fdd1227c3123dfd020d83",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 14,
+      "group": "76370cda02cbfd7d0db4565b084aa3c08eb6720f0e74b67b21b8d9bf0ef9f24f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 15,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 16,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 17,
+      "group": "234d1ddaa34e188af144505d0dd00572c18d037d22d18b17d4efe7ef51aed176",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 18,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-meeting_schedule",
+      "index": 19,
+      "group": "a3e9d6f4d391d86930408fc31a843d03c4fa338ef30da4796ade9c162d1d26c6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 13,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 14,
+      "group": "227f77d8ede6af9e51d9fa1d88a5c66fcd8ea56bb79ab79ae4302420052e2d44",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 16,
+      "group": "c13b497bf1bca05a86a5e2f6a2c44e97c1a75a087cf628fbafc2d3ac69056721",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 17,
+      "group": "946d2335a201ef914c70ec0c5ece02bb3401a34c53911553cd870bfbe770c17f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 18,
+      "group": "4581c99c6a5b431419d99b133de545ccd3eef2330c7bee36a2421746cf098b9c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-min_payment",
+      "index": 19,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-mpg",
+      "index": 2,
+      "group": "e2bd5f049ddd51b8b62a023f955398ad7f6188497bfbdfc5cf37ed0f16d1e03c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-mpg",
+      "index": 13,
+      "group": "7dfb7db93b21009118b5075998e0ed5e6cc5f3d07d07bf9a7ccfbd0576c482f7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-mpg",
+      "index": 17,
+      "group": "5e88f0a38e95a4dfffe4e84ff92531cbc40f34e061e43279a452e17961e8f8d4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-mpg",
+      "index": 18,
+      "group": "f2fd9e3f09e3a7e52644c41d73c7644ecec53033d4155854664c0bacce8e5701",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-mpg",
+      "index": 19,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 15,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 16,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 18,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-new_card",
+      "index": 19,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 0,
+      "group": "11391b3e69c4ce14d9a37a2000bdc98b24771d55d3b089501b1e50255b37c28f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 13,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 16,
+      "group": "3dcea1fc315ae98e0c68b7ec62e73807dcc7832c7264d706c207206a45d5e5c5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 17,
+      "group": "60427fd8f1560eb4d10bd8d61be84849343231e15735eb247a0b842070928ff7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 18,
+      "group": "46058d52391aacbdd6265dc113cdf78aa83986c97a161f20fa92fafcd5bb6ab0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-next_song",
+      "index": 19,
+      "group": "9637083599d356c0b4c20fde8ffc646c77a8245ec56ff97750989cc2cfc5c5ac",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 1,
+      "group": "ca3704aa0b06f5954c79ee837faa152d84d6b2d42838f0637a15eda8337dbdce",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 2,
+      "group": "870814270906b229089eea0083d69a601060422808e6d80d3e11b07c58353bda",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 3,
+      "group": "cc0b4a50b467efe2e87158dea2fd42f63ab1464d7f32cf1c5f82e4fdc279f619",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 4,
+      "group": "216091581592564dcc3c4533094f0f587a2bd014e448f28f088a43ebc9e3d96b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 6,
+      "group": "d440a63a2025f47b42d3a44ec2697f78f012dde5f559003754cfa2e3dedb948e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 8,
+      "group": "09f04951af4cd503877815fd30f98e3af8d3d50a0972e83a4aaa42f4fba59761",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 11,
+      "group": "cdb420a556dcd981fbf45fb4af0b1f103bfac1cb0c2b3e0e29222b2def1c15c2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 15,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 16,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 17,
+      "group": "cbe649f8e0039474b8f9860b9c39e740883affb4f1c0ac850404572172a08a9a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-no",
+      "index": 18,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-oil_change_when",
+      "index": 1,
+      "group": "e6e9fa519b10d6f74365a35dbc2350a0a1dac9ebedd74995023fedc96215ad4f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 13,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 15,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 16,
+      "group": "2f317367d4fb4b1e53eda5c68c1959a8b5638b4ee6846101c62c9c49dd9ca39d",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 17,
+      "group": "978b4896598e132aecb729111b992a73567381ec4cc8ee6b7273c3b134d791e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 18,
+      "group": "a59ab50cb368c015627607134845f39c69f9f9caabe22f35f315344621a7d4fb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order",
+      "index": 19,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 12,
+      "group": "e8b545cb32faea173bc0abc8fb1f1b57851d050ff2d4a471c41e8116fb6b8082",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 15,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 16,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 17,
+      "group": "c13b497bf1bca05a86a5e2f6a2c44e97c1a75a087cf628fbafc2d3ac69056721",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_checks",
+      "index": 18,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 12,
+      "group": "b8a930ee61b9abe829005012070300cec64dc86c106c711459571ebc2ce491d6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 14,
+      "group": "a59ab50cb368c015627607134845f39c69f9f9caabe22f35f315344621a7d4fb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 15,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 16,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 18,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-order_status",
+      "index": 19,
+      "group": "cbe649f8e0039474b8f9860b9c39e740883affb4f1c0ac850404572172a08a9a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 13,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 16,
+      "group": "07074b42d98075fe42e707fdb3188c66187eb5f5607750fc86a22d130a678194",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 17,
+      "group": "7c6b175c22b4261f9dbc0b94ee2f4595aabf07efccf2df498098af42200581c9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pay_bill",
+      "index": 18,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-payday",
+      "index": 0,
+      "group": "45235f6766e3650c0dd6094383037ccd766304ca5272e81b374ea6ff4c789296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-payday",
+      "index": 1,
+      "group": "629b9fcd36119764be88dc5c9989430637816d0e2a9b12bab7bc57d9764d05d7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-payday",
+      "index": 2,
+      "group": "ea262e856cfba9eade54e9fe9849210a911feed4057e10fa21e191264fd2e648",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-payday",
+      "index": 14,
+      "group": "9fb5c6bd25cb8e8fbefd5f204f652a87e9f500a869f7f16bea6cc6e82dba284c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 14,
+      "group": "60427fd8f1560eb4d10bd8d61be84849343231e15735eb247a0b842070928ff7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 15,
+      "group": "17792df7ecf9e38dd19bbba531bd98f338093501266e27d42edf6657aee1c798",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 16,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 17,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-play_music",
+      "index": 18,
+      "group": "9c92a99fdcc55bb8fb8681c4c030e706f2cb262e9608aa57fd7b1a11c7560562",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_balance",
+      "index": 0,
+      "group": "569df333e212701f0e5648f9b1a2eb9d1484f5809b26690183e32ab479ca73f1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_request_status",
+      "index": 13,
+      "group": "ff1c40901fcb893ffadd2c932c3b3e4495ac9da0065e0f8584715a313ec4ee38",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_request_status",
+      "index": 17,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_request_status",
+      "index": 19,
+      "group": "244270303cab4cb1bf9b2da64ed2f2441400d96342be4d5edee70ff32cc4203a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_used",
+      "index": 12,
+      "group": "d13711c8cfd5de42403318aa82fee83309d281403e854e379b20f38dd1a9d084",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_used",
+      "index": 16,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-pto_used",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-recipe",
+      "index": 14,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-recipe",
+      "index": 16,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-recipe",
+      "index": 17,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-recipe",
+      "index": 19,
+      "group": "d284faae103ae186beb01a122d0044a58715dffd996d8c7a55f496a9af113abe",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-redeem_rewards",
+      "index": 14,
+      "group": "07074b42d98075fe42e707fdb3188c66187eb5f5607750fc86a22d130a678194",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-redeem_rewards",
+      "index": 16,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-redeem_rewards",
+      "index": 17,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 13,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 14,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 16,
+      "group": "38c85a4dd8611889ff6ea2f5f7700cd1aa470f7c600ec2ac0301c059901d8f51",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 18,
+      "group": "2f317367d4fb4b1e53eda5c68c1959a8b5638b4ee6846101c62c9c49dd9ca39d",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder",
+      "index": 19,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder_update",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder_update",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder_update",
+      "index": 15,
+      "group": "07074b42d98075fe42e707fdb3188c66187eb5f5607750fc86a22d130a678194",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder_update",
+      "index": 17,
+      "group": "3861c67898a852751fb7b23ea28dd9b118b1751f74735418c48e30078d3d9003",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reminder_update",
+      "index": 19,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 0,
+      "group": "3b56afd99b2148f989878db028a376282bce52b78aa2d2ceb0f72eba1a8285a1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 2,
+      "group": "bf8508797d920301fc2826bf9d358af541fb4cc0d4ded404541b0de1566ad3fa",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 5,
+      "group": "45f3d9e7464a3321efae3dada5324998ec43f221af0099b517c72eb90e7dec5e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 10,
+      "group": "406782127e5f265652f3623aac907057a9ff9d4120f596082fea658033abb9f5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 11,
+      "group": "b28e3866a25dad53982c293a81b86a9b34f2761b99d635be5c42ebc819b58fff",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 13,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 14,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 15,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 16,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 17,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-repeat",
+      "index": 18,
+      "group": "d9ace543793a28b9cb77332a7720187bdde03952c553eee2588ca07b29c576c1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-replacement_card_duration",
+      "index": 1,
+      "group": "3b848e9784b8f964586544523f033c4e09a2540e02ae6fd1f7eabff721b43d59",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-replacement_card_duration",
+      "index": 16,
+      "group": "d14543f9cdfd6961876ea5f6a2a24403e53cb0f12e5ad217cbb731b18d0b9eff",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-replacement_card_duration",
+      "index": 17,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-report_fraud",
+      "index": 14,
+      "group": "2a921647413eebd2d3fc72cc672d4c55a829e5f106fc6cf21957d1c4d97641a3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-report_lost_card",
+      "index": 16,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-report_lost_card",
+      "index": 18,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 13,
+      "group": "17792df7ecf9e38dd19bbba531bd98f338093501266e27d42edf6657aee1c798",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 15,
+      "group": "c340b3e49f9affa220bf9cb9b4dc37cbee8cb55f0f1b5bd01dd134fcadf9b34e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 18,
+      "group": "76370cda02cbfd7d0db4565b084aa3c08eb6720f0e74b67b21b8d9bf0ef9f24f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-reset_settings",
+      "index": 19,
+      "group": "227f77d8ede6af9e51d9fa1d88a5c66fcd8ea56bb79ab79ae4302420052e2d44",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-restaurant_reviews",
+      "index": 15,
+      "group": "c1d96b2ee4578e4004818f1763e56ad9911e851d73d55105333947110fb1ee62",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-restaurant_suggestion",
+      "index": 13,
+      "group": "5ed05a20e6b5f3931982541c7906241cf323197e2e19dc35bdb2cb7ab9d3b4b5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-restaurant_suggestion",
+      "index": 19,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-rewards_balance",
+      "index": 13,
+      "group": "45b2ecdb4add3b84001fb5424c860a6f2ef85a2305ee24911d8c3381aeea9bf6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-rewards_balance",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-rewards_balance",
+      "index": 15,
+      "group": "2a6835159616bff8d828d5bc58d8df093885520cfed2a1872b5b1f93c9af8b40",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-roll_dice",
+      "index": 7,
+      "group": "bfeb9cdfe8ac2763b039d9d8665dab8443108d960f58c2a41dd346edc21527bf",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-roll_dice",
+      "index": 10,
+      "group": "d46e34009e1fd9324ba13c7663542a632ff933840d7a0be41366fcf484908114",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-roll_dice",
+      "index": 16,
+      "group": "500c9ca87786b8596c6dcf1a1ca8dd00b25e7aca5fd4f0bc2c77e1ef3469e775",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-roll_dice",
+      "index": 17,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-roll_dice",
+      "index": 18,
+      "group": "361474b0c9ff016f26dd83d1d41f291e2b977e37c873cb8aecc2d466e6566a26",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 13,
+      "group": "17792df7ecf9e38dd19bbba531bd98f338093501266e27d42edf6657aee1c798",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 14,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 17,
+      "group": "4581c99c6a5b431419d99b133de545ccd3eef2330c7bee36a2421746cf098b9c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 18,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-schedule_meeting",
+      "index": 19,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list",
+      "index": 12,
+      "group": "c5597bab5eda66039596d98213ced5f4615a8e53810fcb32436cfdaf9a9fd3ce",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list",
+      "index": 18,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list_update",
+      "index": 12,
+      "group": "8f2f17b823e801a993c685d6e405aefa0a1bae3e9144ba4e5c73a9b986ae37cf",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list_update",
+      "index": 14,
+      "group": "91502f8bcba51cdea2c39995df0231043e632658fa162dad5f0c642eae70a81d",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list_update",
+      "index": 17,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list_update",
+      "index": 18,
+      "group": "9bb6e9643c4068ff8cbc44568550dc98d559659d1facd95702e495bfcc4cb4a9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-shopping_list_update",
+      "index": 19,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 0,
+      "group": "6d4bc76d66829c917860361b42b212febafaa0ad4acff3ae72dd5fd37446eb79",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 14,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 16,
+      "group": "17792df7ecf9e38dd19bbba531bd98f338093501266e27d42edf6657aee1c798",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 17,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 18,
+      "group": "5d09b4cd48544c015b159abcbae4e04d08ab3813d313a837bfa52f53e4ac57e9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-smart_home",
+      "index": 19,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spelling",
+      "index": 12,
+      "group": "46058d52391aacbdd6265dc113cdf78aa83986c97a161f20fa92fafcd5bb6ab0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spelling",
+      "index": 13,
+      "group": "cb1d9b9e69a7c2262d27587a39e6084858c1968588b392f2e5148a06988d7987",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 13,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 14,
+      "group": "1f096ba030491c1cc6f9511739d41b4e46275fa8757c90fd74082bc2f4db1122",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 15,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 18,
+      "group": "37b28ec9a3ebdf6d2fd4afff1330f78f1a8489608e742a9c578754fa51bd89e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-spending_history",
+      "index": 19,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 1,
+      "group": "b8f51ed8ddd209a08782268dd02fa22b16418ab37e1b67e6287688dc5595dcd2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 12,
+      "group": "c9c122e2ee45217202c1f8d4fc40803ad4d2d6317a0c9d75cf5964a2328128ec",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 13,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 14,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 16,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-sync_device",
+      "index": 17,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 0,
+      "group": "d1b36970d43c1f694207678fbb15b16585e9283563b57bac5a2b83524da0739a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 14,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 15,
+      "group": "2a921647413eebd2d3fc72cc672d4c55a829e5f106fc6cf21957d1c4d97641a3",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 16,
+      "group": "d14543f9cdfd6961876ea5f6a2a24403e53cb0f12e5ad217cbb731b18d0b9eff",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 17,
+      "group": "244270303cab4cb1bf9b2da64ed2f2441400d96342be4d5edee70ff32cc4203a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-taxes",
+      "index": 18,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 13,
+      "group": "500c9ca87786b8596c6dcf1a1ca8dd00b25e7aca5fd4f0bc2c77e1ef3469e775",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 15,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 16,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 17,
+      "group": "10421b46803ef33017ac63784fd8418b80d053eea092fcdd4201aba2d85a841c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tell_joke",
+      "index": 18,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 13,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 16,
+      "group": "7c6b175c22b4261f9dbc0b94ee2f4595aabf07efccf2df498098af42200581c9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 17,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 18,
+      "group": "46058d52391aacbdd6265dc113cdf78aa83986c97a161f20fa92fafcd5bb6ab0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-text",
+      "index": 19,
+      "group": "5d09b4cd48544c015b159abcbae4e04d08ab3813d313a837bfa52f53e4ac57e9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 4,
+      "group": "0daa46ebdccf8e1f2e13574115a260ed9d6220bb48ac1f47856df5c400f04bca",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 9,
+      "group": "4123ba4490ce2c98ceeab716ff7aa29ff68f5abe736df2e9ce32aab4ad8f290c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 10,
+      "group": "cd37cc01135dbdb8f79a87760e8a9b6d2f9fe4df76b388b31c8875120ba19f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 13,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 15,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 16,
+      "group": "eb75e9f084cd8e5c9984688a8502ff45608342a2114c14363fcc9663c8f74de0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-thank_you",
+      "index": 17,
+      "group": "4ef84e5d60b561e0c773b63638b3adc5cb29f91922f0faeb841dc9bd74f9e802",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-time",
+      "index": 0,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-time",
+      "index": 14,
+      "group": "60427fd8f1560eb4d10bd8d61be84849343231e15735eb247a0b842070928ff7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 1,
+      "group": "500c9ca87786b8596c6dcf1a1ca8dd00b25e7aca5fd4f0bc2c77e1ef3469e775",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 12,
+      "group": "9c92a99fdcc55bb8fb8681c4c030e706f2cb262e9608aa57fd7b1a11c7560562",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 13,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 14,
+      "group": "8eeac231e87e3a7b3dfa0512f4d875adef03b204cd9e668b91ca0d4f9370a323",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 15,
+      "group": "a59ab50cb368c015627607134845f39c69f9f9caabe22f35f315344621a7d4fb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 16,
+      "group": "b0569226d34c9890eb09211692b8cb5407b30bb83c4180107844f92f7d093456",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 18,
+      "group": "95d486cad73d491e27c39578897e07d3b1817429364a53e1427cf5b94942daf0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timer",
+      "index": 19,
+      "group": "3930cf2fa6d239cf9364bc390a5ac4f13c8d33083343df165a21432db274d894",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 1,
+      "group": "406238683b82d1c6071c308333540609797f63ad0963ae572f12d2512c3d63b1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 13,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 14,
+      "group": "227f77d8ede6af9e51d9fa1d88a5c66fcd8ea56bb79ab79ae4302420052e2d44",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 15,
+      "group": "cd120cebdc756f809e909be905525cf7dd3745691dac0de0679024d191a0fcb6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 18,
+      "group": "978b4896598e132aecb729111b992a73567381ec4cc8ee6b7273c3b134d791e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-timezone",
+      "index": 19,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tire_change",
+      "index": 17,
+      "group": "e6e9fa519b10d6f74365a35dbc2350a0a1dac9ebedd74995023fedc96215ad4f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tire_pressure",
+      "index": 2,
+      "group": "0973da5569e0012956f1a4f8837f7b792bd7aa5b713ec2e326a2d81498857223",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tire_pressure",
+      "index": 4,
+      "group": "afe84356b9bab1658fb834c05905824c36283f0fc1e67e5f134c53a03b5a9e02",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tire_pressure",
+      "index": 13,
+      "group": "a771ceaf099d4beaa1518242f1078590e159a727d5554f758abdfbad46a1e735",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-tire_pressure",
+      "index": 15,
+      "group": "8a4ffd69fe77811b14f0bc02789df9c9ae5c1d36ba77c6989021e3dd6898a1ae",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 13,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 14,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 15,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 16,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 17,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 18,
+      "group": "55bdaf2e2d76055780fdae45f256c5b08274dde2c623de00a5c870c80540dfb0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list",
+      "index": 19,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 14,
+      "group": "a22038d4bfed3689d110022a9ed1f233a8302f9c6f1e1880024ed644c7d2e556",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 15,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 16,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 17,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-todo_list_update",
+      "index": 18,
+      "group": "1375d1f009a197104b347a741c094c01adbc8d7bcc8a777190031d12bc08d274",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 12,
+      "group": "451b730d5dd16d703a147af8cf4e4d345f4f9a78085040e20143cdb439ff1d7e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 13,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 14,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 15,
+      "group": "0d4857cb48542476b5f50d14e7889e55e81d1ea5f04a874c1c650eab98d3074e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 16,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 17,
+      "group": "a59ab50cb368c015627607134845f39c69f9f9caabe22f35f315344621a7d4fb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 18,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transactions",
+      "index": 19,
+      "group": "b0569226d34c9890eb09211692b8cb5407b30bb83c4180107844f92f7d093456",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 13,
+      "group": "c4780038577dd336697f730c14945eeaa380ca04d60f71c246264b15fd6c3269",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 14,
+      "group": "a2a7c2321b1cf78a354fb9cd1d7b83dae9f663b66ea0cbf5be0aab6302afad72",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 15,
+      "group": "37b28ec9a3ebdf6d2fd4afff1330f78f1a8489608e742a9c578754fa51bd89e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 17,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-transfer",
+      "index": 18,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-translate",
+      "index": 0,
+      "group": "3b6712306653e6604267d6b3bba0e6b4d0e5111003ef8a6f6c66c5dfba13c6ec",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-translate",
+      "index": 14,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-translate",
+      "index": 17,
+      "group": "55bc11c1961b2566f679599111a35060089dc9b4c12002643ee4c4066a972f31",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 12,
+      "group": "1b645fb396fb910c0e0be57c990f022eda08484112134b5474f0420aa52d3857",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 14,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 15,
+      "group": "76370cda02cbfd7d0db4565b084aa3c08eb6720f0e74b67b21b8d9bf0ef9f24f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 16,
+      "group": "6c96c9e67f4d898af5a086b76f83829bba86a0754db107cfca53b9a16d77251b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 17,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_alert",
+      "index": 19,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 12,
+      "group": "45b2ecdb4add3b84001fb5424c860a6f2ef85a2305ee24911d8c3381aeea9bf6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 13,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 14,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 15,
+      "group": "ce1170957eded26d989b71284ff366603c14f24b8385190d3f5f2a4804714c6c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 17,
+      "group": "edd575367f6aa5dd03627e35f2d9216aaad2bda2ef295bdffe1aa220303169d5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_notification",
+      "index": 19,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_suggestion",
+      "index": 12,
+      "group": "9c92a99fdcc55bb8fb8681c4c030e706f2cb262e9608aa57fd7b1a11c7560562",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_suggestion",
+      "index": 14,
+      "group": "45b2ecdb4add3b84001fb5424c860a6f2ef85a2305ee24911d8c3381aeea9bf6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-travel_suggestion",
+      "index": 18,
+      "group": "95e43506041112c3de0af1551219477395ca5e1ac97b75ec3344622f6ccebb65",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 13,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 14,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 17,
+      "group": "e35371e14122c8d3100de233ea34cd85bfd8d7e9253bf44bc56862bc79355292",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 18,
+      "group": "9a94c3c1fedf835b91bb68f1c4f583e02a6e28a185d9f68e12463b0d82e79d68",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-uber",
+      "index": 19,
+      "group": "2f317367d4fb4b1e53eda5c68c1959a8b5638b4ee6846101c62c9c49dd9ca39d",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 13,
+      "group": "1f096ba030491c1cc6f9511739d41b4e46275fa8757c90fd74082bc2f4db1122",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 17,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 18,
+      "group": "72d8b4c5337ff67fdf3cf610b1901d3ce40fc5db9dbb2f69bc374aea8f3b194b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-update_playlist",
+      "index": 19,
+      "group": "edd575367f6aa5dd03627e35f2d9216aaad2bda2ef295bdffe1aa220303169d5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-user_name",
+      "index": 0,
+      "group": "2fe76e2f0c08583f7f77bdf4ea52f610d68f6d766b549391660f54d8d505ea8b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-user_name",
+      "index": 9,
+      "group": "6834063809e870ef2e104a11a7d6144ae597acd7c8ac0661e1a6064bf3349621",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-user_name",
+      "index": 14,
+      "group": "94cb23f8ca7b504b6288ab779d1dddca1ca84e74691a0da382bb0650d1ea781b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-user_name",
+      "index": 15,
+      "group": "116617528fc02e56550c0bb8d337cabc4278fc9bdf0954688d84ca86523804b7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-user_name",
+      "index": 17,
+      "group": "14d4ea54a47dbbf93b16e1828da8aade6c4c3b337b46c751037c85a0c6428f98",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-vaccines",
+      "index": 14,
+      "group": "82345bfb479e6d061a1f15477a3036b31d17857e21dcd717f41076415e04fc35",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-vaccines",
+      "index": 16,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 13,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 14,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 15,
+      "group": "1375d1f009a197104b347a741c094c01adbc8d7bcc8a777190031d12bc08d274",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 18,
+      "group": "e63beb6a08a3ef85cc737ad68b678c84d6a6fa410d3502d13e0bd92e0e3de31f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-w2",
+      "index": 19,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-weather",
+      "index": 0,
+      "group": "20e1dfdfaeff5eb778b3cac343f8efeb7ab8088e9fc06b58118540790a82590e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-weather",
+      "index": 12,
+      "group": "93e8badc1ee94cda9ef882d9ff825e15ae77a73de81255c41d459a4cb0003b0b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-weather",
+      "index": 14,
+      "group": "b80494a41c3bd976186305b3383c4fb82d4c5cd4cf6549fd0f9c5d2613eba4b6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 0,
+      "group": "539979ead0a95dc2da4690617dc52a977bad135168ed5e8ac29940cde423d9c5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 8,
+      "group": "ce10858018277cdd09aabfa1f544410298d64244d9e0e7a5401bda8c1638ca0c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 14,
+      "group": "b0569226d34c9890eb09211692b8cb5407b30bb83c4180107844f92f7d093456",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 16,
+      "group": "9c92a99fdcc55bb8fb8681c4c030e706f2cb262e9608aa57fd7b1a11c7560562",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 17,
+      "group": "8f7ef3ac9a6598ccb56ea5713b4258d54b60b5e4213779bc6559ad36502acce2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_are_your_hobbies",
+      "index": 19,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 1,
+      "group": "5cf178efe9d6a0aaab4fbb7a75a06520c5e49145b533de1865a897719c89ca9f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 2,
+      "group": "fd001330d443bc692afaab6a2ab3a49a1d1c09c2cc090e7271bfe66ffbe67d1e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 13,
+      "group": "8d7a709d864fbbd1c708975c160fbb9fa4dd67f40615a2fcbabb409de1556b76",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 14,
+      "group": "d1c7f32875d36883fa540d924a616cb885f6f721d398711e19250c0b2c7e5acb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 16,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 17,
+      "group": "c1332a137577f1fb6bac17d1710df7d8cf3a701699cfd8151f01678b438fbf8c",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 18,
+      "group": "2ba1199be62defeff304fcea75d40158655272988055eb8bc28bd39a23cc1fde",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_can_i_ask_you",
+      "index": 19,
+      "group": "76370cda02cbfd7d0db4565b084aa3c08eb6720f0e74b67b21b8d9bf0ef9f24f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 1,
+      "group": "134db2677022e79d073ad98a0bc1c589ed33c4e3e323864b406f2a2eb5de7454",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 10,
+      "group": "d5affa5f62f7f09049578afcdb6fcdd296bd191f6e6aa8ff0614b9e948f76fb0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 11,
+      "group": "c924025b83db6800675e350f56f58378a28f0da0efcf6966c5c6498788397247",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 12,
+      "group": "978b4896598e132aecb729111b992a73567381ec4cc8ee6b7273c3b134d791e1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 13,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 15,
+      "group": "5b503f203d6b1847900eae5d75c34fe118545914450a7c091bc6bb93c9758546",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 17,
+      "group": "67a5237dd8e737a8ec1b4eb6e97c607b8a9e6f5c3f995a9cb4030cddf26c5b97",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 18,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_is_your_name",
+      "index": 19,
+      "group": "a59ab50cb368c015627607134845f39c69f9f9caabe22f35f315344621a7d4fb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-what_song",
+      "index": 6,
+      "group": "7d8080ebd5fca58bd82352c32597f47c5d54755390c314b9acc56b7f13900fb6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-where_are_you_from",
+      "index": 5,
+      "group": "58a0c272c84fc7c45705c2c6b81c77731910a5b51ac097fdbf14d1287b4436b1",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-where_are_you_from",
+      "index": 13,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 14,
+      "group": "c5995734dab4efacefa0873ccdb44224d55144f02d07981eed99637b2d52cf5a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 15,
+      "group": "a510b07674664a5f6599a7d8a7f0ce46024ed5339e9e13241e5d43f200f50071",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 18,
+      "group": "cd120cebdc756f809e909be905525cf7dd3745691dac0de0679024d191a0fcb6",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-whisper_mode",
+      "index": 19,
+      "group": "0aa0ada8ec0e24542816dbcc4950b94a67184c44c2b51c776ff8cab8012bb228",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 0,
+      "group": "871ec8c6828c3712c88eca829ff7083987ac923fa0f8aa1fb343cf9ea8f6343a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 1,
+      "group": "e7acf9cb8914b960ef07faa1be08341a4d9c423601baad3d41b3246dd1bcd3d2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 3,
+      "group": "e8794f40a084b60f1011f1a1bbcfbf64ca2788551e41921d4b9ac19efd3dee7a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 6,
+      "group": "f4b518d7d3380c8ea5480730c7726d89626a446a2ca20665a59c1965473725b2",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 13,
+      "group": "75d85578c2146529691e712977e8fe5fd7777f1d895645fd32fb0a21d1089958",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 14,
+      "group": "a944df992fd1e77fa62325db1b23bc6a1df0f5be996633348470b7a0b3f23245",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 16,
+      "group": "832e1ca87754f56224c82b94ee7501ebb3462177225b4de2bbb5cee05e6ba296",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 17,
+      "group": "36a26788b984d1813ab06810dc61d9613856628819601624fc33e84b41066ab5",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 18,
+      "group": "c340b3e49f9affa220bf9cb9b4dc37cbee8cb55f0f1b5bd01dd134fcadf9b34e",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_do_you_work_for",
+      "index": 19,
+      "group": "81b57d156d190ca533438c84d4cc8a1276e2614a736d5a7fa98cf1607c997b36",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 0,
+      "group": "1c4915ccd6e2acbf71b3bcd60eaf6942d7a288e925a74fd41c5e74b3d164da3f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 2,
+      "group": "046bda65e7b7f67bbb5332a74a101aa8123dbb52650e9be0722f0c6319461056",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 3,
+      "group": "811219fa07842251d19b35eb652267ba9d24ab3fd053259e7643c13728125131",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 8,
+      "group": "c8702fa0c4db51192940d3b90246498a44207e26632dd6af20133014c0369f2b",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 12,
+      "group": "d157f5250ce7271899d50e8b5420b7d0d2cdeb8143b94310e408929227d7febc",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 13,
+      "group": "d1a7e9fddc0c976f7379290b18391201e2868fb0d86c4384cbfa4b4323b1c4d4",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 14,
+      "group": "d3f55e80fc3b0d63b8a9aa06581a978319574c833c820c13b9a301e07d8c34cd",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 15,
+      "group": "d5c4569cc701e064615691dcda8639d651b2c596ae2bd2b363b3ff26d1a15576",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 16,
+      "group": "d863d43e2ad6ab5580b230c4a758755b83e350b7aeced562079429c3f73ab5e7",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 17,
+      "group": "daf3196dbf3521aff17553171708c0890a16d19b68182e19946d5c0be3f1939a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 18,
+      "group": "df8e244508bab1c37cd53400671a8b04e4994de2a307944cae193bbc6640e792",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-who_made_you",
+      "index": 19,
+      "group": "e9f7c36a5ab3a0d8537986746e6e00efab6acb256ca7c012edd23fa26ed25ff8",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 0,
+      "group": "a68ff773be3579e1fe70f5f9872312cb1717391a1e44ddb329c63a461242b987",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 1,
+      "group": "1d9e148294a1b484b750b6f0e07e0547ee522bfc276fc2948c95c0f501bfb551",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 3,
+      "group": "d888a3e4ea95d4043e8cc5014482a55fcb37e44e3d56fb9a053ad90feaa1c9f8",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 4,
+      "group": "af6ee99106758696406520ca2ac7d9e9925a302e17ec7fbde1141495b5256fc9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 9,
+      "group": "f2dd233ec6de5c7548eae4049280ac84fdd20123ef80e7cb060a83a66db9a9df",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 12,
+      "group": "d832be57fc35827ecaff1fc34aefd0764e29ed3fa7ca0ab57471e904bddb9135",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 13,
+      "group": "244270303cab4cb1bf9b2da64ed2f2441400d96342be4d5edee70ff32cc4203a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 14,
+      "group": "fc59b6931c45adb954736a5961646288f48ebb035b98261fdbb79a8123e89feb",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 15,
+      "group": "48be07b231ad06756197b4617243835a0c536abd24c4806e96a508de82e84956",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 16,
+      "group": "e64d743f228459aceefe004d6430e1e676623c6af6939e73d92d97c21ea26f0f",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 17,
+      "group": "500fccf896badf1615de95bd800c3bfd23eb9a1fcca8bce4219a2765fa9fc5c0",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "clinc150-yes",
+      "index": 18,
+      "group": "eb5c10fe18d9750934fedf2059ebfd1fccadce64217a583b783ff10959072c1a",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-age_limit",
+      "index": 1,
+      "group": "431bae08a72e175f074e99a74d33dfcd14b57780895be1f2bdf5d1edf1ae6c53",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-card_about_to_expire",
+      "index": 0,
+      "group": "44f8c61a36122b483749427e3a932d03066fe48e1032630a5a6f59c8f07567ef",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-card_delivery_estimate",
+      "index": 1,
+      "group": "a156117065f14ffee1fccc26366b7d3695fe40ccb9c8cfe8b2a92069bb09c8fa",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-declined_card_payment",
+      "index": 0,
+      "group": "b9d0401aa41b316fbcd31250006da7a8f77c164fe7414395177b33ebf2c4f406",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-declined_cash_withdrawal",
+      "index": 7,
+      "group": "3993b08d3b107bdd2c4c71b7938746538f9899abe7f4ca7e507600de5eb27875",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-get_disposable_virtual_card",
+      "index": 0,
+      "group": "ef7f388bb70797482f5edd45e22e7808e958d68daba860572f962fbee8e27bc9",
+      "reason": "duplicate_group"
+    },
+    {
+      "id": "banking77-pin_blocked",
+      "index": 2,
+      "group": "215e902715d57ac5aca88b897f803c6881124b5e2bc7ead40159e29ee5d4b11c",
+      "reason": "duplicate_group"
+    }
+  ],
+  "api_latency_sum_ms": 515561.0426767962,
+  "published_price_estimate_for_recorded_usage_usd": 0.2777502,
+  "actual_billed_cost_usd": null,
+  "price_source": {
+    "url": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash",
+    "checked": "2026-09-21",
+    "input_usd_per_million": 0.3,
+    "output_usd_per_million": 2.5,
+    "account_tier_and_bill": "unavailable; missing usage is not zero cost"
+  }
+}

@@ -486,23 +486,23 @@ class TestAttack4MultithreadedConcurrencyRace:
         for p in prompts:
             engine.learn_from_tier2(p, target={"status": "allow"})
 
-        stop_event = threading.Event()
+        start = threading.Barrier(9)
+        reads_per_reader = 128
+        expected_version = engine.model_version + 30
         observed_inconsistencies: List[str] = []
 
         def reader_job(reader_id: int):
-            local_reads = 0
-            while not stop_event.is_set():
-                p = prompts[local_reads % len(prompts)]
-                v_pre = engine.model_version
+            start.wait(timeout=5.0)
+            for index in range(reads_per_reader):
+                p = prompts[index % len(prompts)]
                 res = engine.decide(p)
-                v_post = engine.model_version
                 # Verify that returned decision adheres to schema
                 if res.values["status"] not in ["allow", "deny"]:
                     observed_inconsistencies.append(f"Reader {reader_id} saw invalid choice: {res.values['status']}")
-                local_reads += 1
-            return local_reads
+            return reads_per_reader
 
         def writer_job():
+            start.wait(timeout=5.0)
             for i in range(30):
                 p = prompts[i % len(prompts)]
                 target_choice = "deny" if i % 2 == 0 else "allow"
@@ -513,13 +513,14 @@ class TestAttack4MultithreadedConcurrencyRace:
             writer_fut = executor.submit(writer_job)
             reader_futs = [executor.submit(reader_job, i) for i in range(8)]
 
+            # Finite readers cannot starve the writer indefinitely or leave
+            # executor shutdown waiting forever if the writer fails/times out.
             writer_fut.result(timeout=10.0)
-            stop_event.set()
             total_reads = sum(rf.result(timeout=5.0) for rf in reader_futs)
 
         assert len(observed_inconsistencies) == 0, f"Observed inconsistencies: {observed_inconsistencies}"
-        assert total_reads > 50
-        assert engine.model_version >= 30
+        assert total_reads == 8 * reads_per_reader
+        assert engine.model_version == expected_version
 
     def test_cache_invalidates_prior_versions_on_multiple_updates(self):
         # Invariant 8: Cache returns stale pre-update decision after 10 online updates

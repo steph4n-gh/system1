@@ -3,9 +3,18 @@ recursive-include tests *.py
 recursive-include examples *.py *.json *.md *.html *.mjs *.mts
 recursive-include scripts *.py
 recursive-include benchmarks *.py *.json *.md
+# Full research evidence stays in Git, outside installable distributions.
+prune benchmarks/quality/n8n_gauntlet/artifacts
+recursive-exclude benchmarks/quality/n8n_gauntlet/results *.json *.png
 recursive-include docs *.md *.json
 recursive-include assets *.md *.jpg
 recursive-include deploy *.md *.yaml
 
 include examples/inbox_zero/upstream/LICENSE examples/inbox_zero/upstream/system1.patch
 recursive-include examples/gaming/snake_arena/results *.gz
+
+recursive-include examples/gaming/skill_playground/results *.gz *.zip
+
+recursive-include examples/gaming/pokemon_teaching/results *.gz *.zip
+
+recursive-include examples/teaching_by_doing/results *.zip

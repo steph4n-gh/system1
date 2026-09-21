@@ -1,0 +1,41 @@
+{
+  "scope": "Integration probes only, not a quality evaluation",
+  "selection": "First two development groups in lexicographic SHA order in each saved accept/review branch, plus one malformed request.",
+  "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+  "requests": [
+    {
+      "id": "local1",
+      "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?",
+      "local_review": false,
+      "recorded_category": "contactless_not_working",
+      "group": "22bb6b36c7ea7b2feafbaa7ffd49b899dc91e5c95360bcade7d8540629716217"
+    },
+    {
+      "id": "local2",
+      "text": "I need to transfer funds from my other bank account into this bank account.",
+      "local_review": false,
+      "recorded_category": "transfer_into_account",
+      "group": "25ae114f93eff6f67f2111dc3bc9c590790c0fb22fd542650a36ee8c7d4cdc57"
+    },
+    {
+      "id": "review1",
+      "text": "why do you charge for transfers?",
+      "local_review": true,
+      "recorded_category": null,
+      "group": "2965eba921976ad97dd30cd523a7770e6ab27bfc4055b21029d79a5597d05675"
+    },
+    {
+      "id": "review2",
+      "text": "Have a payment that I haven't done.",
+      "local_review": true,
+      "recorded_category": null,
+      "group": "2a668676d64352e388f51b6e3d33cfbe3031eebd29b3a4819c531436b6d05da6"
+    },
+    {
+      "id": "malformed",
+      "text": 17,
+      "local_review": true,
+      "recorded_category": null
+    }
+  ]
+}

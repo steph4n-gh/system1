@@ -1,0 +1,587 @@
+{
+  "experiment": "Two taught Pokemon battle skills in the existing simplified simulator",
+  "seed_start": 8000,
+  "seed_count": 60,
+  "teaching": {
+    "move": {
+      "teach": 535,
+      "calibration": 201,
+      "bytes": 7122,
+      "teaching_ms": 10.199499956797808,
+      "lessons_sha256": "c6fe86cee7cc7fe6dd6ec7d259ba8229d2c935c2481bed2e1e2f3524c5673069"
+    },
+    "healing": {
+      "teach": 959,
+      "calibration": 279,
+      "bytes": 50808,
+      "teaching_ms": 54.94783294852823,
+      "lessons_sha256": "a0b4c2137ebbb53462450f56a97061811f08d38ac81169da52b2e897b192ae6e"
+    },
+    "flat": {
+      "teach": 1494,
+      "calibration": 480,
+      "bytes": 80002,
+      "teaching_ms": 262.6122499932535,
+      "lessons_sha256": "0021bb5e858de9489b0f3e0e6a3ee4e67b3ecf23d918537c79b1ecf4353f2dce"
+    },
+    "healing-corrected": {
+      "teach": 959,
+      "calibration": 279,
+      "bytes": 50784,
+      "teaching_ms": 43.29504200723022,
+      "lessons_sha256": "25cc92e4a34de37212d89a76f57e2f09dccc46d3a9d370930ad190b4ca53089b"
+    },
+    "flat-corrected": {
+      "teach": 1494,
+      "calibration": 480,
+      "bytes": 80217,
+      "teaching_ms": 241.18470802204683,
+      "lessons_sha256": "cc752b0529e2bddab7a76be431a987b293463d830068898a4be1389824c3d65f"
+    },
+    "total_ms": 832.118249963969
+  },
+  "paired_changes": {
+    "healthy": {
+      "improved_seeds": [
+        8009,
+        8027
+      ],
+      "regressed_seeds": [],
+      "identical_actions": 56
+    },
+    "pressure": {
+      "improved_seeds": [
+        8024
+      ],
+      "regressed_seeds": [],
+      "identical_actions": 54
+    },
+    "mixed": {
+      "improved_seeds": [],
+      "regressed_seeds": [],
+      "identical_actions": 56
+    },
+    "survival": {
+      "improved_seeds": [
+        8004,
+        8005,
+        8006,
+        8008,
+        8011,
+        8012,
+        8015,
+        8016,
+        8017,
+        8018,
+        8019,
+        8020,
+        8022,
+        8023,
+        8024,
+        8026,
+        8027,
+        8028,
+        8031,
+        8033,
+        8036,
+        8040,
+        8041,
+        8042,
+        8046,
+        8047,
+        8048,
+        8050,
+        8051,
+        8052,
+        8053,
+        8054,
+        8059
+      ],
+      "regressed_seeds": [
+        8032,
+        8055
+      ],
+      "identical_actions": 8
+    }
+  },
+  "correction": {
+    "changed_labels": {
+      "teach": 21,
+      "calibration": 6
+    },
+    "unchanged_skill": "move.s1m"
+  },
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "python": "3.13.5",
+  "results": {
+    "healthy": {
+      "rules": {
+        "episodes": 60,
+        "wins": 49,
+        "wins_without_review": 49,
+        "outcomes": {
+          "VICTORY": 49,
+          "DEFEAT": 11
+        },
+        "turns": 191,
+        "potions": 9,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.008875038474798203
+      },
+      "single": {
+        "episodes": 60,
+        "wins": 46,
+        "wins_without_review": 9,
+        "outcomes": {
+          "VICTORY": 46,
+          "DEFEAT": 14
+        },
+        "turns": 200,
+        "potions": 10,
+        "review_steps": 149,
+        "invalid_steps": 23,
+        "model_calls": 200,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.2278749889228493
+      },
+      "before": {
+        "episodes": 60,
+        "wins": 49,
+        "wins_without_review": 48,
+        "outcomes": {
+          "VICTORY": 49,
+          "DEFEAT": 11
+        },
+        "turns": 192,
+        "potions": 8,
+        "review_steps": 2,
+        "invalid_steps": 0,
+        "model_calls": 757,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.43447953066788614
+      },
+      "after": {
+        "episodes": 60,
+        "wins": 51,
+        "wins_without_review": 49,
+        "outcomes": {
+          "VICTORY": 51,
+          "DEFEAT": 9
+        },
+        "turns": 196,
+        "potions": 11,
+        "review_steps": 5,
+        "invalid_steps": 0,
+        "model_calls": 774,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.43235401972196996
+      },
+      "updated_rules": {
+        "episodes": 60,
+        "wins": 51,
+        "wins_without_review": 51,
+        "outcomes": {
+          "VICTORY": 51,
+          "DEFEAT": 9
+        },
+        "turns": 195,
+        "potions": 12,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.009417010005563498
+      },
+      "updated_single": {
+        "episodes": 60,
+        "wins": 48,
+        "wins_without_review": 10,
+        "outcomes": {
+          "VICTORY": 48,
+          "DEFEAT": 12
+        },
+        "turns": 205,
+        "potions": 14,
+        "review_steps": 151,
+        "invalid_steps": 27,
+        "model_calls": 205,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.23858295753598213
+      },
+      "after_strict": {
+        "episodes": 60,
+        "wins": 49,
+        "wins_without_review": 49,
+        "outcomes": {
+          "VICTORY": 49,
+          "DEFEAT": 8,
+          "REVIEW": 3
+        },
+        "turns": 193,
+        "potions": 11,
+        "review_steps": 3,
+        "invalid_steps": 0,
+        "model_calls": 761,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.4432909772731364
+      }
+    },
+    "pressure": {
+      "rules": {
+        "episodes": 60,
+        "wins": 36,
+        "wins_without_review": 36,
+        "outcomes": {
+          "VICTORY": 36,
+          "DEFEAT": 24
+        },
+        "turns": 168,
+        "potions": 24,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.009520997991785407
+      },
+      "single": {
+        "episodes": 60,
+        "wins": 34,
+        "wins_without_review": 7,
+        "outcomes": {
+          "VICTORY": 34,
+          "DEFEAT": 26
+        },
+        "turns": 177,
+        "potions": 26,
+        "review_steps": 118,
+        "invalid_steps": 15,
+        "model_calls": 177,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.24025002494454384
+      },
+      "before": {
+        "episodes": 60,
+        "wins": 36,
+        "wins_without_review": 33,
+        "outcomes": {
+          "VICTORY": 36,
+          "DEFEAT": 24
+        },
+        "turns": 169,
+        "potions": 24,
+        "review_steps": 3,
+        "invalid_steps": 0,
+        "model_calls": 682,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.4475829773582518
+      },
+      "after": {
+        "episodes": 60,
+        "wins": 37,
+        "wins_without_review": 31,
+        "outcomes": {
+          "VICTORY": 37,
+          "DEFEAT": 23
+        },
+        "turns": 177,
+        "potions": 30,
+        "review_steps": 11,
+        "invalid_steps": 0,
+        "model_calls": 713,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.4402910126373172
+      },
+      "updated_rules": {
+        "episodes": 60,
+        "wins": 37,
+        "wins_without_review": 37,
+        "outcomes": {
+          "VICTORY": 37,
+          "DEFEAT": 23
+        },
+        "turns": 176,
+        "potions": 30,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.00979148899205029
+      },
+      "updated_single": {
+        "episodes": 60,
+        "wins": 35,
+        "wins_without_review": 7,
+        "outcomes": {
+          "VICTORY": 35,
+          "DEFEAT": 25
+        },
+        "turns": 184,
+        "potions": 31,
+        "review_steps": 119,
+        "invalid_steps": 16,
+        "model_calls": 184,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.24041699361987412
+      },
+      "after_strict": {
+        "episodes": 60,
+        "wins": 31,
+        "wins_without_review": 31,
+        "outcomes": {
+          "VICTORY": 31,
+          "DEFEAT": 19,
+          "REVIEW": 10
+        },
+        "turns": 169,
+        "potions": 23,
+        "review_steps": 10,
+        "invalid_steps": 0,
+        "model_calls": 682,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.4379579913802445
+      }
+    },
+    "mixed": {
+      "rules": {
+        "episodes": 60,
+        "wins": 40,
+        "wins_without_review": 40,
+        "outcomes": {
+          "VICTORY": 40,
+          "DEFEAT": 20
+        },
+        "turns": 176,
+        "potions": 24,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.009270966984331608
+      },
+      "single": {
+        "episodes": 60,
+        "wins": 39,
+        "wins_without_review": 10,
+        "outcomes": {
+          "VICTORY": 39,
+          "DEFEAT": 21
+        },
+        "turns": 188,
+        "potions": 25,
+        "review_steps": 127,
+        "invalid_steps": 18,
+        "model_calls": 188,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.2346459950786084
+      },
+      "before": {
+        "episodes": 60,
+        "wins": 40,
+        "wins_without_review": 37,
+        "outcomes": {
+          "VICTORY": 40,
+          "DEFEAT": 20
+        },
+        "turns": 175,
+        "potions": 21,
+        "review_steps": 7,
+        "invalid_steps": 0,
+        "model_calls": 689,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.4301669541746378
+      },
+      "after": {
+        "episodes": 60,
+        "wins": 40,
+        "wins_without_review": 35,
+        "outcomes": {
+          "VICTORY": 40,
+          "DEFEAT": 20
+        },
+        "turns": 180,
+        "potions": 25,
+        "review_steps": 10,
+        "invalid_steps": 0,
+        "model_calls": 708,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.43608350097201765
+      },
+      "updated_rules": {
+        "episodes": 60,
+        "wins": 40,
+        "wins_without_review": 40,
+        "outcomes": {
+          "VICTORY": 40,
+          "DEFEAT": 20
+        },
+        "turns": 181,
+        "potions": 28,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.009082956239581108
+      },
+      "updated_single": {
+        "episodes": 60,
+        "wins": 39,
+        "wins_without_review": 10,
+        "outcomes": {
+          "VICTORY": 39,
+          "DEFEAT": 21
+        },
+        "turns": 192,
+        "potions": 29,
+        "review_steps": 127,
+        "invalid_steps": 25,
+        "model_calls": 192,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.23897903156466782
+      },
+      "after_strict": {
+        "episodes": 60,
+        "wins": 35,
+        "wins_without_review": 35,
+        "outcomes": {
+          "VICTORY": 35,
+          "DEFEAT": 16,
+          "REVIEW": 9
+        },
+        "turns": 170,
+        "potions": 19,
+        "review_steps": 9,
+        "invalid_steps": 0,
+        "model_calls": 667,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.43835450196638703
+      }
+    },
+    "survival": {
+      "rules": {
+        "episodes": 60,
+        "wins": 13,
+        "wins_without_review": 13,
+        "outcomes": {
+          "DEFEAT": 47,
+          "VICTORY": 13
+        },
+        "turns": 139,
+        "potions": 41,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.007542024832218885
+      },
+      "single": {
+        "episodes": 60,
+        "wins": 8,
+        "wins_without_review": 0,
+        "outcomes": {
+          "DEFEAT": 52,
+          "VICTORY": 8
+        },
+        "turns": 125,
+        "potions": 27,
+        "review_steps": 97,
+        "invalid_steps": 50,
+        "model_calls": 125,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.20179100101813674
+      },
+      "before": {
+        "episodes": 60,
+        "wins": 13,
+        "wins_without_review": 13,
+        "outcomes": {
+          "DEFEAT": 47,
+          "VICTORY": 13
+        },
+        "turns": 139,
+        "potions": 41,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 417,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.3436249680817127
+      },
+      "after": {
+        "episodes": 60,
+        "wins": 44,
+        "wins_without_review": 44,
+        "outcomes": {
+          "DEFEAT": 16,
+          "VICTORY": 44
+        },
+        "turns": 262,
+        "potions": 109,
+        "review_steps": 1,
+        "invalid_steps": 0,
+        "model_calls": 786,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.3313120105303824
+      },
+      "updated_rules": {
+        "episodes": 60,
+        "wins": 44,
+        "wins_without_review": 44,
+        "outcomes": {
+          "DEFEAT": 16,
+          "VICTORY": 44
+        },
+        "turns": 262,
+        "potions": 109,
+        "review_steps": 0,
+        "invalid_steps": 0,
+        "model_calls": 0,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.007041497156023979
+      },
+      "updated_single": {
+        "episodes": 60,
+        "wins": 27,
+        "wins_without_review": 0,
+        "outcomes": {
+          "DEFEAT": 33,
+          "VICTORY": 27
+        },
+        "turns": 262,
+        "potions": 108,
+        "review_steps": 129,
+        "invalid_steps": 44,
+        "model_calls": 262,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.19193749176338315
+      },
+      "after_strict": {
+        "episodes": 60,
+        "wins": 44,
+        "wins_without_review": 44,
+        "outcomes": {
+          "DEFEAT": 15,
+          "REVIEW": 1,
+          "VICTORY": 44
+        },
+        "turns": 259,
+        "potions": 107,
+        "review_steps": 1,
+        "invalid_steps": 0,
+        "model_calls": 777,
+        "teacher_calls": 0,
+        "median_decision_ms": 0.3304580459371209
+      }
+    }
+  },
+  "limitations": [
+    "Survival is a constructed stress family for the HP-threshold weakness, not a representative game distribution.",
+    "Equal retained fit/calibration label counts; intermediate supervision and feature representations differ.",
+    "Player always acts first in this simplified simulator; no full-game or Gen-1 fidelity claim.",
+    "Known damage/type rules are shared inputs; the skills do not infer physics from pixels.",
+    "Handwritten original and updated teaching policies are explicit cheaper baselines.",
+    "Flagged predictions execute except in after_strict; legal overrides are counted.",
+    "Familiar local input patterns may recur in unseen encounters; no zero-shot claim."
+  ]
+}
