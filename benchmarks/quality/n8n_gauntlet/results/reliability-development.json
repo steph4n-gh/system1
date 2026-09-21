@@ -1,0 +1,661 @@
+{
+  "scope": "development only; calibration-trained reliability gate",
+  "results": [
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.01,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1460,
+          "accepted_correct": 1446,
+          "accepted_accuracy": 0.9904109589041096,
+          "coverage": 0.7448979591836735,
+          "oos_false_accept": 0,
+          "threshold": 0.9372438093703377
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1547,
+          "accepted_accuracy": 0.9866071428571429,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9102214507321328
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.1,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1340,
+          "accepted_correct": 1327,
+          "accepted_accuracy": 0.9902985074626866,
+          "coverage": 0.6836734693877551,
+          "oos_false_accept": 0,
+          "threshold": 0.963983452008258
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1548,
+          "accepted_accuracy": 0.9872448979591837,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9217000568751238
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 1,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1308,
+          "accepted_correct": 1295,
+          "accepted_accuracy": 0.9900611620795107,
+          "coverage": 0.6673469387755102,
+          "oos_false_accept": 0,
+          "threshold": 0.9702931863140138
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1549,
+          "accepted_accuracy": 0.9878826530612245,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9231724786622485
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 10,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1308,
+          "accepted_correct": 1295,
+          "accepted_accuracy": 0.9900611620795107,
+          "coverage": 0.6673469387755102,
+          "oos_false_accept": 0,
+          "threshold": 0.9706359122725355
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1549,
+          "accepted_accuracy": 0.9878826530612245,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9230828798999643
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.01,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1460,
+          "accepted_correct": 1446,
+          "accepted_accuracy": 0.9904109589041096,
+          "coverage": 0.7448979591836735,
+          "oos_false_accept": 0,
+          "threshold": 0.9371596323120686
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1547,
+          "accepted_accuracy": 0.9866071428571429,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9102300276037218
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.1,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1341,
+          "accepted_correct": 1328,
+          "accepted_accuracy": 0.9903057419835943,
+          "coverage": 0.6841836734693878,
+          "oos_false_accept": 0,
+          "threshold": 0.9637865249159762
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1547,
+          "accepted_accuracy": 0.9866071428571429,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9234115087117071
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 1,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1421,
+          "accepted_correct": 1407,
+          "accepted_accuracy": 0.9901477832512315,
+          "coverage": 0.725,
+          "oos_false_accept": 0,
+          "threshold": 0.9605411925483459
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1541,
+          "accepted_accuracy": 0.982780612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9255909510718331
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "minilm",
+        "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+        "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+        "model_bytes": 23026053,
+        "pooling": "mean",
+        "tokenizer_bytes": 466247,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 10,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1777,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1341,
+          "accepted_correct": 1328,
+          "accepted_accuracy": 0.9903057419835943,
+          "coverage": 0.6841836734693878,
+          "oos_false_accept": 0,
+          "threshold": 0.9766733540742827
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1538,
+          "accepted_accuracy": 0.9808673469387755,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9353552262273299
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.01,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1521,
+          "accepted_correct": 1506,
+          "accepted_accuracy": 0.9901380670611439,
+          "coverage": 0.7760204081632653,
+          "oos_false_accept": 0,
+          "threshold": 0.9276489537496364
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1544,
+          "accepted_accuracy": 0.9846938775510204,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9140611026632379
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.1,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1474,
+          "accepted_correct": 1460,
+          "accepted_accuracy": 0.9905020352781547,
+          "coverage": 0.7520408163265306,
+          "oos_false_accept": 0,
+          "threshold": 0.9462028501464246
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1549,
+          "accepted_accuracy": 0.9878826530612245,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9205058066399266
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 1,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1462,
+          "accepted_correct": 1448,
+          "accepted_accuracy": 0.9904240766073872,
+          "coverage": 0.7459183673469387,
+          "oos_false_accept": 0,
+          "threshold": 0.9539189023227258
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1548,
+          "accepted_accuracy": 0.9872448979591837,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9243561578150943
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 10,
+        "class_features": false
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1446,
+          "accepted_correct": 1432,
+          "accepted_accuracy": 0.9903181189488244,
+          "coverage": 0.7377551020408163,
+          "oos_false_accept": 0,
+          "threshold": 0.9579954069994271
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1548,
+          "accepted_accuracy": 0.9872448979591837,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9260421787238703
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.01,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1519,
+          "accepted_correct": 1504,
+          "accepted_accuracy": 0.990125082290981,
+          "coverage": 0.775,
+          "oos_false_accept": 0,
+          "threshold": 0.9273875572935828
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1544,
+          "accepted_accuracy": 0.9846938775510204,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9139658609292185
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 0.1,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1458,
+          "accepted_correct": 1444,
+          "accepted_accuracy": 0.99039780521262,
+          "coverage": 0.7438775510204082,
+          "oos_false_accept": 0,
+          "threshold": 0.9498169241482635
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1548,
+          "accepted_accuracy": 0.9872448979591837,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9217110807636566
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 1,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1448,
+          "accepted_correct": 1434,
+          "accepted_accuracy": 0.9903314917127072,
+          "coverage": 0.7387755102040816,
+          "oos_false_accept": 0,
+          "threshold": 0.9599790601764047
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1546,
+          "accepted_accuracy": 0.985969387755102,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.931607278110539
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "encoder": {
+        "name": "bge-small",
+        "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+        "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "model_bytes": 133093490,
+        "pooling": "cls",
+        "tokenizer_bytes": 711396,
+        "runtime": "1.30.0",
+        "threads": 1,
+        "provider": "CPUExecutionProvider"
+      },
+      "config": {
+        "kind": "calibration-logistic-reliability",
+        "head_regularization": 0.1,
+        "C": 10,
+        "class_features": true
+      },
+      "quality": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1784,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1390,
+          "accepted_correct": 1377,
+          "accepted_accuracy": 0.9906474820143885,
+          "coverage": 0.7091836734693877,
+          "oos_false_accept": 0,
+          "threshold": 0.9737415687353573
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1540,
+          "accepted_accuracy": 0.9821428571428571,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9414869684808747
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+{
+  "scope": "development only; pretrained encoder weights updated using fitting rows only",
+  "config": {
+    "kind": "adapted-minilm-classifier",
+    "encoder_lr": 2e-05,
+    "head_lr": 0.001,
+    "weight_decay": 0.01,
+    "epochs": 4,
+    "batch_size": 64,
+    "seed": 20260921,
+    "max_tokens": 256,
+    "device": "mps",
+    "initialization": "frozen-encoder logistic C=10"
+  },
+  "environment": {
+    "torch": "2.14.0"
+  },
+  "results": [
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "adapted-minilm-classifier",
+        "encoder_lr": 2e-05,
+        "head_lr": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 4,
+        "batch_size": 64,
+        "seed": 20260921,
+        "max_tokens": 256,
+        "device": "mps",
+        "initialization": "frozen-encoder logistic C=10",
+        "epoch": 0
+      },
+      "fit_ms": 2989.763374964241,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1782,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1290,
+          "accepted_correct": 1278,
+          "accepted_accuracy": 0.9906976744186047,
+          "coverage": 0.6581632653061225,
+          "oos_false_accept": 0,
+          "threshold": 0.8222892880439758
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1533,
+          "accepted_accuracy": 0.9776785714285714,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.669272780418396
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1782,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1313,
+          "accepted_correct": 1300,
+          "accepted_accuracy": 0.9900990099009901,
+          "coverage": 0.6698979591836735,
+          "oos_false_accept": 0,
+          "threshold": 0.7383678555488586
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1537,
+          "accepted_accuracy": 0.9802295918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5408260822296143
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "adapted-minilm-classifier",
+        "encoder_lr": 2e-05,
+        "head_lr": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 4,
+        "batch_size": 64,
+        "seed": 20260921,
+        "max_tokens": 256,
+        "device": "mps",
+        "initialization": "frozen-encoder logistic C=10",
+        "epoch": 1
+      },
+      "fit_ms": 23591.80325001944,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1780,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1350,
+          "accepted_correct": 1337,
+          "accepted_accuracy": 0.9903703703703703,
+          "coverage": 0.6887755102040817,
+          "oos_false_accept": 0,
+          "threshold": 0.899773895740509
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1538,
+          "accepted_accuracy": 0.9808673469387755,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7935367822647095
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1780,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1413,
+          "accepted_correct": 1399,
+          "accepted_accuracy": 0.9900920028308563,
+          "coverage": 0.7209183673469388,
+          "oos_false_accept": 0,
+          "threshold": 0.8158577084541321
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1540,
+          "accepted_accuracy": 0.9821428571428571,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.672730028629303
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "adapted-minilm-classifier",
+        "encoder_lr": 2e-05,
+        "head_lr": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 4,
+        "batch_size": 64,
+        "seed": 20260921,
+        "max_tokens": 256,
+        "device": "mps",
+        "initialization": "frozen-encoder logistic C=10",
+        "epoch": 2
+      },
+      "fit_ms": 38739.47266698815,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1792,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1435,
+          "accepted_correct": 1421,
+          "accepted_accuracy": 0.9902439024390244,
+          "coverage": 0.7321428571428571,
+          "oos_false_accept": 0,
+          "threshold": 0.8949034214019775
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1539,
+          "accepted_accuracy": 0.9815051020408163,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8253265023231506
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1792,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1438,
+          "accepted_correct": 1424,
+          "accepted_accuracy": 0.9902642559109874,
+          "coverage": 0.7336734693877551,
+          "oos_false_accept": 0,
+          "threshold": 0.840890645980835
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1541,
+          "accepted_accuracy": 0.982780612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.738070547580719
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "adapted-minilm-classifier",
+        "encoder_lr": 2e-05,
+        "head_lr": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 4,
+        "batch_size": 64,
+        "seed": 20260921,
+        "max_tokens": 256,
+        "device": "mps",
+        "initialization": "frozen-encoder logistic C=10",
+        "epoch": 3
+      },
+      "fit_ms": 53793.24450000422,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1800,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1465,
+          "accepted_correct": 1451,
+          "accepted_accuracy": 0.990443686006826,
+          "coverage": 0.7474489795918368,
+          "oos_false_accept": 0,
+          "threshold": 0.8977563977241516
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1544,
+          "accepted_accuracy": 0.9846938775510204,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8389229774475098
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1800,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1530,
+          "accepted_correct": 1515,
+          "accepted_accuracy": 0.9901960784313726,
+          "coverage": 0.7806122448979592,
+          "oos_false_accept": 0,
+          "threshold": 0.7953747510910034
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1544,
+          "accepted_accuracy": 0.9846938775510204,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.753324031829834
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "adapted-minilm-classifier",
+        "encoder_lr": 2e-05,
+        "head_lr": 0.001,
+        "weight_decay": 0.01,
+        "epochs": 4,
+        "batch_size": 64,
+        "seed": 20260921,
+        "max_tokens": 256,
+        "device": "mps",
+        "initialization": "frozen-encoder logistic C=10",
+        "epoch": 4
+      },
+      "fit_ms": 67641.11641701311,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1799,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1450,
+          "accepted_correct": 1436,
+          "accepted_accuracy": 0.9903448275862069,
+          "coverage": 0.7397959183673469,
+          "oos_false_accept": 0,
+          "threshold": 0.9030613303184509
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1545,
+          "accepted_accuracy": 0.9853316326530612,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8413463830947876
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1799,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1485,
+          "accepted_correct": 1471,
+          "accepted_accuracy": 0.9905723905723905,
+          "coverage": 0.7576530612244898,
+          "oos_false_accept": 0,
+          "threshold": 0.8256749510765076
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1545,
+          "accepted_accuracy": 0.9853316326530612,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7527897953987122
+        }
+      }
+    }
+  ],
+  "selected_epoch": 3
+}

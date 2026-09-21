@@ -77,11 +77,20 @@ from conformal scoring. Application-defined related groups need to be split by
 the caller; ordinary compilation cannot discover paraphrases or shared sources.
 Evaluation data must stay outside both fitting and calibration.
 
-The fitting code augments features with a bias column and solves regularized
+The default ridge fitting code augments features with a bias column and solves regularized
 normal equations. It currently computes a NumPy inverse and multiplies by the
 cross-product, with pseudoinverse/least-squares fallback on `LinAlgError`.
 It does not use the Cholesky implementation described in earlier drafts.
 Stored inference weights have shape `(number_of_outputs, feature_dimension)`.
+
+The Python compiler also accepts `choice_solver="logistic"` for ChoiceField
+heads. It minimizes summed cross-entropy plus `regularization / 2 * ||W||²`,
+with an unpenalized bias, using SciPy L-BFGS-B from the optional `teaching` extra.
+Stored coefficients are scaled by 0.25 to match the existing runtime's logit
+scaling. Calibration, portable head format and NumPy inference are shared with
+the ridge path. Other field types retain their existing fitting methods; no
+optimizer object is serialized. This is an optional teaching method, not a new
+claim of workload quality or a change to automatic-observation defaults.
 
 ## Local decisions and uncertainty
 

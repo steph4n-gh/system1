@@ -542,21 +542,19 @@ class ConformalPredictor:
                     if cum_mass >= q_hat - 1e-7:
                         break
 
-        p_values: Dict[str, float] = {}
-        cum_masses: Dict[int, float] = {}
-        running_mass = 0.0
-        for idx in sorted_indices:
-            running_mass += float(probs[idx])
-            cum_masses[idx] = running_mass
-
-        for idx, opt in enumerate(self.options):
-            c_mass = 1.0 - float(probs[idx]) if self.score_method == "lac" else cum_masses[idx]
-            if n > 0:
-                rank = int(np.sum(self.calibration_scores >= c_mass))
-                p_val = float((1.0 + rank) / (n + 1))
+        if n > 0:
+            if self.score_method == "lac":
+                candidate_scores = 1.0 - probs
             else:
-                p_val = float(probs[idx])
-            p_values[opt] = p_val
+                candidate_scores = np.empty_like(probs)
+                candidate_scores[sorted_indices] = np.cumsum(probs[sorted_indices])
+            # Calibration scores are sorted when fitted/loaded. Left insertion
+            # includes equal scores, preserving the original >= tail count.
+            ranks = n - np.searchsorted(self.calibration_scores, candidate_scores, side="left")
+            p_values = {opt: float((1 + int(rank)) / (n + 1))
+                        for opt, rank in zip(self.options, ranks)}
+        else:
+            p_values = {opt: float(p) for opt, p in zip(self.options, probs)}
 
         # Cardinality-Scaled Margin Gate & Relative Odds Ratio
         eff_margin_thresh = (

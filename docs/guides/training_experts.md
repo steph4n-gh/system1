@@ -110,6 +110,25 @@ split those same rows internally would expose calibration text to vocabulary
 selection; use explicit separate calibration as above. Old readers continue to
 read old skills but cannot load the new TF-IDF feature type.
 
+## Optional classification fitting
+
+For a choice skill, you can compare the default ridge fit with a cross-entropy
+fit. Install `pip install 'system1[teaching]'`, then set
+`SystemOneCompiler(SupportRoute, projector=projector, choice_solver="logistic",
+regularization=.1)` in the example above. This uses SciPy's iterative optimizer
+during teaching and the same NumPy decision head during inference. It does not
+download a language model. The saved `.s1m` loads without SciPy.
+
+Every choice needs fitting examples. Lower `regularization` permits a more
+flexible fit; select it using separate development data. Temperature and
+conformal calibration still use separate held-out folds. A better fitting loss
+does not itself qualify the skill or detect unfamiliar inputs. Evaluate accuracy,
+acceptance and unsupported-input rejection together. The CLI and automatic
+observation adapters retain their existing ridge fit; this option is currently
+on the Python compiler. Online corrections still use the existing recursive
+least-squares update and invalidate calibration; recompiling retained lessons is
+the preferred way to preserve the selected fitting method.
+
 See the [email comparison](../../examples/inbox_zero/README.md) for measured gains,
 remaining accepted errors, and the distinction between authored and real-world
 evidence. The tiny snippet above only demonstrates the API.

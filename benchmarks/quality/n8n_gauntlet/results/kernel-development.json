@@ -1,0 +1,1301 @@
+{
+  "scope": "development only; learned radial-basis features, no response cache",
+  "results": [
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 5,
+        "C": 10
+      },
+      "fit_ms": 1615.2862909948453,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2805,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2252,
+          "accepted_correct": 2234,
+          "accepted_accuracy": 0.9920071047957372,
+          "coverage": 0.7519198664440735,
+          "oos_false_accept": 1,
+          "threshold": 0.7689576745033264
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2370,
+          "accepted_accuracy": 0.9891485809682805,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.696864664554596
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2805,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2187,
+          "accepted_correct": 2174,
+          "accepted_accuracy": 0.994055784179241,
+          "coverage": 0.7302170283806344,
+          "oos_false_accept": 1,
+          "threshold": 0.7174687385559082
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2377,
+          "accepted_accuracy": 0.9920701168614358,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.5858114957809448
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 5,
+        "C": 100
+      },
+      "fit_ms": 1725.0638750265352,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2811,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1991,
+          "accepted_correct": 1981,
+          "accepted_accuracy": 0.9949773982923155,
+          "coverage": 0.6647746243739566,
+          "oos_false_accept": 1,
+          "threshold": 0.9761701822280884
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2378,
+          "accepted_accuracy": 0.9924874791318865,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.9176093935966492
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2811,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1988,
+          "accepted_correct": 1978,
+          "accepted_accuracy": 0.9949698189134809,
+          "coverage": 0.6637729549248748,
+          "oos_false_accept": 1,
+          "threshold": 0.964630663394928
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2378,
+          "accepted_accuracy": 0.9924874791318865,
+          "coverage": 0.8,
+          "oos_false_accept": 5,
+          "threshold": 0.8689896464347839
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 10,
+        "C": 10
+      },
+      "fit_ms": 1200.0392909976654,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2763,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1135,
+          "accepted_correct": 1131,
+          "accepted_accuracy": 0.9964757709251101,
+          "coverage": 0.3789649415692821,
+          "oos_false_accept": 1,
+          "threshold": 0.993751585483551
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2357,
+          "accepted_accuracy": 0.9837228714524207,
+          "coverage": 0.8,
+          "oos_false_accept": 13,
+          "threshold": 0.9071873426437378
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2763,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1113,
+          "accepted_correct": 1110,
+          "accepted_accuracy": 0.9973045822102425,
+          "coverage": 0.37161936560934894,
+          "oos_false_accept": 1,
+          "threshold": 0.9926869869232178
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2356,
+          "accepted_accuracy": 0.9833055091819699,
+          "coverage": 0.8,
+          "oos_false_accept": 12,
+          "threshold": 0.8716577887535095
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 10,
+        "C": 100
+      },
+      "fit_ms": 1104.758250003215,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2766,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1184,
+          "accepted_correct": 1180,
+          "accepted_accuracy": 0.9966216216216216,
+          "coverage": 0.3953255425709516,
+          "oos_false_accept": 1,
+          "threshold": 0.9997896552085876
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2360,
+          "accepted_accuracy": 0.9849749582637729,
+          "coverage": 0.8,
+          "oos_false_accept": 14,
+          "threshold": 0.9778359532356262
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2766,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1148,
+          "accepted_correct": 1143,
+          "accepted_accuracy": 0.9956445993031359,
+          "coverage": 0.38330550918196993,
+          "oos_false_accept": 1,
+          "threshold": 0.9997212886810303
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2358,
+          "accepted_accuracy": 0.9841402337228714,
+          "coverage": 0.8,
+          "oos_false_accept": 13,
+          "threshold": 0.9638710021972656
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 20,
+        "C": 10
+      },
+      "fit_ms": 1220.1028340496123,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2678,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 735,
+          "accepted_correct": 728,
+          "accepted_accuracy": 0.9904761904761905,
+          "coverage": 0.24540901502504173,
+          "oos_false_accept": 1,
+          "threshold": 0.9965497255325317
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2289,
+          "accepted_accuracy": 0.9553422370617696,
+          "coverage": 0.8,
+          "oos_false_accept": 29,
+          "threshold": 0.8484032154083252
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2678,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 737,
+          "accepted_correct": 730,
+          "accepted_accuracy": 0.9905020352781547,
+          "coverage": 0.24607679465776294,
+          "oos_false_accept": 1,
+          "threshold": 0.995800793170929
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2293,
+          "accepted_accuracy": 0.9570116861435726,
+          "coverage": 0.8,
+          "oos_false_accept": 28,
+          "threshold": 0.812487006187439
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 20,
+        "C": 100
+      },
+      "fit_ms": 1515.6446250039153,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2690,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 771,
+          "accepted_correct": 767,
+          "accepted_accuracy": 0.9948119325551232,
+          "coverage": 0.25742904841402336,
+          "oos_false_accept": 1,
+          "threshold": 0.9999450445175171
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2293,
+          "accepted_accuracy": 0.9570116861435726,
+          "coverage": 0.8,
+          "oos_false_accept": 29,
+          "threshold": 0.9698317050933838
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2690,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 833,
+          "accepted_correct": 829,
+          "accepted_accuracy": 0.9951980792316927,
+          "coverage": 0.27813021702838064,
+          "oos_false_accept": 1,
+          "threshold": 0.9999015927314758
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2298,
+          "accepted_accuracy": 0.9590984974958264,
+          "coverage": 0.8,
+          "oos_false_accept": 27,
+          "threshold": 0.954861044883728
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 5,
+        "C": 10
+      },
+      "fit_ms": 499.553834029939,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1737,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1070,
+          "accepted_correct": 1060,
+          "accepted_accuracy": 0.9906542056074766,
+          "coverage": 0.5459183673469388,
+          "oos_false_accept": 0,
+          "threshold": 0.864677369594574
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1510,
+          "accepted_accuracy": 0.9630102040816326,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5863053202629089
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1737,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1125,
+          "accepted_correct": 1114,
+          "accepted_accuracy": 0.9902222222222222,
+          "coverage": 0.5739795918367347,
+          "oos_false_accept": 0,
+          "threshold": 0.7833269238471985
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1516,
+          "accepted_accuracy": 0.9668367346938775,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.4153172969818115
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 5,
+        "C": 100
+      },
+      "fit_ms": 815.5523750465363,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1765,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1069,
+          "accepted_correct": 1059,
+          "accepted_accuracy": 0.990645463049579,
+          "coverage": 0.5454081632653062,
+          "oos_false_accept": 0,
+          "threshold": 0.976182758808136
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.811307430267334
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1765,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1106,
+          "accepted_correct": 1095,
+          "accepted_accuracy": 0.9900542495479204,
+          "coverage": 0.5642857142857143,
+          "oos_false_accept": 0,
+          "threshold": 0.9568129777908325
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1531,
+          "accepted_accuracy": 0.9764030612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7069405913352966
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 10,
+        "C": 10
+      },
+      "fit_ms": 344.33112503029406,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1749,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 936,
+          "accepted_correct": 927,
+          "accepted_accuracy": 0.9903846153846154,
+          "coverage": 0.4775510204081633,
+          "oos_false_accept": 0,
+          "threshold": 0.9655917286872864
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1524,
+          "accepted_accuracy": 0.9719387755102041,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8139772415161133
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1749,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1022,
+          "accepted_correct": 1012,
+          "accepted_accuracy": 0.9902152641878669,
+          "coverage": 0.5214285714285715,
+          "oos_false_accept": 0,
+          "threshold": 0.9465245604515076
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1522,
+          "accepted_accuracy": 0.9706632653061225,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7222874760627747
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 10,
+        "C": 100
+      },
+      "fit_ms": 564.9412919883616,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1751,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1035,
+          "accepted_correct": 1025,
+          "accepted_accuracy": 0.9903381642512077,
+          "coverage": 0.5280612244897959,
+          "oos_false_accept": 0,
+          "threshold": 0.9947093725204468
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9368041157722473
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1751,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1112,
+          "accepted_correct": 1101,
+          "accepted_accuracy": 0.9901079136690647,
+          "coverage": 0.5673469387755102,
+          "oos_false_accept": 0,
+          "threshold": 0.9887918829917908
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1531,
+          "accepted_accuracy": 0.9764030612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8908593654632568
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 20,
+        "C": 10
+      },
+      "fit_ms": 405.36612505093217,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1730,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 111,
+          "accepted_correct": 110,
+          "accepted_accuracy": 0.990990990990991,
+          "coverage": 0.05663265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.9987585544586182
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1483,
+          "accepted_accuracy": 0.9457908163265306,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8146955370903015
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1730,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 118,
+          "accepted_correct": 117,
+          "accepted_accuracy": 0.9915254237288136,
+          "coverage": 0.06020408163265306,
+          "oos_false_accept": 0,
+          "threshold": 0.9985014796257019
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1488,
+          "accepted_accuracy": 0.9489795918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7540873289108276
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "minilm",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 20,
+        "C": 100
+      },
+      "fit_ms": 560.5342499911785,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1734,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 222,
+          "accepted_correct": 220,
+          "accepted_accuracy": 0.990990990990991,
+          "coverage": 0.11326530612244898,
+          "oos_false_accept": 0,
+          "threshold": 0.9999428987503052
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1488,
+          "accepted_accuracy": 0.9489795918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9444315433502197
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1734,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 245,
+          "accepted_correct": 243,
+          "accepted_accuracy": 0.9918367346938776,
+          "coverage": 0.125,
+          "oos_false_accept": 0,
+          "threshold": 0.9999064803123474
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1487,
+          "accepted_accuracy": 0.9483418367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9047116637229919
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 5,
+        "C": 10
+      },
+      "fit_ms": 1504.4729170040227,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2844,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2005,
+          "accepted_correct": 1995,
+          "accepted_accuracy": 0.9950124688279302,
+          "coverage": 0.669449081803005,
+          "oos_false_accept": 1,
+          "threshold": 0.5879482626914978
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2369,
+          "accepted_accuracy": 0.9887312186978298,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.4769863486289978
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2844,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2171,
+          "accepted_correct": 2162,
+          "accepted_accuracy": 0.9958544449562413,
+          "coverage": 0.7248747913188648,
+          "oos_false_accept": 1,
+          "threshold": 0.4277821481227875
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2383,
+          "accepted_accuracy": 0.9945742904841403,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.3308596611022949
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 5,
+        "C": 100
+      },
+      "fit_ms": 2916.055125009734,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2867,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2170,
+          "accepted_correct": 2164,
+          "accepted_accuracy": 0.9972350230414746,
+          "coverage": 0.7245409015025042,
+          "oos_false_accept": 1,
+          "threshold": 0.8628876209259033
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2384,
+          "accepted_accuracy": 0.994991652754591,
+          "coverage": 0.8,
+          "oos_false_accept": 3,
+          "threshold": 0.8029401302337646
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2867,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2181,
+          "accepted_correct": 2175,
+          "accepted_accuracy": 0.9972489683631361,
+          "coverage": 0.7282136894824708,
+          "oos_false_accept": 1,
+          "threshold": 0.8020241856575012
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.7152107357978821
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 10,
+        "C": 10
+      },
+      "fit_ms": 1447.736750007607,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2866,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2195,
+          "accepted_correct": 2187,
+          "accepted_accuracy": 0.9963553530751709,
+          "coverage": 0.7328881469115192,
+          "oos_false_accept": 1,
+          "threshold": 0.8511244058609009
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2382,
+          "accepted_accuracy": 0.9941569282136895,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.7861365079879761
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2866,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2221,
+          "accepted_correct": 2214,
+          "accepted_accuracy": 0.9968482665466006,
+          "coverage": 0.7415692821368948,
+          "oos_false_accept": 1,
+          "threshold": 0.7866122722625732
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2386,
+          "accepted_accuracy": 0.9958263772954925,
+          "coverage": 0.8,
+          "oos_false_accept": 4,
+          "threshold": 0.7086195945739746
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 10,
+        "C": 100
+      },
+      "fit_ms": 1659.1877499595284,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2876,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2100,
+          "accepted_correct": 2094,
+          "accepted_accuracy": 0.9971428571428571,
+          "coverage": 0.7011686143572621,
+          "oos_false_accept": 1,
+          "threshold": 0.9783495664596558
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2388,
+          "accepted_accuracy": 0.996661101836394,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.9451603293418884
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2876,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 2163,
+          "accepted_correct": 2156,
+          "accepted_accuracy": 0.9967637540453075,
+          "coverage": 0.7222036727879799,
+          "oos_false_accept": 1,
+          "threshold": 0.9590346217155457
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2387,
+          "accepted_accuracy": 0.9962437395659433,
+          "coverage": 0.8,
+          "oos_false_accept": 2,
+          "threshold": 0.9136040210723877
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 20,
+        "C": 10
+      },
+      "fit_ms": 975.2668750006706,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2863,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1600,
+          "accepted_correct": 1596,
+          "accepted_accuracy": 0.9975,
+          "coverage": 0.5342237061769616,
+          "oos_false_accept": 1,
+          "threshold": 0.9906141757965088
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2373,
+          "accepted_accuracy": 0.9904006677796328,
+          "coverage": 0.8,
+          "oos_false_accept": 12,
+          "threshold": 0.9424978494644165
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2863,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1515,
+          "accepted_correct": 1511,
+          "accepted_accuracy": 0.9973597359735974,
+          "coverage": 0.5058430717863105,
+          "oos_false_accept": 1,
+          "threshold": 0.9897935390472412
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2376,
+          "accepted_accuracy": 0.991652754590985,
+          "coverage": 0.8,
+          "oos_false_accept": 12,
+          "threshold": 0.9226617813110352
+        }
+      }
+    },
+    {
+      "dataset": "clinc150",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 2416,
+        "gamma": 20,
+        "C": 100
+      },
+      "fit_ms": 1212.0400840067305,
+      "probability": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2869,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1412,
+          "accepted_correct": 1408,
+          "accepted_accuracy": 0.9971671388101983,
+          "coverage": 0.4714524207011686,
+          "oos_false_accept": 1,
+          "threshold": 0.9996179342269897
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2379,
+          "accepted_accuracy": 0.9929048414023373,
+          "coverage": 0.8,
+          "oos_false_accept": 9,
+          "threshold": 0.9887218475341797
+        }
+      },
+      "margin": {
+        "cases": 2995,
+        "oos_cases": 100,
+        "raw_correct": 2869,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1336,
+          "accepted_correct": 1333,
+          "accepted_accuracy": 0.9977544910179641,
+          "coverage": 0.44607679465776295,
+          "oos_false_accept": 1,
+          "threshold": 0.9995684623718262
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 2396,
+          "accepted_correct": 2383,
+          "accepted_accuracy": 0.9945742904841403,
+          "coverage": 0.8,
+          "oos_false_accept": 8,
+          "threshold": 0.9834995865821838
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 5,
+        "C": 10
+      },
+      "fit_ms": 567.012750019785,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1724,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 805,
+          "accepted_correct": 797,
+          "accepted_accuracy": 0.9900621118012423,
+          "coverage": 0.4107142857142857,
+          "oos_false_accept": 0,
+          "threshold": 0.748124897480011
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1482,
+          "accepted_accuracy": 0.9451530612244898,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.4275904893875122
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1724,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 873,
+          "accepted_correct": 865,
+          "accepted_accuracy": 0.9908361970217641,
+          "coverage": 0.44540816326530613,
+          "oos_false_accept": 0,
+          "threshold": 0.6383792757987976
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1496,
+          "accepted_accuracy": 0.9540816326530612,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.23189909756183624
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 5,
+        "C": 100
+      },
+      "fit_ms": 816.1138749564998,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1757,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1160,
+          "accepted_correct": 1149,
+          "accepted_accuracy": 0.9905172413793103,
+          "coverage": 0.5918367346938775,
+          "oos_false_accept": 0,
+          "threshold": 0.8768979907035828
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1520,
+          "accepted_accuracy": 0.9693877551020408,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.683730959892273
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1757,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1270,
+          "accepted_correct": 1258,
+          "accepted_accuracy": 0.9905511811023622,
+          "coverage": 0.6479591836734694,
+          "oos_false_accept": 0,
+          "threshold": 0.7729222774505615
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1524,
+          "accepted_accuracy": 0.9719387755102041,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5283489227294922
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 10,
+        "C": 10
+      },
+      "fit_ms": 528.2923330087215,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1765,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1184,
+          "accepted_correct": 1173,
+          "accepted_accuracy": 0.9907094594594594,
+          "coverage": 0.6040816326530613,
+          "oos_false_accept": 0,
+          "threshold": 0.8594908118247986
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1521,
+          "accepted_accuracy": 0.9700255102040817,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.6629658937454224
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1765,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1182,
+          "accepted_correct": 1171,
+          "accepted_accuracy": 0.9906937394247038,
+          "coverage": 0.6030612244897959,
+          "oos_false_accept": 0,
+          "threshold": 0.8068625926971436
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1525,
+          "accepted_accuracy": 0.9725765306122449,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.5018519759178162
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 10,
+        "C": 100
+      },
+      "fit_ms": 692.8056659526192,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1785,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1324,
+          "accepted_correct": 1311,
+          "accepted_accuracy": 0.9901812688821753,
+          "coverage": 0.6755102040816326,
+          "oos_false_accept": 0,
+          "threshold": 0.9490630626678467
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1537,
+          "accepted_accuracy": 0.9802295918367347,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8591222763061523
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1785,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1281,
+          "accepted_correct": 1269,
+          "accepted_accuracy": 0.990632318501171,
+          "coverage": 0.6535714285714286,
+          "oos_false_accept": 0,
+          "threshold": 0.9319658875465393
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1536,
+          "accepted_accuracy": 0.9795918367346939,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7695332765579224
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 20,
+        "C": 10
+      },
+      "fit_ms": 336.2734999973327,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1133,
+          "accepted_correct": 1122,
+          "accepted_accuracy": 0.9902912621359223,
+          "coverage": 0.5780612244897959,
+          "oos_false_accept": 0,
+          "threshold": 0.9597766399383545
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1529,
+          "accepted_accuracy": 0.9751275510204082,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.8598042726516724
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1226,
+          "accepted_correct": 1214,
+          "accepted_accuracy": 0.9902120717781403,
+          "coverage": 0.6255102040816326,
+          "oos_false_accept": 0,
+          "threshold": 0.9351381063461304
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1535,
+          "accepted_accuracy": 0.9789540816326531,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.7919465899467468
+        }
+      }
+    },
+    {
+      "dataset": "banking77",
+      "config": {
+        "kind": "radial-basis-logistic",
+        "encoder": "bge-small",
+        "landmarks_per_label": 16,
+        "dimension": 1232,
+        "gamma": 20,
+        "C": 100
+      },
+      "fit_ms": 504.9911250243895,
+      "probability": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1306,
+          "accepted_correct": 1293,
+          "accepted_accuracy": 0.9900459418070444,
+          "coverage": 0.6663265306122449,
+          "oos_false_accept": 0,
+          "threshold": 0.9889087080955505
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1534,
+          "accepted_accuracy": 0.9783163265306123,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9597928524017334
+        }
+      },
+      "margin": {
+        "cases": 1960,
+        "oos_cases": 0,
+        "raw_correct": 1794,
+        "best_development_coverage_at_quality_targets": {
+          "accepted": 1238,
+          "accepted_correct": 1226,
+          "accepted_accuracy": 0.9903069466882067,
+          "coverage": 0.6316326530612245,
+          "oos_false_accept": 0,
+          "threshold": 0.9868091344833374
+        },
+        "quality_at_80_percent_coverage": {
+          "accepted": 1568,
+          "accepted_correct": 1533,
+          "accepted_accuracy": 0.9776785714285714,
+          "coverage": 0.8,
+          "oos_false_accept": 0,
+          "threshold": 0.9306176900863647
+        }
+      }
+    }
+  ]
+}

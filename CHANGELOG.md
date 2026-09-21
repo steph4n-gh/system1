@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add opt-in `choice_solver="logistic"` to the Python compiler for choice skills. SciPy is an optional teaching dependency; saved heads retain the existing NumPy runtime, calibration and portable format. Keep ridge as the default and record failed full-scope development experiments for the n8n quality gauntlet.
+- Honor `record_receipt=False` on fresh decisions as well as cache hits, serialize absent receipts as null, and skip unused cache digests. Compute conformal tail counts by binary search while preserving inclusive ties and prediction sets.
+
 - Add an experimental teach-by-doing document workspace: filing actions become explicit examples, corrections invalidate stale skills, separate checks calibrate review, and lessons/actions/skills export for reuse. Include complete authored sample evidence: 29/30 filing guesses correct, 27/27 accepted ordinary suggestions correct, and one of six unusual requests incorrectly accepted. No new core API or dependency.
 
 - Make the takeover lifecycle test fail on any post-promotion teacher call, replacing a brittle single-call wall-clock limit. Retain the separate warm-latency checks.
