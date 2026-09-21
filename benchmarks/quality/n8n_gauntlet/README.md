@@ -14,6 +14,14 @@ stronger baselines accept 59.33%/54.29%, below 80%, and the CLINC baseline also
 fails unfamiliar rejection. All 17,160 outcomes are retained. These are already
 observed original cohorts, not fresh qualification.
 
+The subsequent [direct OOS teaching comparison](results/direct-oos.md) also
+retains the incumbents. Teaching 674 synthetic unfamiliar examples to the existing
+OOS intent improves raw OOS recognition but reduces supported correctness and
+coverage. All 12,380 development decisions are retained, with no new teacher calls
+and no routing differences after saving. A report-writer failure after measurement
+was recovered from the original journal without repeating timings. This does not
+resolve either full-workload failure or supply independent confirmation.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.

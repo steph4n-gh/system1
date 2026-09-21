@@ -1,0 +1,32 @@
+{
+  "scope": "saved direct-OOS System1 artifacts; not qualification or new timing",
+  "qualified": false,
+  "runtime_report_sha256": "428c472800651587f195a90be46d0c541fa9a30689120b50935d5d2dd17892c3",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "condition": "positive-control",
+      "manifest_sha256": "cd50211d7c0d698a7e5484f8c64f37e57dedbf451d0d765490bd0f153464f434",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "clinc150",
+      "condition": "direct-oos",
+      "manifest_sha256": "3b9547d3250a336039ee0384e05640192ef9bdfd3a63ea3f7bc5c601062b0cce",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

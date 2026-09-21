@@ -20,6 +20,14 @@ at 98.73%. Both meet coverage and latency. The newer development gains did not
 resolve the larger-cohort quality problem. All four candidates and 147 files were
 frozen before this full 17,160-decision observed-test run.
 
+The subsequent [direct OOS teaching experiment](results/direct-oos.md) does not
+replace those selections. It teaches the existing OOS intent with 674 already
+generated unfamiliar examples, holding supported teaching and review data fixed.
+Raw unfamiliar recognition improves, but supported accuracy and coverage fall;
+the same unfamiliar development input still escapes review. All 12,380 measured
+decisions survive a post-measurement reporting failure, recovered without another
+timing run. No test or human reserve was scored, and banking remains unchanged.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product

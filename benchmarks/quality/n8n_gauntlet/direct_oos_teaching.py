@@ -25,7 +25,7 @@ from crossfit_probe import probabilities
 from develop import OUTPUT, frontier, load_splits
 from encoder_probe import Encoder, PreparedFeatures
 from evaluate import deny_network_control, gates, quality
-from latest_regression import frozen
+from latest_regression import CANDIDATES, frozen
 from review_runtime import ReviewCandidate
 from review_teaching import features, meta_features
 from system1 import ChoiceField, CompiledSystemOneModel, DecisionSchema, System1Engine, SystemOneCompiler
@@ -233,7 +233,9 @@ def compare_incumbents(report):
         for kind in ("system1", "baseline"):
             incumbent = next(r["selected_development_candidate"] for r in prior["comparisons"]
                              if (r["dataset"], r["kind"]) == (dataset, kind))
-            assert incumbent["candidate_sha256"] == digest(HERE / "artifacts" / incumbent["folder"] / "manifest.json")
+            # Historical reports use pre-publication folder names for polynomial
+            # artifacts. The frozen selection maps them to their published paths.
+            assert incumbent["candidate_sha256"] == digest(HERE / "artifacts" / CANDIDATES[dataset][kind] / "manifest.json")
             winner = incumbent
             for result in report["results"]:
                 if (result["dataset"], result["kind"]) != (dataset, kind):
@@ -305,11 +307,17 @@ def measure(folder):
                 per_intent={label: quality([r for r in outcomes if r["truth"] == label]) for label in sorted(set(r["truth"] for r in outcomes))},
                 outcomes=outcomes)
             report["results"].append(result)
+            stream.seek(0)
+            stream.write(json.dumps(report, indent=2) + "\n")
+            stream.truncate()
+            stream.flush()
             print(json.dumps({k: result[k] for k in ("dataset", "kind", "condition", "metrics", "latency", "selection_runtime_mismatches")}), flush=True)
             del candidate
             gc.collect()
         compare_incumbents(report)
+        stream.seek(0)
         stream.write(json.dumps(report, indent=2) + "\n")
+        stream.truncate()
     if any(r["selection_runtime_mismatches"] for r in report["results"]):
         raise RuntimeError("Runtime/selection mismatch; failed results retained")
 

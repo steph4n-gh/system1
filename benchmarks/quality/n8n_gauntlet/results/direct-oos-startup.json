@@ -1,0 +1,37 @@
+{
+  "scope": "separate fresh-process startup probe; not original lost timings or quality measurement",
+  "qualified": false,
+  "python": "3.13.5",
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "os_network_denial_errno": 1,
+  "teacher_calls": 0,
+  "decision_requests": 0,
+  "import_and_network_preflight_ms": 620.0862500118092,
+  "source_runtime_sha256": "428c472800651587f195a90be46d0c541fa9a30689120b50935d5d2dd17892c3",
+  "results": [
+    {
+      "kind": "system1",
+      "condition": "positive-control",
+      "candidate_sha256": "cd50211d7c0d698a7e5484f8c64f37e57dedbf451d0d765490bd0f153464f434",
+      "load_ms": 281.70950000640005
+    },
+    {
+      "kind": "system1",
+      "condition": "direct-oos",
+      "candidate_sha256": "3b9547d3250a336039ee0384e05640192ef9bdfd3a63ea3f7bc5c601062b0cce",
+      "load_ms": 248.27116704545915
+    },
+    {
+      "kind": "baseline",
+      "condition": "positive-control",
+      "candidate_sha256": "ce28f3f1597d192e6fe59679de6b4e989c86c04ec1e79d18e00c0738a8bf6faa",
+      "load_ms": 92.28966699447483
+    },
+    {
+      "kind": "baseline",
+      "condition": "direct-oos",
+      "candidate_sha256": "ef86a7a3422e78d18cd5da6c5cf4fe6d637c9c33664a62987bd7e457d2b675fe",
+      "load_ms": 93.3043749537319
+    }
+  ]
+}

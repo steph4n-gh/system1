@@ -1,0 +1,47 @@
+{
+  "scope": "recorded development audit, not qualification or inference",
+  "qualified": false,
+  "source_sha256": "04d9b499551971963d16446f07017ecd21bbe43e954c6cadd89739a277babb76",
+  "runtime_sha256": "428c472800651587f195a90be46d0c541fa9a30689120b50935d5d2dd17892c3",
+  "frozen_files_unchanged": 147,
+  "declared_source_files_verified": 9,
+  "historical_sources_verified_from_git": [
+    "benchmarks/quality/n8n_gauntlet/direct_oos_teaching.py"
+  ],
+  "recovered_requests": 12380,
+  "rerun_timing_requests": 0,
+  "checks": [
+    {
+      "kind": "system1",
+      "condition": "positive-control",
+      "rows": 3095,
+      "source_labels_groups_routing_metrics_and_local_artifacts_verified": true,
+      "complete_artifact_published": true,
+      "max_selection_runtime_score_difference": 3.9700122890229395e-06
+    },
+    {
+      "kind": "system1",
+      "condition": "direct-oos",
+      "rows": 3095,
+      "source_labels_groups_routing_metrics_and_local_artifacts_verified": true,
+      "complete_artifact_published": true,
+      "max_selection_runtime_score_difference": 3.980843196416117e-06
+    },
+    {
+      "kind": "baseline",
+      "condition": "positive-control",
+      "rows": 3095,
+      "source_labels_groups_routing_metrics_and_local_artifacts_verified": true,
+      "complete_artifact_published": false,
+      "max_selection_runtime_score_difference": 4.440892098500626e-16
+    },
+    {
+      "kind": "baseline",
+      "condition": "direct-oos",
+      "rows": 3095,
+      "source_labels_groups_routing_metrics_and_local_artifacts_verified": true,
+      "complete_artifact_published": false,
+      "max_selection_runtime_score_difference": 4.440892098500626e-16
+    }
+  ]
+}
