@@ -53,6 +53,12 @@ retained. Saved-head p95 is 2.69 / 4.39 ms, excluding learned review and adapter
 validation. Those numbers are not complete-adapter qualification. Existing
 candidates remain selected and the full failures remain unresolved.
 
+The next [declared original-only banking comparison](HUMAN_ONLY_PROTOCOL.md)
+removes the 924 earlier synthetic lessons from both System1 and the conventional
+baseline. Encoder, numerical settings and quadratic review stay fixed; the
+complete saved adapters will be measured on the unchanged development cohort.
+No result or qualification is claimed before that comparison runs.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.
