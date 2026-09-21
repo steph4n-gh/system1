@@ -17,6 +17,7 @@ teaching, threshold selection or scoring.
 | [CLINC150-SUR](https://aclanthology.org/2023.acl-industry.42.pdf), section 3 | Expands original CLINC requests with LAMBADA generation, Parrot paraphrasing and weighted duplication to simulate customer traffic. | Derived synthetic material, not fresh independently established correctness; no banking confirmation. Exact overlap has not been audited, and no rows were adopted or scored. |
 | [ArBanking77](https://huggingface.co/SinaLab/ArBanking77), corpus description | Human Arabization and localization of original English BANKING77 queries into Modern Standard Arabic and dialects. | Different language scope and original-data lineage; not fresh English confirmation for this gauntlet. No rows were adopted or scored. |
 | [Off-the-shelf LLM intent augmentation](https://aclanthology.org/2022.nlp4convai-1.5.pdf), section 3.3 | Generates examples from original intent seeds. Its study of possible human relabeling gains uses a classifier trained on the full original training set as an oracle. | The oracle relabeling experiment is not independent human annotation. Original test evaluation and model-labeled synthetic examples do not supply the missing confirmation. No rows were adopted or scored. |
+| [Expert-selected BANKING77 examples](https://huggingface.co/datasets/helvia/banking77-representative-samples/tree/667f7ad4a0e24cb5895e3e76d03a8961813899bd), [paper](https://arxiv.org/pdf/2311.06102), section 4.4 | An expert selected three of ten existing examples per class. The repository also includes a five-example file, whose collection procedure is not explained there. | The pinned overlap audit finds zero new groups and zero label changes in either file. Both contain only original training requests; some also overlap the original test. No new full-scope confirmation or independently corrected fitting labels. |
 
 The [reproducible human-paraphrase audit](audit_paraphrase_source.py) pins the
 repository revision and both CSV hashes. It verifies all original split hashes
@@ -37,3 +38,18 @@ preparing the original pinned folds. It downloads only two pinned public CSVs
 when absent and never opens a model. Any future use needs an explicit protocol,
 resolved provenance/label mapping, and disclosure that these are paraphrases.
 It cannot authorize the qualified recording on its own.
+
+The [expert-source audit](audit_banking_expert_source.py) verifies both original
+BANKING77 CSV hashes and pins the two expert-source CSVs. Its
+[result](results/banking-expert-source-audit.json) records 231 and 385 rows,
+respectively, covering all 77 labels. The smaller file is a subset of the larger;
+their combined 385 normalized groups are all original training groups. One group
+in the smaller file and two in the larger also occur in the original test. No
+source label differs from the corresponding original label. No model was loaded,
+no source was scored or used for teaching, and no annotation was changed.
+
+Run `python benchmarks/quality/n8n_gauntlet/audit_banking_expert_source.py` after
+preparing the pinned original data. The raw downloaded CSVs remain in the ignored
+source cache. The [collection brief](CONFIRMATION_COLLECTION.md) specifies what
+an independent human source would need to supply; preparing that brief does not
+mean collection has occurred or that a future candidate will pass.
