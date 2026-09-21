@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add an experimental courier teaching playground: three saved skills, live isolated terrain corrections, held-out mission composition, matched retained-label baselines and complete recorded evidence. Preserve the initial danger-penalty failure and gate movement using learned terrain eligibility. Keep review limitations explicit; no new core API or runtime dependency.
+
 - Add a three-player Snake GUI comparing a taught System1 skill, real Laya-MLX and Jev. Include timed and equal-move modes, explicit planner/shield accounting, replay without API access, and four complete measured traces.
 - Add a reproducible public SpamAssassin teaching recipe requiring no mailbox or API credentials. Freeze source hashes and disjoint group splits, compare a conventional baseline offline, and retain both the failed collection-shift result (89.9% accepted correctness) and the subsequent representative split (603/618 accepted answers correct, 0.216 ms median). Keep this binary task distinct from the seven-category Inbox Zero pilot.
 

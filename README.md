@@ -241,6 +241,13 @@ for identity, network and enforcement responsibilities.
 
 ## Examples and research
 
+The [teaching playground](examples/gaming/skill_playground/README.md) combines
+three saved skills into a courier agent. Teach a terrain correction live and
+watch it reuse its other abilities on a withheld mission. The
+[40-map experiment](examples/gaming/skill_playground/RESULTS.md) reports
+composition, correction, baselines and review limits; it is an experimental
+example with explicit application wiring.
+
 The [Snake arena](examples/gaming/snake_arena/README.md) puts System1, Laya-MLX
 and Jev side by side in a live GUI. Replay the published runs without an API key,
 or run fresh comparisons. In the recorded 30-second race, System1 filled the board
