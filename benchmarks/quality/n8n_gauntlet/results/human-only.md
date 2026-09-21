@@ -25,6 +25,16 @@ gain therefore does not establish a better review decision. Under this fixed
 procedure, the extra lessons modestly improve accepted coverage; the result
 does not establish that generated labels are generally correct or beneficial.
 
+Inspection also finds possible annotation problems among persistent development
+errors: for example, “My cards were stolen” is labeled `lost_or_stolen_phone`,
+while both candidates suggest `lost_or_stolen_card`. This warrants an independent
+label audit, not a score correction based on our own judgment. The MTEB v2
+[cleaning report](https://gist.github.com/AlexeyVatolin/9bcbb01c07135eb65edc05d623fc4a2b#file-cleaning_report-md)
+lists duplicate and short-text removal for banking; it does not document human
+relabeling of these examples. No labels, rows or metrics are changed. This
+observation neither establishes an accuracy ceiling nor explains away the full
+quality failure, including CLINC's unfamiliar-input errors.
+
 ## Controlled teaching and complete runtime
 
 Both methods retain all 6,026 original fitting rows, all 1,960 calibration rows,
