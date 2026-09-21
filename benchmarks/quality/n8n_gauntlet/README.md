@@ -22,25 +22,39 @@ It needs SciPy during teaching and retains the existing saved-head format and
 NumPy inference. Ridge remains the default. See the
 [teaching guide](../../../docs/guides/training_experts.md).
 
-The strongest current **development** result for CLINC combines the fixed MiniLM
-encoder, a System1 logistic head and a distance check against the taught intent
-distribution: 2,519/2,995 supported requests accepted (84.1%), 2,502/2,519 correct
-(99.3%), and 1/100 out-of-scope requests wrongly accepted. Banking still misses:
-after adding generated contrast lessons, the fixed BGE-small encoder with a
-calibration-taught reliability check reaches 1,547/1,960 accepted (78.9%), with
-1,532/1,547 correct (99.03%). It still makes 20 errors among 1,568 accepted
-requests when coverage is raised to 80%. Before the added lessons, the best
-fixed-encoder reliability result was 1,521/1,960 accepted (77.6%).
+Both **development** candidates now clear the targets through the complete local
+adapter, including the saved head, strict System1 review, fixed encoder and an
+additional learned/distribution guard:
+
+| Development workload | Supported accepted | Correct among accepted | OOS falsely accepted | Complete p95 |
+|---|---:|---:|---:|---:|
+| CLINC, fixed MiniLM, one encoder thread | 2,512/2,995 (83.9%) | 2,495/2,512 (99.32%) | 1/100 | 1.84 ms |
+| BANKING77, fixed BGE-small, four encoder threads | 1,575/1,960 (80.4%) | 1,560/1,575 (99.05%) | No native OOS cohort | 4.38 ms |
+
+Banking's margin is narrow. Its original reliability check reached 77.6% coverage;
+adding 924 generated contrast examples reached 78.9%. Three-fold predictions on
+original fitting rows then supplied independent correctness examples for the
+review model. Each fold excluded its own rows and all generated examples, whose
+prompt lineage could otherwise leak the withheld examples. The review model was
+fitted on those correctness examples plus the reserved calibration fold. Its
+regularization and strict-review settings were selected on development data.
+The one- and two-thread banking runs failed latency (6.23 and 5.36 ms p95); their
+results remain published. No encoder weights were updated for these candidates.
 The exploratory encoder-adaptation run reaches 1,530/1,960 accepted (78.1%) with
 1,515/1,530 correct (99.0%). That adaptation updates pretrained weights; it is
 research evidence, not a requirement for ordinary System1 teaching or an adopted
 integration path. The main route continues with a fixed encoder and taught head.
 
-These are optimistic development frontiers: thresholds/configurations were
+These are development results: thresholds/configurations were
 selected using development outcomes. They are **not** held-out qualifications,
 statistical guarantees or claims that a standard System1 install achieves these
-numbers. The official test splits have not been scored. Full inference timing
-and transfer still need to pass before selecting a final candidate.
+numbers. The official test splits have not been scored. The next step is to freeze
+the complete candidate and baseline, then run that independent test once.
+
+The [real n8n development workflow](N8N.md) already uses the exact saved CLINC
+candidate. It preserves item identity and explicit review, including when the
+local service is stopped. This is integration evidence, not the final qualified
+teacher-disconnection recording.
 
 Retained results:
 
@@ -67,9 +81,19 @@ Retained results:
   [matched development comparisons](results/contrast-development.json).
 - [Request-length reliability follow-up](results/contrast-length-development.json):
   adding a word-count feature did not close the quality gap.
+- [Out-of-fold reliability](results/crossfit-development.json) and its
+  [regularization follow-up](results/crossfit-refined-development.json).
+- [Linear/prototype combination](results/prototype-development.json): retained
+  failure, not adopted by the runtime candidates.
+- Complete saved-adapter runs for [CLINC](results/runtime-development.json) and
+  banking with [one](results/bank-runtime-development-1.json),
+  [two](results/bank-runtime-development-2.json) and
+  [four](results/bank-runtime-development-4.json) encoder threads.
+- OS network-blocked replay of all [3,095 CLINC](results/runtime-isolation.json)
+  and [1,960 banking](results/bank-runtime-isolation.json) development decisions.
 
-All development examples come from the pinned fitting, calibration or development
-folds. Fitted feature vectors may be cached to avoid repeated preprocessing in
+Original examples come from the pinned fitting, calibration or development
+folds; the additional generated lessons are identified separately. Fitted feature vectors may be cached to avoid repeated preprocessing in
 research runs; recorded single-input encoder timings execute the encoder again.
 There is no test-response cache. Head-fit timings exclude initial feature
 extraction. Exploratory encoder timings exclude the System1 engine and adapter,
@@ -99,6 +123,7 @@ python benchmarks/quality/n8n_gauntlet/gating_probe.py
 python benchmarks/quality/n8n_gauntlet/kernel_probe.py
 python benchmarks/quality/n8n_gauntlet/agreement_probe.py
 python benchmarks/quality/n8n_gauntlet/reliability_probe.py
+python benchmarks/quality/n8n_gauntlet/runtime_probe.py
 ```
 
 `encoder_probe.py --extended` retains a separate report for additional C=100/1000
@@ -144,6 +169,10 @@ Actual account tier and billed cost are unavailable. See
 python benchmarks/quality/n8n_gauntlet/teach_contrasts.py
 python benchmarks/quality/n8n_gauntlet/contrast_probe.py
 python benchmarks/quality/n8n_gauntlet/contrast_probe.py --length-feature
+python benchmarks/quality/n8n_gauntlet/crossfit_probe.py
+python benchmarks/quality/n8n_gauntlet/crossfit_probe.py --refine
+python benchmarks/quality/n8n_gauntlet/prototype_probe.py
+python benchmarks/quality/n8n_gauntlet/bank_runtime_probe.py --threads 4
 ```
 
 The first comparison wrote all eight configurations and then aborted during native

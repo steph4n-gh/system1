@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a real n8n development workflow bound to a saved CLINC candidate, with item pairing, explicit review and local-service failure checks. Preserve complete adapter measurements and OS network-blocked replays for all development cases. Both full-scope development candidates meet the unchanged quality/latency targets; official-test qualification and the live-teacher disconnection recording remain pending.
 - Add opt-in `choice_solver="logistic"` to the Python compiler for choice skills. SciPy is an optional teaching dependency; saved heads retain the existing NumPy runtime, calibration and portable format. Keep ridge as the default and record failed full-scope development experiments for the n8n quality gauntlet.
 - Honor `record_receipt=False` on fresh decisions as well as cache hits, serialize absent receipts as null, and skip unused cache digests. Compute conformal tail counts by binary search while preserving inclusive ties and prediction sets.
 

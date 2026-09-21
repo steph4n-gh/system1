@@ -20,7 +20,7 @@ class Encoder:
         "mpnet-base": (768, "mean", 384, 1, "model_qint8_arm64.onnx"),
     }
 
-    def __init__(self, name):
+    def __init__(self, name, *, threads=1):
         import onnxruntime as ort
         from tokenizers import Tokenizer
 
@@ -31,7 +31,9 @@ class Encoder:
         self.tokenizer.enable_padding(pad_id=pad_id, pad_token="<pad>" if pad_id == 1 else "[PAD]")
         path = folder / "onnx" / filename
         options = ort.SessionOptions()
-        options.intra_op_num_threads = 1
+        if type(threads) is not int or not 1 <= threads <= 4:
+            raise ValueError("Encoder threads must be an integer from one to four")
+        options.intra_op_num_threads = threads
         options.inter_op_num_threads = 1
         self.session = ort.InferenceSession(str(path), sess_options=options, providers=["CPUExecutionProvider"])
         self.inputs = {i.name for i in self.session.get_inputs()}
@@ -39,7 +41,7 @@ class Encoder:
                              tokenizer_sha256=hashlib.sha256((folder / "tokenizer.json").read_bytes()).hexdigest(),
                              model_bytes=path.stat().st_size, pooling=self.pooling,
                              tokenizer_bytes=(folder / "tokenizer.json").stat().st_size,
-                             runtime=ort.__version__, threads=1, provider="CPUExecutionProvider")
+                             runtime=ort.__version__, threads=threads, provider="CPUExecutionProvider")
 
     def project_batch(self, texts):
         tokens = self.tokenizer.encode_batch(texts)

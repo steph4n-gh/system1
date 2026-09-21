@@ -1,0 +1,172 @@
+{
+  "scope": "real n8n development integration; no quality qualification or teacher-disconnection claim",
+  "n8n_version": "2.39.10",
+  "service_down": false,
+  "scenarios": [
+    {
+      "name": "mixed",
+      "inputs": [
+        {
+          "id": "timer",
+          "text": "Please set a timer for seven minutes."
+        },
+        {
+          "id": "translate",
+          "text": "Translate good morning into French."
+        },
+        {
+          "id": "unfamiliar",
+          "text": "Compose a symphony about translucent mountains."
+        },
+        {
+          "id": "malformed",
+          "text": 17
+        }
+      ],
+      "outputs": [
+        {
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.9991138245049231,
+          "predictionSet": [
+            "timer"
+          ],
+          "density": -286.9771854733352,
+          "teacherCalls": 0,
+          "id": "timer",
+          "text": "Please set a timer for seven minutes.",
+          "route": "local",
+          "qualification": "development_only"
+        },
+        {
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "needsReview": false,
+          "category": "translate",
+          "suggestion": "translate",
+          "confidence": 0.9940548409896983,
+          "predictionSet": [
+            "translate"
+          ],
+          "density": -409.36530750998355,
+          "teacherCalls": 0,
+          "id": "translate",
+          "text": "Translate good morning into French.",
+          "route": "local",
+          "qualification": "development_only"
+        },
+        {
+          "id": "unfamiliar",
+          "text": "Compose a symphony about translucent mountains.",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "reason": "uncertain"
+        },
+        {
+          "id": "malformed",
+          "text": "17",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        }
+      ],
+      "total_round_trip_ms": 59.76337497122586
+    },
+    {
+      "name": "all_local",
+      "inputs": [
+        {
+          "id": "timer",
+          "text": "Please set a timer for seven minutes."
+        },
+        {
+          "id": "translate",
+          "text": "Translate good morning into French."
+        }
+      ],
+      "outputs": [
+        {
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.9991138245049231,
+          "predictionSet": [
+            "timer"
+          ],
+          "density": -286.9771854733352,
+          "teacherCalls": 0,
+          "id": "timer",
+          "text": "Please set a timer for seven minutes.",
+          "route": "local",
+          "qualification": "development_only"
+        },
+        {
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "needsReview": false,
+          "category": "translate",
+          "suggestion": "translate",
+          "confidence": 0.9940548409896983,
+          "predictionSet": [
+            "translate"
+          ],
+          "density": -409.36530750998355,
+          "teacherCalls": 0,
+          "id": "translate",
+          "text": "Translate good morning into French.",
+          "route": "local",
+          "qualification": "development_only"
+        }
+      ],
+      "total_round_trip_ms": 41.34954197797924
+    },
+    {
+      "name": "all_review",
+      "inputs": [
+        {
+          "id": "unfamiliar",
+          "text": "Compose a symphony about translucent mountains."
+        },
+        {
+          "id": "malformed",
+          "text": 17
+        }
+      ],
+      "outputs": [
+        {
+          "id": "unfamiliar",
+          "text": "Compose a symphony about translucent mountains.",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+          "reason": "uncertain"
+        },
+        {
+          "id": "malformed",
+          "text": "17",
+          "route": "review",
+          "qualification": "development_only",
+          "needsReview": true,
+          "category": null,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        }
+      ],
+      "total_round_trip_ms": 41.05266707483679
+    }
+  ],
+  "unauthorized_status": 403
+}

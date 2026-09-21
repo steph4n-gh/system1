@@ -1,0 +1,337 @@
+{
+  "name": "System1 — development classification",
+  "nodes": [
+    {
+      "id": "c2c15a88-afef-54b7-a74d-0f2da5a7d3ec",
+      "name": "Requests webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "system1-development",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "system1-development",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SYSTEM1_LOCAL_CREDENTIAL",
+          "name": "System1 local classifier"
+        }
+      }
+    },
+    {
+      "id": "c7517bd3-ec07-5353-8e5f-6f7b7f30dee5",
+      "name": "Requests",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        220,
+        200
+      ],
+      "parameters": {
+        "fieldToSplitOut": "body.requests",
+        "options": {
+          "destinationFieldName": "request"
+        }
+      }
+    },
+    {
+      "id": "b6753332-0a3f-522b-b0d8-f9c937a5b43e",
+      "name": "Local System1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        200
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8792/v1/classify",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { ...{\"categories\": {\"accept_reservations\": \"accept reservations\", \"account_blocked\": \"account blocked\", \"alarm\": \"alarm\", \"application_status\": \"application status\", \"apr\": \"apr\", \"are_you_a_bot\": \"are you a bot\", \"balance\": \"balance\", \"bill_balance\": \"bill balance\", \"bill_due\": \"bill due\", \"book_flight\": \"book flight\", \"book_hotel\": \"book hotel\", \"calculator\": \"calculator\", \"calendar\": \"calendar\", \"calendar_update\": \"calendar update\", \"calories\": \"calories\", \"cancel\": \"cancel\", \"cancel_reservation\": \"cancel reservation\", \"car_rental\": \"car rental\", \"card_declined\": \"card declined\", \"carry_on\": \"carry on\", \"change_accent\": \"change accent\", \"change_ai_name\": \"change ai name\", \"change_language\": \"change language\", \"change_speed\": \"change speed\", \"change_user_name\": \"change user name\", \"change_volume\": \"change volume\", \"confirm_reservation\": \"confirm reservation\", \"cook_time\": \"cook time\", \"credit_limit\": \"credit limit\", \"credit_limit_change\": \"credit limit change\", \"credit_score\": \"credit score\", \"current_location\": \"current location\", \"damaged_card\": \"damaged card\", \"date\": \"date\", \"definition\": \"definition\", \"direct_deposit\": \"direct deposit\", \"directions\": \"directions\", \"distance\": \"distance\", \"do_you_have_pets\": \"do you have pets\", \"exchange_rate\": \"exchange rate\", \"expiration_date\": \"expiration date\", \"find_phone\": \"find phone\", \"flight_status\": \"flight status\", \"flip_coin\": \"flip coin\", \"food_last\": \"food last\", \"freeze_account\": \"freeze account\", \"fun_fact\": \"fun fact\", \"gas\": \"gas\", \"gas_type\": \"gas type\", \"goodbye\": \"goodbye\", \"greeting\": \"greeting\", \"how_busy\": \"how busy\", \"how_old_are_you\": \"how old are you\", \"improve_credit_score\": \"improve credit score\", \"income\": \"income\", \"ingredient_substitution\": \"ingredient substitution\", \"ingredients_list\": \"ingredients list\", \"insurance\": \"insurance\", \"insurance_change\": \"insurance change\", \"interest_rate\": \"interest rate\", \"international_fees\": \"international fees\", \"international_visa\": \"international visa\", \"jump_start\": \"jump start\", \"last_maintenance\": \"last maintenance\", \"lost_luggage\": \"lost luggage\", \"make_call\": \"make call\", \"maybe\": \"maybe\", \"meal_suggestion\": \"meal suggestion\", \"meaning_of_life\": \"meaning of life\", \"measurement_conversion\": \"measurement conversion\", \"meeting_schedule\": \"meeting schedule\", \"min_payment\": \"min payment\", \"mpg\": \"mpg\", \"new_card\": \"new card\", \"next_holiday\": \"next holiday\", \"next_song\": \"next song\", \"no\": \"no\", \"nutrition_info\": \"nutrition info\", \"oil_change_how\": \"oil change how\", \"oil_change_when\": \"oil change when\", \"oos\": \"oos\", \"order\": \"order\", \"order_checks\": \"order checks\", \"order_status\": \"order status\", \"pay_bill\": \"pay bill\", \"payday\": \"payday\", \"pin_change\": \"pin change\", \"play_music\": \"play music\", \"plug_type\": \"plug type\", \"pto_balance\": \"pto balance\", \"pto_request\": \"pto request\", \"pto_request_status\": \"pto request status\", \"pto_used\": \"pto used\", \"recipe\": \"recipe\", \"redeem_rewards\": \"redeem rewards\", \"reminder\": \"reminder\", \"reminder_update\": \"reminder update\", \"repeat\": \"repeat\", \"replacement_card_duration\": \"replacement card duration\", \"report_fraud\": \"report fraud\", \"report_lost_card\": \"report lost card\", \"reset_settings\": \"reset settings\", \"restaurant_reservation\": \"restaurant reservation\", \"restaurant_reviews\": \"restaurant reviews\", \"restaurant_suggestion\": \"restaurant suggestion\", \"rewards_balance\": \"rewards balance\", \"roll_dice\": \"roll dice\", \"rollover_401k\": \"rollover 401k\", \"routing\": \"routing\", \"schedule_maintenance\": \"schedule maintenance\", \"schedule_meeting\": \"schedule meeting\", \"share_location\": \"share location\", \"shopping_list\": \"shopping list\", \"shopping_list_update\": \"shopping list update\", \"smart_home\": \"smart home\", \"spelling\": \"spelling\", \"spending_history\": \"spending history\", \"sync_device\": \"sync device\", \"taxes\": \"taxes\", \"tell_joke\": \"tell joke\", \"text\": \"text\", \"thank_you\": \"thank you\", \"time\": \"time\", \"timer\": \"timer\", \"timezone\": \"timezone\", \"tire_change\": \"tire change\", \"tire_pressure\": \"tire pressure\", \"todo_list\": \"todo list\", \"todo_list_update\": \"todo list update\", \"traffic\": \"traffic\", \"transactions\": \"transactions\", \"transfer\": \"transfer\", \"translate\": \"translate\", \"travel_alert\": \"travel alert\", \"travel_notification\": \"travel notification\", \"travel_suggestion\": \"travel suggestion\", \"uber\": \"uber\", \"update_playlist\": \"update playlist\", \"user_name\": \"user name\", \"vaccines\": \"vaccines\", \"w2\": \"w2\", \"weather\": \"weather\", \"what_are_your_hobbies\": \"what are your hobbies\", \"what_can_i_ask_you\": \"what can i ask you\", \"what_is_your_name\": \"what is your name\", \"what_song\": \"what song\", \"where_are_you_from\": \"where are you from\", \"whisper_mode\": \"whisper mode\", \"who_do_you_work_for\": \"who do you work for\", \"who_made_you\": \"who made you\", \"yes\": \"yes\"}, \"instructions\": \"Choose one supported intent. Unfamiliar requests require review.\"}, text: $json.request.text } }}",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "SYSTEM1_LOCAL_CREDENTIAL",
+          "name": "System1 local classifier"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "30a43df1-9e5c-5f89-ab67-d92dd0673aad",
+      "name": "Keep item identity",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        200
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id",
+              "name": "id",
+              "type": "string",
+              "value": "={{ $('Requests').item.json.request.id }}"
+            },
+            {
+              "id": "text",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $('Requests').item.json.request.text }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "efbf2faf-52a0-54cb-a905-3e184fe356d9",
+      "name": "Accepted by this artifact",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "accepted",
+              "leftValue": "={{ $json.needsReview === false }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "artifact",
+              "leftValue": "={{ $json.candidate ?? '' }}",
+              "rightValue": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "1e9dc47a-31eb-5f1f-a56b-c98b52e4d0c9",
+      "name": "Local decision",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        100
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "route",
+              "name": "route",
+              "type": "string",
+              "value": "local"
+            },
+            {
+              "id": "qualification",
+              "name": "qualification",
+              "type": "string",
+              "value": "development_only"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "50b8b89a-59df-5534-9529-ac785c2b13e4",
+      "name": "Explicit review",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        320
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ {id:$json.id, text:$json.text, route:'review', qualification:'development_only', needsReview:true, category:null, teacherCalls:0, candidate:$json.candidate ?? null, reason:$json.reason ?? ($json.error ? 'local_service_failure' : 'uncertain')} }}",
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "f09a0668-d926-5692-bf19-25e282e437f7",
+      "name": "Collect decisions",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1410,
+        200
+      ],
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 2
+      }
+    },
+    {
+      "id": "cf5325f1-ae00-58f1-9415-eabe143b9ee1",
+      "name": "Return decisions",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1640,
+        200
+      ],
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      }
+    },
+    {
+      "id": "8ebcf8bc-5e9c-50b6-b630-e220fd522f7f",
+      "name": "Development notice",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        300,
+        -140
+      ],
+      "parameters": {
+        "width": 1150,
+        "height": 200,
+        "color": 5,
+        "content": "## System1 — development integration\nThis exact saved candidate runs locally with no teacher calls. Uncertain inputs and service failures go to review.\n\n**Not qualified:** the full CLINC + BANKING77 gauntlet is still incomplete. This workflow is an integration check, not the promised takeover recording."
+      }
+    }
+  ],
+  "connections": {
+    "Requests webhook": {
+      "main": [
+        [
+          {
+            "node": "Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Requests": {
+      "main": [
+        [
+          {
+            "node": "Local System1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local System1": {
+      "main": [
+        [
+          {
+            "node": "Keep item identity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep item identity": {
+      "main": [
+        [
+          {
+            "node": "Accepted by this artifact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accepted by this artifact": {
+      "main": [
+        [
+          {
+            "node": "Local decision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Explicit review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local decision": {
+      "main": [
+        [
+          {
+            "node": "Collect decisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Explicit review": {
+      "main": [
+        [
+          {
+            "node": "Collect decisions",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Collect decisions": {
+      "main": [
+        [
+          {
+            "node": "Return decisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
