@@ -18,6 +18,22 @@ from encoder_probe import Encoder, PreparedFeatures
 from system1 import ChoiceField, DecisionSchema, SystemOneCompiler
 
 
+def reliability_features(probabilities, cosines, fit_labels):
+    """Seven fixed confidence/agreement features; no evaluation labels."""
+    chosen = probabilities.argmax(axis=1)
+    ordered = np.sort(probabilities, axis=1)
+    features = [np.log(np.maximum(ordered[:, -1], 1e-12) / np.maximum(1 - ordered[:, -1], 1e-12)),
+                ordered[:, -1] - ordered[:, -2],
+                -(probabilities * np.log(np.maximum(probabilities, 1e-12))).sum(axis=1)]
+    for count in (1, 5):
+        similarity = np.stack([np.sort(cosines[:, fit_labels == i], axis=1)[:, -count:].mean(axis=1)
+                               for i in range(probabilities.shape[1])], axis=1)
+        own = similarity[np.arange(len(chosen)), chosen].copy()
+        similarity[np.arange(len(chosen)), chosen] = -np.inf
+        features.extend([own, own - similarity.max(axis=1)])
+    return np.stack(features, axis=1)
+
+
 def main():
     report = dict(scope="development only; calibration-trained reliability gate", results=[])
     path = OUTPUT / "reliability-development.json"
@@ -45,18 +61,8 @@ def main():
                 probabilities /= probabilities.sum(axis=1, keepdims=True)
                 chosen = probabilities.argmax(axis=1)
                 predictions[split] = np.asarray(labels)[chosen]
-                ordered = np.sort(probabilities, axis=1)
                 cosines = x[split] @ x["fit"].T
-                features = [np.log(np.maximum(ordered[:, -1], 1e-12) / np.maximum(1 - ordered[:, -1], 1e-12)),
-                            ordered[:, -1] - ordered[:, -2],
-                            -(probabilities * np.log(np.maximum(probabilities, 1e-12))).sum(axis=1)]
-                for count in (1, 5):
-                    similarity = np.stack([np.sort(cosines[:, fit_labels == i], axis=1)[:, -count:].mean(axis=1)
-                                           for i in range(len(labels))], axis=1)
-                    own = similarity[np.arange(len(chosen)), chosen].copy()
-                    similarity[np.arange(len(chosen)), chosen] = -np.inf
-                    features.extend([own, own - similarity.max(axis=1)])
-                reliability[split] = (np.stack(features, axis=1), np.eye(len(labels))[chosen])
+                reliability[split] = (reliability_features(probabilities, cosines, fit_labels), np.eye(len(labels))[chosen])
             correctness = predictions["calibration"] == np.asarray([r["label"] for r in data["calibration"]])
             scaler = StandardScaler().fit(reliability["calibration"][0])
             scaled = {split: scaler.transform(values[0]) for split, values in reliability.items()}

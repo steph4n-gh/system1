@@ -49,6 +49,12 @@ def requests():
 
 def main(live=False):
     RECORDS.mkdir(parents=True, exist_ok=True)
+    published = ROOT / "benchmarks/quality/n8n_gauntlet/results/contrast-teacher.json"
+    if published.exists():
+        for record in json.loads(published.read_text()):
+            path = RECORDS / f"{record['label']}.json"
+            if not path.exists():
+                path.write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n")
     if live and not os.environ.get("GEMINI_API_KEY"):
         # Parse just this credential; never execute the file or print values.
         for line in (ROOT / ".env").read_text().splitlines():

@@ -1,0 +1,29 @@
+{
+  "scope": "synthetic teaching; no blind teacher accuracy measured",
+  "calls": 77,
+  "responses": 77,
+  "usage": {
+    "promptTokenCount": 25644,
+    "candidatesTokenCount": 17510,
+    "totalTokenCount": 43154
+  },
+  "actual_billed_cost_usd": null,
+  "retained_lessons": 924,
+  "rejections": [],
+  "models": [
+    "gemini-2.5-flash"
+  ],
+  "latency_ms": {
+    "p50": 1847.2667500609532,
+    "p95": 4871.440874994732
+  },
+  "wall_seconds": 180.26309752464294,
+  "published_price_estimate_usd": 0.0514682,
+  "price_source": {
+    "url": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash",
+    "checked": "2026-09-21",
+    "input_usd_per_million": 0.3,
+    "output_usd_per_million": 2.5,
+    "actual_account_tier_and_bill": "unavailable"
+  }
+}

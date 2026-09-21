@@ -26,9 +26,11 @@ The strongest current **development** result for CLINC combines the fixed MiniLM
 encoder, a System1 logistic head and a distance check against the taught intent
 distribution: 2,519/2,995 supported requests accepted (84.1%), 2,502/2,519 correct
 (99.3%), and 1/100 out-of-scope requests wrongly accepted. Banking still misses:
-the fixed BGE-small encoder with a calibration-taught reliability check reaches
-1,521/1,960 accepted (77.6%), with 1,506/1,521 correct (99.01%). It still makes
-24 errors among 1,568 accepted requests when coverage is raised to 80%.
+after adding generated contrast lessons, the fixed BGE-small encoder with a
+calibration-taught reliability check reaches 1,547/1,960 accepted (78.9%), with
+1,532/1,547 correct (99.03%). It still makes 20 errors among 1,568 accepted
+requests when coverage is raised to 80%. Before the added lessons, the best
+fixed-encoder reliability result was 1,521/1,960 accepted (77.6%).
 The exploratory encoder-adaptation run reaches 1,530/1,960 accepted (78.1%) with
 1,515/1,530 correct (99.0%). That adaptation updates pretrained weights; it is
 research evidence, not a requirement for ordinary System1 teaching or an adopted
@@ -59,6 +61,12 @@ Retained results:
 - [Teacher connectivity](results/teacher-connectivity.json): one actual Jev and
   one actual Gemini request. These are connectivity checks, **not** teacher
   distillation or measured n8n executions.
+- [Generated contrast lessons](results/contrast-lessons.json),
+  [complete teacher requests/responses](results/contrast-teacher.json),
+  [usage and cost estimate](results/contrast-teacher-summary.json), and
+  [matched development comparisons](results/contrast-development.json).
+- [Request-length reliability follow-up](results/contrast-length-development.json):
+  adding a word-count feature did not close the quality gap.
 
 All development examples come from the pinned fitting, calibration or development
 folds. Fitted feature vectors may be cached to avoid repeated preprocessing in
@@ -114,7 +122,33 @@ gradient updates; calibration remains separate. These slower experiments must
 not be described as instant teaching or as proof that language-model fine-tuning
 is required. No model files or credentials are committed.
 
-The next declared experiment is [contrast-example teaching](TEACHING_ADDENDUM.md):
-a bounded, recorded Gemini run generates clearer lessons from fitting examples
-only. Its procedure is committed before calling the API. This is synthetic
-augmentation, not blind teacher classification or a passing result.
+## Recorded contrast teaching
+
+The [contrast-example procedure](TEACHING_ADDENDUM.md) was committed in `679470a`
+before its first API call. Gemini generated 924 lessons in 77 requests, using only
+fitting examples and category names. No generated lesson overlapped a reserved
+normalized group. This is synthetic augmentation, not blind teacher classification
+or a passing result. For example, its disposable-card lessons explicitly mention
+temporary or single-use numbers, while ordinary virtual-card lessons ask how to
+obtain a virtual card. Those labels come from generation instructions, not a human
+audit of all generated examples.
+
+Generation took 180.3 seconds and used 25,644 input and 17,510 output tokens. The
+published standard-price estimate is $0.05147 using Gemini 2.5 Flash's $0.30 per
+million input and $2.50 per million output tokens, checked September 21, 2026.
+Actual account tier and billed cost are unavailable. See
+[Google's pricing](https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash).
+
+```bash
+# Replay published teacher responses; no API credential or new calls needed.
+python benchmarks/quality/n8n_gauntlet/teach_contrasts.py
+python benchmarks/quality/n8n_gauntlet/contrast_probe.py
+python benchmarks/quality/n8n_gauntlet/contrast_probe.py --length-feature
+```
+
+The first comparison wrote all eight configurations and then aborted during native
+library shutdown; its [complete result and failure](results/contrast-development-first.json)
+are preserved. Releasing encoder sessions before threadpool teardown produced a
+clean run with exactly identical quality results. Offline replay also reproduced
+the lesson file byte-for-byte while socket connections were blocked. These checks
+do not replace the required final saved-skill isolation and n8n workflow tests.
