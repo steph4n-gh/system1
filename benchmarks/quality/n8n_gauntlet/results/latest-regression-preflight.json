@@ -1,0 +1,4036 @@
+{
+  "scope": "development-only preflight",
+  "qualified": false,
+  "independent_confirmation": false,
+  "freeze_commit": null,
+  "freeze_sha256": "c4778711ace9ff7044a5f6370612477d3fc9b985f990114f60b2fbad283e4d5f",
+  "criteria": {
+    "supported_coverage_min": 0.8,
+    "accepted_accuracy_min": 0.99,
+    "clinc_oos_false_acceptance_max": 0.01,
+    "warm_adapter_p95_ms_strict_max": 5
+  },
+  "environment": {
+    "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "python": "3.13.5",
+    "cpu": "Apple M4 Pro"
+  },
+  "packages": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "onnxruntime": "1.30.0",
+    "tokenizers": "0.22.2",
+    "threadpoolctl": "3.7.0"
+  },
+  "process_import_and_freeze_preflight_ms": 762.1828340925276,
+  "os_network_denial_errno": 1,
+  "teacher_calls": 0,
+  "new_api_cost": 0,
+  "all_system1_point_targets_pass": false,
+  "results": [
+    {
+      "dataset": "clinc150",
+      "kind": "system1",
+      "folder": "clinc150-system1-context",
+      "candidate_sha256": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+      "manifest": {
+        "status": "unqualified-input-context-review-development",
+        "dataset": "clinc150",
+        "encoder": {
+          "name": "minilm",
+          "model_sha256": "4278337fd0ff3c68bfb6291042cad8ab363e1d9fbc43dcb499fe91c871902474",
+          "tokenizer_sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+          "model_bytes": 23026053,
+          "pooling": "mean",
+          "tokenizer_bytes": 466247,
+          "runtime": "1.30.0",
+          "threads": 1,
+          "provider": "CPUExecutionProvider"
+        },
+        "files": {
+          "intent.s1m": "d0d757e7bd3d88e352cb930f3305e942de1baef496de5124e5c7223244ee7cca",
+          "scope.npz": "a25cf3b30a16bc2ae5fe0ee76210f98bd5ed61f3b3d61cf537a10225e9b303e2"
+        },
+        "categories": {
+          "accept_reservations": "accept reservations",
+          "account_blocked": "account blocked",
+          "alarm": "alarm",
+          "application_status": "application status",
+          "apr": "apr",
+          "are_you_a_bot": "are you a bot",
+          "balance": "balance",
+          "bill_balance": "bill balance",
+          "bill_due": "bill due",
+          "book_flight": "book flight",
+          "book_hotel": "book hotel",
+          "calculator": "calculator",
+          "calendar": "calendar",
+          "calendar_update": "calendar update",
+          "calories": "calories",
+          "cancel": "cancel",
+          "cancel_reservation": "cancel reservation",
+          "car_rental": "car rental",
+          "card_declined": "card declined",
+          "carry_on": "carry on",
+          "change_accent": "change accent",
+          "change_ai_name": "change ai name",
+          "change_language": "change language",
+          "change_speed": "change speed",
+          "change_user_name": "change user name",
+          "change_volume": "change volume",
+          "confirm_reservation": "confirm reservation",
+          "cook_time": "cook time",
+          "credit_limit": "credit limit",
+          "credit_limit_change": "credit limit change",
+          "credit_score": "credit score",
+          "current_location": "current location",
+          "damaged_card": "damaged card",
+          "date": "date",
+          "definition": "definition",
+          "direct_deposit": "direct deposit",
+          "directions": "directions",
+          "distance": "distance",
+          "do_you_have_pets": "do you have pets",
+          "exchange_rate": "exchange rate",
+          "expiration_date": "expiration date",
+          "find_phone": "find phone",
+          "flight_status": "flight status",
+          "flip_coin": "flip coin",
+          "food_last": "food last",
+          "freeze_account": "freeze account",
+          "fun_fact": "fun fact",
+          "gas": "gas",
+          "gas_type": "gas type",
+          "goodbye": "goodbye",
+          "greeting": "greeting",
+          "how_busy": "how busy",
+          "how_old_are_you": "how old are you",
+          "improve_credit_score": "improve credit score",
+          "income": "income",
+          "ingredient_substitution": "ingredient substitution",
+          "ingredients_list": "ingredients list",
+          "insurance": "insurance",
+          "insurance_change": "insurance change",
+          "interest_rate": "interest rate",
+          "international_fees": "international fees",
+          "international_visa": "international visa",
+          "jump_start": "jump start",
+          "last_maintenance": "last maintenance",
+          "lost_luggage": "lost luggage",
+          "make_call": "make call",
+          "maybe": "maybe",
+          "meal_suggestion": "meal suggestion",
+          "meaning_of_life": "meaning of life",
+          "measurement_conversion": "measurement conversion",
+          "meeting_schedule": "meeting schedule",
+          "min_payment": "min payment",
+          "mpg": "mpg",
+          "new_card": "new card",
+          "next_holiday": "next holiday",
+          "next_song": "next song",
+          "no": "no",
+          "nutrition_info": "nutrition info",
+          "oil_change_how": "oil change how",
+          "oil_change_when": "oil change when",
+          "oos": "oos",
+          "order": "order",
+          "order_checks": "order checks",
+          "order_status": "order status",
+          "pay_bill": "pay bill",
+          "payday": "payday",
+          "pin_change": "pin change",
+          "play_music": "play music",
+          "plug_type": "plug type",
+          "pto_balance": "pto balance",
+          "pto_request": "pto request",
+          "pto_request_status": "pto request status",
+          "pto_used": "pto used",
+          "recipe": "recipe",
+          "redeem_rewards": "redeem rewards",
+          "reminder": "reminder",
+          "reminder_update": "reminder update",
+          "repeat": "repeat",
+          "replacement_card_duration": "replacement card duration",
+          "report_fraud": "report fraud",
+          "report_lost_card": "report lost card",
+          "reset_settings": "reset settings",
+          "restaurant_reservation": "restaurant reservation",
+          "restaurant_reviews": "restaurant reviews",
+          "restaurant_suggestion": "restaurant suggestion",
+          "rewards_balance": "rewards balance",
+          "roll_dice": "roll dice",
+          "rollover_401k": "rollover 401k",
+          "routing": "routing",
+          "schedule_maintenance": "schedule maintenance",
+          "schedule_meeting": "schedule meeting",
+          "share_location": "share location",
+          "shopping_list": "shopping list",
+          "shopping_list_update": "shopping list update",
+          "smart_home": "smart home",
+          "spelling": "spelling",
+          "spending_history": "spending history",
+          "sync_device": "sync device",
+          "taxes": "taxes",
+          "tell_joke": "tell joke",
+          "text": "text",
+          "thank_you": "thank you",
+          "time": "time",
+          "timer": "timer",
+          "timezone": "timezone",
+          "tire_change": "tire change",
+          "tire_pressure": "tire pressure",
+          "todo_list": "todo list",
+          "todo_list_update": "todo list update",
+          "traffic": "traffic",
+          "transactions": "transactions",
+          "transfer": "transfer",
+          "translate": "translate",
+          "travel_alert": "travel alert",
+          "travel_notification": "travel notification",
+          "travel_suggestion": "travel suggestion",
+          "uber": "uber",
+          "update_playlist": "update playlist",
+          "user_name": "user name",
+          "vaccines": "vaccines",
+          "w2": "w2",
+          "weather": "weather",
+          "what_are_your_hobbies": "what are your hobbies",
+          "what_can_i_ask_you": "what can i ask you",
+          "what_is_your_name": "what is your name",
+          "what_song": "what song",
+          "where_are_you_from": "where are you from",
+          "whisper_mode": "whisper mode",
+          "who_do_you_work_for": "who do you work for",
+          "who_made_you": "who made you",
+          "yes": "yes"
+        },
+        "instructions": "Choose one supported intent. Unfamiliar requests require review.",
+        "alpha": 0.05,
+        "guard": "category-reliability",
+        "predicted_class_feature": true,
+        "reliability_threshold": 0.8879271434548768,
+        "base_intent_manifest_sha256": "27edb13093e6b4ef8c6edb131e21009e1809cbfc740c4e178de55f2ad4a5063f",
+        "review_protocol_sha256": "00be02cbb0f4000e235d3afab2719aafacbb32af70641075053be05e84caac1c",
+        "review_config": {
+          "extra_negatives": 2000,
+          "predicted_class_feature": true,
+          "C": 0.1
+        },
+        "teaching_projection": "single-request",
+        "kind": "system1",
+        "base_artifact": "benchmarks/quality/n8n_gauntlet/artifacts/clinc-review-consistent",
+        "parent_manifest_sha256": "94abc591501bf5fa9335d5e8708c86d7576c0123b2bd854d638dd029029b4dba",
+        "protocol_sha256": "a6bcafb5e6d1133f0e0ecdac5bef8fbfa4beb88da5ec884c42153f9b6fc070af",
+        "quadratic": false,
+        "review_C": 0.1,
+        "review_parameters": {
+          "mean": [
+            5.402871569638694,
+            0.8860626316987719,
+            0.2887919022369237,
+            0.7504197154960426,
+            0.18002071403711642,
+            0.6808710088393128,
+            0.17879831875884916
+          ],
+          "scale": [
+            3.021935090248998,
+            0.24149446123999901,
+            0.6087966835792673,
+            0.21804229880781498,
+            0.17449221499965345,
+            0.21308784053543472,
+            0.16110315411802223
+          ],
+          "weights": [
+            1.1691345841007792,
+            0.37658720380862215,
+            -0.07252415733983433,
+            0.9894602068856287,
+            0.18251033453502255,
+            0.5452415500909408,
+            0.2901643208869468,
+            0.3109981073679541,
+            -0.06565292520206724,
+            -0.03434205446867518,
+            0.10090282415971927,
+            -0.12728024224863865,
+            -0.0190974972894261,
+            0.18793686504923587,
+            0.20501224381931768,
+            0.172725778553713,
+            0.13510784464097372,
+            -0.08865445014702536,
+            -0.04783797568743911,
+            -0.0010932119803961128,
+            0.15842030328287415,
+            0.16590556688585054,
+            0.0190828359644307,
+            0.22607693569527681,
+            -0.020206317370228818,
+            0.06318364554598703,
+            0.0725685042607909,
+            -0.0254266899099441,
+            -0.18961337820703525,
+            -0.13296773110988597,
+            0.026994185953987428,
+            -0.348749336783328,
+            -0.10639636420076092,
+            0.2219647410411843,
+            0.3837836209756042,
+            0.08632587752378458,
+            0.05906674479703803,
+            0.07476041765882548,
+            -0.05611656872459607,
+            0.01821242030429436,
+            -0.19049690789349713,
+            -0.12578260917383974,
+            -0.05979960201068248,
+            0.007849758942252472,
+            0.19472340226889212,
+            -0.14877017226055628,
+            0.008542550495853214,
+            -0.04142740247994056,
+            0.0014707933031090302,
+            -0.16305615326187725,
+            0.02622519475528525,
+            0.013830815460658574,
+            -0.15182152882234592,
+            0.2230721124628979,
+            -0.17166791952493507,
+            -0.019307795024083314,
+            -0.06884831379678731,
+            -0.013934660232904206,
+            0.28993707501991567,
+            0.02418700340864626,
+            -0.04870708392887474,
+            -0.0995179478275,
+            0.2702314759978882,
+            -0.01272266951485131,
+            -0.04483709941135473,
+            0.065270907038758,
+            0.0882277105132117,
+            -0.09279489486899922,
+            0.03809463670077195,
+            -0.03699025655812383,
+            -0.0925573694622442,
+            0.02708865969454185,
+            0.13837472679378904,
+            0.18175408787736214,
+            -0.11833095091829232,
+            0.13635086890344467,
+            -0.05934796917660933,
+            0.059609012061599354,
+            0.019456831627251425,
+            -0.13101924289685754,
+            6.853558764416455e-05,
+            0.14841229372922177,
+            0.03151910221216825,
+            0.1132107265818391,
+            0.14178241311371997,
+            -0.23211055602310154,
+            -0.030632078183459144,
+            -2.662699101133362,
+            0.10634652505122003,
+            0.02291517267679151,
+            0.07311178454735161,
+            0.17556343106738856,
+            -0.143401456492631,
+            0.014792264714625997,
+            0.2588415680800383,
+            -0.02450529345725956,
+            -0.3698870077432501,
+            0.11720910967977698,
+            0.026829429459724115,
+            -0.19034037643083065,
+            0.3866043069644011,
+            0.1720540298390088,
+            0.10828105960618908,
+            -0.0882821004395189,
+            0.04866734155212764,
+            0.0775264709878647,
+            0.06905010797848049,
+            -0.2165975824076944,
+            -0.160648355335904,
+            -0.06378845059253455,
+            0.08533011427986643,
+            -0.14191401456756347,
+            -0.16592853420989223,
+            0.04108466220003563,
+            0.01248340165556895,
+            0.04255150544924573,
+            -0.17084634257691764,
+            -0.1910798102326114,
+            0.43797064501113653,
+            -0.18222260226955295,
+            0.12409236558608815,
+            -0.2529286407739467,
+            0.3939072380582773,
+            0.19596080799810126,
+            0.056225890450869426,
+            -0.045220481966010466,
+            0.1582914334309368,
+            0.3336199199680709,
+            0.31455646806276444,
+            -0.025008875084488003,
+            0.041990219056178835,
+            0.044326627363582546,
+            -0.05927881171008766,
+            0.008737283874701528,
+            0.5375010233914537,
+            0.08329751703210272,
+            -0.21308409576166415,
+            0.19993998106202665,
+            0.029905950300244927,
+            0.4015555530882128,
+            0.03865896742316719,
+            -0.07727483158523517,
+            -0.3129574341137511,
+            0.005234617078851177,
+            0.02365426940491971,
+            -0.20560405139636434,
+            0.026485417130480395,
+            -0.0011059329086171785,
+            -0.22488193631377112,
+            -0.1004252221244652,
+            -0.13538240439682353,
+            -0.15124778775826386,
+            -0.18650037265249855,
+            -0.29908638494944007,
+            0.07897193005133517,
+            0.2249066343064164,
+            -0.25484739864681377,
+            0.43188368316610787
+          ],
+          "bias": 4.075614056174588
+        },
+        "context_dimension": 384,
+        "context_weights": [
+          0.10357957966752578,
+          -0.30240116812459733,
+          0.1820268468276035,
+          -0.1848453323824575,
+          0.013669856360124102,
+          -0.09768480707730312,
+          0.21882041883082012,
+          -0.13101929724317607,
+          -0.010443266547308391,
+          -0.08260922611641446,
+          -0.13186159220036708,
+          -0.25409210473693306,
+          -0.25113810170827644,
+          -0.02924580866927522,
+          -0.06852304907722669,
+          -0.1969485842272755,
+          0.552853375702614,
+          -0.07537616571362685,
+          -0.2443117257123949,
+          0.010876192690611467,
+          0.2610021499471445,
+          -0.01781776751084152,
+          -0.15680593044714905,
+          0.05209989786579857,
+          -0.20000623691464642,
+          0.036003271932728745,
+          0.10929309176368454,
+          0.0028846257861437716,
+          -0.466116986422481,
+          0.027732180679843114,
+          0.188506876848658,
+          -0.12730468483410248,
+          -0.1852939034172725,
+          -0.14698521807989495,
+          -0.07380030441277365,
+          -0.08509500336075693,
+          0.07016406455402249,
+          -0.39105655906445874,
+          0.19945602327459871,
+          0.16293661035081203,
+          0.16269949313848314,
+          0.06336019899592989,
+          0.10217577399517914,
+          0.03691286110402244,
+          0.23710749931609362,
+          -0.05034789421859583,
+          -0.2002935070396231,
+          0.1336837690568668,
+          0.4262389060536486,
+          -0.08170803558451462,
+          0.09305139059599257,
+          0.019985555560850483,
+          0.03126745383458916,
+          0.08837578302559908,
+          -0.06143010901282768,
+          0.32003399385074516,
+          0.023427316451779936,
+          -0.23422657396351934,
+          -0.11554951438482076,
+          0.029325645697213073,
+          -0.010063631482924495,
+          -0.16278952829012772,
+          0.16322702056575808,
+          0.10854470124136469,
+          -0.12271076669082585,
+          -0.03128263727185766,
+          -0.07889607979101602,
+          0.28855041702379886,
+          0.010211782338350317,
+          0.11017950467751988,
+          -0.21652587669104337,
+          -0.04795953778393594,
+          0.14011136332163862,
+          0.2254722395275043,
+          0.0784824347517186,
+          0.008176904461849623,
+          0.14932738222563016,
+          -0.242653141115984,
+          0.15439819078114586,
+          0.35190220341938055,
+          -0.3627361340515631,
+          -0.2521303338479796,
+          -0.13506218165356745,
+          0.07301121134006247,
+          -0.05076089376589656,
+          -0.017139104988523154,
+          0.04574248759933004,
+          0.44515242205307703,
+          0.09636978110731574,
+          0.019009035603007526,
+          -0.010938110215085412,
+          0.06977659852822946,
+          0.0037658644866264087,
+          -0.06823757694420811,
+          -0.10948741391588265,
+          0.12197498901336375,
+          -0.36503679038144293,
+          -0.3417325730187414,
+          -0.3667446716148254,
+          -0.09027203305981259,
+          0.12544776634474195,
+          0.2739793649378245,
+          0.01847689258858053,
+          -0.2860257843885463,
+          0.2080971112968069,
+          0.0498432929897676,
+          -0.009211799405228751,
+          0.2054088038024445,
+          0.17174994551691464,
+          -0.10395776947051072,
+          0.02871190005418583,
+          0.08952929940706764,
+          0.37375949499206174,
+          -0.14255976293465372,
+          -0.11968851716021023,
+          0.4117033754684912,
+          0.21367868125085568,
+          -0.035462406667540206,
+          0.1189054876247063,
+          -0.17696272873854443,
+          0.09346021239049067,
+          0.10386628828044502,
+          0.16461486111561982,
+          0.11657770450138039,
+          -0.07427580581341212,
+          -0.21319743892830614,
+          0.21576387842816952,
+          -1.7093858533216907e-32,
+          0.06016363305519014,
+          0.2189802748663537,
+          0.05993733649027994,
+          0.005057775477011851,
+          0.2906072932447991,
+          -0.10310220362611607,
+          -0.02499355099701433,
+          0.08551784748940339,
+          -0.02870353467028008,
+          0.2264870350742356,
+          -0.17686980265788949,
+          -0.3547913722750586,
+          -0.05943252493463207,
+          0.006563490037849819,
+          -0.14214984560402946,
+          -0.00021353294498467038,
+          0.11012151422815362,
+          -0.17768986814690196,
+          -0.04127398660874443,
+          -0.023125110164531653,
+          0.005987376610335214,
+          -0.38686861676603324,
+          -0.1410504029026786,
+          0.020752199138085303,
+          0.05646962414895065,
+          0.02180271595522132,
+          -0.09574085206139535,
+          -0.14329458304086143,
+          0.25160846637592715,
+          -0.013540928566349905,
+          -0.31482167662077876,
+          0.10457841188759927,
+          -0.09351804066028221,
+          -0.048018782693742545,
+          -0.17485461480357906,
+          -0.16651301204161537,
+          -0.23764273245278217,
+          0.1338704056531203,
+          0.04649405285766799,
+          -0.12123822329388625,
+          -0.01771447625559162,
+          0.05947271201661039,
+          -0.10584366534757907,
+          0.11279774472563572,
+          0.03498168259632324,
+          -0.13660743015017143,
+          0.24967878924821968,
+          0.016094801963714215,
+          -0.10217134414469216,
+          -0.0033205032395892667,
+          0.11301780137155192,
+          -0.15853666653323123,
+          0.1958677644872255,
+          0.03458872214029103,
+          -0.22458787463647284,
+          0.062290668431208514,
+          0.2449992921607856,
+          -0.15729292585359034,
+          0.22277453779645176,
+          -0.18527501652364928,
+          0.07955880244617233,
+          -0.18847806606963025,
+          -0.11238834830997396,
+          0.03241328469095323,
+          -0.1933461902707795,
+          -0.14073444355935097,
+          -0.12954566479165328,
+          0.10866003527616727,
+          0.07610981184001553,
+          -0.11602551959028591,
+          0.3613455978653048,
+          -0.033189667861644685,
+          0.026705956506168676,
+          -0.0030251644319227704,
+          0.03050333397430028,
+          0.1376268509661798,
+          0.001268687390825986,
+          -0.13100369784689592,
+          0.33774258472484603,
+          -0.08769465682186292,
+          0.3781529222140392,
+          -0.06768033306008482,
+          -0.18771377394890373,
+          0.1813079268977083,
+          0.11218293402560336,
+          0.1485190071330063,
+          -0.08137545697182473,
+          0.07945750930982955,
+          0.042015405184543705,
+          -0.07502689259324904,
+          -0.12116392607684687,
+          0.02371069879252027,
+          0.07273910098850037,
+          -0.1410589803442839,
+          0.03555276437886435,
+          1.6080113288226553e-32,
+          0.24482584642263305,
+          -0.00486222181490499,
+          0.03905798257370363,
+          0.03434931911419776,
+          0.20462883801894513,
+          -0.1346554075711558,
+          -0.02715051402840742,
+          0.20062795352494514,
+          0.34032349838966225,
+          -0.07926207200504526,
+          -0.2914012476931136,
+          0.038501121673377464,
+          0.01605613471764836,
+          -0.17025749542762358,
+          0.036488674319581554,
+          0.13298802464852705,
+          -0.06077832345699287,
+          0.0226376502789568,
+          0.22202972684347938,
+          0.05437264369829583,
+          -0.319464673440856,
+          -0.02620454532341127,
+          0.05789406450547653,
+          0.02762289271667437,
+          0.057205554698793605,
+          -0.023190765262630895,
+          0.21155050402685396,
+          0.09287416511043434,
+          -0.12631184724078484,
+          -0.01054097404716733,
+          0.030852136705293364,
+          -0.3786869053875485,
+          0.01716591261663437,
+          0.013943277696926508,
+          0.2601365716586344,
+          0.22218497374751447,
+          0.005252189041591021,
+          -0.0005755572595043047,
+          -0.039049073037938864,
+          0.09000670156741725,
+          -0.09451084506486189,
+          -0.30320978140270116,
+          -0.20855267431920024,
+          -0.11028675121371424,
+          -0.1475468073964295,
+          0.012911457129867259,
+          0.011569759928620974,
+          -0.006657043243957616,
+          -0.10445767720792175,
+          0.3739554664743275,
+          -0.005180638870460427,
+          0.037642332427915884,
+          -0.1010123504480578,
+          0.20381779789808777,
+          0.06761108612381253,
+          -0.10706688142914847,
+          0.12602789520842797,
+          -0.041212233298440905,
+          -0.11194865704426833,
+          -0.13632827901980293,
+          -0.1349972991943671,
+          0.006839737878164494,
+          0.17538486750572585,
+          0.20943177327676513,
+          -0.013472636350210973,
+          -0.14769468458639792,
+          -0.0893809666649112,
+          0.16864086140998513,
+          -0.14176483868219614,
+          0.23127845537248592,
+          -0.10441825632343334,
+          0.1194497137576351,
+          0.03332736523855776,
+          0.1318614011605006,
+          0.10115975542068364,
+          -0.088747857341173,
+          0.34243050990659596,
+          0.03376239917092062,
+          0.13114786001576656,
+          0.07179826328886722,
+          0.07130113334213506,
+          0.06666142422733938,
+          0.0412575676937971,
+          0.03955147267709036,
+          0.10003883973719943,
+          0.09644565132414207,
+          0.01721335990988811,
+          0.09476544645880261,
+          -0.12122298537121669,
+          -0.03160235745033655,
+          0.07018376869991695,
+          0.20678132967701562,
+          0.14725782714466873,
+          -0.2009686915362225,
+          0.0116402592689843,
+          2.647474675546852e-09,
+          0.2703307689595154,
+          -0.05990229754637812,
+          0.00951646824089742,
+          -0.02245550213123392,
+          -0.0749023372144877,
+          -0.0636053780741149,
+          -0.2396480370699896,
+          -0.2706666714825563,
+          0.027873629537992488,
+          -0.21469217447338215,
+          0.30348164402361033,
+          -0.13274810104297802,
+          -0.11877809498537191,
+          -0.09373216298436016,
+          -0.2657557787570711,
+          0.15781291676769424,
+          0.1692373744967089,
+          -0.0826407622556373,
+          0.046314153235771933,
+          0.07457758537920454,
+          -0.10814355444266749,
+          0.34052225158893645,
+          0.028695300886029538,
+          -0.06259706113425346,
+          0.03102212442791259,
+          -0.05294281545410142,
+          -0.02949699274505541,
+          0.29780313380485385,
+          -0.03607721532900789,
+          0.03380584244604293,
+          -0.007711266373073222,
+          -0.11067897587671219,
+          -0.22602843780061052,
+          0.13252469958931037,
+          -0.2503846281769437,
+          -0.1538796240525273,
+          -0.1826585238564647,
+          -0.23850385485152967,
+          -0.08196408143435982,
+          0.11247784732579867,
+          -0.06547725892991917,
+          -0.05412614921369294,
+          -0.07648067041291705,
+          -0.18335691045850314,
+          -0.22974362528174075,
+          -0.26013198777438246,
+          0.16089974911148622,
+          -0.28173004640190136,
+          0.022880194388605456,
+          0.10346306927828523,
+          -0.15791718975607894,
+          -0.15444516099876013,
+          0.04528738479026965,
+          0.07246948462893493,
+          0.09822989808474145,
+          0.19001953777041744,
+          -0.08316639357598304,
+          0.13689777775895556,
+          0.060328555225156094,
+          0.2740166536496915,
+          0.06153745534869129,
+          0.04051553573230515,
+          -0.20184229426207204,
+          -0.24080362748802098
+        ]
+      },
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 16,
+          "denominator": 16,
+          "fraction": 1.0,
+          "wilson95": [
+            0.8063923194655637,
+            1.0
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 2.0627715275622904,
+        "p95_ms": 2.4206982052419335,
+        "max_ms": 2.662540995515883
+      },
+      "load_ms": 284.2317910399288,
+      "point_gates": {
+        "coverage_at_least_80": true,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": true,
+      "qualified": false,
+      "teacher_calls": 0,
+      "errors": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 17383260,
+      "external_encoder_bytes": 23492300,
+      "per_intent": {
+        "apr": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "change_language": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "direct_deposit": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "directions": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "gas_type": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meal_suggestion": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "measurement_conversion": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meeting_schedule": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "new_card": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_holiday": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_song": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_balance": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_used": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "timer": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "tire_pressure": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "w2": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "000d32d351934fcc1345ac0ed28834d7368e30846c33df0ad4e971b806179b9c",
+          "text": "switch language for me",
+          "truth": "change_language",
+          "latency_ms": 1.7118749674409628,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "change_language",
+          "suggestion": "change_language",
+          "confidence": 0.9997929499898286,
+          "predictionSet": [
+            "change_language"
+          ],
+          "reliability": 0.9973712614835514,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "0017e5a82724e761e388433f69b724ea1a976a60164a7cbbfc5726903a46418d",
+          "text": "how many pto days are available",
+          "truth": "pto_balance",
+          "latency_ms": 2.0372499711811543,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "pto_balance",
+          "suggestion": "pto_balance",
+          "confidence": 0.8043541254865628,
+          "predictionSet": [
+            "pto_balance"
+          ],
+          "reliability": 0.9469952508012066,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "00224bbd1367371db0a325c8828d1620b395752710a38586edbb06047eea5075",
+          "text": "how do i get to new york by bus",
+          "truth": "directions",
+          "latency_ms": 2.1035000681877136,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "directions",
+          "suggestion": "directions",
+          "confidence": 0.9969514023018203,
+          "predictionSet": [
+            "directions"
+          ],
+          "reliability": 0.9846757707766712,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "005b31d73e295d7f6669c586ef9d436753aba5fcb01ac3fd29eb181afbc7fa1c",
+          "text": "where's my w-2 tax form",
+          "truth": "w2",
+          "latency_ms": 2.1079160505905747,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "w2",
+          "suggestion": "w2",
+          "confidence": 0.9999706171895366,
+          "predictionSet": [
+            "w2"
+          ],
+          "reliability": 0.9993205110114539,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "006649b611bf70f4c388f6d4116c5afc1ab639cdede6eb633eabdbcbbc339cb0",
+          "text": "what kind of gas does my car need",
+          "truth": "gas_type",
+          "latency_ms": 2.023958950303495,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "gas_type",
+          "suggestion": "gas_type",
+          "confidence": 0.9998405914553868,
+          "predictionSet": [
+            "gas_type"
+          ],
+          "reliability": 0.9995297237681722,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "0075a5e2c78e9d65a5449fde26f5f7ec8adacadf7fbb0025430e87443b6c3cff",
+          "text": "what is the total number of pints in two quarts",
+          "truth": "measurement_conversion",
+          "latency_ms": 2.333124983124435,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "measurement_conversion",
+          "suggestion": "measurement_conversion",
+          "confidence": 0.9854317303326979,
+          "predictionSet": [
+            "measurement_conversion"
+          ],
+          "reliability": 0.9930581008106071,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "0083b1f18b98bfb10d9ef587a23ed3622a5c8d5d8a8409d82e64766451285fd2",
+          "text": "what kind of meal should i eat from thailand",
+          "truth": "meal_suggestion",
+          "latency_ms": 2.07558402325958,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "meal_suggestion",
+          "suggestion": "meal_suggestion",
+          "confidence": 0.9961775676601258,
+          "predictionSet": [
+            "meal_suggestion"
+          ],
+          "reliability": 0.9980586717559636,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "00854d60091573b5e24f53565f22e7000ad234d1e1cacd90520f1e9d402c31ee",
+          "text": "needing you to play the next song",
+          "truth": "next_song",
+          "latency_ms": 1.964624971151352,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "next_song",
+          "suggestion": "next_song",
+          "confidence": 0.9931091688244598,
+          "predictionSet": [
+            "next_song"
+          ],
+          "reliability": 0.9959599557286638,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "00c053d435db7052caff8f821ddc486e3c6f9200b95ec3d6621ad44af145b83e",
+          "text": "how many days have i taken off",
+          "truth": "pto_used",
+          "latency_ms": 2.0201250445097685,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "pto_used",
+          "suggestion": "pto_used",
+          "confidence": 0.999272583569019,
+          "predictionSet": [
+            "pto_used"
+          ],
+          "reliability": 0.9989758860349833,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "00c56508548847230b47fb6761ce97cbcaf8e50379354f47403311d9cf2aa30b",
+          "text": "what is my card's apr",
+          "truth": "apr",
+          "latency_ms": 1.9839579472318292,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "apr",
+          "suggestion": "apr",
+          "confidence": 0.9999327015461682,
+          "predictionSet": [
+            "apr"
+          ],
+          "reliability": 0.9996482462211432,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "00dbfcf112a849cebe9bd2ec0f75759a8261ed3e5f8ccae44aec1c3efd3a017f",
+          "text": "i want to know when is the next holiday here",
+          "truth": "next_holiday",
+          "latency_ms": 2.0499590318650007,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "next_holiday",
+          "suggestion": "next_holiday",
+          "confidence": 0.9998167147123617,
+          "predictionSet": [
+            "next_holiday"
+          ],
+          "reliability": 0.9996766865110959,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "00df5514a2aae064dbf2fb9b4a888ecddeb00a4d101c24a0eb993fbd11171867",
+          "text": "how do i go about getting direct deposit in my usaa account",
+          "truth": "direct_deposit",
+          "latency_ms": 2.3400839418172836,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "direct_deposit",
+          "suggestion": "direct_deposit",
+          "confidence": 0.9922309473028826,
+          "predictionSet": [
+            "direct_deposit"
+          ],
+          "reliability": 0.9870135418372189,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "00e479413d687c792e57ec29177475604004443c3aaaea34e4c459180069943b",
+          "text": "could you set up a timer for me",
+          "truth": "timer",
+          "latency_ms": 2.048749942332506,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.999095789474058,
+          "predictionSet": [
+            "timer"
+          ],
+          "reliability": 0.999375756066094,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "00f16f24b194c712daf331c5c6b0f1896be53daa7c11bf2277a6efb884712ff6",
+          "text": "please check my tires and let me know if i have sufficient air in them",
+          "truth": "tire_pressure",
+          "latency_ms": 2.662540995515883,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "tire_pressure",
+          "suggestion": "tire_pressure",
+          "confidence": 0.998760236485483,
+          "predictionSet": [
+            "tire_pressure"
+          ],
+          "reliability": 0.9970101580575433,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "013b6a0dfbbf206862cb82e5a9f04f5e269309ba37c503901b8e9acf9bfb2346",
+          "text": "i would like to know more about getting a new credit card",
+          "truth": "new_card",
+          "latency_ms": 2.1937909768894315,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "new_card",
+          "suggestion": "new_card",
+          "confidence": 0.9968748007017483,
+          "predictionSet": [
+            "new_card"
+          ],
+          "reliability": 0.9975718059382243,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "0145ea42a25b4338ab385e8b6ebedf616982c0935e3dd88240622018dffd2f0f",
+          "text": "do i have any meetings coming up with dan",
+          "truth": "meeting_schedule",
+          "latency_ms": 2.142749959602952,
+          "candidate": "d63b1376cbe8f47c14488d679383e35b91ec6b598f1297de60e78b654b22d45d",
+          "needsReview": false,
+          "category": "meeting_schedule",
+          "suggestion": "meeting_schedule",
+          "confidence": 0.9887206625501638,
+          "predictionSet": [
+            "meeting_schedule"
+          ],
+          "reliability": 0.9892114783219791,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "clinc150",
+      "kind": "baseline",
+      "folder": "clinc150-baseline-positive-and-unsupported",
+      "candidate_sha256": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+      "manifest": {
+        "status": "unqualified-boundary-teaching-development",
+        "dataset": "clinc150",
+        "kind": "baseline",
+        "condition": "positive-and-unsupported",
+        "categories": {
+          "accept_reservations": "accept reservations",
+          "account_blocked": "account blocked",
+          "alarm": "alarm",
+          "application_status": "application status",
+          "apr": "apr",
+          "are_you_a_bot": "are you a bot",
+          "balance": "balance",
+          "bill_balance": "bill balance",
+          "bill_due": "bill due",
+          "book_flight": "book flight",
+          "book_hotel": "book hotel",
+          "calculator": "calculator",
+          "calendar": "calendar",
+          "calendar_update": "calendar update",
+          "calories": "calories",
+          "cancel": "cancel",
+          "cancel_reservation": "cancel reservation",
+          "car_rental": "car rental",
+          "card_declined": "card declined",
+          "carry_on": "carry on",
+          "change_accent": "change accent",
+          "change_ai_name": "change ai name",
+          "change_language": "change language",
+          "change_speed": "change speed",
+          "change_user_name": "change user name",
+          "change_volume": "change volume",
+          "confirm_reservation": "confirm reservation",
+          "cook_time": "cook time",
+          "credit_limit": "credit limit",
+          "credit_limit_change": "credit limit change",
+          "credit_score": "credit score",
+          "current_location": "current location",
+          "damaged_card": "damaged card",
+          "date": "date",
+          "definition": "definition",
+          "direct_deposit": "direct deposit",
+          "directions": "directions",
+          "distance": "distance",
+          "do_you_have_pets": "do you have pets",
+          "exchange_rate": "exchange rate",
+          "expiration_date": "expiration date",
+          "find_phone": "find phone",
+          "flight_status": "flight status",
+          "flip_coin": "flip coin",
+          "food_last": "food last",
+          "freeze_account": "freeze account",
+          "fun_fact": "fun fact",
+          "gas": "gas",
+          "gas_type": "gas type",
+          "goodbye": "goodbye",
+          "greeting": "greeting",
+          "how_busy": "how busy",
+          "how_old_are_you": "how old are you",
+          "improve_credit_score": "improve credit score",
+          "income": "income",
+          "ingredient_substitution": "ingredient substitution",
+          "ingredients_list": "ingredients list",
+          "insurance": "insurance",
+          "insurance_change": "insurance change",
+          "interest_rate": "interest rate",
+          "international_fees": "international fees",
+          "international_visa": "international visa",
+          "jump_start": "jump start",
+          "last_maintenance": "last maintenance",
+          "lost_luggage": "lost luggage",
+          "make_call": "make call",
+          "maybe": "maybe",
+          "meal_suggestion": "meal suggestion",
+          "meaning_of_life": "meaning of life",
+          "measurement_conversion": "measurement conversion",
+          "meeting_schedule": "meeting schedule",
+          "min_payment": "min payment",
+          "mpg": "mpg",
+          "new_card": "new card",
+          "next_holiday": "next holiday",
+          "next_song": "next song",
+          "no": "no",
+          "nutrition_info": "nutrition info",
+          "oil_change_how": "oil change how",
+          "oil_change_when": "oil change when",
+          "oos": "oos",
+          "order": "order",
+          "order_checks": "order checks",
+          "order_status": "order status",
+          "pay_bill": "pay bill",
+          "payday": "payday",
+          "pin_change": "pin change",
+          "play_music": "play music",
+          "plug_type": "plug type",
+          "pto_balance": "pto balance",
+          "pto_request": "pto request",
+          "pto_request_status": "pto request status",
+          "pto_used": "pto used",
+          "recipe": "recipe",
+          "redeem_rewards": "redeem rewards",
+          "reminder": "reminder",
+          "reminder_update": "reminder update",
+          "repeat": "repeat",
+          "replacement_card_duration": "replacement card duration",
+          "report_fraud": "report fraud",
+          "report_lost_card": "report lost card",
+          "reset_settings": "reset settings",
+          "restaurant_reservation": "restaurant reservation",
+          "restaurant_reviews": "restaurant reviews",
+          "restaurant_suggestion": "restaurant suggestion",
+          "rewards_balance": "rewards balance",
+          "roll_dice": "roll dice",
+          "rollover_401k": "rollover 401k",
+          "routing": "routing",
+          "schedule_maintenance": "schedule maintenance",
+          "schedule_meeting": "schedule meeting",
+          "share_location": "share location",
+          "shopping_list": "shopping list",
+          "shopping_list_update": "shopping list update",
+          "smart_home": "smart home",
+          "spelling": "spelling",
+          "spending_history": "spending history",
+          "sync_device": "sync device",
+          "taxes": "taxes",
+          "tell_joke": "tell joke",
+          "text": "text",
+          "thank_you": "thank you",
+          "time": "time",
+          "timer": "timer",
+          "timezone": "timezone",
+          "tire_change": "tire change",
+          "tire_pressure": "tire pressure",
+          "todo_list": "todo list",
+          "todo_list_update": "todo list update",
+          "traffic": "traffic",
+          "transactions": "transactions",
+          "transfer": "transfer",
+          "translate": "translate",
+          "travel_alert": "travel alert",
+          "travel_notification": "travel notification",
+          "travel_suggestion": "travel suggestion",
+          "uber": "uber",
+          "update_playlist": "update playlist",
+          "user_name": "user name",
+          "vaccines": "vaccines",
+          "w2": "w2",
+          "weather": "weather",
+          "what_are_your_hobbies": "what are your hobbies",
+          "what_can_i_ask_you": "what can i ask you",
+          "what_is_your_name": "what is your name",
+          "what_song": "what song",
+          "where_are_you_from": "where are you from",
+          "whisper_mode": "whisper mode",
+          "who_do_you_work_for": "who do you work for",
+          "who_made_you": "who made you",
+          "yes": "yes"
+        },
+        "instructions": "Choose one supported intent. Unfamiliar requests require review.",
+        "predicted_class_feature": true,
+        "review_C": 1,
+        "protocol_sha256": "4c1ed5ff8b981a805a276601c8aebaf92daada9f319f8f5a173a012638493320",
+        "lessons_sha256": "39bf1328bfa95a11bede0fd93dff521437cb2ba4528830405d94541cb4afef18",
+        "fit_rows": 13715,
+        "review_rows": 15713,
+        "C": 10,
+        "policy": "reliability",
+        "threshold": 0.9553856242371628,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true,
+        "files": {
+          "weights.npz": "f0a2a70754e4381082ddaba0f67714a4fdf77e6cb2e7fef7f62b641e84b2b1a4",
+          "prototypes.npz": "9eb674c719878e5ca0386628806253c6c0e3163b4160b4a0b5fb75f34f86e46c",
+          "vocabulary.json": "49dddd914b98de21c41d9df351556add05ca057fef17b7c6ad7fd1188ac715cb"
+        }
+      },
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 11,
+          "denominator": 16,
+          "fraction": 0.6875,
+          "wilson95": [
+            0.44404355834740666,
+            0.8583535614521796
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 11,
+          "denominator": 11,
+          "fraction": 1.0,
+          "wilson95": [
+            0.7411670330319684,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 15,
+          "denominator": 16,
+          "fraction": 0.9375,
+          "wilson95": [
+            0.7167126242970107,
+            0.9888806552353576
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 0.6571250269189477,
+        "p95_ms": 0.8155627292580903,
+        "max_ms": 0.8864999981597066
+      },
+      "load_ms": 92.84145897254348,
+      "point_gates": {
+        "coverage_at_least_80": false,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "teacher_calls": 0,
+      "errors": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 35717463,
+      "external_encoder_bytes": 0,
+      "per_intent": {
+        "apr": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "change_language": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "direct_deposit": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "directions": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "gas_type": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meal_suggestion": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "measurement_conversion": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "meeting_schedule": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "new_card": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_holiday": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "next_song": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_balance": {
+          "supported_coverage": {
+            "numerator": 0,
+            "denominator": 1,
+            "fraction": 0.0,
+            "wilson95": [
+              0.0,
+              0.7934506856227626
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "pto_used": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "timer": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "tire_pressure": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        },
+        "w2": {
+          "supported_coverage": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 1,
+            "denominator": 1,
+            "fraction": 1.0,
+            "wilson95": [
+              0.20654931437723745,
+              1.0
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "000d32d351934fcc1345ac0ed28834d7368e30846c33df0ad4e971b806179b9c",
+          "text": "switch language for me",
+          "truth": "change_language",
+          "latency_ms": 0.6299169035628438,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "change_language",
+          "suggestion": "change_language",
+          "confidence": 0.8473289369827259,
+          "acceptance_score": 0.9855580660267582,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "0017e5a82724e761e388433f69b724ea1a976a60164a7cbbfc5726903a46418d",
+          "text": "how many pto days are available",
+          "truth": "pto_balance",
+          "latency_ms": 0.8864999981597066,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "pto_balance",
+          "confidence": 0.7273233372147474,
+          "acceptance_score": 0.8534877382406304,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "00224bbd1367371db0a325c8828d1620b395752710a38586edbb06047eea5075",
+          "text": "how do i get to new york by bus",
+          "truth": "directions",
+          "latency_ms": 0.7919169729575515,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "directions",
+          "confidence": 0.9469301159074778,
+          "acceptance_score": 0.9412610282503326,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "005b31d73e295d7f6669c586ef9d436753aba5fcb01ac3fd29eb181afbc7fa1c",
+          "text": "where's my w-2 tax form",
+          "truth": "w2",
+          "latency_ms": 0.6014589453116059,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "w2",
+          "suggestion": "w2",
+          "confidence": 0.9859484259172272,
+          "acceptance_score": 0.9624343283895688,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "006649b611bf70f4c388f6d4116c5afc1ab639cdede6eb633eabdbcbbc339cb0",
+          "text": "what kind of gas does my car need",
+          "truth": "gas_type",
+          "latency_ms": 0.6695830961689353,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "gas_type",
+          "suggestion": "gas_type",
+          "confidence": 0.9908995896874079,
+          "acceptance_score": 0.9824618977063131,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "0075a5e2c78e9d65a5449fde26f5f7ec8adacadf7fbb0025430e87443b6c3cff",
+          "text": "what is the total number of pints in two quarts",
+          "truth": "measurement_conversion",
+          "latency_ms": 0.6900000153109431,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "calories",
+          "confidence": 0.09283476488888963,
+          "acceptance_score": 0.5924087860581463,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "0083b1f18b98bfb10d9ef587a23ed3622a5c8d5d8a8409d82e64766451285fd2",
+          "text": "what kind of meal should i eat from thailand",
+          "truth": "meal_suggestion",
+          "latency_ms": 0.6209999555721879,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "meal_suggestion",
+          "confidence": 0.5237352696246235,
+          "acceptance_score": 0.8889815355411964,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "00854d60091573b5e24f53565f22e7000ad234d1e1cacd90520f1e9d402c31ee",
+          "text": "needing you to play the next song",
+          "truth": "next_song",
+          "latency_ms": 0.7273749215528369,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "next_song",
+          "suggestion": "next_song",
+          "confidence": 0.9803947434868421,
+          "acceptance_score": 0.982728051473713,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "00c053d435db7052caff8f821ddc486e3c6f9200b95ec3d6621ad44af145b83e",
+          "text": "how many days have i taken off",
+          "truth": "pto_used",
+          "latency_ms": 0.6137910531833768,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "pto_used",
+          "suggestion": "pto_used",
+          "confidence": 0.9903749419920186,
+          "acceptance_score": 0.9851499755132269,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "00c56508548847230b47fb6761ce97cbcaf8e50379354f47403311d9cf2aa30b",
+          "text": "what is my card's apr",
+          "truth": "apr",
+          "latency_ms": 0.661291996948421,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "apr",
+          "suggestion": "apr",
+          "confidence": 0.9932387295722057,
+          "acceptance_score": 0.9943862997919797,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "00dbfcf112a849cebe9bd2ec0f75759a8261ed3e5f8ccae44aec1c3efd3a017f",
+          "text": "i want to know when is the next holiday here",
+          "truth": "next_holiday",
+          "latency_ms": 0.6529580568894744,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "next_holiday",
+          "suggestion": "next_holiday",
+          "confidence": 0.951974736575339,
+          "acceptance_score": 0.9593378712449215,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "00df5514a2aae064dbf2fb9b4a888ecddeb00a4d101c24a0eb993fbd11171867",
+          "text": "how do i go about getting direct deposit in my usaa account",
+          "truth": "direct_deposit",
+          "latency_ms": 0.6507090292870998,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "direct_deposit",
+          "suggestion": "direct_deposit",
+          "confidence": 0.7742853636605211,
+          "acceptance_score": 0.9728003729696224,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "00e479413d687c792e57ec29177475604004443c3aaaea34e4c459180069943b",
+          "text": "could you set up a timer for me",
+          "truth": "timer",
+          "latency_ms": 0.7459580665454268,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "timer",
+          "suggestion": "timer",
+          "confidence": 0.9559336248997101,
+          "acceptance_score": 0.9813565811761955,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "00f16f24b194c712daf331c5c6b0f1896be53daa7c11bf2277a6efb884712ff6",
+          "text": "please check my tires and let me know if i have sufficient air in them",
+          "truth": "tire_pressure",
+          "latency_ms": 0.7298750570043921,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "tire_pressure",
+          "suggestion": "tire_pressure",
+          "confidence": 0.5994517014659064,
+          "acceptance_score": 0.9599510287556063,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "013b6a0dfbbf206862cb82e5a9f04f5e269309ba37c503901b8e9acf9bfb2346",
+          "text": "i would like to know more about getting a new credit card",
+          "truth": "new_card",
+          "latency_ms": 0.6270840531215072,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "new_card",
+          "confidence": 0.6873823711504203,
+          "acceptance_score": 0.9024182067448633,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "0145ea42a25b4338ab385e8b6ebedf616982c0935e3dd88240622018dffd2f0f",
+          "text": "do i have any meetings coming up with dan",
+          "truth": "meeting_schedule",
+          "latency_ms": 0.5625420017167926,
+          "candidate": "3fc70d9b9073502e85bd1306f0e9f67eb7537c7eaa1c7e1cabe61ef27ab7ba98",
+          "needsReview": false,
+          "category": "meeting_schedule",
+          "suggestion": "meeting_schedule",
+          "confidence": 0.8023370704300328,
+          "acceptance_score": 0.9878605105123892,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "banking77",
+      "kind": "system1",
+      "folder": "polynomial-banking77-system1-quadratic",
+      "candidate_sha256": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+      "manifest": {
+        "status": "unqualified-polynomial-review-development",
+        "dataset": "banking77",
+        "guard": "category-reliability",
+        "encoder": {
+          "name": "bge-small",
+          "model_sha256": "828e1496d7fabb79cfa4dcd84fa38625c0d3d21da474a00f08db0f559940cf35",
+          "tokenizer_sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+          "model_bytes": 133093490,
+          "pooling": "cls",
+          "tokenizer_bytes": 711396,
+          "runtime": "1.30.0",
+          "threads": 4,
+          "provider": "CPUExecutionProvider"
+        },
+        "files": {
+          "intent.s1m": "107041dae2446cc824b03a6d6497ac9df310eb3ca6ca1a657c4e5d2aeadff16c",
+          "scope.npz": "18198900de6acb32e9ae5d5ae45a452cdd761f33fcebfc4ae158b4239ade44f4"
+        },
+        "categories": {
+          "Refund_not_showing_up": "Refund not showing up",
+          "activate_my_card": "activate my card",
+          "age_limit": "age limit",
+          "apple_pay_or_google_pay": "apple pay or google pay",
+          "atm_support": "atm support",
+          "automatic_top_up": "automatic top up",
+          "balance_not_updated_after_bank_transfer": "balance not updated after bank transfer",
+          "balance_not_updated_after_cheque_or_cash_deposit": "balance not updated after cheque or cash deposit",
+          "beneficiary_not_allowed": "beneficiary not allowed",
+          "cancel_transfer": "cancel transfer",
+          "card_about_to_expire": "card about to expire",
+          "card_acceptance": "card acceptance",
+          "card_arrival": "card arrival",
+          "card_delivery_estimate": "card delivery estimate",
+          "card_linking": "card linking",
+          "card_not_working": "card not working",
+          "card_payment_fee_charged": "card payment fee charged",
+          "card_payment_not_recognised": "card payment not recognised",
+          "card_payment_wrong_exchange_rate": "card payment wrong exchange rate",
+          "card_swallowed": "card swallowed",
+          "cash_withdrawal_charge": "cash withdrawal charge",
+          "cash_withdrawal_not_recognised": "cash withdrawal not recognised",
+          "change_pin": "change pin",
+          "compromised_card": "compromised card",
+          "contactless_not_working": "contactless not working",
+          "country_support": "country support",
+          "declined_card_payment": "declined card payment",
+          "declined_cash_withdrawal": "declined cash withdrawal",
+          "declined_transfer": "declined transfer",
+          "direct_debit_payment_not_recognised": "direct debit payment not recognised",
+          "disposable_card_limits": "disposable card limits",
+          "edit_personal_details": "edit personal details",
+          "exchange_charge": "exchange charge",
+          "exchange_rate": "exchange rate",
+          "exchange_via_app": "exchange via app",
+          "extra_charge_on_statement": "extra charge on statement",
+          "failed_transfer": "failed transfer",
+          "fiat_currency_support": "fiat currency support",
+          "get_disposable_virtual_card": "get disposable virtual card",
+          "get_physical_card": "get physical card",
+          "getting_spare_card": "getting spare card",
+          "getting_virtual_card": "getting virtual card",
+          "lost_or_stolen_card": "lost or stolen card",
+          "lost_or_stolen_phone": "lost or stolen phone",
+          "order_physical_card": "order physical card",
+          "passcode_forgotten": "passcode forgotten",
+          "pending_card_payment": "pending card payment",
+          "pending_cash_withdrawal": "pending cash withdrawal",
+          "pending_top_up": "pending top up",
+          "pending_transfer": "pending transfer",
+          "pin_blocked": "pin blocked",
+          "receiving_money": "receiving money",
+          "request_refund": "request refund",
+          "reverted_card_payment?": "reverted card payment?",
+          "supported_cards_and_currencies": "supported cards and currencies",
+          "terminate_account": "terminate account",
+          "top_up_by_bank_transfer_charge": "top up by bank transfer charge",
+          "top_up_by_card_charge": "top up by card charge",
+          "top_up_by_cash_or_cheque": "top up by cash or cheque",
+          "top_up_failed": "top up failed",
+          "top_up_limits": "top up limits",
+          "top_up_reverted": "top up reverted",
+          "topping_up_by_card": "topping up by card",
+          "transaction_charged_twice": "transaction charged twice",
+          "transfer_fee_charged": "transfer fee charged",
+          "transfer_into_account": "transfer into account",
+          "transfer_not_received_by_recipient": "transfer not received by recipient",
+          "transfer_timing": "transfer timing",
+          "unable_to_verify_identity": "unable to verify identity",
+          "verify_my_identity": "verify my identity",
+          "verify_source_of_funds": "verify source of funds",
+          "verify_top_up": "verify top up",
+          "virtual_card_not_working": "virtual card not working",
+          "visa_or_mastercard": "visa or mastercard",
+          "why_verify_identity": "why verify identity",
+          "wrong_amount_of_cash_received": "wrong amount of cash received",
+          "wrong_exchange_rate_for_cash_withdrawal": "wrong exchange rate for cash withdrawal"
+        },
+        "instructions": "Choose one supported banking intent. Uncertain requests require review.",
+        "alpha": 0.075,
+        "reliability_threshold": 0.9166566249336663,
+        "predicted_class_feature": true,
+        "base_intent_manifest_sha256": "88ce86d3c9ea3a1257eb4acf73d413098382b40e50d2bcc44f2b98517caee9f3",
+        "review_protocol_sha256": "a1f91d3ce64bfc5f8005e7cd1324c8a9a73c0662b237282f6bec28b2e246831c",
+        "review_config": {
+          "extra_negatives": 0,
+          "predicted_class_feature": true,
+          "C": 0.1
+        },
+        "kind": "system1",
+        "base_artifact": "benchmarks/quality/n8n_gauntlet/artifacts/banking-review",
+        "parent_manifest_sha256": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+        "protocol_sha256": "8034bfd9e254db6aefce7ecda60a4f965da01aecf54808b4bc009b21297366e0",
+        "quadratic": true,
+        "review_C": 0.1,
+        "review_parameters": {
+          "mean": [
+            4.237042961663337,
+            0.8726981347517117,
+            0.27546316492384954,
+            0.9382152618425639,
+            0.07157019622607128,
+            0.9153821622253568,
+            0.07327749840066214,
+            23.345041332375967,
+            4.121323537196104,
+            0.3679419278713417,
+            4.0227956311644935,
+            0.37994077599396175,
+            3.9307466906659356,
+            0.39151223895545345,
+            0.8163892438877278,
+            0.15003664616775858,
+            0.8235827834953414,
+            0.06907670165721821,
+            0.8039039894819853,
+            0.07071751771151677,
+            0.2526997363014275,
+            0.24853232990799126,
+            0.007712862728897347,
+            0.24157276480675008,
+            0.007804426787906949,
+            0.8820330653956321,
+            0.06833685937420683,
+            0.8605000464477652,
+            0.0697984318620209,
+            0.007738993303847414,
+            0.06644254625327477,
+            0.007472647428869996,
+            0.8397855604548761,
+            0.068148091265983,
+            0.007739699709483144
+          ],
+          "scale": [
+            2.322177485334611,
+            0.23406667744173143,
+            0.4204994424152841,
+            0.04225148330308745,
+            0.05115369308280648,
+            0.0431399760604946,
+            0.0486837543501417,
+            20.232473744736275,
+            2.3933822754480722,
+            0.4323041588756811,
+            2.2398984719862223,
+            0.3566222518861601,
+            2.1966049969754464,
+            0.3629736466466802,
+            0.2897404325524956,
+            0.17030311040791926,
+            0.22994469345720567,
+            0.04998998192110622,
+            0.22543041717166631,
+            0.04868566216597502,
+            0.6906318767801268,
+            0.3669770800592525,
+            0.02138376803998914,
+            0.3560315978670464,
+            0.016889055834660754,
+            0.07681965372544844,
+            0.049049082941432245,
+            0.07515777431256065,
+            0.04678561628658372,
+            0.008884296437303858,
+            0.04737300389713742,
+            0.008496912848547023,
+            0.07666068346884433,
+            0.04564287943679404,
+            0.008717155483871985
+          ],
+          "weights": [
+            0.172300264333973,
+            0.007598499149899492,
+            0.05934288386356488,
+            0.1302432273149939,
+            0.1346069491184109,
+            -0.1744056312399442,
+            0.29999871612191625,
+            0.05326130823686331,
+            0.15971253789037324,
+            -0.0020913403423400184,
+            0.21931979487437306,
+            -0.01865670717691231,
+            0.22177078288356145,
+            0.019871761372930934,
+            -0.03603514339241055,
+            -0.09895659621273169,
+            0.07942459299157197,
+            0.11944316570790595,
+            0.08026121898604495,
+            0.18532905866547664,
+            -0.01912541002712273,
+            -0.009902389741308746,
+            0.21097641932032715,
+            -0.0870694563761316,
+            0.07223792270076179,
+            0.1787163102547911,
+            0.12868430174971737,
+            0.026925690713226723,
+            0.35074292815868713,
+            -0.14720909887166594,
+            0.1384361163090782,
+            0.07200568743991186,
+            -0.11787958422293088,
+            0.351934688617438,
+            0.10397103061313097,
+            0.2905101283198627,
+            0.00038908174151208556,
+            0.017335321057467757,
+            0.0030882566171738833,
+            0.09940238328302799,
+            0.21949602645477673,
+            -0.4141761755730675,
+            -0.003431079464898636,
+            0.15249595498736412,
+            -0.18213447714819464,
+            -0.197968240512495,
+            0.12746441654161214,
+            -0.1585276277603772,
+            -0.040739378918153483,
+            0.21137223579368272,
+            0.10289281889067284,
+            -0.2865046659920658,
+            -0.03198181519847319,
+            -0.31178555176473766,
+            0.017423196821630516,
+            -0.002219275377984614,
+            0.02406880540810753,
+            -0.009665351614038881,
+            -0.2880885942947711,
+            0.06872552564213662,
+            0.1638289374703941,
+            -0.3655382457591191,
+            0.04220741856552225,
+            0.07121884495342543,
+            0.20250080580482485,
+            0.08080459059541871,
+            -0.06824788763638465,
+            -0.21702605027229102,
+            0.24245660439521363,
+            -0.15001333060749686,
+            0.11481059543154913,
+            0.04811822957583835,
+            0.026070560809931788,
+            -0.15852841436247989,
+            -0.021629826738317363,
+            0.12934385445563504,
+            -0.1559527864199245,
+            -0.25760685436926506,
+            0.11870057162504045,
+            -0.048295777208644544,
+            0.04067957380626469,
+            -0.07145670135119357,
+            0.358374574610854,
+            0.2956590519194951,
+            -0.19647750086027913,
+            -0.010796930003712082,
+            0.185395448552833,
+            -0.05834913648951604,
+            0.16658433097110364,
+            0.066719979851989,
+            0.033294181643685354,
+            0.015735563164044904,
+            0.23091421305293605,
+            0.07845948989973464,
+            -0.2181530713312014,
+            0.11023827452519874,
+            -0.13730421597480696,
+            -0.20992007534382925,
+            0.16140427231226595,
+            0.21819669264435637,
+            -0.13795035582247414,
+            0.14934472640870214,
+            -0.1779226021686931,
+            -0.1467169543710626,
+            -0.12269129330309568,
+            0.03950134980888939,
+            -0.03030913707900574,
+            -0.025221550424711095,
+            0.11419887456006991,
+            -0.04895989766709663,
+            0.2446323207513002,
+            0.21167447198522962
+          ],
+          "bias": 4.6397973697044534
+        }
+      },
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 13,
+          "denominator": 16,
+          "fraction": 0.8125,
+          "wilson95": [
+            0.5699111903802586,
+            0.9340840092857187
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 12,
+          "denominator": 13,
+          "fraction": 0.9230769230769231,
+          "wilson95": [
+            0.6668604907890041,
+            0.9862895787574435
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 14,
+          "denominator": 16,
+          "fraction": 0.875,
+          "wilson95": [
+            0.639771727342413,
+            0.9650225122567595
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 2.929062524344772,
+        "p95_ms": 4.863239708356559,
+        "max_ms": 4.873582976870239
+      },
+      "load_ms": 372.47437494806945,
+      "point_gates": {
+        "coverage_at_least_80": true,
+        "accepted_accuracy_at_least_99": false,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "teacher_calls": 0,
+      "errors": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 10059841,
+      "external_encoder_bytes": 133804886,
+      "per_intent": {
+        "Refund_not_showing_up": {
+          "supported_coverage": {
+            "numerator": 13,
+            "denominator": 16,
+            "fraction": 0.8125,
+            "wilson95": [
+              0.5699111903802586,
+              0.9340840092857187
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 12,
+            "denominator": 13,
+            "fraction": 0.9230769230769231,
+            "wilson95": [
+              0.6668604907890041,
+              0.9862895787574435
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 14,
+            "denominator": 16,
+            "fraction": 0.875,
+            "wilson95": [
+              0.639771727342413,
+              0.9650225122567595
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.2790830116719007,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "request_refund",
+          "suggestion": "request_refund",
+          "confidence": 0.7353189584939978,
+          "predictionSet": [
+            "request_refund"
+          ],
+          "reliability": 0.9570048126202463,
+          "teacherCalls": 0
+        }
+      ],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "3a28c28e73199948c94282c6fa0b7ff1d6fc44610d6e107c0ed19810c79dc052",
+          "text": "Card refund is not showing up in my statement.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.6672090170904994,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9971287696418061,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9989686997719376,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "3c9d7b7c81b212248f76bcd3454fa0b4f59c499c9c7a7dd1976ec2346fcfbe71",
+          "text": "Why isn't my refund showing in my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.601000014692545,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.999643470134413,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9999249467715682,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "3d8bb76c21209c5bbc2d7c0c5e7a26c64a0dbf0c8c5a8458d1723b910172284e",
+          "text": "I have received my statement but I do not see my refund, why is that?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.99687497317791,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.999458899380371,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9996181212027277,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "3fb4ea464cb2dfa91423af469873b32d6fc33e880122999db17c8f670da09ec5",
+          "text": "When do I see my recent refund in my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.7143339393660426,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9988040747952291,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9995632497283528,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.2790830116719007,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "request_refund",
+          "suggestion": "request_refund",
+          "confidence": 0.7353189584939978,
+          "predictionSet": [
+            "request_refund"
+          ],
+          "reliability": 0.9570048126202463,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "433e16ac9c47bf9edd21fdb3d41b8d856232bf4962a54a42ef4e870b91ad50d4",
+          "text": "I cannot see a refund in my account",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.630166942253709,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9992705343167225,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9996345365226352,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "445461c308f5f3878d6d4649d60f1bbde626f7ef33b35b8a98df8ca7615be157",
+          "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted. Can you confirm to me that all of my money was truly returned to me?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.636375000700355,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "reverted_card_payment?",
+          "confidence": 0.6214874324359217,
+          "predictionSet": [
+            "reverted_card_payment?"
+          ],
+          "reliability": 0.44397482900654467,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "47edc29ef60a61e49a97c8303ff1166d00715f2ea8b671e684e1a510eda83597",
+          "text": "My refund has not yet been credited on my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.7039169799536467,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9990454209918853,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9992896205433152,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "4a6e729f749a63d12eb88edf5b721cf02292e179758f9aa548472047946df962",
+          "text": "Three months ago I bought a new house for my cat, fluffy.  Unfortunately Fluffy was not a fan of the house and it had to be returned to Pet Smart last week.  They said they have sent a refund but it's not there, can you tell me where it is?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.873582976870239,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.42641822311624267,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.748576337516974,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "4b594f00de4cbb188095854465f7cfd53d47f711fe3041f5db35cc5e6dfafc83",
+          "text": "My refund is still pending",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.3118749959394336,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9058576358645911,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.959417107246615,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "4bcf0c7dbc08cdb99b434272e360b2296e91002a7297d63c63727e7d21761578",
+          "text": "How can I check if I have received a refund if it is not yet on my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 3.0552500393241644,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9964864754062522,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9973750420470368,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "4cbdc992f647ee5e18390d29a5e05709435a672f65d3b6de8ef12163568d0d5f",
+          "text": "How will I know when I get my refund?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.8965420788154006,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9817893375121332,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9896093679586275,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "503885e7ef3ee3c756fe8b6076ac2f9e178d90998f7e7bfcb6497bf644a3cf72",
+          "text": "I did all that was asked of me and I am rather frustrated. I don't understand why you just won't credit me my money back. I have contacted the seller and nothing has been done. It's been a week!",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.859791952185333,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.36235916205591184,
+          "predictionSet": [],
+          "reliability": 0.5821810926254748,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "51b4d1b67c4fe58a99626fc78649e498bb2c0f08b0bcdfe1310025cbbc0dfbe3",
+          "text": "I was told I would be getting a refund but I have yet to see it",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 2.9615829698741436,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9972497072893077,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9955489270218977,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "52e51f3e8fb8ab6e5af8267496c8ca8963d41f6e761503b18110beb7480d550b",
+          "text": "I have checked my statements multiple times, but my refund that I requested a while back is not showing on my account. Is there a reason for this? Can I get some help getting my money back from this transaction?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.52887499704957,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9983960185491705,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9981340956762661,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "52e5feb28efd31b4f6d14a33d46664d1e6b4e48f32d789dfe531523104824560",
+          "text": "I requested a refund from a seller a while ago, but when I check my statements it doesn't show up. Can you help me get my refund.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 4.154875059612095,
+          "candidate": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9956984023784526,
+          "predictionSet": [
+            "Refund_not_showing_up"
+          ],
+          "reliability": 0.9961846234657855,
+          "teacherCalls": 0
+        }
+      ]
+    },
+    {
+      "dataset": "banking77",
+      "kind": "baseline",
+      "folder": "polynomial-banking77-baseline-quadratic",
+      "candidate_sha256": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+      "manifest": {
+        "status": "unqualified-polynomial-review-development",
+        "dataset": "banking77",
+        "kind": "baseline",
+        "C": 10.0,
+        "policy": "reliability",
+        "gate_C": 1.0,
+        "threshold": 0.9669447769162332,
+        "fit_rows": 6950,
+        "calibration_rows": 1960,
+        "fit_ms": 4342.67695795279,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true,
+        "max_iter": 1000,
+        "categories": {
+          "Refund_not_showing_up": "Refund not showing up",
+          "activate_my_card": "activate my card",
+          "age_limit": "age limit",
+          "apple_pay_or_google_pay": "apple pay or google pay",
+          "atm_support": "atm support",
+          "automatic_top_up": "automatic top up",
+          "balance_not_updated_after_bank_transfer": "balance not updated after bank transfer",
+          "balance_not_updated_after_cheque_or_cash_deposit": "balance not updated after cheque or cash deposit",
+          "beneficiary_not_allowed": "beneficiary not allowed",
+          "cancel_transfer": "cancel transfer",
+          "card_about_to_expire": "card about to expire",
+          "card_acceptance": "card acceptance",
+          "card_arrival": "card arrival",
+          "card_delivery_estimate": "card delivery estimate",
+          "card_linking": "card linking",
+          "card_not_working": "card not working",
+          "card_payment_fee_charged": "card payment fee charged",
+          "card_payment_not_recognised": "card payment not recognised",
+          "card_payment_wrong_exchange_rate": "card payment wrong exchange rate",
+          "card_swallowed": "card swallowed",
+          "cash_withdrawal_charge": "cash withdrawal charge",
+          "cash_withdrawal_not_recognised": "cash withdrawal not recognised",
+          "change_pin": "change pin",
+          "compromised_card": "compromised card",
+          "contactless_not_working": "contactless not working",
+          "country_support": "country support",
+          "declined_card_payment": "declined card payment",
+          "declined_cash_withdrawal": "declined cash withdrawal",
+          "declined_transfer": "declined transfer",
+          "direct_debit_payment_not_recognised": "direct debit payment not recognised",
+          "disposable_card_limits": "disposable card limits",
+          "edit_personal_details": "edit personal details",
+          "exchange_charge": "exchange charge",
+          "exchange_rate": "exchange rate",
+          "exchange_via_app": "exchange via app",
+          "extra_charge_on_statement": "extra charge on statement",
+          "failed_transfer": "failed transfer",
+          "fiat_currency_support": "fiat currency support",
+          "get_disposable_virtual_card": "get disposable virtual card",
+          "get_physical_card": "get physical card",
+          "getting_spare_card": "getting spare card",
+          "getting_virtual_card": "getting virtual card",
+          "lost_or_stolen_card": "lost or stolen card",
+          "lost_or_stolen_phone": "lost or stolen phone",
+          "order_physical_card": "order physical card",
+          "passcode_forgotten": "passcode forgotten",
+          "pending_card_payment": "pending card payment",
+          "pending_cash_withdrawal": "pending cash withdrawal",
+          "pending_top_up": "pending top up",
+          "pending_transfer": "pending transfer",
+          "pin_blocked": "pin blocked",
+          "receiving_money": "receiving money",
+          "request_refund": "request refund",
+          "reverted_card_payment?": "reverted card payment?",
+          "supported_cards_and_currencies": "supported cards and currencies",
+          "terminate_account": "terminate account",
+          "top_up_by_bank_transfer_charge": "top up by bank transfer charge",
+          "top_up_by_card_charge": "top up by card charge",
+          "top_up_by_cash_or_cheque": "top up by cash or cheque",
+          "top_up_failed": "top up failed",
+          "top_up_limits": "top up limits",
+          "top_up_reverted": "top up reverted",
+          "topping_up_by_card": "topping up by card",
+          "transaction_charged_twice": "transaction charged twice",
+          "transfer_fee_charged": "transfer fee charged",
+          "transfer_into_account": "transfer into account",
+          "transfer_not_received_by_recipient": "transfer not received by recipient",
+          "transfer_timing": "transfer timing",
+          "unable_to_verify_identity": "unable to verify identity",
+          "verify_my_identity": "verify my identity",
+          "verify_source_of_funds": "verify source of funds",
+          "verify_top_up": "verify top up",
+          "virtual_card_not_working": "virtual card not working",
+          "visa_or_mastercard": "visa or mastercard",
+          "why_verify_identity": "why verify identity",
+          "wrong_amount_of_cash_received": "wrong amount of cash received",
+          "wrong_exchange_rate_for_cash_withdrawal": "wrong exchange rate for cash withdrawal"
+        },
+        "instructions": "Choose one supported banking intent. Uncertain requests require review.",
+        "files": {
+          "weights.npz": "fcfe2485d6ad4dd36825de7d62cc0ce6db03fe6367d4562e1cdf0ff1978cf829",
+          "vocabulary.json": "47d45b264ac5dc26a1767a1d2a7c197638d86766d8bc7305318265fba4e96491",
+          "prototypes.npz": "6f2459b94ab537c2c508af80cc6239e5c7251a67ed37f2c9d22115f8379d3c01"
+        },
+        "base_artifact": "benchmarks/quality/n8n_gauntlet/artifacts/banking77-baseline",
+        "parent_manifest_sha256": "760578b5c4c74ad832cf6a70df0fceb7a565e60824fa0a9c1bc49805bd64f608",
+        "protocol_sha256": "8034bfd9e254db6aefce7ecda60a4f965da01aecf54808b4bc009b21297366e0",
+        "quadratic": true,
+        "review_C": 0.1,
+        "review_parameters": {
+          "mean": [
+            0.6727526270920231,
+            0.5278574896998318,
+            1.8812722944060611,
+            0.48511993424480293,
+            0.10632468006189014,
+            0.3465818528036747,
+            0.10465682734335846,
+            3.1715236444548025,
+            0.8612036744334308,
+            -0.5540364057716023,
+            0.5055936822681647,
+            0.24623484068759222,
+            0.39053506896245355,
+            0.21215138015597296,
+            0.38319462908264607,
+            0.6511562160220113,
+            0.29002974412289817,
+            0.091891892616579,
+            0.2115940599345963,
+            0.08342779754872388,
+            4.875565150283437,
+            0.786924594998074,
+            0.09137707107048058,
+            0.540961735416143,
+            0.10948292804938925,
+            0.2672037528024474,
+            0.07961014861989926,
+            0.18663482921414587,
+            0.06576585234230745,
+            0.0510551027413371,
+            0.05186550554509035,
+            0.030640117079875483,
+            0.13548145884471702,
+            0.04819472077859724,
+            0.026387215512631068
+          ],
+          "scale": [
+            1.648917083177802,
+            0.3233590877808106,
+            1.1560189032120758,
+            0.17850042633217036,
+            0.1993744345473455,
+            0.12394546442645195,
+            0.12423431089297901,
+            4.571997435817888,
+            1.2056617844027016,
+            2.881891607046743,
+            0.9424963002828187,
+            0.45031291653523475,
+            0.7146549755148932,
+            0.3780360044668417,
+            0.33150332318904524,
+            0.37205250119858396,
+            0.2293397633029668,
+            0.14406706357393345,
+            0.17052324564571503,
+            0.10604353785644477,
+            4.786174583926868,
+            0.45538655262508493,
+            0.3705408314294961,
+            0.26473153561422014,
+            0.1820079665958916,
+            0.18867664586031066,
+            0.13392585558462727,
+            0.12506789562273246,
+            0.08680049385963398,
+            0.08049798629917139,
+            0.08838959320197945,
+            0.051713150099230075,
+            0.09524712017481451,
+            0.06553502306555127,
+            0.042182497441160184
+          ],
+          "weights": [
+            0.44834693855901236,
+            0.14068351415429142,
+            0.14429461283875827,
+            0.38027362780527635,
+            0.35356495553610645,
+            0.17435435946660227,
+            0.14194616399323512,
+            -0.08409601745251533,
+            0.2972187791342459,
+            0.3376565172660937,
+            0.2500907355468037,
+            -0.04156915422583466,
+            0.33678677603901813,
+            0.03634504809002963,
+            0.4732285831773447,
+            0.5911480103788811,
+            -0.006818064435008264,
+            0.2522567067917235,
+            -0.01799271344177304,
+            0.2725080419626931,
+            0.6066500913805919,
+            0.03150317926984894,
+            -0.05226489324837128,
+            -0.22662373516731357,
+            0.14926592763009708,
+            -0.3591641891640599,
+            -0.3192574034014938,
+            -0.06876881649810661,
+            -0.40129959183270497,
+            0.22948306359139156,
+            0.14016002680989983,
+            0.12224134398370197,
+            -0.15073146176548746,
+            -0.30193184911833576,
+            -0.028388085165730808,
+            0.18725090991989843,
+            0.1981428035549885,
+            0.3442054298362395,
+            0.09187166420218122,
+            0.13024080818091596,
+            0.4919466395618879,
+            -0.32832628459453406,
+            -0.09402135689309057,
+            0.29426421841207984,
+            0.25226522839244836,
+            -0.1044653108991681,
+            -0.13150215313607558,
+            -0.332032382272205,
+            0.08984503885925882,
+            -0.07184518368154641,
+            -0.32595421686655673,
+            0.1119771227753467,
+            -0.24916171796239153,
+            -0.1206032029407428,
+            0.321839885435467,
+            0.025064890825678855,
+            -0.03705625961169692,
+            0.15198859294839362,
+            -0.1473174724697039,
+            0.2563388485875139,
+            0.0647654381318767,
+            -0.10361801895756073,
+            -0.18454189631298729,
+            0.12425456357177302,
+            0.06403075154655312,
+            -0.07081581192840071,
+            0.2833441563423181,
+            -0.4025309848634837,
+            0.0449516605049313,
+            -0.3191438209817082,
+            -0.28207231707048885,
+            -0.23203343742840601,
+            0.032531936013336434,
+            0.261610335669327,
+            -0.08020520262213585,
+            0.1421215443471914,
+            -0.2793538490059468,
+            -0.18387026237795867,
+            -0.019927515798452707,
+            -0.18895603131711539,
+            0.1522019777997357,
+            -0.030827573583078145,
+            0.38397209192716397,
+            0.16084353986845004,
+            -0.2589109064765378,
+            -0.21630213433551213,
+            -0.03234081121855053,
+            0.16046870360255655,
+            -0.06425990106102729,
+            -0.3007175620039453,
+            0.10481559534611837,
+            0.12177834819984155,
+            0.1362484848370835,
+            -0.10926547963446989,
+            -0.07629328668005322,
+            0.2185537439393222,
+            0.021617556433151087,
+            -0.10001500034782458,
+            0.2514009146035545,
+            0.32724185304218684,
+            -0.15279067281920267,
+            -0.24279850329850391,
+            -0.3044942723123828,
+            -0.010033172989118641,
+            0.2386753982518379,
+            0.1203114271713284,
+            0.34331063479971485,
+            0.2761784388935333,
+            -0.04923370276170979,
+            -0.3001809624883197,
+            -0.12202392030864492,
+            0.04863286651392157
+          ],
+          "bias": 2.884679308533075
+        }
+      },
+      "metrics": {
+        "supported_coverage": {
+          "numerator": 12,
+          "denominator": 16,
+          "fraction": 0.75,
+          "wilson95": [
+            0.5050168346449122,
+            0.8981793250878696
+          ]
+        },
+        "accepted_accuracy": {
+          "numerator": 12,
+          "denominator": 12,
+          "fraction": 1.0,
+          "wilson95": [
+            0.7575059933447592,
+            1.0
+          ]
+        },
+        "raw_supported_accuracy": {
+          "numerator": 15,
+          "denominator": 16,
+          "fraction": 0.9375,
+          "wilson95": [
+            0.7167126242970107,
+            0.9888806552353576
+          ]
+        },
+        "oos_false_acceptance": {
+          "numerator": 0,
+          "denominator": 0,
+          "fraction": null,
+          "wilson95": null
+        }
+      },
+      "latency": {
+        "requests": 16,
+        "warmups": 100,
+        "p50_ms": 0.49362494610249996,
+        "p95_ms": 0.6126984371803701,
+        "max_ms": 0.6644170498475432
+      },
+      "load_ms": 32.04874997027218,
+      "point_gates": {
+        "coverage_at_least_80": false,
+        "accepted_accuracy_at_least_99": true,
+        "oos_false_acceptance_at_most_1": true,
+        "adapter_p95_below_5_ms": true,
+        "no_runtime_errors": true
+      },
+      "all_point_targets_pass": false,
+      "qualified": false,
+      "teacher_calls": 0,
+      "errors": 0,
+      "response_cache": false,
+      "receipts": false,
+      "artifact_bytes": 11484597,
+      "external_encoder_bytes": 0,
+      "per_intent": {
+        "Refund_not_showing_up": {
+          "supported_coverage": {
+            "numerator": 12,
+            "denominator": 16,
+            "fraction": 0.75,
+            "wilson95": [
+              0.5050168346449122,
+              0.8981793250878696
+            ]
+          },
+          "accepted_accuracy": {
+            "numerator": 12,
+            "denominator": 12,
+            "fraction": 1.0,
+            "wilson95": [
+              0.7575059933447592,
+              1.0
+            ]
+          },
+          "raw_supported_accuracy": {
+            "numerator": 15,
+            "denominator": 16,
+            "fraction": 0.9375,
+            "wilson95": [
+              0.7167126242970107,
+              0.9888806552353576
+            ]
+          },
+          "oos_false_acceptance": {
+            "numerator": 0,
+            "denominator": 0,
+            "fraction": null,
+            "wilson95": null
+          }
+        }
+      },
+      "accepted_errors": [],
+      "outcomes": [
+        {
+          "index": 0,
+          "group": "3a28c28e73199948c94282c6fa0b7ff1d6fc44610d6e107c0ed19810c79dc052",
+          "text": "Card refund is not showing up in my statement.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5094999214634299,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9660667066721927,
+          "acceptance_score": 0.9952615029094652,
+          "teacherCalls": 0
+        },
+        {
+          "index": 1,
+          "group": "3c9d7b7c81b212248f76bcd3454fa0b4f59c499c9c7a7dd1976ec2346fcfbe71",
+          "text": "Why isn't my refund showing in my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4704589955508709,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9872757600172872,
+          "acceptance_score": 0.9977235279269266,
+          "teacherCalls": 0
+        },
+        {
+          "index": 2,
+          "group": "3d8bb76c21209c5bbc2d7c0c5e7a26c64a0dbf0c8c5a8458d1723b910172284e",
+          "text": "I have received my statement but I do not see my refund, why is that?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.49370795022696257,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9434469073563806,
+          "acceptance_score": 0.9918058885235497,
+          "teacherCalls": 0
+        },
+        {
+          "index": 3,
+          "group": "3fb4ea464cb2dfa91423af469873b32d6fc33e880122999db17c8f670da09ec5",
+          "text": "When do I see my recent refund in my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4495840985327959,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9238656833406665,
+          "acceptance_score": 0.9937188220788756,
+          "teacherCalls": 0
+        },
+        {
+          "index": 4,
+          "group": "3ffe67d6702d52545eae82ff813b1d00b01b187404604ce8b595b2a8449dcc69",
+          "text": "I need my refund",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5502910353243351,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9861152029434725,
+          "acceptance_score": 0.9926456344423423,
+          "teacherCalls": 0
+        },
+        {
+          "index": 5,
+          "group": "433e16ac9c47bf9edd21fdb3d41b8d856232bf4962a54a42ef4e870b91ad50d4",
+          "text": "I cannot see a refund in my account",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4889999981969595,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9477999409471668,
+          "acceptance_score": 0.9961713433933062,
+          "teacherCalls": 0
+        },
+        {
+          "index": 6,
+          "group": "445461c308f5f3878d6d4649d60f1bbde626f7ef33b35b8a98df8ca7615be157",
+          "text": "I made a big purchase that I regretted and cancelled, the merchant said that my refund was submitted. Can you confirm to me that all of my money was truly returned to me?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5652500549331307,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.41119433820123236,
+          "acceptance_score": 0.8316578463659046,
+          "teacherCalls": 0
+        },
+        {
+          "index": 7,
+          "group": "47edc29ef60a61e49a97c8303ff1166d00715f2ea8b671e684e1a510eda83597",
+          "text": "My refund has not yet been credited on my statement",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5954588996246457,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9313321644056101,
+          "acceptance_score": 0.9924770220648739,
+          "teacherCalls": 0
+        },
+        {
+          "index": 8,
+          "group": "4a6e729f749a63d12eb88edf5b721cf02292e179758f9aa548472047946df962",
+          "text": "Three months ago I bought a new house for my cat, fluffy.  Unfortunately Fluffy was not a fan of the house and it had to be returned to Pet Smart last week.  They said they have sent a refund but it's not there, can you tell me where it is?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.6644170498475432,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.1897820457435371,
+          "acceptance_score": 0.720930462031707,
+          "teacherCalls": 0
+        },
+        {
+          "index": 9,
+          "group": "4b594f00de4cbb188095854465f7cfd53d47f711fe3041f5db35cc5e6dfafc83",
+          "text": "My refund is still pending",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.45720802154392004,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.8419410246095771,
+          "acceptance_score": 0.9714573897633836,
+          "teacherCalls": 0
+        },
+        {
+          "index": 10,
+          "group": "4bcf0c7dbc08cdb99b434272e360b2296e91002a7297d63c63727e7d21761578",
+          "text": "How can I check if I have received a refund if it is not yet on my statement?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.49354194197803736,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.6028531661637221,
+          "acceptance_score": 0.9682056547040023,
+          "teacherCalls": 0
+        },
+        {
+          "index": 11,
+          "group": "4cbdc992f647ee5e18390d29a5e05709435a672f65d3b6de8ef12163568d0d5f",
+          "text": "How will I know when I get my refund?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4412909038364887,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.7841111934685349,
+          "acceptance_score": 0.9796316744600604,
+          "teacherCalls": 0
+        },
+        {
+          "index": 12,
+          "group": "503885e7ef3ee3c756fe8b6076ac2f9e178d90998f7e7bfcb6497bf644a3cf72",
+          "text": "I did all that was asked of me and I am rather frustrated. I don't understand why you just won't credit me my money back. I have contacted the seller and nothing has been done. It's been a week!",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5134169477969408,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "reverted_card_payment?",
+          "confidence": 0.1398615630099765,
+          "acceptance_score": 0.49120599464501424,
+          "teacherCalls": 0
+        },
+        {
+          "index": 13,
+          "group": "51b4d1b67c4fe58a99626fc78649e498bb2c0f08b0bcdfe1310025cbbc0dfbe3",
+          "text": "I was told I would be getting a refund but I have yet to see it",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4792920080944896,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.693001988713826,
+          "acceptance_score": 0.9759600989106237,
+          "teacherCalls": 0
+        },
+        {
+          "index": 14,
+          "group": "52e51f3e8fb8ab6e5af8267496c8ca8963d41f6e761503b18110beb7480d550b",
+          "text": "I have checked my statements multiple times, but my refund that I requested a while back is not showing on my account. Is there a reason for this? Can I get some help getting my money back from this transaction?",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.5139160202816129,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": true,
+          "category": null,
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.47858456358647333,
+          "acceptance_score": 0.9239608367416712,
+          "teacherCalls": 0
+        },
+        {
+          "index": 15,
+          "group": "52e5feb28efd31b4f6d14a33d46664d1e6b4e48f32d789dfe531523104824560",
+          "text": "I requested a refund from a seller a while ago, but when I check my statements it doesn't show up. Can you help me get my refund.",
+          "truth": "Refund_not_showing_up",
+          "latency_ms": 0.4889169940724969,
+          "candidate": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+          "needsReview": false,
+          "category": "Refund_not_showing_up",
+          "suggestion": "Refund_not_showing_up",
+          "confidence": 0.9791525363188581,
+          "acceptance_score": 0.9910149739380935,
+          "teacherCalls": 0
+        }
+      ]
+    }
+  ]
+}
