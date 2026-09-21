@@ -251,8 +251,10 @@ The [n8n experiment](benchmarks/quality/n8n_gauntlet/README.md) tests all 150 CL
 and 77 BANKING77 intents against preregistered quality, review and latency targets.
 Its [real n8n development workflow](benchmarks/quality/n8n_gauntlet/N8N.md) loads a
 saved skill and preserves explicit review on uncertainty or service failure.
-Final qualification and the live-teacher disconnection recording remain pending;
-development results and failed approaches are retained.
+The [first held-out evaluation](benchmarks/quality/n8n_gauntlet/results/official-test.md)
+failed qualification: CLINC accepted too many unfamiliar requests, and banking
+missed the accepted-accuracy target. Both passed coverage and latency. The
+live-teacher disconnection recording remains pending; full outcomes are retained.
 
 The [teaching playground](examples/gaming/skill_playground/README.md) combines
 three saved skills into a courier agent. Teach a terrain correction live and

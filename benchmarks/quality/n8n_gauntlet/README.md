@@ -1,6 +1,6 @@
 # n8n decision takeover experiment
 
-**In development; not qualified for takeover.** The goal is to teach a bounded
+**First held-out evaluation failed; not qualified for takeover.** The goal is to teach a bounded
 classification skill, independently qualify it, connect that exact saved skill
 to self-hosted n8n, and record the teacher being disconnected. This directory
 does not yet contain a passing final evaluation or an integration recording.
@@ -10,6 +10,23 @@ committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local
 acceptance, 99% correctness among accepted requests, at most 1% CLINC out-of-scope
 false acceptance, and complete local-adapter p95 below 5 ms. None has been lowered.
+
+The candidates and evaluator were frozen and pushed in `41a0d36` before the first
+official run. The [complete result](results/official-test.md) is retained:
+
+| Official test / System1 | Supported accepted | Correct among accepted supported | OOS falsely accepted | Complete p95 | Failed gate |
+|---|---:|---:|---:|---:|---|
+| CLINC150 + OOS | 3,757/4,500 (83.5%) | 3,721/3,757 (99.04%) | 59/1,000 (5.9%) | 1.82 ms | OOS rejection |
+| BANKING77 | 2,516/3,080 (81.7%) | 2,485/2,516 (98.77%) | No native OOS cohort | 4.39 ms | Accepted accuracy |
+
+The conventional baseline is faster (0.83/0.71 ms p95) but accepts only
+23.4%/43.4% of supported requests. Every official row, accepted error, per-intent
+result and Wilson interval is in the [machine-readable report](results/official-test.json).
+Inference ran with OS networking denied and made zero teacher calls. Neither
+System1 candidate qualifies. A follow-up needs a declared experiment and fresh
+confirmation; these observed tests cannot be reused as independent evidence.
+The [follow-up requirements and source audit](FOLLOW_UP.md) keep that next
+experiment separate from this failure.
 
 ## What development has established
 
@@ -48,9 +65,10 @@ integration path. The main route continues with a fixed encoder and taught head.
 These are development results: thresholds/configurations were
 selected using development outcomes. They are **not** held-out qualifications,
 statistical guarantees or claims that a standard System1 install achieves these
-numbers. The official test splits have not been scored. The
-[candidate freeze and evaluation recipe](FREEZE.md) now binds the exact saved
-candidates, conventional baselines and source files before the first test run.
+numbers. The subsequent official-test failures above take precedence over this
+development evidence. The [candidate freeze and evaluation recipe](FREEZE.md)
+bound the exact saved candidates, conventional baselines and source files before
+the first test run.
 The strengthened TF-IDF baseline selects calibration-taught review models as
 well as probability and margin policies. Its best development coverage is 22.1%
 on CLINC and 42.0% on banking at the quality thresholds, still below 80%.

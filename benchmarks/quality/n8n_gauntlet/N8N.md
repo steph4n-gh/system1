@@ -1,7 +1,8 @@
 # Development integration in real n8n
 
-**Not the qualified takeover demonstration.** The full gauntlet and final
-teacher-disconnection recording remain incomplete. This working integration
+**Not the qualified takeover demonstration.** The
+[first held-out gauntlet failed](results/official-test.md), and the final
+teacher-disconnection recording remains incomplete. This working integration
 uses the same CLINC development artifact that was timed and replayed offline.
 It uses built-in n8n nodes; no community node or custom n8n package is needed.
 
