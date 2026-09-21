@@ -23,6 +23,15 @@ conventional CLINC baseline improves from 29.45% to 59.10% coverage, still short
 80%. All 16,300 runtime decisions match selection. This does not supply fresh
 confirmation or qualification.
 
+The subsequent [review-feature interaction experiment](results/polynomial-review.md)
+retains all eight conditions and 20,220 development decisions. Its selected banking
+System1 review accepts one additional request (1,581/1,960), with the same 15
+accepted mistakes; this is not a meaningful quality breakthrough. The banking
+baseline improves to 51.79% coverage. Both CLINC incumbents remain selected,
+including the stronger boundary-taught baseline at 59.10%. No original test or
+reserved-human input was scored, and neither qualification nor the recording is
+complete.
+
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local
@@ -65,7 +74,7 @@ It needs SciPy during teaching and retains the existing saved-head format and
 NumPy inference. Ridge remains the default. See the
 [teaching guide](../../../docs/guides/training_experts.md).
 
-Both **development** candidates now clear the targets through the complete local
+Both **original development** candidates cleared the targets through the complete local
 adapter, including the saved head, strict System1 review, fixed encoder and an
 additional learned/distribution guard:
 

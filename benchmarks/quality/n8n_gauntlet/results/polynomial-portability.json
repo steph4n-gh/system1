@@ -1,0 +1,52 @@
+{
+  "scope": "saved System1 development artifacts after numerical import repair; not qualification or new timing",
+  "qualified": false,
+  "runtime_report_sha256": "cbf7fb6580e3f0cd63509d64e0e75203d642dd1c39086804a5458ed53119648f",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "condition": "linear-control",
+      "manifest_sha256": "2c6364a334aa07e60660b63a2af2a2ea7fa93a177976bda6519bfa041b9d7c2a",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "clinc150",
+      "condition": "quadratic",
+      "manifest_sha256": "b53a7aee1f0f542b27631c763a51624f5004c8e9d16ee5d6f2f227116d431ba1",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "condition": "linear-control",
+      "manifest_sha256": "af0ec6cb347e4009092f8efa65eb9ab19e52b677649998cc9626ae8c956688d3",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    },
+    {
+      "dataset": "banking77",
+      "condition": "quadratic",
+      "manifest_sha256": "77e120f186cda6a9403122cb2ae478c822538a8b1feaf8e558cb520eba8d16e4",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

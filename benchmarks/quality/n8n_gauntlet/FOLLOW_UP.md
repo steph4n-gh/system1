@@ -70,14 +70,30 @@ sub-millisecond p95, but both workloads still missed the 80% coverage target.
 This closes the follow-up comparison gap; it does not supply independent
 confirmation for System1 or alter the original official results.
 
-## Next bounded implementation experiment
+## Completed review experiments and remaining work
 
-Teach the review decision with explicitly unsupported requests and difficult
-nearby categories, using only declared teaching data. Retain the existing fixed
-encoders and saved-head interface. Compare that taught review decision with the
-current density/reliability guards on development data, including how much
-supported coverage is lost. Keep banking label definitions grounded in the
-original fitting examples rather than inferred corrections to test answers.
+The [boundary-teaching round](results/boundary-development.md) completed the
+proposed supported/unsupported teaching comparison, with 227 recorded Gemini
+calls. It improved CLINC raw correctness but did not win the declared System1
+coverage selection, and it reduced banking coverage below 80%. It substantially
+improved the conventional CLINC baseline, which remains part of every comparison.
+
+The [feature-interaction experiment](results/polynomial-review.md) then kept the
+intent heads fixed and added 28 products of existing numerical review signals.
+It gains just one accepted banking development request over the System1 incumbent,
+with the same 15 accepted mistakes; CLINC does not improve under the declared
+selection. The banking baseline improves from 44.39% to 51.79% coverage. All eight
+conditions, saved parameters and 20,220 runtime outcomes are retained. Neither
+result resolves the observed-test failure or supplies independent confirmation.
+
+Further implementation should first identify useful information missing from the
+current review decision, rather than assume that more examples or more feature
+products will solve the gap. A bounded diagnostic can compare the already-saved
+semantic and lexical predictions on development to establish whether their
+disagreements identify errors while preserving enough coverage. This is a
+diagnostic, not authorization to change thresholds from observed test outcomes
+or add an ensemble without evidence. The missing independent full-scope
+confirmation source remains a separate requirement.
 
 Before any new run, pin the additional data and a small fixed set of review-policy
 settings in a separate experiment protocol. Any new teacher call must retain its
