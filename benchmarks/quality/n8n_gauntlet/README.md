@@ -70,14 +70,14 @@ zero import mismatches. It also inspects all 42 current accepted development
 errors, showing both annotation concerns and genuine decision weaknesses.
 Original labels, final classifiers and full-workload targets stay fixed.
 
-The next [declared correction comparison](CORRECTION_PROTOCOL.md) tests only the
-seven proposed fitting-label changes in both methods, with every calibration
-and development label unchanged. It must reproduce the published controls before
-evaluating corrected candidates. Its first attempt stopped on a banking control
-score mismatch; the failed checkpoint is retained. A declared repair restores
-the incumbent's original batched final-head teaching features, which reproduce
-its weights exactly. Completed CLINC fits are reused; banking and complete
-runtime comparisons remain pending. No replacement has been selected.
+The [completed seven-correction comparison](results/corrected-teaching.md)
+changes only proposed fitting labels, preserving every evaluation label. Both
+banking methods gain one accepted request: System1 reaches 1,567/1,582 correct
+(80.71% coverage), with 4.49 ms complete p95. The baseline remains below the
+coverage target. CLINC keeps its stronger incumbents. All 10,110 saved-adapter
+responses match selection with zero runtime errors or API calls. A stopped
+control-reconstruction attempt and the declared feature-path repair are retained.
+This small development change does not resolve the full quality failures.
 
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
