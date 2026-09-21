@@ -247,6 +247,9 @@ for identity, network and enforcement responsibilities.
 
 ## Examples and research
 
+Run these labs from a repository checkout. Full n8n research artifacts and raw
+results remain in Git and are excluded from the Python package distributions.
+
 The [n8n experiment](benchmarks/quality/n8n_gauntlet/README.md) tests all 150 CLINC
 and 77 BANKING77 intents against preregistered quality, review and latency targets.
 Its [real n8n development workflow](benchmarks/quality/n8n_gauntlet/N8N.md) loads a
