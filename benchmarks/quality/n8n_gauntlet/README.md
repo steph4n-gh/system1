@@ -86,6 +86,12 @@ candidate. It preserves item identity and explicit review, including when the
 local service is stopped. This is integration evidence, not the final qualified
 teacher-disconnection recording.
 
+The separate [development disconnection rehearsal](DISCONNECTION_REHEARSAL.md)
+loads the saved banking review candidate. Two real Gemini fallback calls were
+followed by stopping the teacher process: ten subsequent n8n decisions completed
+with zero new provider attempts, preserving local answers and explicit reviews.
+This validates integration plumbing, not full-scope quality or teacher accuracy.
+
 Retained results:
 
 - [Initial feasibility failure](results/initial-feasibility.json), with its

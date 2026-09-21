@@ -1,0 +1,66 @@
+{
+  "scope": "UNQUALIFIED development integration; not quality confirmation or teacher accuracy",
+  "phase": "local-down",
+  "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+  "n8n_version": "2.39.10",
+  "journal_before": {
+    "sha256": "e37a9f61ffc47639a7d5ad64ba06c13a100827a7fd168beb98b633851bad75a1",
+    "attempted_provider_calls": 2,
+    "provider_responses": 2
+  },
+  "scenarios": [
+    {
+      "name": "local_service_unavailable",
+      "inputs": {
+        "requests": [
+          {
+            "id": "local1",
+            "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?"
+          },
+          {
+            "id": "local2",
+            "text": "I need to transfer funds from my other bank account into this bank account."
+          }
+        ]
+      },
+      "outputs": [
+        {
+          "id": "local1",
+          "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?",
+          "qualification": "development_only",
+          "route": "review",
+          "needsReview": true,
+          "category": null,
+          "teacherRequests": 0,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        },
+        {
+          "id": "local2",
+          "text": "I need to transfer funds from my other bank account into this bank account.",
+          "qualification": "development_only",
+          "route": "review",
+          "needsReview": true,
+          "category": null,
+          "teacherRequests": 0,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        }
+      ],
+      "round_trip_ms": 46.76437494345009
+    }
+  ],
+  "stopped_service_control": {
+    "port": 8793,
+    "errno": 61
+  },
+  "unauthorized_status": 403,
+  "journal_after": {
+    "sha256": "e37a9f61ffc47639a7d5ad64ba06c13a100827a7fd168beb98b633851bad75a1",
+    "attempted_provider_calls": 2,
+    "provider_responses": 2
+  },
+  "checks_passed": true
+}

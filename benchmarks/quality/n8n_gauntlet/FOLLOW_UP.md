@@ -71,3 +71,8 @@ n8n requests with item identity preserved, show live-teacher status and call
 counts, then disconnect that teacher and continue with local decisions plus
 explicit review. The existing local-classifier shutdown test does not prove
 teacher disconnection and must not be presented as doing so.
+
+The [development disconnection rehearsal](DISCONNECTION_REHEARSAL.md) subsequently
+verified the actual teacher-process shutdown, preserved local answers and review,
+and retained real API usage and n8n results. The newly qualified artifact and
+qualified recording are still missing; this rehearsal does not waive those steps.

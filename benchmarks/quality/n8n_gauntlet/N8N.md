@@ -6,6 +6,10 @@ teacher-disconnection recording remains incomplete. This working integration
 uses the same CLINC development artifact that was timed and replayed offline.
 It uses built-in n8n nodes; no community node or custom n8n package is needed.
 
+A separate [teacher-disconnection rehearsal](DISCONNECTION_REHEARSAL.md) now uses
+the newer saved banking review candidate, a real Gemini fallback, and a stopped
+teacher process. It retains the original workflow below and remains unqualified.
+
 ![Executed development workflow](results/n8n-development.png)
 
 The authenticated webhook accepts `{"requests":[{"id":"one","text":"..."}]}`.

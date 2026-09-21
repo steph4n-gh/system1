@@ -254,7 +254,10 @@ saved skill and preserves explicit review on uncertainty or service failure.
 The [first held-out evaluation](benchmarks/quality/n8n_gauntlet/results/official-test.md)
 failed qualification: CLINC accepted too many unfamiliar requests, and banking
 missed the accepted-accuracy target. Both passed coverage and latency. The
-live-teacher disconnection recording remains pending; full outcomes are retained.
+qualified live-teacher disconnection recording remains pending; full outcomes
+are retained. A [development rehearsal](benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
+now verifies real Gemini fallback, then local decisions and explicit review after
+the teacher process is stopped. It does not establish quality qualification.
 
 The [teaching playground](examples/gaming/skill_playground/README.md) combines
 three saved skills into a courier agent. Teach a terrain correction live and

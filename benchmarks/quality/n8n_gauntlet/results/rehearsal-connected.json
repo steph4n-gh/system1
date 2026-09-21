@@ -1,0 +1,200 @@
+{
+  "scope": "UNQUALIFIED development integration; not quality confirmation or teacher accuracy",
+  "phase": "connected",
+  "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+  "n8n_version": "2.39.10",
+  "journal_before": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "attempted_provider_calls": 0,
+    "provider_responses": 0
+  },
+  "scenarios": [
+    {
+      "name": "mixed",
+      "inputs": {
+        "requests": [
+          {
+            "id": "local1",
+            "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?"
+          },
+          {
+            "id": "local2",
+            "text": "I need to transfer funds from my other bank account into this bank account."
+          },
+          {
+            "id": "review1",
+            "text": "why do you charge for transfers?"
+          },
+          {
+            "id": "review2",
+            "text": "Have a payment that I haven't done."
+          },
+          {
+            "id": "malformed",
+            "text": 17
+          }
+        ]
+      },
+      "outputs": [
+        {
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "contactless_not_working",
+          "suggestion": "contactless_not_working",
+          "confidence": 0.9917116668893575,
+          "predictionSet": [
+            "contactless_not_working"
+          ],
+          "reliability": 0.9999104417580593,
+          "teacherCalls": 0,
+          "id": "local1",
+          "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?",
+          "qualification": "development_only",
+          "route": "local",
+          "teacherRequests": 0
+        },
+        {
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "transfer_into_account",
+          "suggestion": "transfer_into_account",
+          "confidence": 0.9983957155217756,
+          "predictionSet": [
+            "transfer_into_account"
+          ],
+          "reliability": 0.9996517391243662,
+          "teacherCalls": 0,
+          "id": "local2",
+          "text": "I need to transfer funds from my other bank account into this bank account.",
+          "qualification": "development_only",
+          "route": "local",
+          "teacherRequests": 0
+        },
+        {
+          "id": "review1",
+          "text": "why do you charge for transfers?",
+          "qualification": "development_only",
+          "route": "teacher",
+          "needsReview": false,
+          "category": "transfer_fee_charged",
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "teacherRequests": 1,
+          "teacherCalls": 1,
+          "teacherStatus": "responded",
+          "reason": "teacher_answer",
+          "usage": {
+            "promptTokenCount": 1076,
+            "candidatesTokenCount": 9,
+            "totalTokenCount": 1085,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 1076
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "model": "gemini-2.5-flash"
+        },
+        {
+          "id": "review2",
+          "text": "Have a payment that I haven't done.",
+          "qualification": "development_only",
+          "route": "teacher",
+          "needsReview": false,
+          "category": "card_payment_not_recognised",
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "teacherRequests": 1,
+          "teacherCalls": 1,
+          "teacherStatus": "responded",
+          "reason": "teacher_answer",
+          "usage": {
+            "promptTokenCount": 1079,
+            "candidatesTokenCount": 12,
+            "totalTokenCount": 1091,
+            "promptTokensDetails": [
+              {
+                "modality": "TEXT",
+                "tokenCount": 1079
+              }
+            ],
+            "serviceTier": "standard"
+          },
+          "model": "gemini-2.5-flash"
+        },
+        {
+          "id": "malformed",
+          "text": 17,
+          "qualification": "development_only",
+          "route": "review",
+          "needsReview": true,
+          "category": null,
+          "teacherRequests": 0,
+          "teacherCalls": 0,
+          "candidate": null,
+          "reason": "local_service_failure"
+        }
+      ],
+      "round_trip_ms": 1410.1408750284463
+    },
+    {
+      "name": "all_local",
+      "inputs": {
+        "requests": [
+          {
+            "id": "local1",
+            "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?"
+          },
+          {
+            "id": "local2",
+            "text": "I need to transfer funds from my other bank account into this bank account."
+          }
+        ]
+      },
+      "outputs": [
+        {
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "contactless_not_working",
+          "suggestion": "contactless_not_working",
+          "confidence": 0.9917116668893575,
+          "predictionSet": [
+            "contactless_not_working"
+          ],
+          "reliability": 0.9999104417580593,
+          "teacherCalls": 0,
+          "id": "local1",
+          "text": "I'm confused. My contactless is suddenly not working anywhere that I try to use it. How do I fix it?",
+          "qualification": "development_only",
+          "route": "local",
+          "teacherRequests": 0
+        },
+        {
+          "candidate": "956d19c5444e66a238645abfe72e01f2b8b18d6dff2e80d57d40e87b4b305767",
+          "needsReview": false,
+          "category": "transfer_into_account",
+          "suggestion": "transfer_into_account",
+          "confidence": 0.9983957155217756,
+          "predictionSet": [
+            "transfer_into_account"
+          ],
+          "reliability": 0.9996517391243662,
+          "teacherCalls": 0,
+          "id": "local2",
+          "text": "I need to transfer funds from my other bank account into this bank account.",
+          "qualification": "development_only",
+          "route": "local",
+          "teacherRequests": 0
+        }
+      ],
+      "round_trip_ms": 57.5706249801442
+    }
+  ],
+  "unauthorized_status": 403,
+  "journal_after": {
+    "sha256": "e37a9f61ffc47639a7d5ad64ba06c13a100827a7fd168beb98b633851bad75a1",
+    "attempted_provider_calls": 2,
+    "provider_responses": 2
+  },
+  "checks_passed": true
+}
