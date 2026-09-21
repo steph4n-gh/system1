@@ -13,6 +13,12 @@ but accepted accuracy is 98.70% / 98.73%, below 99%. CLINC falsely accepts 41 of
 qualification. All 17,160 System1/baseline decisions and the original failure
 are retained; the development improvements below must be read with this result.
 
+The next [declared boundary-teaching round](results/boundary-teaching.md) records
+227 real Gemini calls and 3,287 retained teaching examples across the full scope.
+Generated labels remain unverified teaching material. The fixed development
+comparison must measure their effect; collecting lessons alone is not a quality
+gain, fresh confirmation or qualification.
+
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
 and all 77 BANKING77 intents remain in scope. Required targets are 80% local
