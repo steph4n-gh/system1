@@ -51,7 +51,9 @@ No examples were repaired, relabeled or filtered based on evaluation performance
 The 637 duplicates also show why generated proposal count must not be reported
 as the number of new lessons retained.
 
-The [fixed comparison runner](../boundary_development.py) uses the existing small
+The [completed comparison](boundary-development.md) retains the existing System1
+candidates and publishes the stronger CLINC conventional baseline, including all
+regressions. The [fixed comparison runner](../boundary_development.py) uses the existing small
 intent/review heads and the same frozen encoders, with all generated examples
 excluded from cross-validation fold heads and prototypes. It gives conventional
 TF-IDF/logistic classification the same new teaching data. A

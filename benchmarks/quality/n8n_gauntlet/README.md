@@ -15,9 +15,13 @@ are retained; the development improvements below must be read with this result.
 
 The next [declared boundary-teaching round](results/boundary-teaching.md) records
 227 real Gemini calls and 3,287 retained teaching examples across the full scope.
-Generated labels remain unverified teaching material. The fixed development
-comparison must measure their effect; collecting lessons alone is not a quality
-gain, fresh confirmation or qualification.
+Generated labels remain unverified teaching material. The
+[completed fixed comparison](results/boundary-development.md) retains both
+existing System1 candidates: new CLINC lessons improve raw correctness but reduce
+coverage at the quality thresholds, and banking falls below 80% coverage. The
+conventional CLINC baseline improves from 29.45% to 59.10% coverage, still short of
+80%. All 16,300 runtime decisions match selection. This does not supply fresh
+confirmation or qualification.
 
 The [protocol](PROTOCOL.md) and [source/split manifest](manifest.json) were
 committed in `803650c` before any official-test scoring. All 150 CLINC intents
