@@ -61,11 +61,14 @@ decisions. Both candidates fail 80% coverage; all incumbents remain. Complete
 p95 is 4.38 / 0.68 ms, with all 3,920 routes matching selection, zero runtime
 errors and zero teacher calls. Exact artifacts and offline replay are retained.
 
-The next [declared teaching-consistency diagnostic](TEACHING_CONSISTENCY_PROTOCOL.md)
-checks original fitting examples with predictions made outside their teaching
-folds. It also inspects the current development errors. Model agreement can
-flag examples for review; it cannot establish corrected labels or qualify a
-replacement classifier. Original labels and full-workload targets stay fixed.
+The [completed teaching-consistency diagnostic](results/teaching-consistency.md)
+checks all 18,045 original fitting examples with predictions made outside their
+teaching folds. Both classifiers disagree with the supplied label in 121 CLINC
+and 182 banking cases; these are review candidates, not verified label errors.
+The source audit verifies all 28,080 fitting/calibration/development rows with
+zero import mismatches. It also inspects all 42 current accepted development
+errors, showing both annotation concerns and genuine decision weaknesses.
+Original labels, final classifiers and full-workload targets stay fixed.
 
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved

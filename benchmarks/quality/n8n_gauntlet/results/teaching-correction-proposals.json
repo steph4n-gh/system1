@@ -1,0 +1,85 @@
+{
+  "status": "proposed-not-applied",
+  "scope": "Assistant-proposed original-fitting-only teaching corrections; no benchmark relabeling",
+  "source_report_sha256": "56b069d4c12b0ef22b74ca27b069050ab46283b77db8e013d2f44c3ecc6c783f",
+  "independent_annotations": false,
+  "authoring": "Proposed by the coding assistant; assistant-session authoring cost is not measured by this benchmark.",
+  "teacher_api_calls": 0,
+  "new_api_cost": 0,
+  "fit_sha256": {
+    "clinc150": "3d6fdd52b71ae17be34a44eeff6047e523404ea9f86e88b05883e3cc894c0803",
+    "banking77": "7813426e0bdd2d1c8b99e280a005be136c8e7afec10efe7e76dd8c4e57900c79"
+  },
+  "proposals": [
+    {
+      "dataset": "clinc150",
+      "prompt": "how much is my water bill",
+      "group": "32a5aef7b6b71d3007a514cbdce79fb8ac7fcb55bd891f2138a0584caba94eb3",
+      "source": "train",
+      "index": 7706,
+      "original_label": "bill_due",
+      "proposed_label": "bill_balance",
+      "reason": "The utterance asks for an amount, rather than a due date."
+    },
+    {
+      "dataset": "clinc150",
+      "prompt": "can you please lower the volume please",
+      "group": "ca3c410cdb7c2e099c8022599c862211d340f188fd9120ed219541e0ada36fb7",
+      "source": "train",
+      "index": 11107,
+      "original_label": "whisper_mode",
+      "proposed_label": "change_volume",
+      "reason": "The explicit request is to lower volume; whisper mode is not specified."
+    },
+    {
+      "dataset": "clinc150",
+      "prompt": "turn your volume up",
+      "group": "9ceb813fc51ca171e46de16c5d1575eb3e450c7512b754db35311cd142153ed5",
+      "source": "train",
+      "index": 11129,
+      "original_label": "whisper_mode",
+      "proposed_label": "change_volume",
+      "reason": "The explicit request is to increase volume."
+    },
+    {
+      "dataset": "clinc150",
+      "prompt": "how is the weather today",
+      "group": "b7e21d56cf312d248a20dacd5d59848b27845253ec69504c2fc0b2c08b290dfb",
+      "source": "train",
+      "index": 2294,
+      "original_label": "maybe",
+      "proposed_label": "weather",
+      "reason": "The utterance asks about weather rather than expressing uncertainty."
+    },
+    {
+      "dataset": "clinc150",
+      "prompt": "where's your place of birth",
+      "group": "d2e1d55354f7d5121842816db2286d207d2956a3d3aa9d8aa729f359d9f302e1",
+      "source": "train",
+      "index": 14017,
+      "original_label": "how_old_are_you",
+      "proposed_label": "where_are_you_from",
+      "reason": "The utterance asks where the assistant was born, not its age."
+    },
+    {
+      "dataset": "clinc150",
+      "prompt": "please open a call to my mother",
+      "group": "fa23ae2a87f4928b3206c82e5bc2e198999c235380457dfda4178b9ed532727d",
+      "source": "train",
+      "index": 13940,
+      "original_label": "change_ai_name",
+      "proposed_label": "make_call",
+      "reason": "The utterance requests a phone call, not an assistant name change."
+    },
+    {
+      "dataset": "banking77",
+      "prompt": "Can you tell me what i steps i should take since my card was stolen?",
+      "group": "ac5a421de1f7363d0b869a7d96b59864044d01097354adfc3954597ce7f83f97",
+      "source": "train",
+      "index": 5268,
+      "original_label": "lost_or_stolen_phone",
+      "proposed_label": "lost_or_stolen_card",
+      "reason": "The utterance explicitly describes a stolen card; no phone is mentioned."
+    }
+  ]
+}
