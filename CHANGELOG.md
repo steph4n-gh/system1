@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bound an existing concurrent reader/writer regression workload so a writer timeout cannot leave CI waiting forever for unbounded readers. Use synchronized startup, 1,024 reads and all 30 checked updates.
+
 - Add an experimental courier teaching playground: three saved skills, live isolated terrain corrections, held-out mission composition, matched retained-label baselines and complete recorded evidence. Preserve the initial danger-penalty failure and gate movement using learned terrain eligibility. Keep review limitations explicit; no new core API or runtime dependency.
 
 - Add a three-player Snake GUI comparing a taught System1 skill, real Laya-MLX and Jev. Include timed and equal-move modes, explicit planner/shield accounting, replay without API access, and four complete measured traces.
