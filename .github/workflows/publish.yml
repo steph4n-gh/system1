@@ -40,12 +40,14 @@ jobs:
 
       - name: Test release source
         run: |
+          python scripts/check_documentation.py
           uv sync --locked --extra dev --extra langchain
           uv run --no-sync pytest -q
 
       - name: Build distributions
         run: |
           uv build
+          python scripts/check_distributions.py dist
           uvx twine check --strict dist/*
 
       - name: Publish to PyPI

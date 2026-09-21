@@ -33,6 +33,7 @@ No live credentials are needed for the commands above.
 
 | Example | Scope and evidence boundary |
 |---|---|
+| [n8n development workflow](../benchmarks/quality/n8n_gauntlet/N8N.md) | Importable workflow with local decisions, item pairing and review; its full-scope quality gauntlet remains unqualified |
 | [core_standalone_evaluator.py](core_standalone_evaluator.py) | NumPy-only core and typed outputs; sample predictions are not a quality benchmark |
 | [train_expert.py](train_expert.py) | Legacy name for synthetic/supplied examples, correction and composition; these are optional teaching mechanisms |
 | [four_levers_benchmark.py](four_levers_benchmark.py) | Cache, online correction, margins and numerical telemetry; repeated scripted feedback is not generalization evidence |

@@ -57,3 +57,13 @@ real-email teaching recipe without credentials, but has a different label contra
 The Inbox Zero provider therefore starts in review-only mode and leaves
 uncertain or failed classifications unprocessed without an LLM fallback.
 Other Inbox Zero LLM features remain outside this classification integration.
+
+### n8n decision workflows (experimental)
+
+The [importable n8n workflow](../benchmarks/quality/n8n_gauntlet/N8N.md) calls a
+saved local skill, preserves item identity and routes uncertain, invalid or failed
+requests to review. The [disconnection rehearsal](../benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
+adds a live teacher fallback and verifies continued local decisions and review
+after stopping that teacher. The full quality gauntlet still fails; this is
+development integration evidence, not a qualified production takeover. Follow
+the linked setup from a repository checkout; it is not a bundled n8n node.

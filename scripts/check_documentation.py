@@ -43,10 +43,19 @@ def main():
         targets += re.findall(r'(?:href|src)=[\'\"]([^\'\"]+)[\'\"]', text)
         for raw in targets:
             url = urlsplit(raw.strip("<>"))
-            if url.scheme or url.netloc:
+            # Links to this repository's main branch describe this checkout.
+            # Historical commits/tags and external sites remain separate evidence.
+            repo_prefixes = ("/steph4n-gh/system1/blob/main/", "/steph4n-gh/system1/tree/main/")
+            repo_prefix = next((prefix for prefix in repo_prefixes if url.path.startswith(prefix)), None)
+            if url.netloc == "github.com" and repo_prefix:
+                target = (ROOT / unquote(url.path[len(repo_prefix):])).resolve()
+            elif url.netloc == "raw.githubusercontent.com" and url.path.startswith("/steph4n-gh/system1/main/"):
+                target = (ROOT / unquote(url.path.removeprefix("/steph4n-gh/system1/main/"))).resolve()
+            elif url.scheme or url.netloc:
                 continue
+            else:
+                target = (path.parent / unquote(url.path)).resolve() if url.path else path
             checked += 1
-            target = (path.parent / unquote(url.path)).resolve() if url.path else path
             if not target.exists():
                 errors.append(f"{path.relative_to(ROOT)}: missing {raw}")
             elif url.fragment and target.suffix == ".md" and unquote(url.fragment) not in anchors(target.read_text()):

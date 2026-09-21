@@ -1,6 +1,8 @@
 # System 1 architecture and implementation
 
-Implementation reference for **System 1 1.0.3**, reviewed 20 September 2026.
+Implementation reference for **System 1 1.0.3** and the current source checkout,
+reviewed 21 September 2026. [Unreleased changes](../../CHANGELOG.md#unreleased)
+are not yet part of the published package.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
 [pyproject.toml](../../pyproject.toml).
@@ -10,7 +12,9 @@ this document maps its behavior to the source. The package version is defined in
 A skill maps a bounded input to a declared set of outputs. A teacher supplies
 labels; the local compiler learns a small numerical decision head over fixed
 features. Teaching can use a file of reviewed examples or observations of an API,
-LLM, rule, or callback. System 1 does not download or fine-tune a language model.
+LLM, rule, or callback. The default path does not download or fine-tune a language
+model. Optional research adapters can supply features from fixed pretrained text
+encoders; their weights and runtime costs belong to that adapter's deployment.
 
 ```mermaid
 flowchart TD
@@ -39,7 +43,7 @@ it does not run the teacher, execute a tool, or perform the entire lifecycle.
 | `DeterministicSemanticProjector` | SHA-256-derived signed word, subword and character features, normalized into 384 dimensions by default | [core model](../../src/system1/core/model.py) |
 | `TfidfProjector` | Optional fitted word unigram/bigram vocabulary, smoothed IDF and sublinear term frequency; frozen during inference and saved in the skill | [text features](../../src/system1/core/text.py) |
 | `HybridProjector` | Optional hashed lexical features plus a seeded subword table with curated semantic anchors | [embeddings](../../src/system1/core/embeddings.py) |
-| `SystemOneCompiler` | Validate labels, partition examples, fit ridge heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
+| `SystemOneCompiler` | Validate labels, partition examples, fit ridge or optional logistic choice heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
 | `System1Engine` / `SystemOneEngine` | Apply a schema or compiled skill, uncertainty checks, optional caching and audit evidence | [engine](../../src/system1/engine.py) |
 | TypeSafe `Client` / `AsyncClient` | Teacher observation, per-schema promotion, local typed responses and skill reuse | [adapter](../../src/system1/compat/typesafe.py) |
 | `PolicyEngine` / `SystemOneGuard` | Explicit permissions and guarded proposal evaluation | [guard](../../src/system1/guard.py) |
@@ -83,7 +87,7 @@ cross-product, with pseudoinverse/least-squares fallback on `LinAlgError`.
 It does not use the Cholesky implementation described in earlier drafts.
 Stored inference weights have shape `(number_of_outputs, feature_dimension)`.
 
-The Python compiler also accepts `choice_solver="logistic"` for ChoiceField
+The source checkout's Python compiler also accepts `choice_solver="logistic"` for ChoiceField
 heads. It minimizes summed cross-entropy plus `regularization / 2 * ||W||²`,
 with an unpenalized bias, using SciPy L-BFGS-B from the optional `teaching` extra.
 Stored coefficients are scaled by 0.25 to match the existing runtime's logit

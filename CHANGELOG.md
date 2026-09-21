@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Sync the current guides, papers and indexes with the teaching labs and unqualified n8n results. Distinguish source-only features and encoder-backed experiments from the published default runtime; validate repository-main links and distribution contents in release checks as well as CI.
 - Keep the full n8n research artifacts and raw results in Git, outside Python distributions. Validate archive contents and size in CI, including the runnable teaching example in the source distribution.
 - Add experimental n8n workflows with item pairing, explicit review, local-service failure handling and a real teacher-disconnection rehearsal. The [full-scope quality gauntlet](benchmarks/quality/n8n_gauntlet/README.md) remains unqualified: accepted accuracy and unfamiliar-input rejection still fail. Preserve all experiments, exact artifacts, matched baselines, costs and failures; no independent confirmation or qualified recording is claimed.
 - Add opt-in `choice_solver="logistic"` to the Python compiler for choice skills. SciPy is an optional teaching dependency; saved heads retain the existing NumPy runtime, calibration and portable format. Keep ridge as the default and record failed full-scope development experiments for the n8n quality gauntlet.

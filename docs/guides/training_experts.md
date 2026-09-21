@@ -112,8 +112,9 @@ read old skills but cannot load the new TF-IDF feature type.
 
 ## Optional classification fitting
 
-For a choice skill, you can compare the default ridge fit with a cross-entropy
-fit. Install `pip install 'system1[teaching]'`, then set
+This option is an unreleased source change; start from a repository checkout and
+install `python -m pip install -e '.[teaching]'`. For a choice skill, compare the
+default ridge fit with a cross-entropy fit by setting
 `SystemOneCompiler(SupportRoute, projector=projector, choice_solver="logistic",
 regularization=.1)` in the example above. This uses SciPy's iterative optimizer
 during teaching and the same NumPy decision head during inference. It does not

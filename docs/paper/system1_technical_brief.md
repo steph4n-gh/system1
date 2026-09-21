@@ -1,12 +1,17 @@
 # System 1: technical brief
 
-**System 1 1.0.3 · 20 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.0.3 + current source changes · 21 September 2026 · Maintainer-authored implementation brief**
+
+This brief follows the source checkout. [Unreleased changes](../../CHANGELOG.md#unreleased)
+are separate from the published 1.0.3 package.
 
 System 1 turns a repeatable decision into a small reusable local skill. Define the
 outputs, teach from examples or observe a teacher, validate the skill, then reuse
 it through the same local runtime. A teacher can be a person, JSON data, a rule,
 Jev, Gemini or another callback. System 1 fits numerical decision heads; it does
-not fine-tune or run a language model.
+not fine-tune a language model. The default runtime uses no language model;
+optional research adapters use fixed pretrained encoders whose separate weights
+and inference costs are included in their reports.
 
 **System 1 is not an LLM:** the built-in path needs no language-model weights,
 token generation or GPU. Optional MLX supports Apple Silicon decision-head
@@ -18,12 +23,17 @@ are also its limits; it does not acquire the teacher's general knowledge.
 
 Fixed text features and optional numerical telemetry feed NumPy decision heads.
 The optional TF-IDF projector fits a vocabulary on teaching text and freezes it
-for inference, retaining the existing ridge head and NumPy-only runtime.
+for inference, using the same numerical heads and NumPy-only runtime.
 Separate examples calibrate uncertainty. Explicit teaching produces a `.s1m`
 file; automatic observation keeps the teacher answering until promotion checks
 pass. A saved skill preserves the schema, feature configuration, weights and
 uncertainty behavior. New inputs are evaluated through those shared features,
 not only looked up in a cache.
+
+The source compiler also offers opt-in `choice_solver="logistic"`, using SciPy
+during teaching and the existing NumPy choice head during inference. Ridge stays
+the default. Separate calibration and evaluation remain necessary for either
+method; see the [teaching guide](../guides/training_experts.md#optional-classification-fitting).
 
 The local result includes a value and review information. The application chooses
 how to handle review requests. Automatic takeover removes the teacher from the
@@ -65,6 +75,18 @@ portable local skill, with explicit review behavior and optional audit evidence.
 Ridge regression, feature hashing, conformal prediction and digital signatures
 are established techniques. These results support the bounded tasks measured;
 they do not establish universal provider parity or a novel learning algorithm.
+
+The new [document workspace](../../examples/teaching_by_doing/README.md) records
+filing actions as lessons and supports corrections and saved-skill export. Its
+authored sample results include mistakes. The courier and Pokémon teaching labs
+also remain bounded experiments, indexed in the [example catalog](../../examples/README.md).
+
+The [full-scope n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md) covers
+all 150 CLINC and 77 banking intents. Its latest full-scope regression fails
+accepted accuracy on both workloads and unfamiliar rejection on CLINC. Later
+development gains do not resolve qualification or provide independent
+confirmation. The recorded teacher-disconnection rehearsal proves integration
+behavior with an unqualified artifact; it is not the qualified takeover goal.
 
 For application permissions, `PolicyEngine` evaluates explicit rules and
 `SystemOneGuard(enforcement_profile=True)` requires a permission grant, signing

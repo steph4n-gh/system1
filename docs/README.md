@@ -1,6 +1,6 @@
 # System 1 documentation
 
-Current stable runtime: **1.0.3**. Reviewed 20 September 2026.
+Current stable runtime: **1.0.3**. Source documentation reviewed 21 September 2026.
 System 1 is not an LLM. Start with one journey: **choose a decision → show
 examples → check answers → save and reuse → improve**. A person or a running
 teacher can supply the examples.
@@ -20,6 +20,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | [Compositional teaching playground](../examples/gaming/skill_playground/README.md) | Live correction of one skill in a small agent, with held-out missions and baseline evidence |
 | [Example catalog](../examples/README.md) | Every example's role and supported or experimental scope |
 | [Inbox Zero pilot](../examples/inbox_zero/README.md) | Teach email categories, serve locally, and inspect the initial quality limits |
+| [n8n development workflow](../benchmarks/quality/n8n_gauntlet/N8N.md) | Import a local classification workflow with item pairing and explicit review; the skill remains unqualified |
 | [Public real-email recipe](../benchmarks/quality/public_email/README.md) | Download labeled mail, teach spam/ham locally, and reproduce both successful and failed evaluations |
 | [Application integrations](integrations.md) | Connect a checked skill to LangChain, MCP, ASGI, gRPC or monitoring |
 | [Tool permissions](guides/policy_guard.md) | Add an explicit permission rule when an answer would trigger an action |
@@ -36,6 +37,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 | [Whitepaper](paper/system1_whitepaper.md) | Current design, measurements and limitations |
 | [Mathematical notes](paper/conformal_gating.md) | Established results and their assumptions |
 | [Public workloads](../benchmarks/quality/workloads/README.md) | Banking, assistant, SMS, classical baseline and real teachers |
+| [Full-scope n8n gauntlet](../benchmarks/quality/n8n_gauntlet/README.md) | All 150 CLINC and 77 banking intents, failed quality gates, exact artifacts and the unqualified disconnection rehearsal |
 | [1.0.2 quality round](../benchmarks/quality/quality_round/README.md) | Stricter takeover qualification, SMS improvement and fresh diagnostic failures |
 | [Teaching examples](../examples/teaching/README.md) | Authored lessons, current counts and historical development |
 | [Benchmark index](../benchmarks/README.md) and [quality suite](../benchmarks/quality/README.md) | Reproduction commands and distinct evaluation targets |
