@@ -1,16 +1,37 @@
 """The portable review score must match the teaching library after JSON reload."""
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 import pytest
 
 
+def test_numerical_scores_import_without_optional_benchmark_libraries():
+    folder = Path(__file__).resolve().parents[1] / "benchmarks/quality/n8n_gauntlet"
+    script = """
+import importlib.abc
+import sys
+class BlockOptional(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname.split('.')[0] in {'threadpoolctl', 'scipy', 'sklearn', 'onnxruntime', 'tokenizers'}:
+            raise ImportError('Optional benchmark dependency: ' + fullname)
+sys.meta_path.insert(0, BlockOptional())
+sys.path.insert(0, sys.argv[1])
+import polynomial_scores
+assert polynomial_scores.score([0.] * 7, 0, False,
+    polynomial_scores.load_review(dict(quadratic=False, review_parameters=dict(
+        mean=[0.] * 7, scale=[1.] * 7, weights=[0.] * 8, bias=0.)), 1)) == .5
+"""
+    subprocess.run([sys.executable, "-c", script, str(folder)], check=True, capture_output=True, text=True)
+
+
 @pytest.fixture
 def runtime(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / "benchmarks/quality/n8n_gauntlet"))
-    import polynomial_runtime
-    return polynomial_runtime
+    import polynomial_scores
+    return polynomial_scores
 
 
 @pytest.mark.parametrize("quadratic", [False, True])

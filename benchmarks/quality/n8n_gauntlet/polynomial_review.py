@@ -141,7 +141,7 @@ def prepare(dataset, kind):
 
 
 def fit(folder):
-    revision = committed([PROTOCOL, Path(__file__).resolve(), HERE / "polynomial_runtime.py", HERE / "results/boundary-runtime.json"])
+    revision = committed([PROTOCOL, Path(__file__).resolve(), HERE / "polynomial_runtime.py", HERE / "polynomial_scores.py", HERE / "results/boundary-runtime.json"])
     frozen(False)
     denied = deny_network_control()
     folder.mkdir(parents=True, exist_ok=False)
