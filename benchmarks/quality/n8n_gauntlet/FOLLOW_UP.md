@@ -51,6 +51,11 @@ zero selection/runtime mismatches on the full development cohort. Both current
 development candidates clear the targets; neither has new independent full-scope
 confirmation. The original official-test failure remains authoritative.
 
+A [further source search](CONFIRMATION_SOURCES.md) identified a human CLINC
+paraphrase supplement with 2,977 normalized groups absent from the original folds.
+It covers only 35 numeric categories and has one unresolved label mapping; it is
+reserved unscored and does not supply the missing full-scope confirmation.
+
 ## Next bounded implementation experiment
 
 Teach the review decision with explicitly unsupported requests and difficult
