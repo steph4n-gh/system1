@@ -1,0 +1,37 @@
+{
+  "scope": "experiment 2g prefit adapter-reuse check; no tests or reserves",
+  "qualified": false,
+  "original_runtime_sha256": "cbf7fb6580e3f0cd63509d64e0e75203d642dd1c39086804a5458ed53119648f",
+  "os_network_denial_errno": 1,
+  "teacher_calls": 0,
+  "checks": [
+    {
+      "dataset": "clinc150",
+      "condition": "linear-control",
+      "candidate_sha256": "162d03114529f61b55cf11c0e275fa8ecfdb540c5fd52b160a22e07489f4d317",
+      "recorded_responses_reproduced": 100,
+      "score_tolerance": 1e-12
+    },
+    {
+      "dataset": "clinc150",
+      "condition": "quadratic",
+      "candidate_sha256": "666f1c5b1a5f05da60fec83b28dab7688a569b9ef8f7d51d66a5d5d09372e20b",
+      "recorded_responses_reproduced": 100,
+      "score_tolerance": 1e-12
+    },
+    {
+      "dataset": "banking77",
+      "condition": "linear-control",
+      "candidate_sha256": "a16c796e9994c3ad89811b0db1a21f9100d835f214864acd65fd2dadd7ce4753",
+      "recorded_responses_reproduced": 100,
+      "score_tolerance": 1e-12
+    },
+    {
+      "dataset": "banking77",
+      "condition": "quadratic",
+      "candidate_sha256": "7a6539ca70005d2b553dfb9154e76859f621d6d1e50c4acd0baa537cffcf20ca",
+      "recorded_responses_reproduced": 100,
+      "score_tolerance": 1e-12
+    }
+  ]
+}

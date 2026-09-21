@@ -55,12 +55,16 @@ class PolynomialBaseline(Baseline):
             return dict(candidate=self.identity, needsReview=True, category=None, reason="changed_contract", teacherCalls=0)
         x = self.vectorizer.transform([payload["text"]])
         values = softmax(x @ self.transposed_weights + self.bias)[0]
-        signals, chosen = numerical_signals(values, (x @ self.prototypes).toarray()[0], self.offsets)
-        confidence = score(signals, chosen, self.manifest["quadratic"], self.review_parameters)
+        chosen = int(values.argmax())
+        confidence = self.review_score(values, x)
         suggestion = str(self.labels[chosen])
         review = suggestion == "oos" or confidence < self.manifest["threshold"]
         return dict(candidate=self.identity, needsReview=bool(review), category=None if review else suggestion,
             suggestion=suggestion, confidence=float(values[chosen]), acceptance_score=confidence, teacherCalls=0)
+
+    def review_score(self, values, x):
+        signals, chosen = numerical_signals(values, (x @ self.prototypes).toarray()[0], self.offsets)
+        return score(signals, chosen, self.manifest["quadratic"], self.review_parameters)
 
 
 def prepare(dataset, kind):
@@ -192,12 +196,17 @@ def fit(folder):
                 gc.collect()
 
 
-def measure(folder):
+def measure(folder, *, protocol=PROTOCOL,
+            scope="experiment 2f complete development adapters; not qualification",
+            candidate_classes=(PolynomialCandidate, PolynomialBaseline),
+            comparison_path=HERE / "results/boundary-runtime.json"):
     frozen(False)
     source = json.loads((folder / "development.json").read_text())
-    assert source["protocol_sha256"] == digest(PROTOCOL)
-    assert source["comparison_report_sha256"] == digest(HERE / "results/boundary-runtime.json")
-    report = dict(scope="experiment 2f complete development adapters; not qualification", qualified=False,
+    assert source["protocol_sha256"] == digest(protocol)
+    assert source["comparison_report_sha256"] == digest(comparison_path)
+    report = dict(scope=scope, qualified=False,
+        source_report_sha256=digest(folder / "development.json"), source_revision=source["source_revision"],
+        protocol_sha256=digest(protocol), comparison_report_sha256=digest(comparison_path),
         os_network_denial_errno=deny_network_control(), teacher_calls=0, response_cache=False, receipts=False,
         process_import_preflight_ms=(time.perf_counter() - STARTED) * 1000,
         environment=dict(platform=platform.platform(), python=platform.python_version(), machine=platform.machine()),
@@ -206,7 +215,7 @@ def measure(folder):
     with (folder / "runtime.json").open("x") as stream, (folder / "runtime.jsonl").open("x") as journal, threadpool_limits(limits=1):
         for selected in source["results"]:
             begin = time.perf_counter()
-            candidate = (PolynomialCandidate if selected["kind"] == "system1" else PolynomialBaseline)(folder / selected["folder"])
+            candidate = candidate_classes[0 if selected["kind"] == "system1" else 1](folder / selected["folder"])
             load_ms = (time.perf_counter() - begin) * 1000
             assert candidate.identity == selected["manifest_sha256"]
             rows = load_splits(selected["dataset"])["development"]
@@ -249,7 +258,7 @@ def measure(folder):
             del candidate
             gc.collect()
         report["comparisons"] = []
-        previous = json.loads((HERE / "results/boundary-runtime.json").read_text())
+        previous = json.loads(comparison_path.read_text())
         for prior in previous["comparisons"]:
             winner = prior["selected_development_candidate"]
             incumbent = winner.copy()
