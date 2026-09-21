@@ -7,15 +7,17 @@ one piece while keeping the others unchanged. No API key, LLM or new dependency.
 
 ## Run it
 
-From the repository root, with System1 installed:
+From the repository root, install the current checkout (the playground uses
+unreleased features already on this branch):
 
 ```bash
+python -m pip install -e .
 python -m examples.gaming.skill_playground
 python -m examples.gaming.skill_playground --serve
 ```
 
-Open http://127.0.0.1:8789/. The first command generates lessons, teaches and
-reloads the skills, and evaluates 40 maps. The second opens a local HTTP service
+Open http://127.0.0.1:8789/. The evaluation command generates lessons, teaches and
+reloads the skills, and evaluates 40 maps. The `--serve` command opens a local HTTP service
 using those artifacts. `--serve` also performs that preparation if the default
 output directory has no report. Use `--output-dir`, `--episodes`, `--seed` and
 `--port` to change the experiment or local service.
