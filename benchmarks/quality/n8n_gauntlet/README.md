@@ -45,6 +45,14 @@ outcomes, both saved bundles and fixed-budget teaching warnings are retained.
 No encoder weights, core runtime or current candidate changed; there is no new
 adapter timing or qualification claim.
 
+The [fixed 12-layer MiniLM comparison](results/minilm12.md) also fails its
+declared screen. CLINC gains 20 raw correct decisions but its best simple
+confidence/margin coverage falls to 70.18%; banking loses 15 raw correct decisions
+while that frontier rises to 68.88%. All 5,055 outcomes and exact heads are
+retained. Saved-head p95 is 2.69 / 4.39 ms, excluding learned review and adapter
+validation. Those numbers are not complete-adapter qualification. Existing
+candidates remain selected and the full failures remain unresolved.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.

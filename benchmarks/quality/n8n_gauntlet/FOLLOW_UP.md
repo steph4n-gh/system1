@@ -50,6 +50,13 @@ condition passes the preregistered advancement rule; both exact saved candidates
 and all 5,055 outcomes are retained without building another review adapter.
 Adding this nonlinear transform has not earned a core implementation.
 
+The [larger fixed-encoder comparison](results/minilm12.md) subsequently tests
+12-layer MiniLM with the unchanged numerical head. CLINC raw correctness gains
+20 requests but its simple-threshold coverage falls; banking loses 15 raw
+correct decisions while its frontier improves. Neither meets the fixed
+advancement rule. Saved-head timing excludes learned review and does not prove
+the full latency gate. All 5,055 outcomes and both heads remain available.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product
