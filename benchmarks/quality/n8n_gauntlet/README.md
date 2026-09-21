@@ -70,6 +70,11 @@ zero import mismatches. It also inspects all 42 current accepted development
 errors, showing both annotation concerns and genuine decision weaknesses.
 Original labels, final classifiers and full-workload targets stay fixed.
 
+The next [declared correction comparison](CORRECTION_PROTOCOL.md) tests only the
+seven proposed fitting-label changes in both methods, with every calibration
+and development label unchanged. It must reproduce the published controls before
+evaluating corrected candidates. No quality improvement is claimed before it runs.
+
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
 the full quality objective.
