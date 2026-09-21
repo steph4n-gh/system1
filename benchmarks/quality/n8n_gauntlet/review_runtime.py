@@ -3,6 +3,7 @@
 The original intent-head bytes and encoder identities are retained unchanged.
 Neither official tests nor the unused human OOS reserve are opened or scored.
 """
+import argparse
 import gc
 import hashlib
 import json
@@ -40,17 +41,23 @@ class ReviewCandidate(LocalCandidate):
 
 
 def prepare(dataset, source):
+    consistent = source.get("experiment") == "2b"
+    prefix = "consistent-review" if consistent else "review"
     is_bank = dataset == "banking77"
     original = HERE / "artifacts" / ("banking-development" if is_bank else "clinc-development")
     data = load_splits(dataset)
     selection = source["datasets"][dataset]["selected"]
-    folder = OUTPUT / f"review-{dataset}-candidate"
+    folder = OUTPUT / f"{prefix}-{dataset}-candidate"
     folder.mkdir(exist_ok=True)
     manifest = json.loads((original / "manifest.json").read_text())
     if digest(original / "manifest.json") != source["datasets"][dataset]["frozen_manifest_sha256"]:
         raise ValueError("Original intent candidate changed")
-    shutil.copyfile(original / "intent.s1m", folder / "intent.s1m")
-    guard = OUTPUT / f"review-{dataset}-guard.npz"
+    intent = OUTPUT / f"{prefix}-{dataset}-intent.s1m" if consistent else original / "intent.s1m"
+    expected_intent = source["datasets"][dataset]["replacement_intent_sha256"] if consistent else manifest["files"]["intent.s1m"]
+    if digest(intent) != expected_intent:
+        raise ValueError("Intent head changed")
+    shutil.copyfile(intent, folder / "intent.s1m")
+    guard = OUTPUT / f"{prefix}-{dataset}-guard.npz"
     if digest(guard) != selection["guard_sha256"]:
         raise ValueError("Selected review head changed")
     with np.load(guard, allow_pickle=False) as arrays:
@@ -61,7 +68,7 @@ def prepare(dataset, source):
     else:
         # These are the same fitting features used to teach review. Runtime
         # requests always execute the saved encoder again.
-        key = hashlib.sha256((hashlib.sha256(json.dumps(manifest["encoder"], sort_keys=True).encode()).hexdigest()
+        key = hashlib.sha256((("single-request-v1:" if consistent else "") + hashlib.sha256(json.dumps(manifest["encoder"], sort_keys=True).encode()).hexdigest()
                               + json.dumps(data["fit"], sort_keys=True)).encode()).hexdigest()
         features = np.load(OUTPUT / f"features-{key}.npy", allow_pickle=False)
         labels = sorted(manifest["categories"])
@@ -76,23 +83,29 @@ def prepare(dataset, source):
         reliability_threshold=selection["threshold"],
         base_intent_manifest_sha256=digest(original / "manifest.json"),
         review_protocol_sha256=source["protocol_sha256"], review_config=selection["config"],
+        teaching_projection="single-request" if consistent else "batch32",
         files={name: digest(folder / name) for name in ("intent.s1m", "scope.npz")})
-    assert manifest["files"]["intent.s1m"] == json.loads((original / "manifest.json").read_text())["files"]["intent.s1m"]
+    assert manifest["files"]["intent.s1m"] == expected_intent
     (folder / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     return folder
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--consistent-clinc", action="store_true")
+    consistent = parser.parse_args().consistent_clinc
+    prefix = "consistent-review" if consistent else "review"
     # Verify OS isolation without importing or calling a teacher.
     from evaluate import deny_network_control, quality, gates
     denied = deny_network_control()
-    source = json.loads((HERE / "results/review-teaching-development.json").read_text())
-    if digest(HERE / "REVIEW_TEACHING_PROTOCOL.md") != source["protocol_sha256"]:
+    source = json.loads((HERE / "results" / f"{prefix}-teaching-development.json").read_text())
+    protocol = "CONSISTENT_FEATURES_PROTOCOL.md" if consistent else "REVIEW_TEACHING_PROTOCOL.md"
+    if digest(HERE / protocol) != source["protocol_sha256"]:
         raise ValueError("Review protocol changed")
-    report = dict(scope="experiment 2a complete development adapters; not qualification", results=[],
+    report = dict(scope=f"experiment {'2b' if consistent else '2a'} complete development adapters; not qualification", results=[],
                   os_network_denial_errno=denied, teacher_calls=0, response_cache=False, receipts=False)
     with threadpool_limits(limits=1):
-        for dataset in ("clinc150", "banking77"):
+        for dataset in (("clinc150",) if consistent else ("clinc150", "banking77")):
             folder = prepare(dataset, source)
             started = time.perf_counter()
             candidate = ReviewCandidate(folder)
@@ -115,8 +128,12 @@ def main():
                 artifact_bytes=sum(path.stat().st_size for path in folder.iterdir() if path.is_file()),
                 latency=dict(requests=len(outcomes), warmups=100, p50_ms=float(np.median(timings)), p95_ms=p95),
                 outcomes=outcomes)
+            selected = source["datasets"][dataset]["selected"]["outcomes"]
+            result["selection_runtime_mismatches"] = [row["group"] for row, expected in zip(outcomes, selected, strict=True)
+                if row["group"] != expected["group"] or row["needsReview"] != expected["needs_review"]
+                or row["suggestion"] != expected["prediction"]]
             report["results"].append(result)
-            (HERE / "results/review-runtime-development.json").write_text(json.dumps(report, indent=2) + "\n")
+            (HERE / "results" / f"{prefix}-runtime-development.json").write_text(json.dumps(report, indent=2) + "\n")
             print(json.dumps({key: value for key, value in result.items() if key not in ("manifest", "outcomes")}), flush=True)
             del candidate
             gc.collect()

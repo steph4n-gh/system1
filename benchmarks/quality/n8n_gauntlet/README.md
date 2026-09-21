@@ -28,6 +28,14 @@ confirmation; these observed tests cannot be reused as independent evidence.
 The [follow-up requirements and source audit](FOLLOW_UP.md) keep that next
 experiment separate from this failure.
 
+The [later review-teaching experiments](results/consistent-features.md) improve
+development coverage to 86.6% on CLINC and 80.6% on banking at the quality targets,
+with complete p95 of 2.69/4.24 ms. They also found and corrected a mismatch between
+batched quantized-MiniLM teaching features and single-request inference. The
+corrected CLINC candidate matches selection on all 3,095 development requests.
+These results do not supersede the failed official test or establish qualification;
+fresh full-scope confirmation remains outstanding.
+
 ## What development has established
 
 The original small lexical classifier does not meet this broader task. Simply

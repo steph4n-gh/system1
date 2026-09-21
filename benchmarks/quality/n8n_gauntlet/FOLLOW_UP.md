@@ -38,9 +38,18 @@ groups from two pinned upstream alternatives against every original fold:
   of near-boundary user requests.
 
 The audit opened no model and scored no requests. It records URLs, file hashes,
-row counts and overlap counts. No new examples have yet been allocated to
-teaching, calibration or confirmation. Reserve independent examples before
-using any new source to select a policy.
+row counts and overlap counts. After that audit, the prospectively declared
+[review-teaching experiment](REVIEW_TEACHING_PROTOCOL.md) allocated 2,000
+Wikipedia negatives to teaching and reserved all 151 extra human OOS groups.
+That reserve remains unscored; its hashes are in [the separate data manifest](review-data-manifest.json).
+
+The [review-teaching result](results/review-teaching.md) retained a CLINC failure
+caused by batched versus single-request quantized-encoder features. The subsequent
+[consistency correction](results/consistent-features.md) rebuilt CLINC teaching
+features through the same individual-request operation as inference and verified
+zero selection/runtime mismatches on the full development cohort. Both current
+development candidates clear the targets; neither has new independent full-scope
+confirmation. The original official-test failure remains authoritative.
 
 ## Next bounded implementation experiment
 

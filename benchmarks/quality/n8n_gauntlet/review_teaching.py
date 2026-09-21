@@ -3,6 +3,7 @@
 Never opens official tests or the human OOS reserve. Frozen intent heads and
 encoders are unchanged. See REVIEW_TEACHING_PROTOCOL.md for scope and limitations.
 """
+import argparse
 import gc
 import hashlib
 import json
@@ -19,20 +20,25 @@ from develop import OUTPUT, frontier, load_splits
 from encoder_probe import Encoder, PreparedFeatures
 from reliability_probe import reliability_features
 from runtime_probe import LocalCandidate
-from system1 import ChoiceField, DecisionSchema, SystemOneCompiler
+from system1 import ChoiceField, CompiledSystemOneModel, DecisionSchema, System1Engine, SystemOneCompiler
 
 HERE = Path(__file__).resolve().parent
 
 
-def features(rows, encoder):
-    key = hashlib.sha256((encoder.projector_digest() + json.dumps(rows, sort_keys=True)).encode()).hexdigest()
+def features(rows, encoder, *, single=False, evidence=None):
+    started = time.perf_counter()
+    key = hashlib.sha256((("single-request-v1:" if single else "") + encoder.projector_digest() + json.dumps(rows, sort_keys=True)).encode()).hexdigest()
     path = OUTPUT / f"features-{key}.npy"
-    if not path.exists():
-        started = time.perf_counter()
-        vectors = np.concatenate([encoder.project_batch([r["prompt"] for r in rows[i:i + 32]])
-                                  for i in range(0, len(rows), 32)])
+    cached = path.exists()
+    if not cached:
+        vectors = (np.stack([encoder.project(r["prompt"]) for r in rows]) if single else
+                   np.concatenate([encoder.project_batch([r["prompt"] for r in rows[i:i + 32]])
+                                   for i in range(0, len(rows), 32)]))
         np.save(path, vectors, allow_pickle=False)
         print(f"Encoded {len(rows)} teaching rows in {time.perf_counter() - started:.2f}s", flush=True)
+    if evidence is not None:
+        evidence.append(dict(rows=len(rows), cache_hit=cached, mode="single" if single else "batch32",
+                             preparation_ms=(time.perf_counter() - started) * 1000))
     return np.load(path, allow_pickle=False)
 
 
@@ -43,7 +49,7 @@ def meta_features(values, x, prototypes, prototype_labels):
                            for i in range(0, len(values), 256)])
 
 
-def run(dataset, report):
+def run(dataset, report, *, single=False):
     is_bank = dataset == "banking77"
     data = load_splits(dataset)
     original = data["fit"]
@@ -65,7 +71,8 @@ def run(dataset, report):
     all_rows = dict(data, augmented=augmented)
     if negative:
         all_rows["negative"] = negative
-    x = {split: features(rows, encoder) for split, rows in all_rows.items()}
+    preparation = []
+    x = {split: features(rows, encoder, single=single, evidence=preparation) for split, rows in all_rows.items()}
     schema = type("Intent", (DecisionSchema,), {"intent": ChoiceField(options=labels)})
     prepared = PreparedFeatures(augmented + data["calibration"], np.concatenate([x["augmented"], x["calibration"]]), encoder)
     compiler = SystemOneCompiler(schema, projector=prepared, choice_solver="logistic", regularization=.01 if is_bank else .1)
@@ -87,6 +94,16 @@ def run(dataset, report):
         cp[valid] = values.argmax(axis=1)
         print(f"{dataset}: completed review-teaching fold {fold + 1}/3", flush=True)
     cy = (cp == yi) & np.asarray([r["label"] != "oos" for r in original])
+    replacement_sha = None
+    if single:
+        model = compiler.compile({"intent": [(r["prompt"], r["label"]) for r in augmented]},
+                                 augment=False, calibration_exemplars=calibration)
+        candidate.model = CompiledSystemOneModel(model.schema, model.heads, dimension=384,
+            projector=candidate.encoder, metadata=model.metadata, use_cache=False)
+        candidate.engine = System1Engine(candidate.model.schema, model=candidate.model, strict_mode=True, use_cache=False)
+        path = OUTPUT / f"{report['file_prefix']}-{dataset}-intent.s1m"
+        candidate.model.save(path)
+        replacement_sha = hashlib.sha256(path.read_bytes()).hexdigest()
     values, meta, guesses = {}, {}, {}
     for split in ("calibration", "development") + (("negative",) if negative else ()):
         values[split] = probabilities(candidate.model.heads["intent"], x[split])
@@ -99,26 +116,30 @@ def run(dataset, report):
                 for row, vector in zip(data["development"], x["development"], strict=True)]
     pred = np.asarray(labels)[guesses["development"]]
     report["datasets"][dataset] = dict(frozen_manifest_sha256=candidate.identity, head_and_crossfit_ms=(time.perf_counter() - started) * 1000,
+        feature_preparation=preparation, replacement_intent_sha256=replacement_sha,
         original_fit_rows=len(original), final_intent_fit_rows=len(augmented), folds=3,
         generated_examples_in_fold_heads=0, alpha=candidate.manifest["alpha"],
         fold_groups=[[original[i]["group"] for i in np.flatnonzero(folds == fold)] for fold in range(3)])
     best = None
-    for negatives in ((0,) if is_bank else (0, 2000)):
+    for negatives in ((2000,) if single else ((0,) if is_bank else (0, 2000))):
         teaching = np.concatenate([cf, meta["calibration"]] + ([meta["negative"]] if negatives else []))
         teaching_guesses = np.concatenate([cp, guesses["calibration"]] + ([guesses["negative"]] if negatives else []))
         target = np.concatenate([cy, cal_correct] + ([np.zeros(negatives, dtype=bool)] if negatives else []))
         scaler = StandardScaler().fit(teaching)
         scaled = scaler.transform(teaching)
         dev_scaled = scaler.transform(meta["development"])
-        for use_class in (False, True):
+        for use_class in ((True,) if single else (False, True)):
             train = np.concatenate([scaled, np.eye(len(labels))[teaching_guesses]], axis=1) if use_class else scaled
             dev = np.concatenate([dev_scaled, np.eye(len(labels))[guesses["development"]]], axis=1) if use_class else dev_scaled
-            for c in (.01, .1, 1.0):
+            for c in ((.1,) if single else (.01, .1, 1.0)):
+                fit_started = time.perf_counter()
                 gate = LogisticRegression(C=c, max_iter=1000).fit(train, target)
+                gate_fit_ms = (time.perf_counter() - fit_started) * 1000
                 if gate.n_iter_.max() >= 1000:
                     raise RuntimeError("Review head failed to converge")
                 scores = gate.predict_proba(dev)[:, 1]
                 result = dict(dataset=dataset, config=dict(extra_negatives=negatives, predicted_class_feature=use_class, C=c),
+                    gate_fit_ms=gate_fit_ms,
                     review_teaching_rows=len(target), negative_targets=int((~target).sum()),
                     quality=frontier([r["label"] for r in data["development"]], pred, scores, eligible=eligible))
                 report["results"].append(result)
@@ -130,22 +151,27 @@ def run(dataset, report):
                     if threshold is not None:
                         lower = scores[scores < threshold]
                         threshold = float((threshold + lower.max()) / 2) if len(lower) else float(threshold)
-                        guard = OUTPUT / f"review-{dataset}-guard.npz"
+                        guard = OUTPUT / f"{report['file_prefix']}-{dataset}-guard.npz"
                         np.savez_compressed(guard, mean=scaler.mean_, scale=scaler.scale_, weights=gate.coef_[0], bias=gate.intercept_[0])
                         report["datasets"][dataset]["selected"] = dict(config=result["config"], threshold=threshold,
                             guard_sha256=hashlib.sha256(guard.read_bytes()).hexdigest(),
                             outcomes=[dict(group=row["group"], truth=row["label"], prediction=str(pred[i]), score=float(scores[i]),
                                            needs_review=bool(not eligible[i] or pred[i] == "oos" or scores[i] < threshold))
                                       for i, row in enumerate(data["development"])])
-                (HERE / "results/review-teaching-development.json").write_text(json.dumps(report, indent=2) + "\n")
+                (HERE / "results" / f"{report['file_prefix']}-teaching-development.json").write_text(json.dumps(report, indent=2) + "\n")
     del candidate, model, compiler, prepared, encoder
     gc.collect()
 
 
 if __name__ == "__main__":
-    report = dict(scope="experiment 2a: development review teaching only; no official/reserve scoring",
-                  protocol_sha256=hashlib.sha256((HERE / "REVIEW_TEACHING_PROTOCOL.md").read_bytes()).hexdigest(),
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--consistent-clinc", action="store_true", help="Fixed experiment 2b; keeps 2a results intact")
+    single = parser.parse_args().consistent_clinc
+    protocol = "CONSISTENT_FEATURES_PROTOCOL.md" if single else "REVIEW_TEACHING_PROTOCOL.md"
+    report = dict(scope=f"experiment {'2b' if single else '2a'}: development only; no official/reserve scoring",
+                  experiment="2b" if single else "2a", file_prefix="consistent-review" if single else "review",
+                  protocol_sha256=hashlib.sha256((HERE / protocol).read_bytes()).hexdigest(),
                   datasets={}, results=[], live_teacher_calls=0)
     with threadpool_limits(limits=1):
-        for dataset in ("clinc150", "banking77"):
-            run(dataset, report)
+        for dataset in (("clinc150",) if single else ("clinc150", "banking77")):
+            run(dataset, report, single=single)
