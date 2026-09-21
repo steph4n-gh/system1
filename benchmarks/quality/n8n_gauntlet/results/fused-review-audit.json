@@ -1,0 +1,12 @@
+{
+  "scope": "recorded fused-review lineage and adapter audit; no model inference or test access",
+  "qualified": false,
+  "source_sha256": "163e242002f537c79be50a80b2d55577ed1e3759b71cc04fe8eaf7709d295be5",
+  "runtime_sha256": "25b2224077da7a75f01bd543abc5cf07b565cae013e6cc280f0a820f0393872f",
+  "frozen_files_unchanged": 147,
+  "declared_sources_verified": 10,
+  "fold_lexical_vocabularies_reconstructed": 3,
+  "outcomes_verified": 3095,
+  "intent_head_and_lexical_config_unchanged": true,
+  "max_selection_runtime_review_difference": 9.019106247398767e-07
+}

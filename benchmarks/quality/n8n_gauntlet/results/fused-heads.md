@@ -86,3 +86,8 @@ checks all four bundles and eight declared sources, and confirms all 147 earlier
 frozen files are unchanged. The next steps remain full review/runtime validation,
 resolution of both workloads' failures, independent full-scope confirmation and
 the qualified n8n disconnection recording. PR #3 stays open; no release.
+
+The subsequent [complete review and adapter check](fused-review.md) has now
+finished: 79.30% supported coverage fails the unchanged 80% target, despite
+99.66% accepted accuracy and 2.80 ms p95. The candidate does not replace the
+incumbent. The raw gain above was insufficient for a useful coverage gain.

@@ -1,0 +1,22 @@
+{
+  "scope": "saved fused-review System1 artifact; not qualification or new timing",
+  "qualified": false,
+  "runtime_report_sha256": "25b2224077da7a75f01bd543abc5cf07b565cae013e6cc280f0a820f0393872f",
+  "os_network_denial_errno": 1,
+  "blocked_imports": [
+    "scipy",
+    "sklearn"
+  ],
+  "results": [
+    {
+      "dataset": "clinc150",
+      "condition": "fused-review",
+      "manifest_sha256": "c2144c382e66453d2eb0bd6b365ed44a6b930fa522c1deb2a8d28e17f075cb48",
+      "matching_recorded_responses": 100,
+      "score_tolerance": 1e-12,
+      "changed_contracts_reviewed": 2,
+      "malformed_requests_rejected": 6,
+      "teacher_calls": 0
+    }
+  ]
+}

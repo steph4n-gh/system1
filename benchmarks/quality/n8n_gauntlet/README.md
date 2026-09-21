@@ -28,7 +28,14 @@ while banking falls from 1,787 to 1,773 out of 1,960. All 10,110 development
 outcomes and four saved heads are retained. Only CLINC advances to a separately
 declared full review comparison; simple confidence/margin policies still fail
 80% coverage at the quality targets. No current adapter is replaced and no new
-complete-adapter latency or qualification is claimed.
+complete-adapter latency or qualification is claimed by that head probe.
+
+The [completed fused-review follow-up](results/fused-review.md) fails coverage:
+2,375/2,995 supported requests accepted (79.30%), with 2,367 correct (99.66%)
+and 1/100 unfamiliar false acceptance. Complete p95 is 2.80 ms. All 3,095 saved
+adapter responses match selection, with zero teacher calls or runtime errors.
+The higher raw head accuracy does not improve useful coverage. All incumbents
+remain; banking quality and independent full-scope confirmation are unresolved.
 
 The [earlier regression failure](results/observed-regression.md) and original
 held-out failure remain unchanged. Development gains below have not resolved
@@ -59,7 +66,7 @@ to 76.28%, while agreement without learned review accepts 6/100 unfamiliar CLINC
 requests. It reuses recorded development responses and makes no joint-latency or
 qualification claim; no ensemble was added.
 
-The latest [input-feature review comparison](results/context-review.md) adds no
+The earlier [input-feature review comparison](results/context-review.md) adds no
 encoder or teacher call. CLINC System1 gains 16 accepted development cases, but
 also one mistake: 2,584/2,610 correct (99.0038%), with 1/100 unfamiliar acceptance
 and 2.78 ms p95. Banking ties its incumbent; stronger baseline incumbents remain.

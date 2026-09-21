@@ -36,6 +36,13 @@ gauntlet: the original banking accuracy failure remains unresolved. Simple
 confidence/margin policies still fail coverage, and all current complete
 adapter selections remain unchanged. No encoder weights or core APIs changed.
 
+That [complete fused-review check](results/fused-review.md) is now finished.
+It accepts 2,375/2,995 supported development requests (79.30%), below 80%, at
+99.66% accepted accuracy, 1/100 unfamiliar false acceptance and 2.80 ms complete
+p95. All 3,095 saved-runtime outcomes match selection, but coverage loses to the
+incumbent. This avenue has not resolved either workload's failed qualification;
+all four current selections remain unchanged.
+
 The two concrete deficiencies are unfamiliar-input rejection and banking
 distinctions. Keep the encoders fixed and first investigate better teaching of
 those decisions. Another encoder, ensemble, larger framework or new product
