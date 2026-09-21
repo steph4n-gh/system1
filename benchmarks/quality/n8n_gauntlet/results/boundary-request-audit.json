@@ -1,6 +1,6 @@
 {
   "scope": "prompt lineage only; no teacher call or model evaluation",
-  "request_manifest_sha256": "30bace80e5ce3c1f8953a2635b594bab2553cff74789b91c1c975a22c5f49c5d",
+  "request_manifest_sha256": "e1df0d39283811b11e2c600ec0b7cd8b6f2e5b9a0eeb5e8f3ebfa8c8d3a16aeb",
   "checks": [
     {
       "dataset": "clinc150",
@@ -17,5 +17,13 @@
   ],
   "planned_api_calls": 227,
   "supported_proposals": 2724,
-  "unsupported_proposals": 1200
+  "unsupported_proposals": 1200,
+  "initial_request_manifest_sha256": "30bace80e5ce3c1f8953a2635b594bab2553cff74789b91c1c975a22c5f49c5d",
+  "pre_api_correction": {
+    "reason": "Original BANKING77 label reverted_card_payment? rejected by overly strict filename whitelist",
+    "api_attempts_before_correction": 0,
+    "payloads_and_labels_unchanged": 227,
+    "original_code_sha256": "acf324e834dd82b8475129fbb5a406bd1a0a5bef747bde3b5fac0bde195eeff1",
+    "corrected_code_sha256": "c3b80d44abfa3bed7ed6cf119dd0d46900db471586f8ef2ddafd5289d01e099e"
+  }
 }

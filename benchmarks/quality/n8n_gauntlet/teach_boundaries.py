@@ -135,7 +135,8 @@ def checked_requests():
     if len(report["requests"]) != report["max_calls"] or report["max_calls"] != 227:
         raise ValueError("Declared call budget changed")
     ids = [r["id"] for r in report["requests"]]
-    if len(set(ids)) != 227 or any(not i.replace("_", "").replace("-", "").isalnum() for i in ids):
+    # BANKING77's original taxonomy includes `reverted_card_payment?`.
+    if len(set(ids)) != 227 or any(not i.replace("_", "").replace("-", "").replace("?", "").isalnum() for i in ids):
         raise ValueError("Invalid request identities")
     for item in report["requests"]:
         if item["request_sha256"] != payload_digest(item["payload"]):

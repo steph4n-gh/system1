@@ -27,6 +27,13 @@ def response(supported, unsupported=None):
                 usageMetadata=dict(promptTokenCount=5, candidatesTokenCount=8))
 
 
+def test_original_banking_punctuation_survives_request_preflight(teaching, monkeypatch):
+    monkeypatch.setattr(teaching, "committed", lambda paths: "test")
+    requests = teaching.checked_requests()["requests"]
+    assert len(requests) == 227
+    assert any(r["id"] == "banking77-reverted_card_payment?" for r in requests)
+
+
 def test_failed_attempt_is_not_retried_or_leaked(teaching, tmp_path, monkeypatch):
     calls = []
     def fail(request, **kwargs):
