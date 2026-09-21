@@ -1,8 +1,11 @@
 """Keep official tests intact while excluding their groups from teaching."""
-from benchmarks.quality.n8n_gauntlet.prepare import group, partition, rows
+from pathlib import Path
 
 
-def test_gauntlet_reserves_test_groups_and_excludes_conflicting_training_labels():
+def test_gauntlet_reserves_test_groups_and_excludes_conflicting_training_labels(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from benchmarks.quality.n8n_gauntlet.prepare import group, partition, rows
+
     training = rows([(f"support request {i}", "a") for i in range(100)] + [
         ("OFFICIAL test!", "a"), ("conflicting example", "a"),
         ("conflicting example", "b"), ("support request 1", "a"),
@@ -19,7 +22,10 @@ def test_gauntlet_reserves_test_groups_and_excludes_conflicting_training_labels(
     assert group(" Straße! ") == group("STRASSE")
 
 
-def test_gauntlet_official_validation_takes_priority_over_training():
+def test_gauntlet_official_validation_takes_priority_over_training(monkeypatch):
+    monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1]))
+    from benchmarks.quality.n8n_gauntlet.prepare import partition, rows
+
     training = rows([(f"request {i}", "a") for i in range(100)], "train")
     validation = rows([("request 0", "a"), ("final test", "a")], "val")
     test = rows([("final test!", "a")], "test")
