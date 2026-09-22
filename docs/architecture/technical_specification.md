@@ -1,8 +1,8 @@
 # System 1 architecture and implementation
 
-Implementation reference for **System 1 1.0.3** and the current source checkout,
-reviewed 22 September 2026. [Unreleased changes](../../CHANGELOG.md#unreleased)
-are not yet part of the published package.
+Implementation reference for **System 1 1.1.0**, reviewed 22 September 2026.
+See the [release changes](../releases/1.1.0.md) and
+[changelog](../../CHANGELOG.md) for version boundaries.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
 [pyproject.toml](../../pyproject.toml).
@@ -47,7 +47,7 @@ it does not run the teacher, execute a tool, or perform the entire lifecycle.
 | `TfidfProjector` | Optional fitted word unigram/bigram vocabulary, smoothed IDF and sublinear term frequency; frozen during inference and saved in the skill | [text features](../../src/system1/core/text.py) |
 | `HybridProjector` | Optional hashed lexical features plus a seeded subword table with curated semantic anchors | [embeddings](../../src/system1/core/embeddings.py) |
 | `SystemOneCompiler` | Validate labels, partition examples, fit ridge or optional logistic choice heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
-| `TeachingSession` (unreleased) | Retain explicit text lessons for one ChoiceField, compile/check a candidate, and explicitly adopt the exact passing artifact | [teaching lifecycle](../../src/system1/teaching.py) |
+| `TeachingSession` (since 1.1.0) | Retain explicit text lessons for one ChoiceField, compile/check a candidate, and explicitly adopt the exact passing artifact | [teaching lifecycle](../../src/system1/teaching.py) |
 | `System1Engine` / `SystemOneEngine` | Apply a schema or compiled skill, uncertainty checks, optional caching and audit evidence | [engine](../../src/system1/engine.py) |
 | TypeSafe `Client` / `AsyncClient` | Teacher observation, per-schema promotion, local typed responses and skill reuse | [adapter](../../src/system1/compat/typesafe.py) |
 | `PolicyEngine` / `SystemOneGuard` | Explicit permissions and guarded proposal evaluation | [guard](../../src/system1/guard.py) |
@@ -94,7 +94,7 @@ cross-product, with pseudoinverse/least-squares fallback on `LinAlgError`.
 It does not use the Cholesky implementation described in earlier drafts.
 Stored inference weights have shape `(number_of_outputs, feature_dimension)`.
 
-The source checkout's Python compiler also accepts `choice_solver="logistic"` for ChoiceField
+The Python compiler also accepts `choice_solver="logistic"` for ChoiceField
 heads. It minimizes summed cross-entropy plus `regularization / 2 * ||W||²`,
 with an unpenalized bias, using SciPy L-BFGS-B from the optional `teaching` extra.
 Stored coefficients are scaled by 0.25 to match the existing runtime's logit
@@ -167,8 +167,9 @@ Format-v2 `.s1m` files contain schema, projector configuration, weights, tempera
 calibration scores and score semantics; adapter exports retain evaluated review
 settings. Built-in projectors, including the optional fitted TF-IDF vocabulary, can be reconstructed. External projectors must be
 supplied and should expose a configuration digest. Readers validate versions,
-shapes, schema identity and finite numerical values. Version 1.0.3 also reads v1
-skills with legacy APS semantics; 0.2.x readers cannot read v2.
+shapes, schema identity and finite numerical values. The 1.1.0 reader also supports v1
+skills with legacy APS semantics; 0.2.x readers cannot read v2. TF-IDF skills
+require a 1.1.0-or-newer reader even though they use the existing v2 container.
 
 The loader bounds file/header size, schema complexity, compressed and expanded
 arrays, and runtime allocation before materializing arrays or projectors. It
@@ -181,7 +182,7 @@ and its aliases, invalidate changed heads' calibration and caches. Recalibrate
 on separate examples before strict acceptance. Retaining examples and recompiling
 is the simplest reproducible update process.
 
-The unreleased, additive `TeachingSession` helper implements that process for a
+The additive `TeachingSession` helper introduced in 1.1.0 implements that process for a
 text classifier with one `ChoiceField` whose `escalate_on_ambiguity` is enabled.
 The helper rejects a schema that suppresses its review flag. Separate `teach`,
 `calibrate`, and `evaluate` records feed a TF-IDF/ridge candidate, strict

@@ -135,7 +135,7 @@ For “The payment page crashes,” our desired answer is `support`: the issue i
 broken software. Correct the lesson, then check different messages for **both**
 teams before adopting a revision.
 
-The new source-only `TeachingSession` workflow keeps that process together.
+The `TeachingSession` workflow, available in System 1 1.1.0, keeps that process together.
 First [create a session with separate lessons and checks](docs/guides/correcting_skills.md).
 Once initialized, a correction looks like this:
 
@@ -281,17 +281,16 @@ the practical value is the complete path from examples to a checked local skill.
 
 ## Release and development
 
-This README follows the current source checkout. `TeachingSession`, its CLI and
-document-workspace adoption flow, the optional logistic teaching method, and
-latest experimental labs are source changes listed
-under [Unreleased](CHANGELOG.md#unreleased); merging them does not publish a new
-PyPI version.
+**Version 1.1.0:** adds `TeachingSession`, `system1 teach`, portable TF-IDF text
+skills and optional logistic teaching. Existing compiler/engine APIs and saved
+hashed skills remain supported. TF-IDF skills require a 1.1.0-or-newer reader.
 
-**Version 1.0.3:** authenticated audit receipts, checked ledger inclusion, bounded
-saved-skill loading and registered gRPC schemas. Includes the numeric teaching
-fix and supervised Paperclips example.
-See the [release report](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.3.md)
-and [1.0 migration guide](https://github.com/steph4n-gh/system1/blob/main/docs/releases/1.0.md).
+The document workspace and gaming/integration labs remain experimental examples
+run from a repository checkout. Publishing the runtime does not qualify their
+workloads or include every research artifact in Python distributions. See the
+[1.1.0 release report](docs/releases/1.1.0.md), [changelog](CHANGELOG.md),
+[1.0.3 security release](docs/releases/1.0.3.md) and
+[1.0 migration guide](docs/releases/1.0.md).
 The legacy `reflex` import namespace remains a compatibility alias.
 
 ```bash

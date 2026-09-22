@@ -5,17 +5,25 @@ together. **Correct a lesson → build a candidate → compare answers → expli
 adopt.** Editing a lesson or assessing a candidate does not replace the skill
 already serving your application.
 
-This is an **unreleased, additive source feature**. Install from a repository
-checkout. The first supported workflow is text classification with one
+This additive workflow is available in **System 1 1.1.0 and newer**:
+
+```bash
+python -m pip install 'system1>=1.1.0'
+```
+
+The first supported workflow is text classification with one
 `ChoiceField` with ambiguity escalation enabled (the schema default). A field
 that disables escalation is rejected because the session requires review of
 uncertain answers. Existing compiler and engine APIs, numerical algorithms, and
-`.s1m` files remain unchanged; no additional dependency is required. This helper
-uses the existing TF-IDF projector with at most 1,024 features, ridge regularization
+`.s1m` format remain unchanged; no additional dependency is required. Existing
+hashed skills remain readable. The helper's TF-IDF skills need a 1.1.0-or-newer
+reader. This helper uses the existing TF-IDF projector with at most 1,024 features,
+ridge regularization
 0.1, and strict decisions at `alpha=0.05`. These choices are confined to the helper;
 the compiler's existing defaults remain unchanged.
 
-For the visual version, run `python -m examples.teaching_by_doing`. Use
+For the experimental visual version, use a repository checkout and run
+`python -m examples.teaching_by_doing`. Use
 **Review candidate** to check a proposed document-filing skill and **Adopt
 candidate** to activate a passing revision. The
 [workspace guide](../../examples/teaching_by_doing/README.md) explains its authored

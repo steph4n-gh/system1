@@ -2,9 +2,10 @@
 
 Run examples from a repository checkout with System 1 installed. The primary
 workflow is **teach → check a candidate → adopt → run locally → correct**.
-For a text classifier with one `ChoiceField`, the source-only
-[correction workflow](../docs/guides/correcting_skills.md) uses the same unreleased
-`TeachingSession` helper in Python, the CLI and the document demo.
+For a text classifier with one `ChoiceField`, the
+[correction workflow](../docs/guides/correcting_skills.md) uses the same
+`TeachingSession` helper, available since 1.1.0, in Python, the CLI and the
+experimental document demo.
 It retains the current skill while changes are checked. Existing multi-field,
 numeric and teacher-observation examples keep their current APIs.
 The [teaching guide](../docs/guides/training_experts.md) and

@@ -1,6 +1,13 @@
 # Deployment boundaries and release limitations
 
-System 1 1.0.3 supports the NumPy teaching, calibration, local decision, portable skill, observation/cutover, and explicit policy/audit paths. See the [current release evidence](releases/1.0.3.md) and subsequent [public-workload evaluation](../benchmarks/quality/workloads/README.md). Current papers describe these same boundaries; earlier release reports retain their version-specific measurements.
+System 1 1.1.0 supports NumPy teaching, calibration, local decisions, portable
+skills, observation/cutover and explicit policy/audit paths. It adds retained
+teaching sessions with candidate assessment and explicit adoption. See the
+[current release evidence](releases/1.1.0.md) and
+[workload evidence index](../benchmarks/quality/README.md). Experimental labs and
+successful workflow checks do not establish production quality for their tasks.
+Current papers describe these same boundaries; earlier release reports retain
+their version-specific measurements.
 
 ## Deterministic tool authorization
 

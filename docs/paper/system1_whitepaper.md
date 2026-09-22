@@ -1,11 +1,12 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.0.3 + current source changes · 22 September 2026**
+**steph4n-gh · System 1 1.1.0 · 22 September 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
 
-This document follows the source checkout. [Unreleased changes](../../CHANGELOG.md#unreleased)
-are separate from the published 1.0.3 package.
+This document describes [System 1 1.1.0](../releases/1.1.0.md). Measurements retain
+the original source revisions and evidence linked in each experiment; this
+release does not make historical results fresh evaluations.
 
 System 1 is **not an LLM**. Its built-in local path fits small numerical decision
 heads and requires no language-model download, token generation or GPU. It can
@@ -24,7 +25,7 @@ enable automatic local takeover on a six-intent assistant task. Banking and SMS
 observation tests expose limits, retained alongside the successful results.
 The later full-scope n8n gauntlet remains unqualified; its teacher-disconnection
 rehearsal establishes integration behavior, not successful quality qualification.
-A source-only correction-workflow experiment on real BBC articles reduces accepted
+A pre-release correction-workflow experiment on real BBC articles reduces accepted
 mistakes by requesting more review; every candidate fails the default adoption
 policy. These results distinguish successful workflow checks from workload readiness.
 
@@ -63,7 +64,7 @@ For explicit teaching, `SystemOneCompiler(...).compile(examples, augment=False)`
 fits regularized linear heads. The default ridge implementation augments features
 with a bias, computes regularized normal equations using NumPy, and retains calibration
 metadata. Temperature fitting and conformal scoring use separate examples.
-The source compiler additionally offers opt-in `choice_solver="logistic"` for
+The compiler additionally offers opt-in `choice_solver="logistic"` for
 choice fields: SciPy minimizes cross-entropy with L2-regularized weights and an
 unpenalized bias during teaching. It saves the existing NumPy head format. Ridge
 remains the default, including automatic observation. See the
@@ -93,7 +94,7 @@ count both parts; the default projector measurements cannot be applied to them.
 
 ### Retained lessons, candidate assessment and explicit adoption
 
-The source-only `TeachingSession` adds a reproducible correction workflow for
+`TeachingSession`, introduced in 1.1.0, adds a reproducible correction workflow for
 one text `ChoiceField`, with ambiguity escalation enabled so uncertain answers
 request review. It retains explicitly labeled `teach`, `calibrate` and
 `evaluate` records. A same-input correction replaces a record; normalized inputs
@@ -220,7 +221,7 @@ remain deferred under the stronger policy, and a routing revision is not adopted
 The [evidence index](../../benchmarks/quality/README.md) retains these failures,
 recipes and comparisons alongside the original results.
 
-### Real-document correction workflow (unreleased)
+### Real-document correction workflow (pre-release experiment)
 
 The [BBC experiment](../../benchmarks/quality/document_workflow/README.md) evaluates
 the new session workflow on all five news topics using published labels as
@@ -320,5 +321,5 @@ research history, rather than treating later experiments as revisions of older
 measurements.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
-local reuse*, version 1.0.3. Cite the source revision and linked evidence when
+local reuse*, version 1.1.0. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.

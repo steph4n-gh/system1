@@ -4,8 +4,9 @@ File a document in **Finance**, **People** or **Projects**. That action records
 the visible text and the folder you chose as an explicit lesson. Review a
 candidate, compare it with the approved skill, then adopt it explicitly. The
 interface uses the shared `TeachingSession` lifecycle and adds no dependencies.
-This workflow is unreleased; use the current source checkout, not the published
-1.0.3 package on its own.
+`TeachingSession` is part of System 1 1.1.0. This experimental browser demo runs
+from a repository checkout; installing the core package alone does not install
+the example workspace.
 
 ## Try the workspace
 

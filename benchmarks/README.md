@@ -9,7 +9,7 @@ The [1.0.2 quality round](quality/quality_round/README.md) adds stricter qualifi
 a measured SMS takeover improvement and fresh authored failures. System 1 remains
 a small local decision runtime, not an LLM.
 
-The unreleased [real-email experiment](quality/public_email/README.md) adds public
+The [real-email experiment](quality/public_email/README.md) adds public
 SpamAssassin teaching and evaluation with no credentials: 603/618 accepted
 decisions correct on a representative grouped split, with a separate failed
 source-shift experiment retained. Neither result qualifies seven-category routing.
