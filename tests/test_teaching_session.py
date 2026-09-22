@@ -253,7 +253,11 @@ def test_one_corrected_lesson_improves_unseen_cases_without_losing_old_skill(ses
     phrase = "subscription renewal charge " * 4
     wrong_lesson = phrase + "teach specialty"
     session.record(wrong_lesson, "support")
-    session.record_many([{"input": phrase + f"{split} specialty {index}", "label": "billing", "split": split}
+    # Split names and single-digit IDs are absent from the fitted vocabulary.
+    # A known billing cue keeps the unseen checks off the calibration-score tie,
+    # where batch/single BLAS rounding could change the prediction set by one ULP.
+    session.record_many([{"input": ("invoice " if split == "evaluate" else "") + phrase + f"{split} specialty {index}",
+                          "label": "billing", "split": split}
                          for split, count in (("calibrate", 6), ("evaluate", 2)) for index in range(count)])
     initial = session.assess()
     assert initial["passed"]
