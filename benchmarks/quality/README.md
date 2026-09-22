@@ -1,5 +1,32 @@
 # System 1 Decision Engine — Quality Benchmark Suite
 
+Use this index to distinguish a working product flow from a qualified workload.
+**Raw accuracy, accepted correctness, acceptance coverage, and execution cost
+answer different questions.** A passing recurring check is regression evidence;
+it is not fresh confirmation after its outcomes have informed development.
+
+| Workload / evidence | Status and scope | Baseline or comparison |
+|---|---|---|
+| [Three bounded public-data skills](workloads/README.md) — three banking intents, six assistant intents, SMS | Original fitting/calibration/test splits; all three meet the stated 95% accepted-correctness / 80% acceptance point targets. These fixed tests are now regression evidence. | Matched TF-IDF/logistic regression is faster on all three; raw quality ties banking/assistant and is lower on SMS. |
+| [Actual Jev/Gemini observation](workloads/README.md) | Both teach the six-intent assistant takeover after 358 observations. Other teacher/task combinations defer or miss independent quality targets. | Original-label teacher and saved/reloaded local outputs; provider and local timing cohorts are not a matched speedup test. |
+| [Stronger qualification / fresh authored probes](quality_round/README.md) | Fuller SMS teaching improves the old test; new SMS accepted correctness is 27/33 (81.8%). Banking/assistant remain deferred; routing revision rejected. | Original recipes and unchanged skills; authored probes are diagnostics, not customer evidence. |
+| [Public SpamAssassin mail](public_email/README.md) | Source shift fails at 89.9% accepted correctness; subsequent retrospective grouped split reaches 603/618 (97.6%). Binary spam/ham only. | Conventional classifier has slightly better raw correctness on the representative split. |
+| [Inbox Zero pilot](../../examples/inbox_zero/README.md) | Upstream compatibility and authored synthetic email; accepted mistakes remain. Review-only, without independent mailbox qualification. | Earlier hashed skill, broader TF-IDF skill, and conventional classifier. |
+| [Full-scope n8n gauntlet](n8n_gauntlet/README.md) | All 150 CLINC / 77 banking intents remain unqualified: accepted accuracy fails on both; unfamiliar rejection fails on CLINC. Rehearsal proves integration only. | Matched conventional and research candidates; exact artifacts, failures and costs retained. |
+| [Document teaching workspace](../../examples/teaching_by_doing/README.md) | Demonstrates lessons, corrections, candidate comparison and explicit adoption on recurring authored checks. Historical sample evidence includes an accepted unusual-input error. | Approved skill versus candidate on the same checks; no independent production qualification. |
+| [Real-document correction workflow](document_workflow/README.md) — five BBC news topics | Fresh 400-article holdout: targeted feedback halves accepted errors (16→8), while coverage falls from 93.25% to 84.25%. All candidates fail the default zero-error development adoption gate. | Initial skill and equal-count ordinary extra lessons; no adopted skill or proven raw-accuracy gain. |
+| [Games and composed skills](../../examples/README.md) | Snake planner hints, courier wiring, and bounded Pokémon/Paperclips policies have separate scopes. No general agency or independent game-reasoning claim. | Per-experiment rules, planner accounting, retained-label baselines and paired runs; inspect each report. |
+
+The new [correction workflow](../../docs/guides/correcting_skills.md) makes these
+distinctions visible while improving a single text-choice skill. Its default
+adoption thresholds are a demonstration policy, not a new quality benchmark or
+production guarantee. Use representative labeled traffic and task-specific
+thresholds to qualify your own skill. Keep evaluation evidence out of fitting and
+calibration, and check completed workflow outcomes when decisions cause actions.
+
+Recent reproduction paths follow. Historical benchmark tables and raw reports
+remain below and in their linked directories; no failed result has been removed.
+
 ## Full-scope n8n gauntlet: unqualified
 
 The [gauntlet index](n8n_gauntlet/README.md) retains the preregistered protocol,

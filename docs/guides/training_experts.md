@@ -4,6 +4,13 @@ If you are new to labeling examples or correcting a skill, start with
 [Teach your first skill](first_skill.md). It explains those terms using a copyable
 message-and-answer file. This page covers the underlying API and data contracts.
 
+For a text classifier with one `ChoiceField`, use the new source-only
+[correction workflow](correcting_skills.md): retain lessons, assess a separate
+candidate, compare it with the approved skill, and adopt explicitly. It wraps the
+existing compiler and strict engine without changing their APIs or saved format.
+This page remains the reference for lower-level compilation, multiple fields,
+numerical telemetry and other output types.
+
 System 1 learns a particular decision from labeled examples, saves it as a small
 `.s1m` file, and applies it locally. A person, an existing system, or a reasoning
 model can supply the examples. An LLM is not required.
@@ -199,10 +206,13 @@ Its [lesson file](../../examples/teaching/paperclips_wire.json) teaches the same
 question with different wire supplies; its [walkthrough](../../examples/gaming/PAPERCLIPS_TEACHING.md)
 shows the saved skill, a supervised live purchase, and the remaining boundary errors.
 
-Check both accuracy and how often the skill can answer without review. Examine
-mistakes by label, especially costly mistakes. A small calibration set or a weak
-skill can mean every input needs review. There is no guaranteed example count
-that makes a skill reliable, and calibration is not proof of correct permissions.
+Measure raw accuracy, accepted errors and acceptance coverage separately.
+Low raw accuracy points to the learned decision or input representation; more
+calibration alone cannot correct the chosen labels. High raw accuracy with low
+coverage calls for examining the withheld cases and calibration evidence. Those
+patterns guide investigation, not a proven diagnosis. Examine mistakes by label,
+especially costly mistakes. There is no guaranteed example count that makes a
+skill reliable, and calibration is not proof of correct permissions.
 
 For current measured behavior, use the [public-workload evidence](../../benchmarks/quality/workloads/README.md).
 The [teacher adapter guide](../typesafe.md) covers observing Jev or another
@@ -210,6 +220,11 @@ callback, including the completed Gemini demonstration. A bundle such as
 `examples/teaching/support_triage.json` contains `teach`, `calibration` and
 `evaluate` splits; its example helper converts these into compiler field mappings.
 Pass a field mapping or record list, not the whole bundle, to CLI `--dataset`.
+
+That is the **`system1 compile`** format. The new **`system1 teach`** session
+command instead accepts a JSON object with `teach`, `calibrate` and `evaluate`
+keys, each containing `[text, label]` pairs. These formats are deliberately
+separate; see the [session walkthrough](correcting_skills.md#the-same-workflow-from-the-cli).
 
 To reproduce the smaller historical development comparison:
 
@@ -230,8 +245,14 @@ Saving the revised skill uses the same runtime. Version 1.0 writes format v2
 and reads older v1 skills; older runtimes must be upgraded before reading v2.
 
 Online correction methods invalidate the changed heads' calibration in memory
-and in saved artifacts. Strict mode then requires review until recalibration. The
-simplest reproducible workflow is to retain your examples and recompile.
+and in saved artifacts. Strict mode then requires review until recalibration.
+
+For one text-choice field, `TeachingSession` retains those examples and compiles
+a separate candidate. Its report compares raw accuracy, coverage, accepted
+errors and regressions on the same recurring checks. `adopt()` requires a passing
+report and unchanged candidate, data and current skill. The
+[walkthrough](correcting_skills.md) covers defaults and their evidence limits.
+For other schemas, retain your examples and recompile with this lower-level API.
 
 The broader [expert examples](../../examples/train_expert.py) explore synthetic
 bootstrapping, online updates, and composition. They are optional. Teaching one

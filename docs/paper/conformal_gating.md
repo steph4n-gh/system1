@@ -1,9 +1,9 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.0.3 + current source changes · 21 September 2026 · Implementation notes, not new theorems**
+**System 1 1.0.3 + current source changes · 22 September 2026 · Implementation notes, not new theorems**
 
 This note follows the source checkout, including the
-[unreleased optional teaching method](../../CHANGELOG.md#unreleased).
+[unreleased teaching workflow and optional fitting method](../../CHANGELOG.md#unreleased).
 
 This note describes the mathematics used by the runtime and the assumptions
 needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the
@@ -162,9 +162,11 @@ limit exact equivalence. A positive diagonal alone does not prove positive
 definiteness; rescaling a matrix alone does not improve its condition number.
 No fixed latency, unlimited stability or immunity to forgetting is implied.
 
-Most users can retain corrected examples and recompile. If online correction is
-used, changed weights invalidate their old calibration, in memory and saved
-artifacts. Strict inference requests review until separate recalibration. A
+The source-only `TeachingSession` workflow retains corrected examples and
+recompiles a separate TF-IDF/ridge candidate, then recalibrates it on its separate
+calibration records. It does not use the online update formulas above or mutate
+the approved skill during assessment. If online correction is used directly,
+changed weights invalidate their old calibration, in memory and saved artifacts. Strict inference requests review until separate recalibration. A
 teacher label is fallible supervision, so one correction should not be described
 as making every unseen related case correct.
 
@@ -186,3 +188,15 @@ The [n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md) is a separat
 selective-classification experiment with learned review policies and failed
 quality gates. Its development scores are not conformal guarantees or independent
 confirmation of accepted correctness or unfamiliar-input rejection.
+
+The new session's adoption checks are an explicit empirical policy over recurring
+development cases: raw accuracy, acceptance coverage, accepted-error count and
+loss of previously accepted correct answers. Their default zero-error requirement
+is neither a conformal theorem nor a future-error guarantee. Reusing checks to
+choose corrections does not create independent validation evidence. The
+[BBC workflow experiment](../../benchmarks/quality/document_workflow/README.md)
+keeps a separate final holdout: a candidate meets its 95% accepted-correctness /
+80% coverage targets yet is correctly refused by the stricter development
+adoption policy. Its narrower accepted set also yields fewer correct automatic
+answers. Neither a Wilson interval nor a small accepted-error count proves a
+better decision policy without considering coverage and application costs.

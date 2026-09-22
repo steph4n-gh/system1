@@ -18,3 +18,5 @@ recursive-include examples/gaming/skill_playground/results *.gz *.zip
 recursive-include examples/gaming/pokemon_teaching/results *.gz *.zip
 
 recursive-include examples/teaching_by_doing/results *.zip
+
+recursive-include benchmarks/quality/document_workflow/results *.zip

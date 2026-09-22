@@ -1,7 +1,12 @@
 # Example catalog
 
 Run examples from a repository checkout with System 1 installed. The primary
-workflow is **teach or observe → validate → run locally → save and reuse**.
+workflow is **teach → check a candidate → adopt → run locally → correct**.
+For a text classifier with one `ChoiceField`, the source-only
+[correction workflow](../docs/guides/correcting_skills.md) uses the same unreleased
+`TeachingSession` helper in Python, the CLI and the document demo.
+It retains the current skill while changes are checked. Existing multi-field,
+numeric and teacher-observation examples keep their current APIs.
 The [teaching guide](../docs/guides/training_experts.md) and
 [teacher adapter](../docs/typesafe.md) describe the supported core.
 
@@ -10,7 +15,7 @@ The [teaching guide](../docs/guides/training_experts.md) and
 | Example | What it demonstrates |
 |---|---|
 | [teach_skill.py](teach_skill.py) | Eight editable lessons; custom lesson file, message and saved path; [beginner walkthrough](../docs/guides/first_skill.md) |
-| [teaching_by_doing/](teaching_by_doing/README.md) | Browser workspace: demonstrated filing choices become lessons, with corrections, separate checks, portable exports and retained sample failures |
+| [teaching_by_doing/](teaching_by_doing/README.md) | Browser workspace: explicit filing lessons, before/after candidate checks, explicit adoption and portable skills; historical sample failures remain available |
 | [support_triage.py](support_triage.py) | Taught department routing, calibration, saved/reloaded evaluation |
 | [model_routing.py](model_routing.py) | A stated routing policy; does not call downstream models |
 | [agent_guard.py](agent_guard.py) | Operation classification plus a separate explicit permission/audit example |
@@ -28,6 +33,13 @@ python examples/banking_support.py
 rates separately. The [public-workload runner](../benchmarks/quality/workloads/README.md)
 adds six assistant intents, SMS and actual Jev/Gemini takeover with offline replay.
 No live credentials are needed for the commands above.
+
+The separate [real-document workflow test](../benchmarks/quality/document_workflow/README.md)
+uses published BBC topic labels as simulated feedback, not the fictional folders
+from the browser demo. Targeted lessons reduced accepted mistakes with more
+review; no candidate passed the default adoption gates. The report retains the
+ordinary-addition control and full failure evidence. It does not qualify the
+demo's filing policy on real office documents.
 
 ## API and experimental demonstrations
 

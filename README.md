@@ -11,7 +11,7 @@ no language-model weights to download, no token generation, and no GPU required.
 Optional **MLX support** runs
 decision-head matrix operations on Apple Silicon.
 
-**Choose a decision → show examples → check answers → save and reuse → improve.**
+**Choose a decision → show examples → check a candidate → adopt → correct and compare.**
 
 [![CI](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml/badge.svg)](https://github.com/steph4n-gh/system1/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/system1.svg)](https://pypi.org/project/system1/)
@@ -60,8 +60,9 @@ On Windows, activate the environment with `.venv\Scripts\activate` instead.
 
 **Prefer to teach by doing?** Run `python -m examples.teaching_by_doing` and open
 http://127.0.0.1:8791/. File fictional document cards into folders; each choice
-becomes a lesson. Teach, try different documents, correct earlier choices and
-download the saved skill. The [document workspace](examples/teaching_by_doing/README.md)
+becomes a lesson. Review a candidate, compare its answers, then explicitly adopt
+a passing revision. Correct earlier choices while keeping the approved skill
+available, and download that skill for reuse. The [document workspace](examples/teaching_by_doing/README.md)
 explains the flow and reports its sample results, including mistakes.
 
 ### 1. Choose one decision
@@ -130,20 +131,30 @@ uncertain answer into an approved one.
 
 ### 5. Improve with a correction
 
-Copy the lessons and edit their answers or add varied real messages:
+For “The payment page crashes,” our desired answer is `support`: the issue is
+broken software. Correct the lesson, then check different messages for **both**
+teams before adopting a revision.
 
-```bash
-cp examples/teaching/first_skill.json .system1/my-lessons.json
-python examples/teach_skill.py --lessons .system1/my-lessons.json --output .system1/candidate.s1m --prompt "The payment page crashes"
+The new source-only `TeachingSession` workflow keeps that process together.
+First [create a session with separate lessons and checks](docs/guides/correcting_skills.md).
+Once initialized, a correction looks like this:
+
+```python
+from system1 import TeachingSession
+
+# Reopen a session created with a schema and separate labeled checks.
+session = TeachingSession(".system1/support-session")
+session.record("The payment page crashes", "support")
+report = session.assess()   # Build and compare; the current skill keeps serving.
+print(report["candidate"], report["regressions"], report["reasons"])
+# After reviewing a passing report: session.adopt()
 ```
 
-For that message, our desired answer is `support`: the issue is broken software.
-If a lesson has the wrong answer, replace it. Rerun teaching, then check different
-messages for **both** teams before adopting the candidate. This keeps the earlier
-skill while you evaluate the revision. Follow the
-[worked correction](https://github.com/steph4n-gh/system1/blob/main/docs/guides/first_skill.md#what-does-correcting-a-mistake-mean)
-and [teaching API guide](https://github.com/steph4n-gh/system1/blob/main/docs/guides/training_experts.md)
-for your own output choices and separate checking data.
+The report separates raw accuracy, accepted mistakes, review rate and regressions.
+Adoption requires the exact passing candidate and unchanged data; a failed revision does not replace the
+working skill. This first workflow supports one text `ChoiceField`. The
+[eight-example starter](docs/guides/first_skill.md) and
+[lower-level teaching APIs](docs/guides/training_experts.md) remain available.
 
 ## Observe a teacher, then take over
 
@@ -184,28 +195,26 @@ The report includes original labels, fixed splits, every error and a classical
 TF-IDF/logistic-regression baseline. That baseline matched raw correctness on
 banking and assistant, scored lower on SMS, and ran faster locally on all three.
 
-The unreleased [real-email experiment](https://github.com/steph4n-gh/system1/blob/main/benchmarks/quality/public_email/README.md)
-uses public SpamAssassin labels: a representative teaching recipe accepts
-618/632 held-out spam/ham decisions, with 603/618 correct (97.6%), after 0.94 seconds
-of teaching. Median local decisions take 0.216 ms and the saved skill is 78.2 KiB.
-It retains 15 accepted mistakes and an earlier source-shift failure (89.9% accepted
-correctness). The representative split was designed after that failure; it is not
-new blinded evidence or qualification of the seven-category Inbox Zero pilot.
+Automatic observation is measured separately. Actual **Jev and Gemini 2.5
+Flash** each enabled six-intent assistant takeover after 358 observations under
+the original default policy: 171/180 test requests accepted, 167/171 correct,
+with no further teacher calls and matching saved/reloaded results.
 
-Automatic observation is measured separately. Under the original default policy,
-actual **Jev and Gemini 2.5 Flash** each enabled assistant takeover after 358
-observations: 171/180 old official test requests accepted locally, 167/171 correct,
-with no further teacher calls. Saved/reloaded results matched. Recorded teacher
-responses can be replayed offline.
+Quality does not transfer automatically to new traffic. Later authored SMS
+probes reached only 27/33 correct accepted answers (81.8%); stronger-policy
+banking and assistant takeovers remained deferred. The public-email experiments
+retain a source-shift failure and a subsequent retrospective improvement. The
+full-scope n8n skills and seven-category Inbox Zero pilot remain unqualified.
+The [workload and evidence index](benchmarks/quality/README.md) distinguishes
+these scopes, baselines, successful checks and unresolved failures. Reused test
+sets are regression evidence, not fresh independent confirmation.
 
-The [1.0.2 quality round](https://github.com/steph4n-gh/system1/blob/main/benchmarks/quality/quality_round/README.md)
-uses stronger qualification and a fuller SMS stream: 2,961 observations,
-954/980 correct accepted old-test decisions (97.3%). Banking and assistant remain
-deferred under that policy. **Fresh authored SMS probes reach only 27/33 correct
-accepted answers (81.8%)**. New banking phrasing also reveals weaknesses, and a
-routing teaching candidate was not adopted after mixed results. The old tests are
-now regression evidence; the new authored probes are diagnostics, not independent
-customer evidence. These limitations remain visible.
+The new [real-document workflow test](benchmarks/quality/document_workflow/README.md)
+used all five BBC news topics and a 400-article holdout. Targeted feedback reduced
+accepted mistakes from 16 to 8 while accepted decisions fell from 373 to 337.
+Its one-point raw-accuracy gain was inconclusive. **All candidates were rejected
+by the unchanged default adoption gates.** This demonstrates a quality/review
+tradeoff and a working refusal path, not automatic qualification of a document skill.
 
 To check the primary teaching examples and the recorded Jev comparison:
 
@@ -253,42 +262,13 @@ for identity, network and enforcement responsibilities.
 Run these labs from a repository checkout. Full n8n research artifacts and raw
 results remain in Git and are excluded from the Python package distributions.
 
-The [n8n experiment](benchmarks/quality/n8n_gauntlet/README.md) tests all 150 CLINC
-and 77 BANKING77 intents against preregistered quality, review and latency targets.
-Its [real n8n development workflow](benchmarks/quality/n8n_gauntlet/N8N.md) loads a
-saved skill and preserves explicit review on uncertainty or service failure.
-The [first held-out evaluation](benchmarks/quality/n8n_gauntlet/results/official-test.md)
-failed qualification: CLINC accepted too many unfamiliar requests, and banking
-missed the accepted-accuracy target. Both passed coverage and latency. The
-[later full-scope regression](benchmarks/quality/n8n_gauntlet/results/latest-regression.md)
-still misses accepted accuracy on both workloads and unfamiliar rejection on
-CLINC. Subsequent development gains do not establish qualification; independent
-confirmation and the qualified recording remain outstanding. A
-[development rehearsal](benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
-now verifies real Gemini fallback, then local decisions and explicit review after
-the teacher process is stopped. It does not establish quality qualification.
-
-The [teaching playground](examples/gaming/skill_playground/README.md) combines
-three saved skills into a courier agent. Teach a terrain correction live and
-watch it reuse its other abilities on a withheld mission. The
-[40-map experiment](examples/gaming/skill_playground/RESULTS.md) reports
-composition, correction, baselines and review limits; it is an experimental
-example with explicit application wiring.
-
-The [Pokémon teaching lab](examples/gaming/pokemon_teaching/README.md) applies the
-same idea to move selection and healing. It includes live correction, a constructed
-survival test (13/60 → 44/60 wins), broader results and regressions, and real
-Pokémon Red potion control. Identical edited battle saves give a smaller real-engine
-gain: 6/18 → 7/18 wins, with one regression and more potion use. The GUI lets you
-replay the same save before and after teaching. This remains a bounded experiment.
-
-The [Snake arena](examples/gaming/snake_arena/README.md) puts System1, Laya-MLX
-and Jev side by side in a live GUI. Replay the published runs without an API key,
-or run fresh comparisons. In the recorded 30-second race, System1 filled the board
-in 13.44 seconds; three equal-move runs matched Jev's preferred-move choices.
-All engines receive planner hints, so this demonstrates a tiny taught skill's
-execution cost, not independent game reasoning. See the
-[full measurements and limitations](examples/gaming/snake_arena/RESULTS.md).
+| Lab | What it demonstrates | Boundary |
+|---|---|---|
+| [Document workspace](examples/teaching_by_doing/README.md) | Filing lessons, candidate comparison and explicit adoption | Authored recurring checks, with retained mistakes; not production qualification |
+| [n8n workflow](benchmarks/quality/n8n_gauntlet/N8N.md) | Saved-skill integration and teacher disconnection | Full-scope quality gates still fail; the recording is a development rehearsal |
+| [Courier playground](examples/gaming/skill_playground/README.md) | Three wired skills and an isolated terrain correction | Constructed missions, explicit application logic and matched baselines |
+| [Pokémon lab](examples/gaming/pokemon_teaching/README.md) | Bounded move/healing skills and paired ROM replays | Real-engine wins improve 6/18 → 7/18, with a regression and more potion use |
+| [Snake arena](examples/gaming/snake_arena/README.md) | Local System1, Laya-MLX and Jev execution in a live GUI | All receive planner hints; it measures execution cost, not independent game reasoning |
 
 The [example catalog](https://github.com/steph4n-gh/system1/blob/main/examples/README.md)
 links every teaching, observation, game and integration example with its scope.
@@ -301,8 +281,9 @@ the practical value is the complete path from examples to a checked local skill.
 
 ## Release and development
 
-This README follows the current source checkout. The document workspace, optional
-logistic teaching method and latest experimental labs are source changes listed
+This README follows the current source checkout. `TeachingSession`, its CLI and
+document-workspace adoption flow, the optional logistic teaching method, and
+latest experimental labs are source changes listed
 under [Unreleased](CHANGELOG.md#unreleased); merging them does not publish a new
 PyPI version.
 
