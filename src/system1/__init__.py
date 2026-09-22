@@ -122,11 +122,12 @@ _SUBMODULE_NAMES = {
     "receipt",
     "schema",
     "telemetry",
+    "teaching",
 }
 
 # Lazy-loaded governance modules and symbols (cryptography, SQLite, reference monitor, compat)
 _MODULE_MAP = {
-    # 18 submodules
+    # Public submodules
     "cache": "system1.cache",
     "calibration": "system1.calibration",
     "cli": "system1.cli",
@@ -145,6 +146,8 @@ _MODULE_MAP = {
     "receipt": "system1.receipt",
     "schema": "system1.schema",
     "telemetry": "system1.telemetry",
+    "teaching": "system1.teaching",
+    "TeachingSession": "system1.teaching",
     # cache (Lever 1)
     "SemanticSystemOneCache": "system1.cache",
     "CacheEntry": "system1.cache",
@@ -259,6 +262,7 @@ def __dir__() -> list[str]:
 
 
 __all__ = [
+    "TeachingSession",
     # Version
     "__version__",
     # Engine & Core Results

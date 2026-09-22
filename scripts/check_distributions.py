@@ -15,13 +15,19 @@ def main(directory):
     assert source.stat().st_size < 25 * 1024**2, 'Source archive unexpectedly exceeds 25 MiB'
     with zipfile.ZipFile(wheel) as archive:
         wheel_names = set(archive.namelist())
-    assert {'system1/compiler.py', 'system1/proto/system1.proto', 'reflex/__init__.py',
-            'reflex/proto/system1.proto'} <= wheel_names
+    assert {'system1/compiler.py', 'system1/teaching.py', 'system1/proto/system1.proto',
+            'reflex/__init__.py', 'reflex/teaching.py', 'reflex/proto/system1.proto'} <= wheel_names
     assert not any(name.startswith(('benchmarks/', 'examples/')) for name in wheel_names)
     with tarfile.open(source, 'r:gz') as archive:
         source_names = {member.name.split('/', 1)[1] for member in archive.getmembers() if '/' in member.name}
     assert {'src/system1/compiler.py', 'examples/teaching_by_doing/app.py',
             'examples/teaching_by_doing/index.html', 'examples/teaching_by_doing/documents.json',
+            'src/system1/teaching.py', 'src/reflex/teaching.py',
+            'docs/guides/correcting_skills.md',
+            'benchmarks/quality/document_workflow/run.py',
+            'benchmarks/quality/document_workflow/PROTOCOL.md',
+            'benchmarks/quality/document_workflow/results/summary.json',
+            'benchmarks/quality/document_workflow/results/evidence.zip',
             'benchmarks/quality/n8n_gauntlet/prepare.py',
             'benchmarks/quality/n8n_gauntlet/boundary-teaching-requests.json'} <= source_names
     assert not any(name.startswith('benchmarks/quality/n8n_gauntlet/artifacts/') or

@@ -1,6 +1,6 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.0.3 + current source changes · 21 September 2026**
+**steph4n-gh · System 1 1.0.3 + current source changes · 22 September 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
 
@@ -24,6 +24,9 @@ enable automatic local takeover on a six-intent assistant task. Banking and SMS
 observation tests expose limits, retained alongside the successful results.
 The later full-scope n8n gauntlet remains unqualified; its teacher-disconnection
 rehearsal establishes integration behavior, not successful quality qualification.
+A source-only correction-workflow experiment on real BBC articles reduces accepted
+mistakes by requesting more review; every candidate fails the default adoption
+policy. These results distinguish successful workflow checks from workload readiness.
 
 ## 1. Problem and scope
 
@@ -35,7 +38,9 @@ exactly match a prior request, because the decision head operates on shared text
 features. This is limited statistical generalization, not newly acquired general
 language understanding.
 
-The product loop is **teach or observe → validate → run locally → save and reuse**.
+The product loop is **teach → check a candidate → adopt → correct and compare**,
+with automatic teacher observation as an alternative source of lessons and
+promotion evidence.
 A human, JSON file, decision API, LLM or application callback can provide labels.
 Teacher outputs are supervision, not automatically ground truth. Independent
 expected labels are needed to assess whether the teacher and local skill are right.
@@ -85,6 +90,37 @@ Optional research adapters may supply features from fixed pretrained text
 encoders. Those require separate encoder weights and execution, even though the
 decision head does not generate language or update the encoder. Their reports
 count both parts; the default projector measurements cannot be applied to them.
+
+### Retained lessons, candidate assessment and explicit adoption
+
+The source-only `TeachingSession` adds a reproducible correction workflow for
+one text `ChoiceField`, with ambiguity escalation enabled so uncertain answers
+request review. It retains explicitly labeled `teach`, `calibrate` and
+`evaluate` records. A same-input correction replaces a record; normalized inputs
+cannot cross splits. Related threads and paraphrases still require caller-managed
+grouping. The helper uses the existing fitted TF-IDF projector (at most 1,024
+features), ridge regularization 0.1, and strict inference at `alpha=0.05`. These
+are helper-specific choices, not changes to existing compiler or engine defaults.
+
+`assess()` compiles a separate candidate, saves/reloads it and compares it with
+the approved skill on the same evaluation rows. The report exposes raw accuracy,
+acceptance coverage, accepted errors and per-case predictions/review sets.
+A useful regression is an earlier accepted-correct case that becomes wrong or
+requires review; raw correctness regressions are also counted separately.
+`adopt()` requires a passing report and unchanged data, candidate and current
+artifact. Editing lessons or failing assessment does not replace the approved
+skill. Existing algorithms, `.s1m` format and dependencies are unchanged.
+
+The defaults require raw accuracy ≥0.8, coverage ≥0.5, no accepted errors and no
+useful regressions. They are demonstration policy, not statistical production
+qualification. Checks reused to guide corrections are recurring development
+evidence, even though excluded from fitting and calibration. Diagnostics help
+distinguish wrong raw choices from withheld choices; they do not establish causal
+failure explanations or out-of-distribution detection. For decisions acting in a
+workflow, fixed-list accuracy also cannot establish successful task completion.
+The [correction guide](../guides/correcting_skills.md) is the authoritative API and
+CLI walkthrough; the [document workspace](../../examples/teaching_by_doing/README.md)
+uses this same lifecycle.
 
 ## 3. Automatic teacher observation
 
@@ -173,26 +209,46 @@ responses reproduce promotion and quality entirely offline without API keys.
 Teacher and local latency cohorts differ, so their timings are not a matched-input
 speedup benchmark. No dollar savings are inferred from token usage.
 
-## 1.0.2 qualification follow-up
+### 1.0.2 qualification follow-up
 
-The [follow-up protocol and full results](../../benchmarks/quality/quality_round/README.md)
-retain the earlier experiments above and add an explicit 95% accepted-agreement
-requirement. Both its point estimate and exact lower bound must pass; three exact
-bounds share the repeated-attempt confidence budget. This is opt-in and does not
-change the original default policy. The adapter also exposes the compiler's
-existing regularization parameter.
+The [follow-up protocol and results](../../benchmarks/quality/quality_round/README.md)
+add opt-in accepted-agreement qualification without changing the original policy.
+With fuller label observation, SMS promotes after 2,961 cases and reaches 954/980
+correct accepted old-test decisions (97.3%). That reused test is regression
+evidence. Fresh authored SMS probes reach only 27/33 (81.8%); banking and assistant
+remain deferred under the stronger policy, and a routing revision is not adopted.
+The [evidence index](../../benchmarks/quality/README.md) retains these failures,
+recipes and comparisons alongside the original results.
 
-With regularization 0.1, a first attempt at 400 observations and a fuller available
-stream, the original-label SMS skill promotes after 2,961 observations. On the
-old test, 954/980 accepted decisions are correct (97.3%), improving on the earlier
-897/963 (93.1%). This test is now regression evidence, not a fresh independent
-experiment. Banking and assistant do not qualify under the stronger requirement.
-On 40 new authored SMS probes the promoted skill gets only 27/33 accepted answers
-right. Unchanged explicitly taught banking and SMS skills likewise miss the
-accepted-correctness target on new authored probes. A 36-lesson routing candidate
-reduces accepted errors on the older difficult cohort but misses fresh coverage
-and introduces a primary-cohort error; it is not adopted. No general quality
-claim follows from the older passing results.
+### Real-document correction workflow (unreleased)
+
+The [BBC experiment](../../benchmarks/quality/document_workflow/README.md) evaluates
+the new session workflow on all five news topics using published labels as
+simulated human feedback. A frozen protocol groups duplicate and near-duplicate
+articles before separating 100 initial lessons, 200 calibration examples,
+200 recurring adoption checks, a feedback pool and 400 final holdout articles.
+Exactly 64 wrong or reviewed examples are added after inspecting 400 feedback
+labels. An ordinary-addition control receives the same number of lessons, without
+targeting errors; it does not match the cost of inspecting labels. All candidates
+and adoption outcomes are frozen before the final holdout is scored.
+
+On that holdout, initial → targeted raw correctness is 369→373/400. The one-point
+gain has a paired 95% bootstrap interval of −1.25 to +3.5 percentage points.
+Accepted mistakes fall 16→8 while accepted decisions fall 373→337 and correct
+accepted decisions fall 357→329. The ordinary-addition control has 372/400 raw
+correct, 310/314 accepted correct and four accepted mistakes. These comparisons
+demonstrate differing review/quality tradeoffs, not a clear raw-quality or
+sample-efficiency advantage for targeted feedback.
+
+The targeted candidate meets the separate 95% accepted-correctness / 80% coverage
+holdout targets, with a 95.39–98.79% Wilson interval for accepted correctness.
+However, the recurring adoption checks retain 8, 4 and 1 accepted mistakes for
+the initial, targeted and ordinary candidates: all fail the unchanged default
+zero-error gate. Nothing is adopted, and no approved incumbent exists in this
+run. The experiment tests stale/failed rejection, not preservation of an already
+serving skill or successful adoption/reopen prediction parity. Published evidence
+includes every outcome and source hash. Historical news-topic routing does not
+qualify private document filing, unfamiliar-topic rejection or traffic drift.
 
 ## 6. Statistical and operational boundaries
 
@@ -241,46 +297,28 @@ historical SMS data does not measure modern phishing. Scripted gaming gains are
 separate [first-use policy evidence](../../benchmarks/quality/zero_shot/README.md),
 not learned strategic competence or verified speed records.
 
-The later [full-scope n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md)
-does evaluate all 150 CLINC and 77 BANKING77 intents. The latest full-scope
-regression still fails accepted accuracy on both and unfamiliar rejection on
-CLINC, despite meeting coverage and latency targets. Subsequent development
-comparisons do not supersede those failures. Independently labeled full-scope
-confirmation remains missing, as documented in the
-[source inventory](../../benchmarks/quality/n8n_gauntlet/CONFIRMATION_SOURCES.md).
-The [real teacher-disconnection rehearsal](../../benchmarks/quality/n8n_gauntlet/DISCONNECTION_REHEARSAL.md)
-uses an unqualified saved development artifact. It does not complete the promised
-qualified recording.
+Later experiments widen the scope without establishing universal quality. The
+[full-scope n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md) still fails
+accepted accuracy on all-intent CLINC and BANKING77, plus unfamiliar-input
+rejection on CLINC. Its teacher-disconnection recording is an integration
+rehearsal using an unqualified artifact; independent confirmation remains missing.
+The [Inbox Zero pilot](../../examples/inbox_zero/README.md) improves authored email
+results but retains accepted errors and lacks independent mailbox qualification.
+A separate binary [public-email experiment](../../benchmarks/quality/public_email/README.md)
+retains an 89.9% accepted-correctness source-shift failure and a later retrospective
+97.6% result, with slightly better raw correctness from its conventional baseline.
+Neither result qualifies seven-category mailbox automation or modern drift.
 
-The [document workspace](../../examples/teaching_by_doing/README.md) makes teaching
-an ordinary filing action, with explicit corrections, separate checks and skill
-export. Courier and Pokémon labs demonstrate bounded skill composition and
-retain baselines and regressions. Their scopes and results are indexed in the
-[example catalog](../../examples/README.md); they do not establish general agency.
+The [document workspace](../../examples/teaching_by_doing/README.md) demonstrates
+explicit lessons, corrections, candidate comparison and adoption on recurring
+authored checks. Courier and Pokémon labs retain bounded composition tests,
+baselines and regressions. Snake receives planner hints. None establishes general
+agency. The [evidence index](../../benchmarks/quality/README.md) and
+[example catalog](../../examples/README.md) preserve complete protocols, raw
+results, reproduction commands and each scope. They are the entry points for
+research history, rather than treating later experiments as revisions of older
+measurements.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
 local reuse*, version 1.0.3. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.
-
-
-### Email feature comparison (unreleased pilot)
-
-The [Inbox Zero experiment](../../examples/inbox_zero/README.md) compares optional
-TF-IDF features and broader authored lessons with the original hashed skill.
-On the same 35 upstream regressions, correct classifications increase from 28
-to 32, accepted choices from 5 to 24, and median direct latency falls from
-2.02 ms to about 0.20 ms. On 84 separately authored synthetic emails, the new
-candidate is correct on 83 and accepts 81, with one accepted error. These are
-not independently collected mailbox examples. The upstream cohort still misses
-the 80% acceptance target, and the pilot remains review-only by default. Existing
-public-dataset and recorded teacher measurements above are unchanged.
-
-A separate [public-email experiment](../../benchmarks/quality/public_email/README.md)
-uses SpamAssassin's original spam/ham labels. An initial source holdout yields
-1,239/1,378 correct accepted decisions (89.9%), failing the quality target. A
-subsequent retrospective grouped split with both collections represented yields
-603/618 correct accepted decisions (97.6%), accepting 618/632 inputs, with a
-96.0%–98.5% Wilson interval for accepted correctness. Teaching takes 0.94 seconds;
-median decisions take 0.216 ms. The conventional classifier has slightly better
-raw correctness in that second experiment. Neither experiment qualifies the
-seven-category integration or demonstrates robustness to modern mailbox drift.

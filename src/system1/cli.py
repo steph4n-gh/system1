@@ -2,7 +2,8 @@
 
 Provides:
 - system1 decide: Evaluates inputs against typed decision schemas.
-- system1 bench: Latency & throughput benchmark beating TypeSafe AI (Jev).
+- system1 bench: Local decision latency and throughput measurements.
+- system1 teach: Explicit corrections, candidate checks and adoption.
 - system1 calibrate: Fits temperature scaling and conformal prediction sets.
 - system1 verify-receipt: Offline cryptographic verification of decision receipts.
 """
@@ -561,6 +562,91 @@ def handle_serve_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def handle_teach_command(args: argparse.Namespace) -> int:
+    """Maintain a checked candidate without replacing the current skill."""
+    from system1.teaching import TeachingSession
+
+    try:
+        if (args.record is None) != (args.label is None):
+            raise ValueError("Use --record and --label together")
+        if args.split is not None and args.record is None:
+            raise ValueError("--split belongs to --record; datasets declare their own splits")
+        threshold_names = ("min_accuracy", "min_coverage", "max_accepted_errors", "max_regressions")
+        thresholds = {name: getattr(args, name) for name in threshold_names if getattr(args, name) is not None}
+        if thresholds and not args.assess:
+            raise ValueError("Quality thresholds belong to --assess")
+        schema = _load_schema(args.schema) if args.schema else None
+        session = TeachingSession(args.directory, schema)
+        if args.dataset:
+            with open(args.dataset, encoding="utf-8") as stream:
+                data = json.load(stream)
+            if not isinstance(data, dict) or not data or set(data) - {"teach", "calibrate", "evaluate"}:
+                raise ValueError("Dataset must map teach, calibrate and/or evaluate to lists of [text, label]")
+            rows = []
+            for split, examples in data.items():
+                if not isinstance(examples, list):
+                    raise ValueError("Each dataset split must be a list of [text, label]")
+                for example in examples:
+                    if not isinstance(example, list) or len(example) != 2:
+                        raise ValueError("Each example must be [text, label]")
+                    rows.append({"input": example[0], "label": example[1], "split": split, "source": "file"})
+            session.record_many(rows)
+        elif args.record is not None:
+            session.record(args.record, args.label, split=args.split or "teach", source="human")
+        elif args.remove is not None:
+            session.remove(args.remove)
+
+        if args.assess:
+            result = session.assess(**thresholds)
+        elif args.adopt:
+            result = session.adopt()
+        else:
+            result = session.snapshot()
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        if args.json:
+            print(json.dumps({"error": str(exc)}, ensure_ascii=False))
+        else:
+            print(f"[SYSTEM1 ERROR] {exc}", file=sys.stderr)
+        return 1
+
+    if args.json:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    elif args.assess:
+        print("Candidate passed the configured checks." if result["passed"] else "Candidate did not pass; current skill unchanged.")
+        for name in ("incumbent", "candidate"):
+            metrics = result.get(name)
+            if metrics is None:
+                continue
+            print(
+                f"{name.capitalize()}: {metrics['raw_correct']}/{metrics['count']} correct guesses; "
+                f"{metrics['accepted_correct']}/{metrics['accepted']} accepted answers correct; "
+                f"{metrics['accepted_errors']} accepted mistakes; "
+                f"{metrics['review']}/{metrics['count']} need review"
+            )
+        print(f"Previously accepted correct cases lost: {result['regressions']}")
+        for message in result.get("diagnostics", []) + result.get("reasons", []):
+            print(f"- {message}")
+        print("These are recurring development checks, not independent qualification.")
+        if result["passed"]:
+            print("Inspect the report, then run this command with --adopt to use the candidate.")
+    elif args.adopt:
+        print(f"Adopted the checked candidate: {session.current_path}")
+    else:
+        print(f"Teaching session: {Path(args.directory)}")
+        counts = result["counts"]
+        print(f"Examples: {counts['teach']} teaching, {counts['calibrate']} calibration, {counts['evaluate']} comparison checks")
+        print(f"Current skill: {session.current_path}" if result["current"] else "No skill adopted yet.")
+        if result.get("candidate_stale"):
+            print("Lessons or artifacts changed; assess again before adopting.")
+        elif result.get("adopted"):
+            print("The assessed candidate is the current skill.")
+        elif result.get("report"):
+            print("Candidate passed; inspect the report before --adopt." if result["report"]["passed"] else "Candidate did not pass; current skill unchanged.")
+        else:
+            print("Record separate examples for all three purposes, then use --assess.")
+    return 2 if args.assess and not result["passed"] else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Constructs the unified CLI argument parser for system1."""
     parser = argparse.ArgumentParser(
@@ -584,7 +670,7 @@ def build_parser() -> argparse.ArgumentParser:
     decide_parser.set_defaults(func=handle_decide_command)
 
     # Command: bench
-    bench_parser = subparsers.add_parser("bench", help="Run latency & throughput benchmark beating Jev")
+    bench_parser = subparsers.add_parser("bench", help="Measure local decision latency and throughput")
     bench_parser.add_argument("--schema", help="Schema preset ('triage', 'guard'), import path, or path to JSON schema file")
     bench_parser.add_argument("--iterations", type=int, default=100, help="Number of benchmark iterations")
     bench_parser.add_argument("--warmup", type=int, default=10, help="Number of warmup iterations")
@@ -623,6 +709,24 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON compilation summary")
     compile_parser.set_defaults(func=handle_compile_command)
 
+    teach_parser = subparsers.add_parser("teach", help="Record corrections, check a candidate, and explicitly adopt a local text skill")
+    teach_parser.add_argument("directory", help="Local teaching session directory")
+    teach_parser.add_argument("--schema", help="Single-choice schema; required when creating a session")
+    teach_action = teach_parser.add_mutually_exclusive_group()
+    teach_action.add_argument("--record", metavar="TEXT", help="Record an explicit answer or replace an earlier lesson")
+    teach_action.add_argument("--remove", metavar="TEXT", help="Remove a recorded input")
+    teach_action.add_argument("--dataset", help="JSON split mapping: teach/calibrate/evaluate to [text, label] pairs")
+    teach_action.add_argument("--assess", action="store_true", help="Teach and compare a saved candidate; leave current skill unchanged")
+    teach_action.add_argument("--adopt", action="store_true", help="Adopt the exact passing candidate if its evidence is unchanged")
+    teach_parser.add_argument("--label", help="Desired choice for --record")
+    teach_parser.add_argument("--split", choices=("teach", "calibrate", "evaluate"), help="Purpose of --record (default: teach)")
+    teach_parser.add_argument("--min-accuracy", type=float, help="Minimum raw correctness on checking examples (assessment default: 0.8)")
+    teach_parser.add_argument("--min-coverage", type=float, help="Minimum fraction answered without review (assessment default: 0.5)")
+    teach_parser.add_argument("--max-accepted-errors", type=int, help="Maximum accepted mistakes (assessment default: 0)")
+    teach_parser.add_argument("--max-regressions", type=int, help="Maximum previously accepted correct cases now wrong or reviewed (default: 0)")
+    teach_parser.add_argument("--json", action="store_true", help="Output session state or the complete candidate report as JSON")
+    teach_parser.set_defaults(func=handle_teach_command)
+
     # Command: serve
     serve_parser = subparsers.add_parser("serve", help="Start the System 1 gRPC sidecar server")
     serve_parser.add_argument("--grpc", action="store_true", default=True, help="Use gRPC transport (default)")
@@ -652,6 +756,7 @@ __all__ = [
     "handle_calibrate_command",
     "handle_verify_receipt_command",
     "handle_compile_command",
+    "handle_teach_command",
     "handle_serve_command",
     "DefaultTriageSchema",
 ]

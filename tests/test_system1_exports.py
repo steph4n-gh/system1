@@ -8,7 +8,7 @@ import pytest
 import system1
 from system1.cli import build_parser
 
-ALL_16_SUBMODULES = [
+ALL_SUBMODULES = [
     "cache",
     "calibration",
     "cli",
@@ -26,6 +26,7 @@ ALL_16_SUBMODULES = [
     "proto",
     "receipt",
     "schema",
+    "teaching",
     "telemetry",
 ]
 
@@ -41,6 +42,7 @@ def test_system1_namespace_exports():
         "BenchmarkReport",
         "decide",
         "DecisionSchema",
+        "TeachingSession",
         "DecisionField",
         "ChoiceField",
         "BooleanField",
@@ -112,16 +114,16 @@ def test_system1_namespace_exports():
 
 
 def test_system1_submodules():
-    """Verify all 16 submodules exist on system1, match disk discovery, and export valid symbols."""
+    """Verify public submodules match disk discovery and export valid symbols."""
     import types
     import pkgutil
 
     discovered = sorted([m.name for m in pkgutil.iter_modules(system1.__path__)])
-    assert discovered == ALL_16_SUBMODULES, (
-        f"Submodule inventory mismatch: discovered={discovered} vs expected={ALL_16_SUBMODULES}"
+    assert discovered == ALL_SUBMODULES, (
+        f"Submodule inventory mismatch: discovered={discovered} vs expected={ALL_SUBMODULES}"
     )
 
-    for sub in ALL_16_SUBMODULES:
+    for sub in ALL_SUBMODULES:
         assert hasattr(system1, sub), f"system1 missing submodule {sub}"
         submod = getattr(system1, sub)
         assert submod is not None, f"Submodule {sub} is None"
@@ -235,6 +237,7 @@ def test_system1_package_parity():
     assert reflex.__version__ == system1.__version__
     assert reflex.SystemOneEngine is system1.SystemOneEngine
     assert reflex.SystemOneCompiler is system1.SystemOneCompiler
+    assert reflex.TeachingSession is system1.TeachingSession
     assert reflex.DecisionSchema is system1.DecisionSchema
     assert reflex.ChoiceField is system1.ChoiceField
     assert reflex.BooleanField is system1.BooleanField
@@ -249,17 +252,17 @@ def test_system1_package_parity():
     assert res.choice in ("a", "b")
 
 
-def test_system1_all_16_submodules_import_and_parity():
-    """Verify all 16 submodules in system1 can be imported via reflex.<submodule> and __all__ matches."""
+def test_system1_all_submodules_import_and_parity():
+    """Verify public submodules import through reflex with identical exports."""
     import importlib
     import pkgutil
     import system1
     import reflex
 
     discovered = sorted([m.name for m in pkgutil.iter_modules(system1.__path__)])
-    assert discovered == ALL_16_SUBMODULES, f"Expected 16 submodules {ALL_16_SUBMODULES}, discovered {discovered}"
+    assert discovered == ALL_SUBMODULES, f"Expected submodules {ALL_SUBMODULES}, discovered {discovered}"
 
-    for sub in ALL_16_SUBMODULES:
+    for sub in ALL_SUBMODULES:
         s_mod = importlib.import_module(f"system1.{sub}")
         r_mod = importlib.import_module(f"reflex.{sub}")
 
@@ -277,18 +280,13 @@ def test_system1_all_16_submodules_import_and_parity():
             assert r_val is s_val, f"Symbol {symbol} in {sub} is not identical object ({r_val} vs {s_val})"
 
 
-def test_system1_dynamic_submodule_getattr():
-    """Verify getattr(reflex, submod) dynamically resolves all 15 submodules and __dir__ includes them."""
+def test_reflex_dynamic_submodule_getattr():
+    """Verify reflex resolves every public submodule and includes it in dir()."""
     import importlib
     import reflex
 
-    submodules = [
-        "cache", "calibration", "cli", "compat", "compiler",
-        "core", "embeddings", "engine", "guard", "ledger",
-        "model", "neural", "receipt", "schema", "telemetry",
-    ]
     system1_dir = dir(reflex)
-    for sub in submodules:
+    for sub in ALL_SUBMODULES:
         mod = getattr(reflex, sub)
         assert mod is not None, f"getattr(reflex, {sub!r}) returned None"
         expected_mod = importlib.import_module(f"reflex.{sub}")
@@ -365,7 +363,7 @@ def test_system1_core_submodules_parity():
             assert getattr(r_mod, symbol) is getattr(s_mod, symbol)
 
 
-def test_system1_cli_main_entrypoint(capsys):
+def test_reflex_cli_main_entrypoint(capsys):
     """Verify reflex.cli.main executes correctly."""
     import reflex.cli as r_cli
     ret = r_cli.main(["decide", "Safe read check", "--json"])
@@ -376,11 +374,11 @@ def test_system1_cli_main_entrypoint(capsys):
 
 
 def test_system1_dynamic_submodule_getattr():
-    """Verify getattr(system1, submod) dynamically resolves all 16 submodules and __dir__ includes them."""
+    """Verify system1 resolves every public submodule and includes it in dir()."""
     import importlib
 
     system1_dir = dir(system1)
-    for sub in ALL_16_SUBMODULES:
+    for sub in ALL_SUBMODULES:
         assert hasattr(system1, sub), f"hasattr(system1, {sub!r}) returned False"
         mod = getattr(system1, sub)
         assert mod is not None, f"getattr(system1, {sub!r}) returned None"
@@ -390,7 +388,7 @@ def test_system1_dynamic_submodule_getattr():
 
 
 def test_system1_isolated_subprocess_attribute_resolution():
-    """Verify in a clean, isolated subprocess that all 15 submodules on system1 resolve dynamically.
+    """Verify every public system1 submodule resolves in an isolated subprocess.
     
     Prevents pre-import contamination (from reflex or engine) from masking lazy-loading defects.
     """
@@ -398,19 +396,13 @@ def test_system1_isolated_subprocess_attribute_resolution():
     import subprocess
     import sys
 
-    code = """
+    code = "ALL_SUBMODULES = " + repr(ALL_SUBMODULES) + "\n" + """
 import sys
 import types
 import system1
 
-ALL_15 = [
-    "cache", "calibration", "cli", "compat", "compiler",
-    "core", "embeddings", "engine", "guard", "ledger",
-    "model", "neural", "receipt", "schema", "telemetry"
-]
-
 failed = []
-for sub in ALL_15:
+for sub in ALL_SUBMODULES:
     if not hasattr(system1, sub):
         failed.append(f"hasattr(system1, {sub!r}) is False")
         continue
@@ -455,13 +447,9 @@ import sys
 import types
 import {pkg}
 
-ALL_15 = [
-    "cache", "calibration", "cli", "compat", "compiler",
-    "core", "embeddings", "engine", "guard", "ledger",
-    "model", "neural", "receipt", "schema", "telemetry"
-]
+ALL_SUBMODULES = {ALL_SUBMODULES!r}
 
-for sub in ALL_15:
+for sub in ALL_SUBMODULES:
     assert hasattr({pkg}, sub), f"hasattr({pkg}, {{sub!r}}) is False"
     val = getattr({pkg}, sub)
     assert val is not None, f"getattr({pkg}, {{sub!r}}) is None"
@@ -491,18 +479,18 @@ def test_system1_and_reflex_negative_attribute_resolution():
 
 
 def test_submodule_inventory_and_module_map_completeness():
-    """Verify disk packages, _MODULE_MAP, and __dir__ match all 16 submodules across both namespaces."""
+    """Verify disk packages, module maps, and dir() agree across both namespaces."""
     import pkgutil
     import reflex
 
     s1_disk = set(m.name for m in pkgutil.iter_modules(system1.__path__))
     r_disk = set(m.name for m in pkgutil.iter_modules(reflex.__path__))
-    expected = set(ALL_16_SUBMODULES)
+    expected = set(ALL_SUBMODULES)
 
     assert s1_disk == expected, f"system1 disk submodules mismatch: {s1_disk ^ expected}"
     assert r_disk == expected, f"reflex disk submodules mismatch: {r_disk ^ expected}"
 
-    # Verify all 16 submodules appear in dir()
+    # Verify every public submodule appears in dir().
     assert expected.issubset(set(dir(system1))), f"Missing from dir(system1): {expected - set(dir(system1))}"
     assert expected.issubset(set(dir(reflex))), f"Missing from dir(reflex): {expected - set(dir(reflex))}"
 
@@ -531,5 +519,4 @@ def test_spec_harmonization_aliases():
 
     assert system1.compiler.CompiledSystemOneModel.learn_from_system2 is system1.compiler.CompiledSystemOneModel.learn_from_tier2
     assert system1.core.SystemOneModel.learn_from_system2 is system1.core.SystemOneModel.learn_from_tier2
-
 

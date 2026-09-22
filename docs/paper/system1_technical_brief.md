@@ -1,130 +1,111 @@
 # System 1: technical brief
 
-**System 1 1.0.3 + current source changes · 21 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.0.3 + current source changes · 22 September 2026 · Maintainer-authored implementation brief**
 
 This brief follows the source checkout. [Unreleased changes](../../CHANGELOG.md#unreleased)
 are separate from the published 1.0.3 package.
 
 System 1 turns a repeatable decision into a small reusable local skill. Define the
-outputs, teach from examples or observe a teacher, validate the skill, then reuse
-it through the same local runtime. A teacher can be a person, JSON data, a rule,
-Jev, Gemini or another callback. System 1 fits numerical decision heads; it does
-not fine-tune a language model. The default runtime uses no language model;
-optional research adapters use fixed pretrained encoders whose separate weights
-and inference costs are included in their reports.
+choices, show examples, check a candidate, adopt it, then correct and compare when
+it makes mistakes. A person, JSON data, a rule, Jev, Gemini or another callback can
+supply labels. **System 1 is not an LLM:** its built-in path fits numerical decision
+heads without language-model weights, token generation or a GPU. It does not
+inherit a teacher's general knowledge.
 
-**System 1 is not an LLM:** the built-in path needs no language-model weights,
-token generation or GPU. Optional MLX supports Apple Silicon decision-head
-operations; the results below use NumPy, and speedups must be measured for the
-workload. Its narrow output schema and learned feature weights
-are also its limits; it does not acquire the teacher's general knowledge.
+## One teaching and correction workflow
 
-## How it works
+The new source-only `TeachingSession` keeps one text `ChoiceField`, explicit
+lessons, separate calibration examples and evaluation checks together. The field
+must keep ambiguity escalation enabled, so uncertainty requests review. A
+correction replaces a same-input lesson. `assess()` builds, saves and reloads a
+candidate and compares it with the approved skill on the same checks. It reports
+raw accuracy, accepted errors, review coverage, changed answers and regressions.
+`adopt()` activates only a passing candidate whose lessons, artifacts and current
+skill have not changed. Editing or failing an assessment leaves the approved
+skill available.
 
-Fixed text features and optional numerical telemetry feed NumPy decision heads.
-The optional TF-IDF projector fits a vocabulary on teaching text and freezes it
-for inference, using the same numerical heads and NumPy-only runtime.
-Separate examples calibrate uncertainty. Explicit teaching produces a `.s1m`
-file; automatic observation keeps the teacher answering until promotion checks
-pass. A saved skill preserves the schema, feature configuration, weights and
-uncertainty behavior. New inputs are evaluated through those shared features,
-not only looked up in a cache.
+This is an additive wrapper around the existing compiler and strict engine. It
+uses the existing TF-IDF projector and ridge head, with no new dependency or
+saved-format change. The [walkthrough](../guides/correcting_skills.md) is the
+reference for Python, CLI, defaults and evidence limits. The
+[document workspace](../../examples/teaching_by_doing/README.md) exposes the same
+workflow through filing actions. Its authored sample checks demonstrate the
+process; they do not qualify a customer's document workload.
 
-The source compiler also offers opt-in `choice_solver="logistic"`, using SciPy
-during teaching and the existing NumPy choice head during inference. Ridge stays
-the default. Separate calibration and evaluation remain necessary for either
-method; see the [teaching guide](../guides/training_experts.md#optional-classification-fitting).
+## How a saved skill works
 
-The local result includes a value and review information. The application chooses
-how to handle review requests. Automatic takeover removes the teacher from the
-normal decision path, but does not mean every subsequent input is accepted.
+Text features and optional numerical telemetry feed small NumPy decision heads.
+The default compiler uses fixed hashed features; the optional TF-IDF projector
+fits a vocabulary on teaching text and freezes it for inference. Separate
+examples calibrate uncertainty. A `.s1m` file preserves the schema, feature
+configuration, weights and review behavior. New inputs pass through those shared
+features, rather than requiring an exact cached match.
 
-## Demonstrated behavior
+Optional MLX supports Apple Silicon decision-head operations; its benefit depends
+on workload. Optional research adapters use fixed pretrained text encoders whose
+separate weights and execution costs belong in their measurements. The source
+compiler also offers opt-in logistic fitting with SciPy during teaching and the
+existing NumPy head during inference. These choices do not change the default
+ridge compiler or the limits of its narrow output schema.
 
-On three fixed public-data tasks, explicitly taught skills accepted 96.1–98.3%
-of 1,301 held-out cases, with 97.5–99.4% correctness among accepted decisions.
-Teaching plus calibration took 0.23–1.77 seconds once labeled data existed;
-saved skills were 20.4–47.0 KiB and median local decisions took 0.34–0.44 ms.
-These are measurements from one machine, excluding data preparation, startup,
-receipts and downstream actions.
+Automatic observation is a separate existing path: the teacher keeps answering
+until promotion checks pass. Later local decisions can still request review.
+Neither manual adoption nor automatic promotion grants permission to perform an
+action; the application must honor review and its own execution policy.
 
-On a separate automatic-observation path, actual Jev and Gemini each taught the
-six-intent assistant skill in 358 observations. With network access disabled,
-each skill accepted 171/180 unseen requests and got 167/171 accepted decisions
-right. Nine requests needed review. Saved/reloaded outputs matched.
+## What the evidence supports
 
-Banking did not qualify for automatic takeover with the available observations.
-SMS taught from observed dataset labels promoted under the normal 80% gates but
-missed the independent 95% correctness target; the live Jev SMS run did not promote.
-The classical TF-IDF/logistic-regression baseline ran faster locally. Full counts,
-methods, errors, teacher recordings and reproduction commands are in the
-[workload report](../../benchmarks/quality/workloads/README.md).
+Three fixed public-data tasks accepted 96.1–98.3% of 1,301 originally held-out
+cases, with 97.5–99.4% correctness among accepted decisions. Teaching and
+calibration took 0.23–1.77 seconds once labels existed; saved skills were
+20.4–47.0 KiB and median local decisions took 0.34–0.44 ms. These NumPy CPU
+measurements exclude data preparation, startup, audit work and downstream actions.
+The matched conventional TF-IDF/logistic baseline ran faster locally on all three.
 
-The later [1.0.2 quality round](../../benchmarks/quality/quality_round/README.md)
-adds an opt-in 95% accepted-agreement lower-bound requirement. With fuller local
-label observation, SMS takes over after 2,961 cases and gets 954/980 accepted old
-test decisions right (97.3%). Banking and assistant remain deferred. Fresh authored
-SMS probes reach only 27/33 correct accepted decisions (81.8%). A proposed routing
-teaching change is retained as an experiment because its tradeoffs failed the
-adoption criteria. These limits remain part of the evidence.
+Actual Jev and Gemini each taught the six-intent assistant takeover after 358
+observations: 171/180 test requests accepted, 167/171 correct, with no further
+teacher calls and identical reloaded results. Other teacher/task combinations
+deferred or missed the independent quality target. These bounded measurements
+do not establish general provider parity or superiority over conventional
+classifiers. See the [original workload report](../../benchmarks/quality/workloads/README.md).
 
-## What the product adds
+The new [BBC workflow test](../../benchmarks/quality/document_workflow/README.md)
+measured one correction round on five news topics. On 400 previously unscored
+articles, targeted feedback reduced accepted errors 16→8 while acceptance fell
+373→337. Raw correctness rose 369→373, but the paired interval includes no gain.
+All candidates failed the unchanged zero-error adoption checks, so none became
+a serving skill. This is evidence of a review/quality tradeoff and candidate
+rejection; it does not establish successful real-data adoption or superiority
+over its ordinary-addition control.
 
-The practical value is the integrated path from an existing teacher to a validated,
-portable local skill, with explicit review behavior and optional audit evidence.
-Ridge regression, feature hashing, conformal prediction and digital signatures
-are established techniques. These results support the bounded tasks measured;
-they do not establish universal provider parity or a novel learning algorithm.
+Later work preserves substantial limitations: fresh authored SMS probes reached
+only 27/33 correct accepted answers; public email has a source-shift failure and
+a retrospective improvement; Inbox Zero remains review-only; the full-scope n8n
+skills fail accepted-accuracy targets and CLINC unfamiliar-input rejection.
+The [workload and evidence index](../../benchmarks/quality/README.md) links every
+protocol, baseline, result and reproduction path. Reused checks are regression
+evidence. New candidates still need representative independent confirmation.
 
-The new [document workspace](../../examples/teaching_by_doing/README.md) records
-filing actions as lessons and supports corrections and saved-skill export. Its
-authored sample results include mistakes. The courier and Pokémon teaching labs
-also remain bounded experiments, indexed in the [example catalog](../../examples/README.md).
+## Product value and boundaries
 
-The [full-scope n8n gauntlet](../../benchmarks/quality/n8n_gauntlet/README.md) covers
-all 150 CLINC and 77 banking intents. Its latest full-scope regression fails
-accepted accuracy on both workloads and unfamiliar rejection on CLINC. Later
-development gains do not resolve qualification or provide independent
-confirmation. The recorded teacher-disconnection rehearsal proves integration
-behavior with an unqualified artifact; it is not the qualified takeover goal.
+The practical value is the complete path from explicit examples to a checked,
+portable local skill that can be corrected without silently replacing a working
+revision. Feature hashing, ridge regression, conformal prediction and signatures
+are established techniques. This is an integration and usability claim, not a
+new learning algorithm. Poor raw predictions, excessive review and unsuccessful
+completed tasks remain distinct problems; better workflow does not by itself
+solve them.
 
-For application permissions, `PolicyEngine` evaluates explicit rules and
-`SystemOneGuard(enforcement_profile=True)` requires a permission grant, signing
-key and durable ledger. A classifier answer alone is not authorization. Software
-Ed25519 receipts and a SHA-256-chained SQLite ledger support auditing; applications
-must authenticate callers, protect keys and enforce tool boundaries.
+Optional `PolicyEngine`/`SystemOneGuard` permissions, software Ed25519 receipts
+and a SHA-256-chained ledger support enforcement and auditing. Applications must
+authenticate callers, protect keys and enforce tool boundaries. See
+[deployment boundaries](../deployment.md) and the
+[1.0.3 security release](../releases/1.0.3.md).
 
-Version 1.0.3 requires independent receipt verification keys, binds ledger IDs in
-signed envelopes, checks exact inclusion and full ledger history, and bounds
-saved-skill loading. gRPC resolves only registered schemas. See the
-[security release notes](../releases/1.0.3.md) for compatibility changes.
-
-## Start here
-
-From an installed repository checkout:
-
-```bash
-python examples/support_triage.py
-python examples/observe_routing.py
-python benchmarks/quality/evaluate_release.py
-```
-
-These run locally; the observation tutorial uses an inspectable rule teacher.
-For your own task, follow the [teaching guide](../guides/training_experts.md).
-The [architecture reference](../architecture/technical_specification.md),
-[teacher adapter](../typesafe.md), [deployment boundaries](../deployment.md) and
-[documentation index](../README.md) describe the supported interfaces.
-
-
-The unreleased [Inbox Zero pilot](../../examples/inbox_zero/README.md) now includes
-a TF-IDF feature option and broader lessons. It improves the original email
-result and speed, but its new quality evidence is synthetic, includes an accepted
-mistake, and does not qualify real-mailbox automation. Its recorded results are
-separate from the public-data and teacher comparisons above.
-
-The additional [real-email recipe](../../benchmarks/quality/public_email/README.md)
-teaches spam/ham from public SpamAssassin labels in 0.94 seconds and saves a
-78.2 KiB local skill. Its representative grouped evaluation accepts 618/632
-decisions, 603 correct (97.6%), at 0.216 ms median latency. This retrospective
-experiment follows a preserved source-shift failure at 89.9% accepted correctness;
-it supports a bounded spam/ham skill, not seven-category Inbox Zero automation.
+Start with [your first skill](../guides/first_skill.md), then
+[correct, compare, and adopt](../guides/correcting_skills.md). The
+[architecture reference](../architecture/technical_specification.md),
+[teacher adapter](../typesafe.md), [whitepaper](system1_whitepaper.md) and
+[example catalog](../../examples/README.md) cover implementation, evidence and
+bounded research labs. This brief and the whitepaper are maintainer-authored,
+not peer-reviewed publications.

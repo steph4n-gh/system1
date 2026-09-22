@@ -145,12 +145,13 @@ _SUBMODULE_NAMES = {
     "proto",
     "receipt",
     "schema",
+    "teaching",
     "telemetry",
 }
 
 # Dynamic submodule and lazy symbol dispatch map
 _MODULE_MAP = {
-    # 18 submodules
+    # Public submodules
     "cache": "reflex.cache",
     "calibration": "reflex.calibration",
     "cli": "reflex.cli",
@@ -168,7 +169,9 @@ _MODULE_MAP = {
     "proto": "reflex.proto",
     "receipt": "reflex.receipt",
     "schema": "reflex.schema",
+    "teaching": "reflex.teaching",
     "telemetry": "reflex.telemetry",
+    "TeachingSession": "reflex.teaching",
     # cache (Lever 1)
     "SemanticSystemOneCache": "reflex.cache",
     "CacheEntry": "reflex.cache",

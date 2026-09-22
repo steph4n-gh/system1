@@ -10,8 +10,9 @@ Our rule is simple: payment questions go to `billing`; broken software goes to
 If you prefer a visual first lesson, try the
 [document teaching workspace](../../examples/teaching_by_doing/README.md).
 You choose folders for fictional documents, and the page records those actions
-as examples. It also lets you correct a choice and download the learned skill.
-The walkthrough below teaches the same lifecycle using an editable JSON file.
+as examples. It lets you compare a candidate with the approved skill, explicitly
+adopt a passing revision, correct a choice and download the skill.
+The walkthrough below introduces teaching using an editable JSON file.
 
 ## What is a label?
 
@@ -100,9 +101,10 @@ For a different job, define different output choices as described in the
 ## How do I know it is ready?
 
 Keep some real messages out of the lessons. Decide their correct teams yourself,
-then compare System 1's answers. Track two separate things:
+then compare System 1's answers. Track three separate things:
 
-- **How often it is right when it answers without review.** Count confident mistakes too.
+- **How often the best guess is right, including guesses sent for review.** This is raw accuracy.
+- **How often it is wrong without requesting review.** These mistakes could reach your workflow.
 - **How often it needs review.** A skill that asks about every message is not yet doing the job automatically.
 
 The complete workflow uses examples in three ways:
@@ -127,9 +129,11 @@ messages. There is no magic number of examples: start with the task's common
 cases and confusing distinctions, then use the separate checks to decide what
 is missing. Never teach from your final check and still call that same check new.
 
-If many answers need review, gather more varied lessons and separate checking
-examples. If confident answers are wrong, revisit the rule and the lessons before
-allowing automatic decisions. Reteaching changes the skill, so check it again.
+If raw guesses are wrong, inspect the rule, lessons and whether the text features
+capture the distinction. More calibration alone does not repair wrong guesses.
+If guesses are mostly right but often need review, inspect representative
+calibration examples and the cases being withheld. Reteaching changes the skill,
+so check it again.
 
 ## Reuse the saved skill
 
@@ -172,6 +176,15 @@ Rerun the teaching command. Then try **different** messages, such as “The chec
 screen freezes” and “Why was I billed twice?” Showing that the corrected sentence
 now works is useful, but it does not show that the skill handles new cases.
 A correction can also affect other decisions, so check both teams again.
+
+For an ongoing skill, use the source-only
+[correct, compare, and adopt workflow](correcting_skills.md). It retains separate
+teaching, calibration and evaluation examples, builds a candidate, and compares
+old and new answers before you explicitly activate it. It reports lost useful
+answers as regressions even when the revised skill merely sends them to review.
+An unsuccessful candidate leaves the approved skill available. The first helper
+supports one text-choice decision; the existing compiler still supports broader
+schemas and numerical inputs.
 
 ## Can someone else supply the lessons?
 

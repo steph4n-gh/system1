@@ -1,7 +1,7 @@
 # System 1 architecture and implementation
 
 Implementation reference for **System 1 1.0.3** and the current source checkout,
-reviewed 21 September 2026. [Unreleased changes](../../CHANGELOG.md#unreleased)
+reviewed 22 September 2026. [Unreleased changes](../../CHANGELOG.md#unreleased)
 are not yet part of the published package.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
@@ -25,8 +25,11 @@ flowchart TD
     E -->|No| F[Keep using the teacher]
     F --> A
     E -->|Yes| G[Use the local skill]
-    D --> H[Explicit teaching: evaluate before deployment]
-    H --> G
+    D --> H{Explicit candidate checks pass?}
+    H -->|No| L[Keep current skill or remain unadopted]
+    L --> A
+    H -->|Yes| M[Review report and explicitly adopt]
+    M --> G
     G --> I[Return values and review flags]
     G --> J[Save and reload the skill]
     I --> K[Application accepts or requests review]
@@ -44,6 +47,7 @@ it does not run the teacher, execute a tool, or perform the entire lifecycle.
 | `TfidfProjector` | Optional fitted word unigram/bigram vocabulary, smoothed IDF and sublinear term frequency; frozen during inference and saved in the skill | [text features](../../src/system1/core/text.py) |
 | `HybridProjector` | Optional hashed lexical features plus a seeded subword table with curated semantic anchors | [embeddings](../../src/system1/core/embeddings.py) |
 | `SystemOneCompiler` | Validate labels, partition examples, fit ridge or optional logistic choice heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
+| `TeachingSession` (unreleased) | Retain explicit text lessons for one ChoiceField, compile/check a candidate, and explicitly adopt the exact passing artifact | [teaching lifecycle](../../src/system1/teaching.py) |
 | `System1Engine` / `SystemOneEngine` | Apply a schema or compiled skill, uncertainty checks, optional caching and audit evidence | [engine](../../src/system1/engine.py) |
 | TypeSafe `Client` / `AsyncClient` | Teacher observation, per-schema promotion, local typed responses and skill reuse | [adapter](../../src/system1/compat/typesafe.py) |
 | `PolicyEngine` / `SystemOneGuard` | Explicit permissions and guarded proposal evaluation | [guard](../../src/system1/guard.py) |
@@ -63,8 +67,11 @@ understanding system.
 
 The compiler defaults to 384 features, ridge regularization 1.0 and NumPy.
 Published explicit-teaching workloads use 2,048 features and regularization 0.1;
-the automatic-observation experiments retain regularization 1.0. These settings
-are different paths, so their results must not be conflated.
+the original automatic-observation experiments use regularization 1.0. Later
+quality-round recipes state their own settings. The new `TeachingSession` defaults
+to fitted TF-IDF with at most 1,024 features, ridge regularization 0.1, strict
+`alpha=0.05` and disabled inference caches. These are distinct paths; their
+settings and measured costs must not be conflated.
 
 ## Teaching and calibration
 
@@ -173,6 +180,26 @@ sets and review flags. Online correction methods, including `learn_from_tier2`
 and its aliases, invalidate changed heads' calibration and caches. Recalibrate
 on separate examples before strict acceptance. Retaining examples and recompiling
 is the simplest reproducible update process.
+
+The unreleased, additive `TeachingSession` helper implements that process for a
+text classifier with one `ChoiceField` whose `escalate_on_ambiguity` is enabled.
+The helper rejects a schema that suppresses its review flag. Separate `teach`,
+`calibrate`, and `evaluate` records feed a TF-IDF/ridge candidate, strict
+uncertainty calibration, and recurring comparison
+checks. Assessing does not replace the current skill; adopting rechecks the exact
+artifact and evidence identities. Corrections to the same normalized input replace
+the lesson. Its report separates raw errors, accepted errors, reviews and losses
+of previously accepted correct decisions. Repeated checks are development evidence,
+not independent qualification. This is a single-writer local workspace over the
+existing compiler and `.s1m` format, with no change to their defaults or algorithms.
+Its default adoption checks require raw accuracy ≥80%, acceptance coverage ≥50%,
+zero accepted errors and zero useful regressions. These empirical checks differ
+from automatic teacher promotion, conformal coverage and workload qualification.
+In the [BBC workflow test](../../benchmarks/quality/document_workflow/README.md),
+all three candidates are refused despite some meeting separate holdout quality
+targets; no approved skill is created. See the
+[shared workflow](../guides/correcting_skills.md) for explicit threshold settings
+and the report contract.
 
 Optional recursive least-squares updates use retained covariance state where
 available. Their forgetting and numerical stabilization differ from unweighted
