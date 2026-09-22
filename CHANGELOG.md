@@ -2,11 +2,18 @@
 
 ## Unreleased
 
-- Add `TeachingSession` and `system1 teach` for one text `ChoiceField`: retain explicit lessons, build a separate candidate, compare it with the approved skill, and require explicit adoption of an unchanged passing candidate. Report raw accuracy, accepted errors, review, useful regressions and evidence limits; retain the working skill during unsuccessful revisions. No changes to existing compiler/engine APIs, numerical algorithms, `.s1m` format or dependencies.
+No changes yet.
+
+## 1.1.0 — 2026-09-22
+
+This compatible feature release includes the teaching lifecycle and the additions
+merged since 1.0.3. See [release notes and compatibility](docs/releases/1.1.0.md).
+
+- Add `TeachingSession` and `system1 teach` for one text `ChoiceField`: retain explicit lessons, build a separate candidate, compare it with the approved skill, and require explicit adoption of an unchanged passing candidate. Report raw accuracy, accepted errors, review, useful regressions and evidence limits; retain the working skill during unsuccessful revisions. The helper preserves existing compiler/engine defaults, numerical algorithms, `.s1m` format and required dependencies.
 - Connect the document teaching workspace to the same candidate/report/adoption workflow. Consolidate the correction walkthrough and workload evidence index while preserving historical reports, failures and experimental scopes.
 - Record a frozen, real-document correction experiment on five BBC news topics. On 400 untouched articles, targeted feedback reduces accepted mistakes from 16 to 8 while increasing review from 27 to 63; the raw-accuracy change is inconclusive. All candidates fail the unchanged zero-error adoption gate. Preserve the protocol, ordinary-lesson control and complete text-free evidence.
 
-- Sync the current guides, papers and indexes with the teaching labs and unqualified n8n results. Distinguish source-only features and encoder-backed experiments from the published default runtime; validate repository-main links and distribution contents in release checks as well as CI.
+- Sync the current guides, papers and indexes with the teaching lifecycle, labs and unqualified n8n results. Distinguish packaged runtime features from repository-only and encoder-backed experiments; validate repository-main links and distribution contents in release checks as well as CI.
 - Keep the full n8n research artifacts and raw results in Git, outside Python distributions. Validate archive contents and size in CI, including the runnable teaching example in the source distribution.
 - Add experimental n8n workflows with item pairing, explicit review, local-service failure handling and a real teacher-disconnection rehearsal. The [full-scope quality gauntlet](benchmarks/quality/n8n_gauntlet/README.md) remains unqualified: accepted accuracy and unfamiliar-input rejection still fail. Preserve all experiments, exact artifacts, matched baselines, costs and failures; no independent confirmation or qualified recording is claimed.
 - Add opt-in `choice_solver="logistic"` to the Python compiler for choice skills. SciPy is an optional teaching dependency; saved heads retain the existing NumPy runtime, calibration and portable format. Keep ridge as the default and record failed full-scope development experiments for the n8n quality gauntlet.

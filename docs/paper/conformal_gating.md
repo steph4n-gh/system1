@@ -1,12 +1,10 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.0.3 + current source changes · 22 September 2026 · Implementation notes, not new theorems**
+**System 1 1.1.0 · 22 September 2026 · Implementation notes, not new theorems**
 
-This note follows the source checkout, including the
-[unreleased teaching workflow and optional fitting method](../../CHANGELOG.md#unreleased).
-
-This note describes the mathematics used by the runtime and the assumptions
-needed to interpret it. The [whitepaper](system1_whitepaper.md) contains the
+This note describes the runtime mathematics in
+[System 1 1.1.0](../releases/1.1.0.md) and the assumptions needed to interpret it,
+including the teaching workflow and optional fitting method. The [whitepaper](system1_whitepaper.md) contains the
 product evaluation; the [architecture reference](../architecture/technical_specification.md)
 maps behavior to code. Earlier claims of guaranteed safe execution, universal
 margin improvement and fixed microsecond update times are withdrawn.
@@ -162,7 +160,7 @@ limit exact equivalence. A positive diagonal alone does not prove positive
 definiteness; rescaling a matrix alone does not improve its condition number.
 No fixed latency, unlimited stability or immunity to forgetting is implied.
 
-The source-only `TeachingSession` workflow retains corrected examples and
+The `TeachingSession` workflow introduced in 1.1.0 retains corrected examples and
 recompiles a separate TF-IDF/ridge candidate, then recalibrates it on its separate
 calibration records. It does not use the online update formulas above or mutate
 the approved skill during assessment. If online correction is used directly,
@@ -170,7 +168,7 @@ changed weights invalidate their old calibration, in memory and saved artifacts.
 teacher label is fallible supervision, so one correction should not be described
 as making every unseen related case correct.
 
-The source compiler's optional logistic choice fit instead minimizes summed
+The compiler's optional logistic choice fit instead minimizes summed
 cross-entropy plus $\lambda\|W\|_F^2/2$, with an unpenalized bias, using SciPy
 L-BFGS-B at teaching time. Stored coefficients are scaled by 0.25 to match the
 runtime's choice-logit scaling. NumPy inference and separate calibration are

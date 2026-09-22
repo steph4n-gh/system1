@@ -177,8 +177,8 @@ screen freezes” and “Why was I billed twice?” Showing that the corrected s
 now works is useful, but it does not show that the skill handles new cases.
 A correction can also affect other decisions, so check both teams again.
 
-For an ongoing skill, use the source-only
-[correct, compare, and adopt workflow](correcting_skills.md). It retains separate
+For an ongoing skill, use the
+[correct, compare, and adopt workflow](correcting_skills.md), available in System 1 1.1.0. It retains separate
 teaching, calibration and evaluation examples, builds a candidate, and compares
 old and new answers before you explicitly activate it. It reports lost useful
 answers as regressions even when the revised skill merely sends them to review.

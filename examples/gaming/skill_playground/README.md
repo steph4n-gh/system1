@@ -7,8 +7,8 @@ one piece while keeping the others unchanged. No API key, LLM or new dependency.
 
 ## Run it
 
-From the repository root, install the current checkout (the playground uses
-unreleased features already on this branch):
+From a System 1 1.1.0-or-newer repository checkout, install the project and run
+this experimental example:
 
 ```bash
 python -m pip install -e .

@@ -1,9 +1,10 @@
 # System 1: technical brief
 
-**System 1 1.0.3 + current source changes · 22 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.1.0 · 22 September 2026 · Maintainer-authored implementation brief**
 
-This brief follows the source checkout. [Unreleased changes](../../CHANGELOG.md#unreleased)
-are separate from the published 1.0.3 package.
+This brief describes [System 1 1.1.0](../releases/1.1.0.md). Each linked experiment
+retains its original source revision and evidence; a release does not rerun or
+upgrade historical quality results.
 
 System 1 turns a repeatable decision into a small reusable local skill. Define the
 choices, show examples, check a candidate, adopt it, then correct and compare when
@@ -14,7 +15,7 @@ inherit a teacher's general knowledge.
 
 ## One teaching and correction workflow
 
-The new source-only `TeachingSession` keeps one text `ChoiceField`, explicit
+`TeachingSession`, introduced in 1.1.0, keeps one text `ChoiceField`, explicit
 lessons, separate calibration examples and evaluation checks together. The field
 must keep ambiguity escalation enabled, so uncertainty requests review. A
 correction replaces a same-input lesson. `assess()` builds, saves and reloads a
@@ -43,7 +44,7 @@ features, rather than requiring an exact cached match.
 
 Optional MLX supports Apple Silicon decision-head operations; its benefit depends
 on workload. Optional research adapters use fixed pretrained text encoders whose
-separate weights and execution costs belong in their measurements. The source
+separate weights and execution costs belong in their measurements. The
 compiler also offers opt-in logistic fitting with SciPy during teaching and the
 existing NumPy head during inference. These choices do not change the default
 ridge compiler or the limits of its narrow output schema.

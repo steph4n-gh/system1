@@ -1,11 +1,13 @@
 # System 1 documentation
 
-Current stable runtime: **1.0.3**. Source documentation reviewed 22 September 2026.
+Current stable runtime: **1.1.0**. Source documentation reviewed 22 September 2026.
 System 1 is not an LLM. Start with one journey: **choose a decision → show
 examples → check a candidate → adopt → correct and compare**. A person or a running
 teacher can supply the examples.
-GitHub can contain documentation and evaluation tools added after the published
-package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes.
+The [1.1.0 release notes](releases/1.1.0.md) identify the packaged runtime changes.
+Experimental labs and full research evidence remain in the repository; their
+availability does not establish production qualification. [CHANGELOG](../CHANGELOG.md)
+tracks later development separately.
 
 ## Use the product
 
@@ -13,7 +15,7 @@ package; [CHANGELOG](../CHANGELOG.md) identifies those unreleased source changes
 |---|---|
 | [README quickstart](../README.md#quickstart) | Install System 1 and run a complete taught skill |
 | [Your first skill](guides/first_skill.md) | What an example means, an editable lesson file, corrections and readiness |
-| [Correct, compare, and adopt](guides/correcting_skills.md) | Retain lessons, inspect before/after answers, and explicitly adopt a passing candidate; source-only single-choice text workflow |
+| [Correct, compare, and adopt](guides/correcting_skills.md) | Retain lessons, inspect before/after answers, and explicitly adopt a passing candidate; single-choice text workflow introduced in 1.1.0 |
 | [Teach by doing](../examples/teaching_by_doing/README.md) | Use the same candidate/adoption flow by filing fictional documents |
 | [Teaching guide](guides/training_experts.md) | Label formats, separate evidence, compilation and corrections |
 | [Teacher observation](typesafe.md) | Callback contract, actual Jev/Gemini evidence, promotion and reuse |
@@ -49,7 +51,7 @@ Do not compare unlike timing cohorts as a measured speedup.
 
 ## Release and review history
 
-[1.0.3 security release](releases/1.0.3.md) · [1.0.2 release report](releases/1.0.2.md) · [1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
+[1.1.0 teaching workflow release](releases/1.1.0.md) · [1.0.3 security release](releases/1.0.3.md) · [1.0.2 release report](releases/1.0.2.md) · [1.0.1 release report](releases/1.0.1.md) · [1.0 release and migration](releases/1.0.md) ·
 [completed stabilization checklist](stable-release-checklist.md) ·
 [historical launch review](launch-review.md) · [historical example review](examples-review.md).
 

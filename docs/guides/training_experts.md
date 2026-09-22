@@ -4,7 +4,7 @@ If you are new to labeling examples or correcting a skill, start with
 [Teach your first skill](first_skill.md). It explains those terms using a copyable
 message-and-answer file. This page covers the underlying API and data contracts.
 
-For a text classifier with one `ChoiceField`, use the new source-only
+For a text classifier with one `ChoiceField`, System 1 1.1.0 adds the
 [correction workflow](correcting_skills.md): retain lessons, assess a separate
 candidate, compare it with the approved skill, and adopt explicitly. It wraps the
 existing compiler and strict engine without changing their APIs or saved format.
@@ -114,13 +114,15 @@ when teaching new vocabulary; online head corrections do not expand it. Keep
 vocabulary fitting, head fitting, calibration, and evaluation appropriately
 separated. In particular, fitting vocabulary before asking the compiler to
 split those same rows internally would expose calibration text to vocabulary
-selection; use explicit separate calibration as above. Old readers continue to
-read old skills but cannot load the new TF-IDF feature type.
+selection; use explicit separate calibration as above. Existing hashed skills
+remain readable. Saved skills using the TF-IDF projector
+require System 1 1.1.0 or newer; earlier readers do not support that feature type.
 
 ## Optional classification fitting
 
-This option is an unreleased source change; start from a repository checkout and
-install `python -m pip install -e '.[teaching]'`. For a choice skill, compare the
+This option is available in System 1 1.1.0. Install its teaching dependency with
+`python -m pip install 'system1[teaching]>=1.1.0'`. From a checkout, use
+`python -m pip install -e '.[teaching]'`. For a choice skill, compare the
 default ridge fit with a cross-entropy fit by setting
 `SystemOneCompiler(SupportRoute, projector=projector, choice_solver="logistic",
 regularization=.1)` in the example above. This uses SciPy's iterative optimizer

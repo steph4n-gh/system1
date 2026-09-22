@@ -78,7 +78,8 @@ and scoring. No product dependency or classifier implementation changed.
 
 ## Reproduce and inspect
 
-From a development checkout containing this unreleased helper:
+From a repository checkout with System 1 1.1.0 or newer (the evidence archive
+below retains the exact pre-release source used for the recorded run):
 
 ```bash
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python benchmarks/quality/document_workflow/run.py \
