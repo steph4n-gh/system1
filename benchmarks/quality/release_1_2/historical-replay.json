@@ -1,0 +1,347 @@
+{
+  "approved_preserved_during_fault": true,
+  "fault": {
+    "calibration_counts": {
+      "calibration": 125,
+      "fit": 287,
+      "generated": 0,
+      "temperature": 63
+    },
+    "candidate": {
+      "accepted": 0,
+      "accepted_accuracy": null,
+      "accepted_correct": 0,
+      "accepted_correctness_lower_bound": null,
+      "accepted_errors": 0,
+      "count": 120,
+      "coverage": 0.0,
+      "coverage_lower_bound": 0.0,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 0,
+          "review": 40
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 0,
+          "review": 40
+        },
+        "lost_or_stolen_card": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 4,
+          "review": 40
+        }
+      },
+      "raw_accuracy": 0.03333333333333333,
+      "raw_correct": 4,
+      "review": 120,
+      "review_rate": 1.0
+    },
+    "counts": {
+      "calibrate": 125,
+      "evaluate": 120,
+      "teach": 287
+    },
+    "diagnostics": [
+      "The candidate chooses wrong labels before review gating; inspect examples and features. More calibration alone does not repair the learned choices.",
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "456195d0a736e7881c87963179bd21a33d6919a1122e0d546dd8b9ba2843b617",
+      "current": "d89f8e5fc29ba4ab6a580be3ff8b93e56758fee2127ef49bce24cfb5dca29e22",
+      "session": "2a66d8e8e7897bfe6fdf99a7a0fac14d9ce1a513ad4b868b5861b4d2b8ac759a"
+    },
+    "incumbent": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "passed": false,
+    "raw_regressions": 115,
+    "reasons": [
+      "Raw accuracy is below the required minimum",
+      "Local acceptance coverage is below the required minimum",
+      "Previously accepted correct checks became wrong or required review"
+    ],
+    "regressions": 112,
+    "thresholds": {
+      "max_accepted_errors": 5,
+      "max_regressions": 10,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.8,
+      "require_qualification": false
+    },
+    "version": 1
+  },
+  "fault_adoption": "Candidate did not pass its adoption checks",
+  "history_before_rollback": [
+    {
+      "approved_at": "2026-10-01T22:45:13.355626+00:00",
+      "current": false,
+      "qualification": false,
+      "revision": "d89f8e5fc29ba4ab6a580be3ff8b93e56758fee2127ef49bce24cfb5dca29e22"
+    },
+    {
+      "approved_at": "2026-10-01T22:45:13.548190+00:00",
+      "current": true,
+      "qualification": false,
+      "revision": "14bce45f447052369c89725109630beaf12aec2b3795c82bec18f91adfdcac04"
+    }
+  ],
+  "initial": {
+    "calibration_counts": {
+      "calibration": 125,
+      "fit": 287,
+      "generated": 0,
+      "temperature": 63
+    },
+    "candidate": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "counts": {
+      "calibrate": 125,
+      "evaluate": 120,
+      "teach": 287
+    },
+    "diagnostics": [
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "d89f8e5fc29ba4ab6a580be3ff8b93e56758fee2127ef49bce24cfb5dca29e22",
+      "current": null,
+      "session": "9adf3184472eaaadf6a3b2d1df5756b3e363aef8dfc8271d9fb730f7b1a53d71"
+    },
+    "incumbent": null,
+    "passed": true,
+    "raw_regressions": 0,
+    "reasons": [],
+    "regressions": 0,
+    "thresholds": {
+      "max_accepted_errors": 5,
+      "max_regressions": 10,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.8,
+      "require_qualification": false
+    },
+    "version": 1
+  },
+  "initial_adopted": true,
+  "initial_revision": "d89f8e5fc29ba4ab6a580be3ff8b93e56758fee2127ef49bce24cfb5dca29e22",
+  "policy": {
+    "max_accepted_errors": 5,
+    "max_regressions": 10,
+    "min_accuracy": 0.8,
+    "min_coverage": 0.8
+  },
+  "protocol_sha256": "f1939774e710b552f7e6828ce790b6ad31b16605cbcb79e8f77120935c75440a",
+  "reopen_after_rollback_exact": true,
+  "reopen_predictions_equal": true,
+  "restored": {
+    "calibration_counts": {
+      "calibration": 125,
+      "fit": 287,
+      "generated": 0,
+      "temperature": 63
+    },
+    "candidate": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "counts": {
+      "calibrate": 125,
+      "evaluate": 120,
+      "teach": 287
+    },
+    "diagnostics": [
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "14bce45f447052369c89725109630beaf12aec2b3795c82bec18f91adfdcac04",
+      "current": "d89f8e5fc29ba4ab6a580be3ff8b93e56758fee2127ef49bce24cfb5dca29e22",
+      "session": "1f62a738c0d670df490060be65eb3eff31dbceee7908332f8ab077252c87a17a"
+    },
+    "incumbent": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "passed": true,
+    "raw_regressions": 0,
+    "reasons": [],
+    "regressions": 0,
+    "thresholds": {
+      "max_accepted_errors": 5,
+      "max_regressions": 10,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.8,
+      "require_qualification": false
+    },
+    "version": 1
+  },
+  "restored_adopted": true,
+  "restored_revision": "14bce45f447052369c89725109630beaf12aec2b3795c82bec18f91adfdcac04",
+  "rollback_exact_initial_bytes": true,
+  "rollback_preserves_restored_lessons": true,
+  "scope": "historical recurring development regression; no fresh qualification or improvement claim",
+  "source_sha256": "d1bc96779a6ff92ad1bc21cad725b0f1b8bc08db81ee6d129485490165f4d06a",
+  "teacher_calls": 0
+}

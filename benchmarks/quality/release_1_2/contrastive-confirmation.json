@@ -1,0 +1,306 @@
+{
+  "freeze_sha256": "35b1bf864911c3995166afe247c40930f773bbab73741269de871fee15bed9e9",
+  "results": [
+    {
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.049875,
+        "cached_features_p95_latency_ms": 0.052958,
+        "count": 1986,
+        "coverage": 0.0,
+        "raw_accuracy": 0.5236656596173213,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "frozen_encoder-11-400"
+    },
+    {
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.0601665,
+        "cached_features_p95_latency_ms": 0.07485449999999999,
+        "count": 1986,
+        "coverage": 0.0,
+        "raw_accuracy": 0.5287009063444109,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "contrastive_projection-11-400"
+    },
+    {
+      "metrics": {
+        "accepted": 19,
+        "accepted_accuracy": 0.9473684210526315,
+        "accepted_correct": 18,
+        "accepted_correct_yield": 0.00906344410876133,
+        "accepted_error_upper_95": 0.22637424927237804,
+        "accepted_errors": 1,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 8,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 10,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.050625,
+        "cached_features_p95_latency_ms": 0.05709375,
+        "count": 1986,
+        "coverage": 0.009566968781470292,
+        "raw_accuracy": 0.5196374622356495,
+        "review_rate": 0.9904330312185297,
+        "screen_pass": false
+      },
+      "name": "frozen_encoder-29-400"
+    },
+    {
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.053042,
+        "cached_features_p95_latency_ms": 0.06448975,
+        "count": 1986,
+        "coverage": 0.0,
+        "raw_accuracy": 0.5246727089627392,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "contrastive_projection-29-400"
+    },
+    {
+      "metrics": {
+        "accepted": 13,
+        "accepted_accuracy": 0.8461538461538461,
+        "accepted_correct": 11,
+        "accepted_correct_yield": 0.0055387713997985906,
+        "accepted_error_upper_95": 0.41009860483381616,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 6,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 5,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.0516045,
+        "cached_features_p95_latency_ms": 0.060134999999999994,
+        "count": 1986,
+        "coverage": 0.006545820745216516,
+        "raw_accuracy": 0.5211480362537765,
+        "review_rate": 0.9934541792547835,
+        "screen_pass": false
+      },
+      "name": "frozen_encoder-47-400"
+    },
+    {
+      "metrics": {
+        "accepted": 8,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 8,
+        "accepted_correct_yield": 0.004028197381671702,
+        "accepted_error_upper_95": 0.3123439780663678,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 3,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 5,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "cached_features_median_latency_ms": 0.054834,
+        "cached_features_p95_latency_ms": 0.06782325,
+        "count": 1986,
+        "coverage": 0.004028197381671702,
+        "raw_accuracy": 0.5322255790533736,
+        "review_rate": 0.9959718026183283,
+        "screen_pass": false
+      },
+      "name": "contrastive_projection-47-400"
+    }
+  ],
+  "scope": "untouched same-source public confirmation; not customer validation"
+}

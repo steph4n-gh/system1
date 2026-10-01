@@ -1,0 +1,429 @@
+{
+  "all_confirmation_freezes_commit": "69ccf18",
+  "annotation_costs": {
+    "development_annotations_per_candidate": 1987,
+    "human_labeling_time_measured": false,
+    "scope": "Simulated oracle budgets; public gold annotations already available. These are not total project labeling effort or independently reviewed customer judgments.",
+    "selection_budgets_fit_plus_calibration": [
+      100,
+      200,
+      400
+    ],
+    "source_annotations_read_by_automated_audit": 20000,
+    "untouched_confirmation_annotations_per_candidate": 1986
+  },
+  "cache_correction": "Earlier standalone development attempt invalidated and retained; corrected run disables compiled and engine caching. Confirmation untouched until committed freeze.",
+  "contrastive_comparison": [
+    {
+      "confirmation": {
+        "accepted_correct_yield": 0.004867405169519974,
+        "coverage": 0.005370929842228936,
+        "raw_accuracy": 0.5214837193689158
+      },
+      "development": {
+        "accepted_correct_yield": 0.0062070122462674045,
+        "coverage": 0.0073813118604261025,
+        "raw_accuracy": 0.5009226639825533
+      },
+      "encoder_weights_bytes": 90868376,
+      "kind": "frozen_encoder",
+      "median_complete_latency_ms_mean": 2.5221945,
+      "screen_pass": false
+    },
+    {
+      "confirmation": {
+        "accepted_correct_yield": 0.001342732460557234,
+        "coverage": 0.001342732460557234,
+        "raw_accuracy": 0.5285330647868413
+      },
+      "development": {
+        "accepted_correct_yield": 0.0018453279651065256,
+        "coverage": 0.0021808421405804393,
+        "raw_accuracy": 0.533299781915786
+      },
+      "encoder_weights_bytes": 90868376,
+      "kind": "contrastive_projection",
+      "median_complete_latency_ms_mean": 2.4370765,
+      "screen_pass": false
+    }
+  ],
+  "conventional_comparator_400_development": {
+    "accepted_correct_yield": 0.0,
+    "coverage": 0.0,
+    "raw_accuracy": 0.40395906727059216
+  },
+  "date": "2026-10-01",
+  "error_evidence": {
+    "bytes": 7295336,
+    "case_groups": 97,
+    "content": "IDs, supplied labels, predictions, review/correctness outcomes; no input text or model weights",
+    "path": "artifacts/evaluation-cases.json.gz",
+    "retained_rows": 178180,
+    "sha256": "b82097ad2999c9e198eb4559678691ac1c5f21b12faa9c4eb62d3d9862cdc38f"
+  },
+  "evidence_files": {
+    "FREEZE.json": "a6c9010f6ddfa03ce8038efcf13893229537b6673801bbee13f1d85b8943e525",
+    "confirmation.json": "6ba6bc8f06526b43e7fca9494c51ecebb6663d831925c9030405e956f1c45623",
+    "contrastive-FREEZE.json": "35b1bf864911c3995166afe247c40930f773bbab73741269de871fee15bed9e9",
+    "contrastive-confirmation.json": "de62614d7cb11b01d193f5ba6dd36322c145b913f0bc53e489ea35f2572644c5",
+    "contrastive-development.json": "65324ea90ad3d750c6040ad889518c6bfe474290ab91143a3c1833b9dc0b195f",
+    "development.json": "595d33c304c66b4857a77b229e2690b4daf711ed7c0f747d6375d67d0a41a6fa",
+    "encoder-source-manifest.json": "15f4449c4eb583425be0a9617c1900be8fdb082f1c1676c411d68fa390472de7",
+    "historical-replay.json": "115f7f599209e9ab783f9831f5adb2a8848f00a0cc4c35a3dcb6812e9acb7d90",
+    "invalid-cache-contrastive-FREEZE.json": "401dfe6afbab2c770f733829a5e5140887b74f8420eeca0c78c4393218a7e427",
+    "invalid-cache-contrastive-development.json": "6ac9f0983971c8902f02378ad1f5b05c2c3c0177fb612a4043b8e9ef00645953",
+    "invalid-cache-lifecycle-FREEZE.json": "f893dad9bd5589cd2df7a45fc9afe9539d95758dde5d695e302dd9d061a47835",
+    "invalid-cache-lifecycle-development.json": "53e0d1b4e50ff0378d9c6691cb94c88e6296f85d1c10c124e12f863b91f393d1",
+    "lifecycle-FREEZE.json": "8df96ab8f6d8a24c54cc8bec2e6cbdfc55a9dd34b3d09b62241404c26658e6bd",
+    "lifecycle-confirmation.json": "a7c9ef21e104573b6179fdf7a085c830dfd66b05c73b9d143c228248ecf10bd6",
+    "lifecycle-development.json": "22e246032013c8fe67e2320b7a9f9b9642afaadc685196ba0d2dceabeb9d78b2",
+    "lifecycle-source-manifest.json": "5ee9c2a3f33b06b112e788b2fbdfb5e3acd097a35b88c5cf4173eeebe031eb00",
+    "source-manifest.json": "f9bb7b5f58e941859d82dd8faa802b057536f04fd217152f25ae09f662301e04"
+  },
+  "historical_lifecycle_regression": {
+    "approved_preserved_during_fault": true,
+    "fault": {
+      "accepted": 0,
+      "accepted_accuracy": null,
+      "accepted_correct": 0,
+      "accepted_correctness_lower_bound": null,
+      "accepted_errors": 0,
+      "count": 120,
+      "coverage": 0.0,
+      "coverage_lower_bound": 0.0,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 0,
+          "review": 40
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 0,
+          "review": 40
+        },
+        "lost_or_stolen_card": {
+          "accepted": 0,
+          "accepted_correct": 0,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 4,
+          "review": 40
+        }
+      },
+      "raw_accuracy": 0.03333333333333333,
+      "raw_correct": 4,
+      "review": 120,
+      "review_rate": 1.0
+    },
+    "fault_adoption_denied": true,
+    "initial": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "initial_adopted": true,
+    "new_quality_claim": false,
+    "reopen_after_rollback_exact": true,
+    "reopen_predictions_equal": true,
+    "restored": {
+      "accepted": 113,
+      "accepted_accuracy": 0.9911504424778761,
+      "accepted_correct": 112,
+      "accepted_correctness_lower_bound": 0.9516793514358977,
+      "accepted_errors": 1,
+      "count": 120,
+      "coverage": 0.9416666666666667,
+      "coverage_lower_bound": 0.8835016203543855,
+      "per_class": {
+        "card_arrival": {
+          "accepted": 38,
+          "accepted_correct": 37,
+          "accepted_errors": 1,
+          "count": 40,
+          "raw_correct": 39,
+          "review": 2
+        },
+        "cash_withdrawal_charge": {
+          "accepted": 40,
+          "accepted_correct": 40,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 40,
+          "review": 0
+        },
+        "lost_or_stolen_card": {
+          "accepted": 35,
+          "accepted_correct": 35,
+          "accepted_errors": 0,
+          "count": 40,
+          "raw_correct": 36,
+          "review": 5
+        }
+      },
+      "raw_accuracy": 0.9583333333333334,
+      "raw_correct": 115,
+      "review": 7,
+      "review_rate": 0.058333333333333334
+    },
+    "restored_adopted": true,
+    "rollback_exact_initial_bytes": true,
+    "rollback_preserves_restored_lessons": true,
+    "scope": "historical recurring development regression; no fresh qualification or improvement claim"
+  },
+  "historical_replay_protocol_commit": "0c983a5",
+  "large_model_downloads": 0,
+  "limitations": [
+    "Public exposure and pretrained-model contamination cannot be excluded.",
+    "Fresh to this project is not customer validation.",
+    "Grouping covers normalized exact and specified near duplicates; authors and conversations cannot be checked.",
+    "Calibration labels, development labels and confirmation labels are separate costs.",
+    "Standalone UCI diagnostic uses the prospectively frozen .025 tail per bound; no current product qualification was issued.",
+    "No new unfamiliar-intent detection or full assistant/banking qualification claim."
+  ],
+  "optional_cached_encoder_weights_shipped": false,
+  "portable_logistic_400_development": {
+    "accepted_correct_yield": 0.00016775708773695687,
+    "coverage": 0.00016775708773695687,
+    "raw_accuracy": 0.4145277637980205
+  },
+  "primary_protocol_commit": "04adb2d",
+  "prospective_lifecycle_amendment_commit": "f22ad13",
+  "raw_corpus_shipped": false,
+  "release_decision": "Omit experimental lesson selection and semantic classification capabilities; release claims limited to implemented lifecycle behavior.",
+  "selection_comparison": [
+    {
+      "all_confirmation_screens_pass": false,
+      "all_development_screens_pass": false,
+      "calibration_labels": 40,
+      "confirmation": {
+        "accepted_correct_yield": 0.009902651896609601,
+        "coverage": 0.014770057066129574,
+        "raw_accuracy": 0.41037260825780464
+      },
+      "development": {
+        "accepted_correct_yield": 0.009394396913269586,
+        "coverage": 0.012749538668008722,
+        "raw_accuracy": 0.4173796342895487
+      },
+      "development_yield_gains_vs_random_by_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fit_labels": 360,
+      "seeds": [
+        11,
+        29,
+        47
+      ],
+      "strategy": "random",
+      "superiority_earned": false,
+      "total_model_labels": 400
+    },
+    {
+      "all_confirmation_screens_pass": false,
+      "all_development_screens_pass": false,
+      "calibration_labels": 40,
+      "confirmation": {
+        "accepted_correct_yield": 0.007888553205773748,
+        "coverage": 0.010406176569318564,
+        "raw_accuracy": 0.4038267875125881
+      },
+      "development": {
+        "accepted_correct_yield": 0.009562154001006542,
+        "coverage": 0.012581781580271765,
+        "raw_accuracy": 0.41117262204328137
+      },
+      "development_yield_gains_vs_random_by_seed": [
+        0.026673376950176145,
+        -0.0055359838953195776,
+        -0.0206341217916457
+      ],
+      "fit_labels": 360,
+      "seeds": [
+        11,
+        29,
+        47
+      ],
+      "strategy": "uncertainty",
+      "superiority_earned": false,
+      "total_model_labels": 400
+    },
+    {
+      "all_confirmation_screens_pass": false,
+      "all_development_screens_pass": false,
+      "calibration_labels": 40,
+      "confirmation": {
+        "accepted_correct_yield": 0.005035246727089627,
+        "coverage": 0.007385028533064787,
+        "raw_accuracy": 0.40986908358509566
+      },
+      "development": {
+        "accepted_correct_yield": 0.007884583123636973,
+        "coverage": 0.010065425264217413,
+        "raw_accuracy": 0.4076497232008052
+      },
+      "development_yield_gains_vs_random_by_seed": [
+        0.01560140915953699,
+        -0.004026170105686965,
+        -0.01610468042274786
+      ],
+      "fit_labels": 360,
+      "seeds": [
+        11,
+        29,
+        47
+      ],
+      "strategy": "uncertainty_diversity",
+      "superiority_earned": false,
+      "total_model_labels": 400
+    }
+  ],
+  "sources_pinned_before_scoring_commit": "88d68a5",
+  "status": "research gates missed; historical lifecycle regression passed",
+  "teacher_calls": 0,
+  "uci_lifecycle": {
+    "corrected_adopted": false,
+    "corrected_development": {
+      "accepted": 43,
+      "accepted_accuracy": 0.8372093023255814,
+      "accepted_correct": 36,
+      "accepted_correctness_lower_bound": 0.6929891276350899,
+      "accepted_errors": 7,
+      "count": 200,
+      "coverage": 0.215,
+      "coverage_lower_bound": 0.1601816953323354,
+      "per_class": {
+        "negative": {
+          "accepted": 26,
+          "accepted_correct": 21,
+          "accepted_errors": 5,
+          "count": 102,
+          "raw_correct": 70,
+          "review": 76
+        },
+        "positive": {
+          "accepted": 17,
+          "accepted_correct": 15,
+          "accepted_errors": 2,
+          "count": 98,
+          "raw_correct": 71,
+          "review": 81
+        }
+      },
+      "raw_accuracy": 0.705,
+      "raw_correct": 141,
+      "review": 157,
+      "review_rate": 0.785
+    },
+    "initial_adopted": false,
+    "initial_development": {
+      "accepted": 40,
+      "accepted_accuracy": 0.825,
+      "accepted_correct": 33,
+      "accepted_correctness_lower_bound": 0.672209866638414,
+      "accepted_errors": 7,
+      "count": 200,
+      "coverage": 0.2,
+      "coverage_lower_bound": 0.14689448821575724,
+      "per_class": {
+        "negative": {
+          "accepted": 27,
+          "accepted_correct": 21,
+          "accepted_errors": 6,
+          "count": 102,
+          "raw_correct": 71,
+          "review": 75
+        },
+        "positive": {
+          "accepted": 13,
+          "accepted_correct": 12,
+          "accepted_errors": 1,
+          "count": 98,
+          "raw_correct": 70,
+          "review": 85
+        }
+      },
+      "raw_accuracy": 0.705,
+      "raw_correct": 141,
+      "review": 160,
+      "review_rate": 0.8
+    },
+    "qualification_attempt_consumed": false,
+    "rollback_earned": false,
+    "source_shift_diagnostic": {
+      "accepted": 194,
+      "accepted_accuracy": 0.8711340206185567,
+      "accepted_correct": 169,
+      "accepted_correct_yield": 0.16967871485943775,
+      "accepted_correctness_lower_bound": 0.8156701275681495,
+      "accepted_error_upper_95": 0.17531436391119506,
+      "accepted_errors": 25,
+      "by_class": {
+        "negative": {
+          "accepted": 106,
+          "accepted_errors": 7,
+          "count": 497
+        },
+        "positive": {
+          "accepted": 88,
+          "accepted_errors": 18,
+          "count": 499
+        }
+      },
+      "count": 996,
+      "coverage": 0.19477911646586346,
+      "coverage_lower_bound": 0.17061329069336814,
+      "median_latency_ms": 0.063958,
+      "p95_latency_ms": 0.07738525,
+      "raw_accuracy": 0.6927710843373494,
+      "review_rate": 0.8052208835341366,
+      "screen_pass": false,
+      "strict_source_shift_gate_pass": false
+    },
+    "source_shift_is_api_qualification": false,
+    "strict_source_shift_gate_pass": false
+  }
+}
