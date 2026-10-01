@@ -344,6 +344,9 @@ def test_http_workspace_qualification_adoption_preview_and_rollback(tmp_path, mo
     import examples.teaching_by_doing.app as app
     from http.server import HTTPServer
 
+    # HTTPServer reverse-resolves even numeric loopback during construction.
+    # Keep this local transport fixture independent of the runner's DNS service.
+    monkeypatch.setattr('http.server.socket.getfqdn', lambda host: host)
     ready = Event()
     servers = []
     def local_server(address, handler):
