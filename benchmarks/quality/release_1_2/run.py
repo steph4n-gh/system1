@@ -144,7 +144,11 @@ def prepare():
         for origin, name in [("amazon", "amazon_cells_labelled.txt"),
                              ("imdb", "imdb_labelled.txt"), ("yelp", "yelp_labelled.txt")]:
             raw = archive.read(f"sentiment labelled sentences/{name}").decode()
-            for line in raw.splitlines():
+            # Unicode splitlines also splits NEL characters inside movie-review
+            # sentences; the source format uses literal newline row boundaries.
+            for line in raw.split("\n"):
+                if not line.strip():
+                    continue
                 text, label = line.rsplit("\t", 1)
                 rows.append(dict(id=sha(normalize(text)), input=text,
                                  label="positive" if label == "1" else "negative", origin=origin))
@@ -284,13 +288,15 @@ def develop():
         for strategy in STRATEGIES:
             fitting=list(initial)
             remaining=list(pool)
+            current=None
             for budget in (100,200,400):
                 name=f"ridge-{strategy}-{seed}-{budget}"
                 folder=CACHE/name
                 selection_time=0.
                 if budget>100:
                     start=time.perf_counter()
-                    indices=choose(current,remaining,budget-previous,strategy,seed+budget)
+                    indices=choose(current,remaining,budget-previous,
+                                   strategy if current else "random",seed+budget)
                     selection_time=time.perf_counter()-start
                     selected=set(indices)
                     fitting += [remaining[i] for i in indices]
@@ -299,9 +305,10 @@ def develop():
                 if missing:
                     results.append(dict(name=name,seed=seed,budget=budget,strategy=strategy,
                                         status="infeasible",missing_classes=sorted(missing)))
-                    # Acquisition remains uniform until a candidate can be fit;
-                    # uncertainty has no calibrated engine for ranking.
-                    raise RuntimeError(f"Initial labels miss classes: {name}: {missing}")
+                    # No uncharged oracle search for missing classes. Without an
+                    # engine, uniform acquisition resumes at the next budget.
+                    previous=budget
+                    continue
                 current,fit_time,path=fit_ridge(fitting,calibration,splits["validation"],folder)
                 metrics,cases=outcomes(current,splits["validation"])
                 write(folder/"development-cases.json",cases)
