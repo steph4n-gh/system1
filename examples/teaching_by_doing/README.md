@@ -4,7 +4,8 @@ File a document in **Finance**, **People** or **Projects**. That action records
 the visible text and the folder you chose as an explicit lesson. Review a
 candidate, compare it with the approved skill, then adopt it explicitly. The
 interface uses the shared `TeachingSession` lifecycle and adds no dependencies.
-`TeachingSession` is part of System 1 1.1.0. This experimental browser demo runs
+System 1 1.2.0 adds fresh qualification, approved revision recovery and observable
+review reasons to the teaching lifecycle introduced in 1.1.0. This browser demo runs
 from a repository checkout; installing the core package alone does not install
 the example workspace.
 
@@ -24,8 +25,9 @@ are fictional text previews; no real files are opened, moved or uploaded.
 2. Use **Calibrate** to label different documents for uncertainty calibration.
    These answers stay separate from fitting and candidate comparison.
 3. Click **Review candidate**. Inspect candidate and approved-skill accuracy,
-   accepted errors, coverage, review count and regressions. Expand the case
-   details to see wrong answers, reviewed cases and regressions.
+   accepted errors, coverage, review count, per-folder results and regressions.
+   Expand the case details to see wrong answers, reviewed cases and regressions.
+   Development bounds describe the reused checks; they do not qualify new traffic.
 4. Click **Adopt candidate** only after reviewing a passing report. Until then,
    predictions and downloads continue to use the approved skill. Lesson edits,
    failed candidates and server restarts do not disable that skill.
@@ -39,6 +41,10 @@ are fictional text previews; no real files are opened, moved or uploaded.
    new candidate. Repeated choices replace the same lesson instead of inflating
    the count. Your saved texts also appear under **Show how** for correction or
    removal.
+8. Under **Approved revisions**, choose a retained revision and click **Restore
+   selected revision** to recover its exact approved skill. The action keeps your
+   lessons and invalidates the pending assessment. Review a new candidate before
+   deploying later corrections.
 
 For a quick tour, **Add sample session** fills missing choices using the authored
 sample policy. It preserves your corrections and labels the source of each
@@ -55,6 +61,41 @@ requiring review. Passing is a minimum check, not an automatic adoption or a
 claim of readiness outside this sample policy. Different personal policies may
 conflict with the authored sample answers.
 
+## Fresh qualification and deployment
+
+Select **Require fresh qualification before adopting the next candidate** before
+reviewing it to add an independent-data gate. Development checks must pass first;
+the approved skill continues to serve predictions while qualification is pending.
+
+The **Fresh qualification** section accepts a local JSON file containing a list
+of `[text, correct_folder]` pairs. Objects with `input`, `label` and an optional
+`group` are also supported. Supply one independently sampled example per related
+document or conversation group; keep those groups separate from fitting,
+calibration and development checks. Describe the collection dates, selection
+method and labeling source. Choose correctness, coverage and confidence targets
+before scoring the cohort. The file and provenance go only to this local server.
+
+The default fresh gate requires an accepted-correctness lower bound of 95% and
+a coverage lower bound of 80%, at 95% confidence across both checks. Small cohorts
+can provide insufficient evidence even when every prediction is correct. These
+bounds depend on independent, representative sampling, which the software cannot
+establish from a JSON file. The authored sample documents are rejected as fresh
+qualification; no qualifying cohort is included with the demo.
+
+Each candidate can consume one qualification request. Passing and failing
+requests, labels, predictions and targets are retained. Qualification examples
+and identified groups cannot later become lessons or another qualification
+cohort. A rejected correction leaves the action log and visible choices unchanged.
+If qualification fails, preserve the failure and use genuinely fresh data for
+a later candidate; do not tune against the consumed cohort. Adoption still
+requires an explicit click after the configured gates pass.
+
+Review explanations describe observable conditions: no learned vocabulary matched,
+the uncertainty gate did not yield exactly one folder, or the saved model requested
+review. They do not establish why a document is unfamiliar or guarantee that an
+accepted suggestion is correct. Review leaves the document for a person to inspect;
+the page neither calls a teacher nor learns from a prediction automatically.
+
 ## What the action teaches
 
 The observation is `title + "\n" + excerpt`. The answer is your selected folder.
@@ -62,6 +103,16 @@ Document IDs, data splits and reference answers are never model features.
 TF-IDF features are fitted only on demonstrated text, followed by a small
 numerical decision head. Compilation uses `augment=False`: it generates no
 additional labels and calls no LLM or teacher API.
+
+For a new session, optionally select the existing logistic fitting method:
+
+```bash
+python -m examples.teaching_by_doing --choice-solver logistic --output-dir .system1/filing-logistic
+```
+
+Ridge remains the default. The choice is saved with the session; reopening with
+a different explicit choice is rejected. Choosing logistic does not establish
+better classification, and qualification targets remain unchanged.
 
 The sample policy files by the work requested. An invoice for a project belongs
 in Finance; a software bug in an invoice screen belongs in Projects. Learned text
@@ -114,6 +165,22 @@ Your application must honor review before acting. `.s1m` carries the learned
 features, head and calibration; it does not contain an LLM or this web server.
 `--output-dir PATH` starts or resumes a separate demonstration session;
 `--port PORT` changes the local port.
+
+The shared command line also supports the complete lifecycle:
+
+```bash
+system1 teach SESSION --assess --require-qualification
+system1 teach SESSION --qualification fresh.json --source "Collection dates and independent sampling method"
+system1 teach SESSION --adopt
+system1 teach SESSION --predict "Text to preview"
+system1 teach SESSION --history
+system1 teach SESSION --rollback FULL_APPROVED_REVISION_DIGEST
+```
+
+Use a separate CLI/Python session rather than the demo-owned directory. Create it
+with `--schema schema.json --dataset lessons.json`; the dataset maps `teach`,
+`calibrate` and `evaluate` to labeled pairs or input/label/optional group objects.
+For a single grouped lesson, use `--record TEXT --label CHOICE --group GROUP`.
 
 ## Review a sample session from the command line
 

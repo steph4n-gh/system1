@@ -1,10 +1,10 @@
 # System 1: teaching bounded decisions for local reuse
 
-**steph4n-gh · System 1 1.1.0 · 22 September 2026**
+**steph4n-gh · System 1 1.2.0 · 1 October 2026**
 Maintainer-authored technical whitepaper; not a peer-reviewed publication.
 [Source repository](https://github.com/steph4n-gh/system1)
 
-This document describes [System 1 1.1.0](../releases/1.1.0.md). Measurements retain
+This document describes [System 1 1.2.0](../releases/1.2.0.md). Measurements retain
 the original source revisions and evidence linked in each experiment; this
 release does not make historical results fresh evaluations.
 
@@ -39,7 +39,8 @@ exactly match a prior request, because the decision head operates on shared text
 features. This is limited statistical generalization, not newly acquired general
 language understanding.
 
-The product loop is **teach → check a candidate → adopt → correct and compare**,
+The product loop is **teach → assess → qualify when required → adopt → review
+and correct → restore when needed**,
 with automatic teacher observation as an alternative source of lessons and
 promotion evidence.
 A human, JSON file, decision API, LLM or application callback can provide labels.
@@ -98,14 +99,18 @@ count both parts; the default projector measurements cannot be applied to them.
 one text `ChoiceField`, with ambiguity escalation enabled so uncertain answers
 request review. It retains explicitly labeled `teach`, `calibrate` and
 `evaluate` records. A same-input correction replaces a record; normalized inputs
-cannot cross splits. Related threads and paraphrases still require caller-managed
-grouping. The helper uses the existing fitted TF-IDF projector (at most 1,024
-features), ridge regularization 0.1, and strict inference at `alpha=0.05`. These
+cannot cross splits. In 1.2.0, supplied groups also cannot cross splits; related
+threads and paraphrases still require caller-managed grouping. The helper uses
+the existing fitted TF-IDF projector (at most 1,024 features), regularization 0.1,
+and strict inference at `alpha=0.05`. Ridge remains the default; the existing
+optional logistic solver can be selected when creating a session. That solver is
+saved and cannot be changed by reopening the session. These
 are helper-specific choices, not changes to existing compiler or engine defaults.
 
 `assess()` compiles a separate candidate, saves/reloads it and compares it with
 the approved skill on the same evaluation rows. The report exposes raw accuracy,
-acceptance coverage, accepted errors and per-case predictions/review sets.
+acceptance coverage, accepted errors, per-class counts, descriptive bounds and
+per-case predictions/review sets.
 A useful regression is an earlier accepted-correct case that becomes wrong or
 requires review; raw correctness regressions are also counted separately.
 `adopt()` requires a passing report and unchanged data, candidate and current
@@ -122,6 +127,32 @@ workflow, fixed-list accuracy also cannot establish successful task completion.
 The [correction guide](../guides/correcting_skills.md) is the authoritative API and
 CLI walkthrough; the [document workspace](../../examples/teaching_by_doing/README.md)
 uses this same lifecycle.
+
+The 1.2.0 helper can require separate qualification before adoption through
+`assess(require_qualification=True)`. `qualify()` binds a supplied fresh cohort,
+source and fixed targets to the exact candidate and current skill before the
+first prediction. It separately tests exact one-sided lower bounds for correctness
+among accepted decisions and acceptance coverage. Confidence is fixed across
+the session's attempts; each bound at attempt `k` spends
+`(1 - confidence) / (2 * k * (k + 1))`. Defaults require lower bounds of 0.95
+accepted correctness and 0.8 coverage, at session confidence 0.95. No accepted
+evidence prevents qualification. These interpretations require independent,
+representative groups; the software cannot establish those properties from a file.
+
+Each candidate consumes one qualification request, including failed or interrupted
+scoring. Its inputs and supplied groups cannot overlap lessons, calibration,
+development checks or previous qualification cohorts, or later enter teaching.
+One row per independent group is required. The request, predictions and failures
+are retained; reused cases do not become fresh evidence for a later candidate.
+
+Explicit adoption revalidates required qualification and retains exact approved
+artifacts and evidence. `rollback()` validates an archived revision and any
+required qualification, restores its bytes, preserves lessons and invalidates
+the pending assessment. `decision_details()` provides the active revision and
+observable review conditions, without a teacher call or automatic label creation.
+These lifecycle changes introduce no new encoder or lesson-selection algorithm,
+do not establish a classification-quality gain, and leave full-scope workload
+requirements unchanged.
 
 ## 3. Automatic teacher observation
 
@@ -321,5 +352,5 @@ research history, rather than treating later experiments as revisions of older
 measurements.
 
 Suggested citation: steph4n-gh (2026), *System 1: teaching bounded decisions for
-local reuse*, version 1.1.0. Cite the source revision and linked evidence when
+local reuse*, version 1.2.0. Cite the source revision and linked evidence when
 quoting measurements; earlier unsupported benchmark tables have been withdrawn.

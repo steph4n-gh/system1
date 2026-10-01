@@ -1,8 +1,8 @@
 # System 1: technical brief
 
-**System 1 1.1.0 · 22 September 2026 · Maintainer-authored implementation brief**
+**System 1 1.2.0 · 1 October 2026 · Maintainer-authored implementation brief**
 
-This brief describes [System 1 1.1.0](../releases/1.1.0.md). Each linked experiment
+This brief describes [System 1 1.2.0](../releases/1.2.0.md). Each linked experiment
 retains its original source revision and evidence; a release does not rerun or
 upgrade historical quality results.
 
@@ -20,18 +20,38 @@ lessons, separate calibration examples and evaluation checks together. The field
 must keep ambiguity escalation enabled, so uncertainty requests review. A
 correction replaces a same-input lesson. `assess()` builds, saves and reloads a
 candidate and compares it with the approved skill on the same checks. It reports
-raw accuracy, accepted errors, review coverage, changed answers and regressions.
+raw accuracy, accepted errors, review coverage, per-class counts, descriptive
+bounds, changed answers and regressions. Reused checks remain development evidence.
 `adopt()` activates only a passing candidate whose lessons, artifacts and current
 skill have not changed. Editing or failing an assessment leaves the approved
 skill available.
 
+In 1.2.0, `assess(require_qualification=True)` also requires `qualify()` to pass
+on one separately supplied fresh cohort. Provenance, targets and labels are
+frozen before scoring. Consumed inputs and supplied groups cannot become lessons
+or another qualification cohort, and one candidate gets one request even when
+scoring fails or is interrupted. The caller must supply independent,
+representative examples; the software cannot verify that assumption.
+Accepted-correctness and coverage lower bounds use a fixed session confidence
+budget: each bound spends `(1 - confidence) / (2 * k * (k + 1))` at attempt `k`.
+This is distinct from conformal prediction-set coverage and development checks.
+
+Adoption archives exact approved bytes and their evidence. `rollback()` validates
+and restores a retained revision, preserves lessons and requires a new assessment
+before further adoption. `decision_details()` reports the active revision and
+observable review conditions, without automatically calling a teacher or teaching
+from predictions.
+
 This is an additive wrapper around the existing compiler and strict engine. It
-uses the existing TF-IDF projector and ridge head, with no new dependency or
+uses the existing TF-IDF projector and a ridge or optional logistic head, with
+the solver fixed when the session is created, no new dependency or
 saved-format change. The [walkthrough](../guides/correcting_skills.md) is the
 reference for Python, CLI, defaults and evidence limits. The
 [document workspace](../../examples/teaching_by_doing/README.md) exposes the same
 workflow through filing actions. Its authored sample checks demonstrate the
 process; they do not qualify a customer's document workload.
+The release introduces no new encoder or lesson-selection algorithm and does not
+weaken the existing full-scope quality targets.
 
 ## How a saved skill works
 

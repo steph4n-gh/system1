@@ -9,6 +9,7 @@ def main():
     parser.add_argument('--port', type=int, default=8791)
     parser.add_argument('--evaluate', action='store_true', help='Review an explicit sample candidate in an empty output directory')
     parser.add_argument('--adopt', action='store_true', help='With --evaluate, explicitly adopt a passing sample candidate and preview it')
+    parser.add_argument('--choice-solver', choices=('ridge', 'logistic'), help='Fitting method for a new session; existing settings stay fixed')
     args = parser.parse_args()
     if not 1024 <= args.port <= 65535:
         parser.error('Use a port from 1024 to 65535')
@@ -17,7 +18,7 @@ def main():
     if args.evaluate:
         if args.output_dir.exists() and any(args.output_dir.iterdir()):
             parser.error('Use an empty output directory to preserve existing sessions and evidence')
-        session = Session(args.output_dir)
+        session = Session(args.output_dir, choice_solver=args.choice_solver)
         session.sample_session()
         report = session.teach()['candidate']
         candidate = report['candidate']
@@ -35,7 +36,7 @@ def main():
         else:
             print('Open this output directory in the local page to review and adopt the candidate.')
     else:
-        serve(args.output_dir, args.port)
+        serve(args.output_dir, args.port, choice_solver=args.choice_solver)
 
 
 if __name__ == '__main__':

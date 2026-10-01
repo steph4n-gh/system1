@@ -1,7 +1,7 @@
 # System 1 architecture and implementation
 
-Implementation reference for **System 1 1.1.0**, reviewed 22 September 2026.
-See the [release changes](../releases/1.1.0.md) and
+Implementation reference for **System 1 1.2.0**, reviewed 1 October 2026.
+See the [release changes](../releases/1.2.0.md) and
 [changelog](../../CHANGELOG.md) for version boundaries.
 The [whitepaper](../paper/system1_whitepaper.md) explains the product and evidence;
 this document maps its behavior to the source. The package version is defined in
@@ -28,7 +28,12 @@ flowchart TD
     D --> H{Explicit candidate checks pass?}
     H -->|No| L[Keep current skill or remain unadopted]
     L --> A
-    H -->|Yes| M[Review report and explicitly adopt]
+    H -->|Yes| N{Independent qualification required?}
+    N -->|No| M[Review report and explicitly adopt]
+    N -->|Yes| O[Score one fresh cohort with frozen targets]
+    O --> P{Qualification bounds pass?}
+    P -->|No| L
+    P -->|Yes| M
     M --> G
     G --> I[Return values and review flags]
     G --> J[Save and reload the skill]
@@ -47,7 +52,7 @@ it does not run the teacher, execute a tool, or perform the entire lifecycle.
 | `TfidfProjector` | Optional fitted word unigram/bigram vocabulary, smoothed IDF and sublinear term frequency; frozen during inference and saved in the skill | [text features](../../src/system1/core/text.py) |
 | `HybridProjector` | Optional hashed lexical features plus a seeded subword table with curated semantic anchors | [embeddings](../../src/system1/core/embeddings.py) |
 | `SystemOneCompiler` | Validate labels, partition examples, fit ridge or optional logistic choice heads, calibrate, serialize | [compiler](../../src/system1/compiler.py) |
-| `TeachingSession` (since 1.1.0) | Retain explicit text lessons for one ChoiceField, compile/check a candidate, and explicitly adopt the exact passing artifact | [teaching lifecycle](../../src/system1/teaching.py) |
+| `TeachingSession` (since 1.1.0) | Retain explicit lessons and groups for one ChoiceField; assess, independently qualify, explicitly adopt and restore exact approved revisions | [teaching lifecycle](../../src/system1/teaching.py) |
 | `System1Engine` / `SystemOneEngine` | Apply a schema or compiled skill, uncertainty checks, optional caching and audit evidence | [engine](../../src/system1/engine.py) |
 | TypeSafe `Client` / `AsyncClient` | Teacher observation, per-schema promotion, local typed responses and skill reuse | [adapter](../../src/system1/compat/typesafe.py) |
 | `PolicyEngine` / `SystemOneGuard` | Explicit permissions and guarded proposal evaluation | [guard](../../src/system1/guard.py) |
@@ -68,10 +73,12 @@ understanding system.
 The compiler defaults to 384 features, ridge regularization 1.0 and NumPy.
 Published explicit-teaching workloads use 2,048 features and regularization 0.1;
 the original automatic-observation experiments use regularization 1.0. Later
-quality-round recipes state their own settings. The new `TeachingSession` defaults
+quality-round recipes state their own settings. `TeachingSession` defaults
 to fitted TF-IDF with at most 1,024 features, ridge regularization 0.1, strict
 `alpha=0.05` and disabled inference caches. These are distinct paths; their
-settings and measured costs must not be conflated.
+settings and measured costs must not be conflated. Since 1.2.0, its ridge or
+optional logistic choice solver is saved when the session is created; reopening
+with a different explicit solver is rejected. Existing 1.1.0 sessions retain ridge.
 
 ## Teaching and calibration
 
@@ -185,13 +192,16 @@ is the simplest reproducible update process.
 The additive `TeachingSession` helper introduced in 1.1.0 implements that process for a
 text classifier with one `ChoiceField` whose `escalate_on_ambiguity` is enabled.
 The helper rejects a schema that suppresses its review flag. Separate `teach`,
-`calibrate`, and `evaluate` records feed a TF-IDF/ridge candidate, strict
+`calibrate`, and `evaluate` records feed a TF-IDF candidate with the session's
+fixed ridge or optional logistic solver, strict
 uncertainty calibration, and recurring comparison
 checks. Assessing does not replace the current skill; adopting rechecks the exact
 artifact and evidence identities. Corrections to the same normalized input replace
 the lesson. Its report separates raw errors, accepted errors, reviews and losses
 of previously accepted correct decisions. Repeated checks are development evidence,
-not independent qualification. This is a single-writer local workspace over the
+not independent qualification. Since 1.2.0, supplied related-document groups must
+also stay within one split. Normalized text and explicit groups cannot identify
+every paraphrase or shared source. This is a single-writer local workspace over the
 existing compiler and `.s1m` format, with no change to their defaults or algorithms.
 Its default adoption checks require raw accuracy ≥80%, acceptance coverage ≥50%,
 zero accepted errors and zero useful regressions. These empirical checks differ
@@ -201,6 +211,35 @@ all three candidates are refused despite some meeting separate holdout quality
 targets; no approved skill is created. See the
 [shared workflow](../guides/correcting_skills.md) for explicit threshold settings
 and the report contract.
+
+In 1.2.0, `assess(require_qualification=True)` adds a fresh-data gate without
+weakening the development checks. `qualify()` freezes one supplied cohort,
+provenance and targets before scoring the exact assessed candidate. One row per
+independent supplied group is required; qualification inputs and identified groups
+cannot overlap session records or earlier consumed cohorts. A candidate gets one
+request, including failed or interrupted requests. Consumed inputs and groups
+cannot later become lessons. Independent representative sampling remains the
+caller's responsibility; software cannot establish it from uploaded labels.
+
+Qualification separately checks exact one-sided binomial lower bounds for
+accepted correctness and acceptance coverage. Confidence is fixed across the
+session's attempts; at attempt `k`, each bound spends
+`(1 - confidence) / (2 * k * (k + 1))`. The summable budget applies across the
+retained qualification attempts, under the required sampling assumptions.
+Defaults require lower bounds of 0.95 accepted correctness and 0.8 coverage,
+at confidence 0.95. No accepted evidence prevents qualification. The mathematical
+note distinguishes this gate from reused development bounds and conformal sets.
+
+Explicit adoption revalidates any required qualification and archives exact
+approved `.s1m` bytes with their assessment and qualification evidence.
+`rollback(revision)` validates the retained artifact and required evidence,
+restores those bytes, keeps current lessons, and invalidates the pending assessment.
+Legacy approved skills are preserved without inventing a missing assessment or
+retroactive qualification. `decision_details()` exposes the approved revision,
+prediction set and observable review conditions; it does not call a teacher,
+automatically label predictions, or explain the cause of a classification error.
+These additions introduce no new encoder or lesson-selection algorithm and do
+not change the full-scope workload requirements.
 
 Optional recursive least-squares updates use retained covariance state where
 available. Their forgetting and numerical stabilization differ from unweighted

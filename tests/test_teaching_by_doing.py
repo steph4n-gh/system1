@@ -3,6 +3,9 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import sys
+from threading import Event, Thread
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 import zipfile
 
 import pytest
@@ -288,3 +291,136 @@ def test_published_evidence_replays_every_document(tmp_path):
         assert sum(r['folder'] == r['expected'] for r in regular) == report['correct']
         assert sum(not r['review'] for r in regular) == report['accepted']
         assert sum(not r['review'] and r['correct'] for r in regular) == report['accepted_correct']
+
+
+def test_workspace_solver_reasons_and_retained_revisions(tmp_path):
+    session = Session(tmp_path, choice_solver='logistic')
+    session.sample_session()
+    assert session.teach()['settings']['choice_solver'] == 'logistic'
+    session.adopt()
+    original = session.lifecycle.current_path.read_bytes()
+    first_revision = session.snapshot()['history'][0]['revision']
+    prediction = session.predict('xyzzynonexistent', 'blorbunknown splatunknown')
+    assert prediction['review'] and 'unknown_vocabulary' in prediction['review_reasons']
+    assert prediction['revision'] == first_revision
+    session.record_text('Supplier invoice extra lesson', 'Please approve payment for the supplier invoice.', 'Finance')
+    assert session.teach()['candidate']['passed']
+    session.adopt()
+    assert len(session.snapshot()['history']) == 2
+    before = session.digest()
+    restored = session.rollback(first_revision)
+    assert restored['history'][0]['current']
+    assert session.lifecycle.current_path.read_bytes() == original
+    assert session.digest() == before and restored['candidate']['stale']
+    assert Session(tmp_path).lifecycle.current_path.read_bytes() == original
+    with pytest.raises(ValueError, match='differs'):
+        Session(tmp_path, choice_solver='ridge')
+
+
+def test_workspace_refuses_authored_qualification_and_keeps_failed_result(tmp_path):
+    session = Session(tmp_path)
+    session.sample_session()
+    state = session.teach(require_qualification=True)
+    assert state['candidate']['passed'] and not state['can_adopt']
+    with pytest.raises(ValueError, match='qualification'):
+        session.adopt()
+    for document_id in ('teach-01', 'evaluate-01', 'challenge-01'):
+        with pytest.raises(ValueError, match='sample documents'):
+            session.qualify([[observation(session.documents[document_id]), 'Finance']], source='Authored fixture')
+    with pytest.raises(ValueError, match='disjoint'):
+        session.record_text('External lesson', 'Supplier invoice requires payment.', 'Finance')
+        session.teach(require_qualification=True)
+        session.qualify([['External lesson\nSupplier invoice requires payment.', 'Finance']], source='Repeated lesson')
+    before = session.digest()
+    state = session.qualify([['xyzzynonexistent blorbunknown', 'Finance']], source='Synthetic failure fixture')
+    assert not state['qualification']['passed'] and not state['can_adopt']
+    assert session.digest() == before and not session.lifecycle.current_path.exists()
+    with pytest.raises(ValueError, match='frozen'):
+        session.qualify([['another brandnew strange fixture', 'People']], source='Attempted replacement')
+    assert Session(tmp_path).snapshot()['qualification'] == state['qualification']
+
+
+def test_http_workspace_qualification_adoption_preview_and_rollback(tmp_path, monkeypatch):
+    import examples.teaching_by_doing.app as app
+    from http.server import HTTPServer
+
+    ready = Event()
+    servers = []
+    def local_server(address, handler):
+        server = HTTPServer(('127.0.0.1', 0), handler)
+        servers.append(server)
+        ready.set()
+        return server
+    monkeypatch.setattr(app, 'HTTPServer', local_server)
+    worker = Thread(target=app.serve, args=(tmp_path,), daemon=True)
+    worker.start()
+    assert ready.wait(10), 'Local workspace did not start'
+    server = servers[0]
+    base = f'http://127.0.0.1:{server.server_port}'
+    def request(path, body=None, host='127.0.0.1:8791'):
+        headers = {'Host': host}
+        data = None
+        if body is not None:
+            data = json.dumps(body).encode()
+            headers['Content-Type'] = 'application/json'
+        with urlopen(Request(base+path, data=data, headers=headers), timeout=10) as response:
+            return response.read()
+    def api(path, body=None):
+        return json.loads(request('/api/'+path, body))
+    try:
+        html = request('/').decode()
+        assert 'Fresh qualification' in html and 'Restore selected revision' in html
+        with pytest.raises(HTTPError) as rejected:
+            request('/api/sample', {}, host='untrusted.example')
+        assert rejected.value.code == 403
+        state = api('sample', {})
+        assert state['settings']['choice_solver'] == 'ridge'
+        state = api('teach', {'require_qualification': True})
+        assert state['candidate']['passed'] and not state['can_adopt']
+        with pytest.raises(HTTPError) as rejected:
+            api('adopt', {})
+        assert rejected.value.code == 400
+
+        # Synthetic transport fixture only; the runtime cannot establish
+        # independence/representativeness from a supplied JSON file.
+        catalog = json.loads((ROOT/'documents.json').read_text())['documents']
+        cohort = [{'input': observation(doc)+f'\nTransport fixture {index}', 'label': doc['folder'],
+                   'group': f"transport-{doc['id']}-{index}"}
+                  for doc in catalog if doc['purpose'] == 'evaluate' for index in range(3)]
+        state = api('qualify', {'rows': cohort, 'source': 'Synthetic HTTP transport fixture',
+                               'min_accepted_accuracy': .9, 'min_coverage': .7, 'confidence': .9})
+        assert state['qualification']['passed'] and state['can_adopt']
+        actions_before = api('actions')
+        with pytest.raises(HTTPError) as rejected:
+            title, excerpt = cohort[0]['input'].split('\n', 1)
+            api('record-text', {'title': title, 'excerpt': excerpt, 'folder': cohort[0]['label']})
+        assert rejected.value.code == 400
+        assert api('actions') == actions_before
+        state = api('adopt', {})
+        assert state['candidate']['adopted'] and not state['can_adopt']
+        first_revision = state['history'][0]['revision']
+        approved = request('/api/skill')
+        assert sha256(approved).hexdigest() == first_revision
+        prediction = api('predict', {'title': 'xyzzynonexistent', 'excerpt': 'blorbunknown'})
+        assert prediction['review'] and prediction['revision'] == first_revision
+        assert 'unknown_vocabulary' in prediction['review_reasons']
+        preview = api('preview', {})
+        assert preview['total'] == 36 and all(row['revision'] == first_revision for row in preview['rows'])
+        api('record-text', {'title': 'Supplier invoice extra lesson',
+                            'excerpt': 'Please approve payment for the supplier invoice.', 'folder': 'Finance'})
+        assert api('teach', {})['candidate']['passed']
+        state = api('adopt', {})
+        assert len(state['history']) == 2
+        actions = api('actions')
+        state = api('rollback', {'revision': first_revision})
+        assert state['candidate']['stale'] and not state['can_adopt']
+        assert request('/api/skill') == approved and api('actions') == actions
+        with pytest.raises(HTTPError) as rejected:
+            api('rollback', {'revision': '../current'})
+        assert rejected.value.code == 400
+        assert request('/api/skill') == approved
+    finally:
+        server.shutdown()
+        server.server_close()
+        worker.join(10)
+        assert not worker.is_alive()
