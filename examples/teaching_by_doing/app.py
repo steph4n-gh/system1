@@ -40,7 +40,7 @@ def atomic_json(path, value):
 
 
 class Session:
-    def __init__(self, directory):
+    def __init__(self, directory, *, choice_solver=None):
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.catalog = json.loads((ROOT/'documents.json').read_text(encoding='utf-8'))
@@ -58,7 +58,7 @@ class Session:
                     raise ValueError('Repeated demonstration id')
                 self.records[row['id']] = row
         existing_session = (self.directory/'session.json').exists()
-        self.lifecycle = TeachingSession(self.directory, Filing)
+        self.lifecycle = TeachingSession(self.directory, Filing, choice_solver=choice_solver)
         self.sync_lessons(check_existing=existing_session)
         # Earlier versions saved an automatically activated skill under this name.
         # Preserve it only when it has exactly the same filing schema.
@@ -81,11 +81,11 @@ class Session:
         return {'fit': counts['fit'], 'calibration': counts['calibration'],
                 'conformal_checks': counts['calibration'] - counts['temperature']}
 
-    def sync_lessons(self, *, check_existing=False):
+    def sync_lessons(self, *, check_existing=False, records=None):
         rows = [{'input': row['input'], 'label': row['folder'],
                  'split': 'teach' if row['purpose'] == 'teach' else 'calibrate',
                  'source': 'human' if row['source'] == 'manual' else 'sample'}
-                for row in self.records.values()]
+                for row in (self.records if records is None else records).values()]
         # Fixed authored answers are recurring development checks, never fitting
         # or calibration examples. Challenge requests have no in-schema label.
         rows += [{'input': observation(doc), 'label': doc['folder'],
@@ -132,9 +132,12 @@ class Session:
         else:
             raise ValueError('Unknown demonstration document')
 
-    def save(self):
-        self.sync_lessons()
-        atomic_json(self.directory/'actions.json', {'version':1, 'actions':list(self.records.values())})
+    def save(self, records):
+        # Validate the complete prospective lesson set before replacing either
+        # the visible actions or in-memory choices (including consumed cohorts).
+        self.sync_lessons(records=records)
+        atomic_json(self.directory/'actions.json', {'version':1, 'actions':list(records.values())})
+        self.records = records
         self.batch = None
 
     def record_text(self, title, excerpt, folder):
@@ -143,8 +146,7 @@ class Session:
         row = {'id': 'own-' + fingerprint(text), 'title': title, 'excerpt': excerpt,
                'input': text, 'folder': folder, 'purpose': 'teach', 'source': 'manual'}
         self.validate_record(row)
-        self.records[row['id']] = row
-        self.save()
+        self.save({**self.records, row['id']: row})
         return self.snapshot()
 
     def record(self, document_id, folder, *, source='manual'):
@@ -154,34 +156,33 @@ class Session:
         row = {k:doc[k] for k in ('id','title','excerpt','purpose')}
         row.update(input=observation(doc), folder=folder, source=source)
         self.validate_record(row)
-        self.records[document_id] = row
-        self.save()
+        self.save({**self.records, document_id: row})
         return self.snapshot()
 
     def remove(self, document_id):
         if document_id not in self.records:
             raise ValueError('That document has no recorded choice')
         self.lifecycle.remove(self.records[document_id]['input'])
-        del self.records[document_id]
-        self.save()
+        self.save({key: value for key, value in self.records.items() if key != document_id})
         return self.snapshot()
 
     def sample_session(self):
         # Explicitly requested authored examples; preserve every user correction.
+        records = dict(self.records)
         for doc in self.documents.values():
-            if doc['purpose'] in ('teach','check') and doc['id'] not in self.records:
+            if doc['purpose'] in ('teach','check') and doc['id'] not in records:
                 row = {k:doc[k] for k in ('id','title','excerpt','purpose','folder')}
                 row.update(input=observation(doc), source='sample')
                 self.validate_record(row)
-                self.records[doc['id']] = row
-        self.save()
+                records[doc['id']] = row
+        self.save(records)
         return self.snapshot()
 
-    def teach(self):
+    def teach(self, *, require_qualification=False):
         fitting = [r for r in self.records.values() if r['purpose'] == 'teach']
         if {r['folder'] for r in fitting} != set(FOLDERS):
             raise ValueError('Show at least one document in each folder before teaching')
-        self.lifecycle.assess()
+        self.lifecycle.assess(require_qualification=require_qualification)
         return self.snapshot()
 
     def adopt(self):
@@ -189,14 +190,33 @@ class Session:
         self.batch = None
         return self.snapshot()
 
+    def rollback(self, revision):
+        self.lifecycle.rollback(revision)
+        self.batch = None
+        return self.snapshot()
+
+    def qualify(self, rows, source, **thresholds):
+        if not isinstance(rows, list):
+            raise ValueError('Qualification JSON must be a list of labeled examples')
+        rows = [{'input': row[0], 'label': row[1]} if isinstance(row, list) and len(row) == 2 else row for row in rows]
+        if any(not isinstance(row, dict) or not {'input','label'} <= set(row)
+               or set(row) - {'input','label','group'} for row in rows):
+            raise ValueError('Use [text, folder] pairs or input/label objects with an optional independent group')
+        reserved = {fingerprint(observation(doc)) for doc in self.documents.values()}
+        if any(not isinstance(row['input'], str) or fingerprint(row['input']) in reserved for row in rows):
+            raise ValueError('Authored sample documents cannot be independent qualification examples')
+        self.lifecycle.qualify(rows, source=source, **thresholds)
+        return self.snapshot()
+
     def predict(self, title, excerpt):
         self.validate_text(title, excerpt)
         if self.engine is None:
             raise ValueError('Review and adopt a passing candidate first')
         started = time.perf_counter()
-        result = self.lifecycle.predict(observation({'title':title,'excerpt':excerpt}))
-        return {'folder':result.values['folder'], 'review':bool(result.is_ambiguous),
-                'possibilities':result.conformal_sets['folder'], 'milliseconds':(time.perf_counter()-started)*1000}
+        result = self.lifecycle.decision_details(observation({'title':title,'excerpt':excerpt}))
+        return {'folder':result['values']['folder'], 'review':result['review'],
+                'possibilities':result['prediction_set'], 'review_reasons':result['review_reasons'],
+                'revision':result['revision'], 'milliseconds':(time.perf_counter()-started)*1000}
 
     def preview(self):
         rows = []
@@ -255,12 +275,14 @@ class Session:
                 'actions':list(self.records.values()), 'counts':dict(Counter(r['purpose'] for r in self.records.values())),
                 'sources':dict(Counter(r['source'] for r in self.records.values())), 'taught':self.engine is not None,
                 'teaching':self.teaching, 'folders':FOLDERS, 'candidate':candidate,
+                'settings':lifecycle['settings'], 'history':self.lifecycle.history,
+                'can_adopt':lifecycle['can_adopt'], 'qualification':lifecycle['qualification'],
                 'development_checks':sum(d['purpose'] == 'evaluate' for d in self.documents.values()),
                 'evidence_scope':'The same 30 authored filing samples are recurring development checks, not a fresh test.'}
 
 
-def serve(directory, port=8791):
-    session = Session(directory)
+def serve(directory, port=8791, *, choice_solver=None):
+    session = Session(directory, choice_solver=choice_solver)
     html = (ROOT/'index.html').read_bytes()
     class Handler(BaseHTTPRequestHandler):
         def reply(self, status, value, kind='application/json', filename=None):
@@ -297,8 +319,10 @@ def serve(directory, port=8791):
                 elif self.path=='/api/record-text' and set(data)=={'title','excerpt','folder'}: result=session.record_text(**data)
                 elif self.path=='/api/remove' and set(data)=={'id'}: result=session.remove(data['id'])
                 elif self.path=='/api/sample' and not data: result=session.sample_session()
-                elif self.path=='/api/teach' and not data: result=session.teach()
+                elif self.path=='/api/teach' and set(data) <= {'require_qualification'}: result=session.teach(**data)
                 elif self.path=='/api/adopt' and not data: result=session.adopt()
+                elif self.path=='/api/rollback' and set(data)=={'revision'}: result=session.rollback(data['revision'])
+                elif self.path=='/api/qualify' and {'rows','source'} <= set(data) <= {'rows','source','min_accepted_accuracy','min_coverage','confidence'}: result=session.qualify(**data)
                 elif self.path=='/api/preview' and not data: result=session.preview()
                 elif self.path=='/api/evaluate' and not data: result=session.evaluate()
                 elif self.path=='/api/predict' and set(data)=={'title','excerpt'}: result=session.predict(**data)

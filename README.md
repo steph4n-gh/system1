@@ -135,7 +135,7 @@ For “The payment page crashes,” our desired answer is `support`: the issue i
 broken software. Correct the lesson, then check different messages for **both**
 teams before adopting a revision.
 
-The `TeachingSession` workflow, available in System 1 1.1.0, keeps that process together.
+The `TeachingSession` workflow, introduced in System 1 1.1.0, keeps that process together.
 First [create a session with separate lessons and checks](docs/guides/correcting_skills.md).
 Once initialized, a correction looks like this:
 
@@ -155,6 +155,21 @@ Adoption requires the exact passing candidate and unchanged data; a failed revis
 working skill. This first workflow supports one text `ChoiceField`. The
 [eight-example starter](docs/guides/first_skill.md) and
 [lower-level teaching APIs](docs/guides/training_experts.md) remain available.
+
+### 6. Qualify and retain approved revisions
+
+In 1.2.0, assess with `require_qualification=True` when adoption must also pass
+separate qualification. Supply a reserved, independently labeled cohort and its
+source to `session.qualify(...)` before adopting. Reports distinguish accepted
+correctness from the fraction answered without review, and insufficient evidence
+continues to block adoption. Software cannot establish that supplied labels or
+sampling are valid; see the [qualification guide](docs/guides/correcting_skills.md#independent-qualification).
+
+Approved bytes and their evidence remain in `session.history`. Restore a known
+revision explicitly with `session.rollback(revision)`; lessons stay available,
+and another adoption needs a new assessment. `session.decision_details(text)`
+shows the approved revision and observable review reasons. These additions do
+not make a rejected workload qualified.
 
 ## Observe a teacher, then take over
 
@@ -281,14 +296,16 @@ the practical value is the complete path from examples to a checked local skill.
 
 ## Release and development
 
-**Version 1.1.0:** adds `TeachingSession`, `system1 teach`, portable TF-IDF text
-skills and optional logistic teaching. Existing compiler/engine APIs and saved
-hashed skills remain supported. TF-IDF skills require a 1.1.0-or-newer reader.
+**Version 1.2.0:** adds candidate-bound independent qualification, retained approved
+revisions and explicit rollback, clearer review evidence, and optional logistic
+fitting in teaching sessions. Python, CLI and the document workspace share the
+same lifecycle. Existing compiler/engine APIs and saved skills remain supported;
+TF-IDF skills require a 1.1.0-or-newer reader.
 
 The document workspace and gaming/integration labs remain experimental examples
 run from a repository checkout. Publishing the runtime does not qualify their
 workloads or include every research artifact in Python distributions. See the
-[1.1.0 release report](docs/releases/1.1.0.md), [changelog](CHANGELOG.md),
+[1.2.0 release report](docs/releases/1.2.0.md), [changelog](CHANGELOG.md),
 [1.0.3 security release](docs/releases/1.0.3.md) and
 [1.0 migration guide](docs/releases/1.0.md).
 The legacy `reflex` import namespace remains a compatibility alias.

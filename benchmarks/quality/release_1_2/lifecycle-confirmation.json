@@ -1,0 +1,44 @@
+{
+  "api_qualification_ran": false,
+  "candidate_sha256": "4c0b21f656c51bdc26abc41a3d2e7741f98fe1bfce5167e96448b0272d8fc18c",
+  "current_preserved_on_failure": true,
+  "diagnostic_metrics": {
+    "accepted": 194,
+    "accepted_accuracy": 0.8711340206185567,
+    "accepted_correct": 169,
+    "accepted_correct_yield": 0.16967871485943775,
+    "accepted_correctness_lower_bound": 0.8156701275681495,
+    "accepted_error_upper_95": 0.17531436391119506,
+    "accepted_errors": 25,
+    "by_class": {
+      "negative": {
+        "accepted": 106,
+        "accepted_errors": 7,
+        "count": 497
+      },
+      "positive": {
+        "accepted": 88,
+        "accepted_errors": 18,
+        "count": 499
+      }
+    },
+    "count": 996,
+    "coverage": 0.19477911646586346,
+    "coverage_lower_bound": 0.17061329069336814,
+    "median_latency_ms": 0.063958,
+    "p95_latency_ms": 0.07738525,
+    "raw_accuracy": 0.6927710843373494,
+    "review_rate": 0.8052208835341366,
+    "screen_pass": false,
+    "strict_source_shift_gate_pass": false
+  },
+  "freeze_sha256": "8df96ab8f6d8a24c54cc8bec2e6cbdfc55a9dd34b3d09b62241404c26658e6bd",
+  "policy": {
+    "confidence": 0.95,
+    "min_accepted_accuracy": 0.95,
+    "min_coverage": 0.8
+  },
+  "qualification_adoption": "not eligible: frozen development gate failed",
+  "rollback": "unavailable: initial development candidate did not earn approval",
+  "source": "UCI CC BY 4.0: untouched Yelp source-shift after Amazon+IMDb development"
+}

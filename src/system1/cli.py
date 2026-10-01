@@ -471,6 +471,7 @@ def handle_compile_command(args: argparse.Namespace) -> int:
         schema=schema,
         dimension=getattr(args, "dimension", 384),
         regularization=getattr(args, "regularization", 1.0),
+        choice_solver=getattr(args, "choice_solver", "ridge"),
     )
 
     output_path = getattr(args, "output", "model.s1m") or "model.s1m"
@@ -502,6 +503,7 @@ def handle_compile_command(args: argparse.Namespace) -> int:
         "file_size_kb": round(file_size_kb, 2),
         "fields_compiled": list(schema.fields.keys()),
         "regularization": getattr(args, "regularization", 1.0),
+        "choice_solver": compiled_model.metadata["choice_solver"],
         "teacher": compiled_model.metadata["teacher"],
         "teaching_mode": compiled_model.metadata["teaching_mode"],
         "sample_counts": compiled_model.metadata["sample_counts"],
@@ -571,12 +573,20 @@ def handle_teach_command(args: argparse.Namespace) -> int:
             raise ValueError("Use --record and --label together")
         if args.split is not None and args.record is None:
             raise ValueError("--split belongs to --record; datasets declare their own splits")
-        threshold_names = ("min_accuracy", "min_coverage", "max_accepted_errors", "max_regressions")
+        if args.group is not None and args.record is None:
+            raise ValueError("--group belongs to --record; datasets declare their own groups")
+        threshold_names = ("min_accuracy", "max_accepted_errors", "max_regressions")
         thresholds = {name: getattr(args, name) for name in threshold_names if getattr(args, name) is not None}
-        if thresholds and not args.assess:
+        if (thresholds or args.require_qualification) and not args.assess:
             raise ValueError("Quality thresholds belong to --assess")
+        if args.min_coverage is not None and not (args.assess or args.qualification):
+            raise ValueError("--min-coverage belongs to --assess or --qualification")
+        if (args.min_accepted_accuracy is not None or args.confidence is not None or args.source is not None) and not args.qualification:
+            raise ValueError("Qualification settings belong to --qualification")
+        if args.qualification and (not args.source or not args.source.strip()):
+            raise ValueError("Fresh qualification needs --source to describe the independently collected cohort")
         schema = _load_schema(args.schema) if args.schema else None
-        session = TeachingSession(args.directory, schema)
+        session = TeachingSession(args.directory, schema, choice_solver=args.choice_solver)
         if args.dataset:
             with open(args.dataset, encoding="utf-8") as stream:
                 data = json.load(stream)
@@ -587,19 +597,42 @@ def handle_teach_command(args: argparse.Namespace) -> int:
                 if not isinstance(examples, list):
                     raise ValueError("Each dataset split must be a list of [text, label]")
                 for example in examples:
-                    if not isinstance(example, list) or len(example) != 2:
-                        raise ValueError("Each example must be [text, label]")
-                    rows.append({"input": example[0], "label": example[1], "split": split, "source": "file"})
+                    if isinstance(example, list) and len(example) == 2:
+                        example = {"input": example[0], "label": example[1]}
+                    if (not isinstance(example, dict) or not {"input", "label"} <= set(example)
+                            or set(example) - {"input", "label", "group"}):
+                        raise ValueError("Each example must be [text, label] or an input/label object with optional group")
+                    rows.append({**example, "split": split, "source": "file"})
             session.record_many(rows)
         elif args.record is not None:
-            session.record(args.record, args.label, split=args.split or "teach", source="human")
+            session.record(args.record, args.label, split=args.split or "teach", source="human", group=args.group)
         elif args.remove is not None:
             session.remove(args.remove)
 
         if args.assess:
+            if args.min_coverage is not None:
+                thresholds["min_coverage"] = args.min_coverage
+            if args.require_qualification:
+                thresholds["require_qualification"] = True
             result = session.assess(**thresholds)
         elif args.adopt:
             result = session.adopt()
+        elif args.qualification:
+            with open(args.qualification, encoding="utf-8") as stream:
+                rows = json.load(stream)
+            if not isinstance(rows, list):
+                raise ValueError("Qualification JSON must be a list of labeled examples")
+            rows = [{"input": row[0], "label": row[1]} if isinstance(row, list) and len(row) == 2 else row
+                    for row in rows]
+            settings = {name: getattr(args, name) for name in ("min_accepted_accuracy", "min_coverage", "confidence")
+                        if getattr(args, name) is not None}
+            result = session.qualify(rows, source=args.source, **settings)
+        elif args.history:
+            result = session.history
+        elif args.rollback:
+            result = session.rollback(args.rollback)
+        elif args.predict is not None:
+            result = session.decision_details(args.predict)
         else:
             result = session.snapshot()
     except (OSError, ValueError, TypeError, KeyError) as exc:
@@ -623,16 +656,52 @@ def handle_teach_command(args: argparse.Namespace) -> int:
                 f"{metrics['accepted_errors']} accepted mistakes; "
                 f"{metrics['review']}/{metrics['count']} need review"
             )
+            accepted_bound = metrics['accepted_correctness_lower_bound']
+            accepted_evidence = f"{accepted_bound:.1%}" if accepted_bound is not None else "no accepted evidence"
+            print(f"  Development evidence: accepted-correctness lower bound "
+                  f"{accepted_evidence}; coverage lower bound "
+                  f"{metrics['coverage_lower_bound']:.1%}. Reused checks do not qualify future traffic.")
+        for label, metrics in result["candidate"]["per_class"].items():
+            print(f"  {label}: {metrics['accepted_errors']} accepted mistakes; {metrics['review']}/{metrics['count']} need review")
         print(f"Previously accepted correct cases lost: {result['regressions']}")
         for message in result.get("diagnostics", []) + result.get("reasons", []):
             print(f"- {message}")
         print("These are recurring development checks, not independent qualification.")
         if result["passed"]:
-            print("Inspect the report, then run this command with --adopt to use the candidate.")
+            if args.require_qualification:
+                print("Supply a fresh cohort with --qualification before adopting this candidate.")
+            else:
+                print("Inspect the report, then run this command with --adopt to use the candidate.")
     elif args.adopt:
         print(f"Adopted the checked candidate: {session.current_path}")
+    elif args.qualification:
+        print("Fresh qualification passed." if result["passed"] else "Fresh qualification failed; current skill unchanged.")
+        metrics = result["candidate"]
+        accepted_bound = metrics['accepted_correctness_lower_bound']
+        accepted_evidence = f"{accepted_bound:.1%}" if accepted_bound is not None else "no accepted evidence"
+        print(f"Accepted correctness: {metrics['accepted_correct']}/{metrics['accepted']}; "
+              f"lower bound {accepted_evidence}")
+        print(f"Coverage: {metrics['coverage']:.1%}; lower bound {metrics['coverage_lower_bound']:.1%}")
+        for reason in result["reasons"]:
+            print(f"- {reason}")
+        print(f"Cohort source: {result['source']}. Bounds require independent, representative examples.")
+    elif args.history:
+        if not result:
+            print("No retained approved revisions yet.")
+        for revision in result:
+            print(f"{revision['revision']} {'(current)' if revision['current'] else ''} approved {revision['approved_at']} "
+                  f"{'with fresh qualification' if revision['qualification'] else 'from development checks'}")
+    elif args.rollback:
+        print(f"Restored approved revision {result['revision']}. Lessons stay available for a new assessment.")
+    elif args.predict is not None:
+        print(f"{'Review required' if result['review'] else 'Accepted suggestion'}: {result['values'][session.field_name]}")
+        print(f"Possible choices: {', '.join(result['prediction_set']) or 'none'}")
+        if result["review_reasons"]:
+            print(f"Review reasons: {', '.join(result['review_reasons'])}")
+        print(f"Approved revision: {result['revision']}")
     else:
         print(f"Teaching session: {Path(args.directory)}")
+        print(f"Fitting method: {result['settings']['choice_solver']}")
         counts = result["counts"]
         print(f"Examples: {counts['teach']} teaching, {counts['calibrate']} calibration, {counts['evaluate']} comparison checks")
         print(f"Current skill: {session.current_path}" if result["current"] else "No skill adopted yet.")
@@ -641,10 +710,14 @@ def handle_teach_command(args: argparse.Namespace) -> int:
         elif result.get("adopted"):
             print("The assessed candidate is the current skill.")
         elif result.get("report"):
-            print("Candidate passed; inspect the report before --adopt." if result["report"]["passed"] else "Candidate did not pass; current skill unchanged.")
+            if result["report"]["passed"]:
+                print("Candidate passed; inspect the report before --adopt." if result["can_adopt"]
+                      else "Candidate passed development checks; fresh qualification is required before --adopt.")
+            else:
+                print("Candidate did not pass; current skill unchanged.")
         else:
             print("Record separate examples for all three purposes, then use --assess.")
-    return 2 if args.assess and not result["passed"] else 0
+    return 2 if (args.assess or args.qualification) and not result["passed"] else 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -706,24 +779,35 @@ def build_parser() -> argparse.ArgumentParser:
     compile_parser.add_argument("--dimension", type=int, default=384, help="Feature dimension (default: 384)")
     compile_parser.add_argument("--samples-per-choice", type=int, default=20, help="Number of synthetic samples to generate per choice")
     compile_parser.add_argument("--regularization", type=float, default=1.0, help="Ridge regression L2 regularization lambda")
+    compile_parser.add_argument("--choice-solver", choices=("ridge", "logistic"), default="ridge", help="Choice head fitting method (default: ridge)")
     compile_parser.add_argument("--json", action="store_true", help="Output machine-readable JSON compilation summary")
     compile_parser.set_defaults(func=handle_compile_command)
 
     teach_parser = subparsers.add_parser("teach", help="Record corrections, check a candidate, and explicitly adopt a local text skill")
     teach_parser.add_argument("directory", help="Local teaching session directory")
     teach_parser.add_argument("--schema", help="Single-choice schema; required when creating a session")
+    teach_parser.add_argument("--choice-solver", choices=("ridge", "logistic"), help="Fitting method for a new session (default: ridge); existing settings must match")
     teach_action = teach_parser.add_mutually_exclusive_group()
     teach_action.add_argument("--record", metavar="TEXT", help="Record an explicit answer or replace an earlier lesson")
     teach_action.add_argument("--remove", metavar="TEXT", help="Remove a recorded input")
-    teach_action.add_argument("--dataset", help="JSON split mapping: teach/calibrate/evaluate to [text, label] pairs")
+    teach_action.add_argument("--dataset", help="JSON split mapping: teach/calibrate/evaluate to pairs or input/label/optional group objects")
     teach_action.add_argument("--assess", action="store_true", help="Teach and compare a saved candidate; leave current skill unchanged")
     teach_action.add_argument("--adopt", action="store_true", help="Adopt the exact passing candidate if its evidence is unchanged")
+    teach_action.add_argument("--qualification", metavar="FILE", help="One-use fresh JSON cohort: [text, label] pairs or input/label/optional group objects")
+    teach_action.add_argument("--history", action="store_true", help="List retained approved revisions")
+    teach_action.add_argument("--rollback", metavar="REVISION", help="Restore an exact retained approved revision; keep current lessons")
+    teach_action.add_argument("--predict", metavar="TEXT", help="Preview an approved-skill suggestion and factual review reasons")
     teach_parser.add_argument("--label", help="Desired choice for --record")
     teach_parser.add_argument("--split", choices=("teach", "calibrate", "evaluate"), help="Purpose of --record (default: teach)")
+    teach_parser.add_argument("--group", help="Related-document group for --record; keep a group within one split")
     teach_parser.add_argument("--min-accuracy", type=float, help="Minimum raw correctness on checking examples (assessment default: 0.8)")
-    teach_parser.add_argument("--min-coverage", type=float, help="Minimum fraction answered without review (assessment default: 0.5)")
+    teach_parser.add_argument("--min-coverage", type=float, help="Minimum acceptance coverage (assessment default: 0.5); qualification lower bound target (default: 0.8)")
     teach_parser.add_argument("--max-accepted-errors", type=int, help="Maximum accepted mistakes (assessment default: 0)")
     teach_parser.add_argument("--max-regressions", type=int, help="Maximum previously accepted correct cases now wrong or reviewed (default: 0)")
+    teach_parser.add_argument("--require-qualification", action="store_true", help="Require fresh qualification after development assessment before adoption")
+    teach_parser.add_argument("--source", help="Independent cohort provenance for --qualification")
+    teach_parser.add_argument("--min-accepted-accuracy", type=float, help="Required lower bound for accepted correctness in fresh qualification (default: 0.95)")
+    teach_parser.add_argument("--confidence", type=float, help="Statistical confidence for fresh qualification bounds (default: 0.95)")
     teach_parser.add_argument("--json", action="store_true", help="Output session state or the complete candidate report as JSON")
     teach_parser.set_defaults(func=handle_teach_command)
 

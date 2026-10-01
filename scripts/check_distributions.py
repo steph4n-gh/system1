@@ -24,6 +24,10 @@ def main(directory):
             'examples/teaching_by_doing/index.html', 'examples/teaching_by_doing/documents.json',
             'src/system1/teaching.py', 'src/reflex/teaching.py',
             'docs/guides/correcting_skills.md',
+            'docs/releases/1.2.0.md',
+            'benchmarks/quality/release_1_2/README.md',
+            'benchmarks/quality/release_1_2/PROTOCOL.md',
+            'benchmarks/quality/release_1_2/SUMMARY.json',
             'benchmarks/quality/document_workflow/run.py',
             'benchmarks/quality/document_workflow/PROTOCOL.md',
             'benchmarks/quality/document_workflow/results/summary.json',
@@ -33,6 +37,10 @@ def main(directory):
     assert not any(name.startswith('benchmarks/quality/n8n_gauntlet/artifacts/') or
                    (name.startswith('benchmarks/quality/n8n_gauntlet/results/') and name.endswith(('.json', '.png')))
                    for name in source_names), 'Research payload leaked into the source archive'
+    research_summary = {'README.md', 'PROTOCOL.md', 'SUMMARY.json'}
+    assert all(name.removeprefix('benchmarks/quality/release_1_2/') in research_summary
+               for name in source_names if name.startswith('benchmarks/quality/release_1_2/')), \
+        'Release research payload leaked into the source archive'
     print(f'Checked wheel ({wheel.stat().st_size:,} bytes) and source archive ({source.stat().st_size:,} bytes).')
 
 

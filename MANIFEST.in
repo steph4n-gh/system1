@@ -6,6 +6,8 @@ recursive-include benchmarks *.py *.json *.md
 # Full research evidence stays in Git, outside installable distributions.
 prune benchmarks/quality/n8n_gauntlet/artifacts
 recursive-exclude benchmarks/quality/n8n_gauntlet/results *.json *.png
+prune benchmarks/quality/release_1_2
+include benchmarks/quality/release_1_2/README.md benchmarks/quality/release_1_2/PROTOCOL.md benchmarks/quality/release_1_2/SUMMARY.json
 recursive-include docs *.md *.json
 recursive-include assets *.md *.jpg
 recursive-include deploy *.md *.yaml

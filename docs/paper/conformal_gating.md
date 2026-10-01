@@ -1,9 +1,9 @@
 # Mathematical notes: uncertainty, prototype geometry and online correction
 
-**System 1 1.1.0 · 22 September 2026 · Implementation notes, not new theorems**
+**System 1 1.2.0 · 1 October 2026 · Implementation notes, not new theorems**
 
 This note describes the runtime mathematics in
-[System 1 1.1.0](../releases/1.1.0.md) and the assumptions needed to interpret it,
+[System 1 1.2.0](../releases/1.2.0.md) and the assumptions needed to interpret it,
 including the teaching workflow and optional fitting method. The [whitepaper](system1_whitepaper.md) contains the
 product evaluation; the [architecture reference](../architecture/technical_specification.md)
 maps behavior to code. Earlier claims of guaranteed safe execution, universal
@@ -97,6 +97,51 @@ separate policy from alpha 0.05 or a 95% accepted-correctness workload target.
 The [SMS observation result](../../benchmarks/quality/workloads/README.md)
 promotes under the former and misses the latter.
 
+### Independent qualification in the 1.2.0 teaching session
+
+`TeachingSession.assess()` compares a fixed candidate with the approved skill on
+recurring development checks. Its empirical counts and descriptive bounds cannot
+be treated as fresh qualification after the checks have guided corrections.
+`assess(require_qualification=True)` additionally requires a separately supplied
+cohort scored by `qualify()`, after its candidate, targets and source are frozen.
+
+For qualification attempt $k\ge1$, let $N_k$ be the number of independently sampled
+groups, $A_k$ the number accepted, and $S_k$ the accepted-correct count. There is
+one supplied row per group. The two quantities being assessed are acceptance
+probability and correctness conditional on acceptance for this fixed candidate
+on the represented population. Using the existing exact one-sided binomial lower
+bound $L(s,n;\delta)$, qualification requires
+
+$$L(S_k,A_k;\delta_k)\ge t_{\rm correctness},\qquad
+L(A_k,N_k;\delta_k)\ge t_{\rm coverage}.$$
+
+With no accepted observations, accepted correctness is undefined and qualification
+fails. For $0<s\le n$, the bound inverts the binomial upper tail; when $s=n$,
+$L(n,n;\delta)=\delta^{1/n}$. A zero success count gives a zero lower bound.
+The defaults are $t_{\rm correctness}=0.95$ and $t_{\rm coverage}=0.8$.
+
+The session fixes confidence $c$ on its first consumed qualification request.
+Every later request must use the same $c$. Each bound at attempt $k$ receives
+
+$$\delta_k=\frac{1-c}{2k(k+1)},\qquad
+\sum_{k=1}^{\infty}2\delta_k=1-c.$$
+
+Under independent representative sampling, with each candidate fixed before its
+fresh cohort is scored, the union bound therefore controls bound failures across
+the session's qualification attempts at $1-c$. Candidates may have been developed
+from earlier evidence; a later cohort must remain independent conditional on that
+history. This does not establish future accuracy after population drift, per-class
+accuracy, or conformity of caller-supplied data to the assumptions.
+
+The complete request is persisted before scoring. One candidate can consume one
+request, including a failed or interrupted evaluation. Inputs and supplied groups
+are excluded from later qualification and teaching within the session. These
+checks catch supplied lineage and normalized overlap; they cannot prove that
+unidentified paraphrases or source families are independent. The confidence scope
+is the retained session, rather than arbitrary experiments in other directories.
+This gate is separate from both conformal calibration and the automatic teacher
+promotion policy above.
+
 ## 3. Prototype centering: a conditional geometry result
 
 The schema-seeded model can center class prototypes and normalize the residuals.
@@ -161,7 +206,7 @@ definiteness; rescaling a matrix alone does not improve its condition number.
 No fixed latency, unlimited stability or immunity to forgetting is implied.
 
 The `TeachingSession` workflow introduced in 1.1.0 retains corrected examples and
-recompiles a separate TF-IDF/ridge candidate, then recalibrates it on its separate
+recompiles a separate TF-IDF candidate, then recalibrates it on its separate
 calibration records. It does not use the online update formulas above or mutate
 the approved skill during assessment. If online correction is used directly,
 changed weights invalidate their old calibration, in memory and saved artifacts. Strict inference requests review until separate recalibration. A
@@ -174,6 +219,10 @@ L-BFGS-B at teaching time. Stored coefficients are scaled by 0.25 to match the
 runtime's choice-logit scaling. NumPy inference and separate calibration are
 unchanged. The ridge batch-equivalence formulas above do not describe incremental
 logistic fitting: retain corrections and recompile to preserve that objective.
+Since 1.2.0, the teaching session fixes its ridge or optional logistic solver at
+creation. Adoption archives exact approved bytes and evidence; restoring a
+validated approved revision keeps lessons and invalidates the pending assessment.
+Restoration does not recompute an online update or make old qualification data fresh.
 
 ## 5. Reading the evidence
 
@@ -198,3 +247,6 @@ keeps a separate final holdout: a candidate meets its 95% accepted-correctness /
 adoption policy. Its narrower accepted set also yields fewer correct automatic
 answers. Neither a Wilson interval nor a small accepted-error count proves a
 better decision policy without considering coverage and application costs.
+The separate 1.2.0 qualification gate adds fresh-data lower-bound checks under
+the assumptions above; it does not retroactively qualify this experiment or any
+full-scope workload. No new encoder or lesson-selection result is asserted here.

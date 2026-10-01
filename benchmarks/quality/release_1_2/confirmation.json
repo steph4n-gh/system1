@@ -1,0 +1,619 @@
+{
+  "evaluation_labels_per_candidate": 1986,
+  "freeze_sha256": "a6c9010f6ddfa03ce8038efcf13893229537b6673801bbee13f1d85b8943e525",
+  "results": [
+    {
+      "cases_sha256": "40492a4c8abfff8c5e7adaa7949adf1932be259c594eb6f68b89892ede6a28c5",
+      "metrics": {
+        "accepted": 3,
+        "accepted_accuracy": 0.6666666666666666,
+        "accepted_correct": 2,
+        "accepted_correct_yield": 0.0010070493454179255,
+        "accepted_error_upper_95": 0.8646496378284161,
+        "accepted_errors": 1,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 2,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0015105740181268882,
+        "median_latency_ms": 0.068458,
+        "p95_latency_ms": 0.08440675,
+        "raw_accuracy": 0.3892245720040282,
+        "review_rate": 0.9984894259818731,
+        "screen_pass": false
+      },
+      "name": "ridge-random-11-400"
+    },
+    {
+      "cases_sha256": "9bf893ad4931a7b3222125b173539e0ff91624968ef6cb02ac7f7a495cbedf65",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005035246727089627,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0005035246727089627,
+        "median_latency_ms": 0.066333,
+        "p95_latency_ms": 0.08225,
+        "raw_accuracy": 0.39778449144008055,
+        "review_rate": 0.999496475327291,
+        "screen_pass": false
+      },
+      "name": "logistic-random-11-400"
+    },
+    {
+      "cases_sha256": "a5cdd71c41c9e848af6a91e47df7f2c52c6d5dd37e92a4db9dda8697fb8a68b7",
+      "metrics": {
+        "accepted": 60,
+        "accepted_accuracy": 0.75,
+        "accepted_correct": 45,
+        "accepted_correct_yield": 0.022658610271903322,
+        "accepted_error_upper_95": 0.35853979440481315,
+        "accepted_errors": 15,
+        "by_class": {
+          "anger": {
+            "accepted": 4,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 39,
+            "accepted_errors": 3,
+            "count": 688
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 14,
+            "accepted_errors": 7,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.030211480362537766,
+        "median_latency_ms": 0.067833,
+        "p95_latency_ms": 0.082167,
+        "raw_accuracy": 0.3982880161127895,
+        "review_rate": 0.9697885196374623,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty-11-400"
+    },
+    {
+      "cases_sha256": "5efd8f0de7d7f30618b393910ccc0d00e26eb9f9ccb3cf0a09dd47961b3f7e13",
+      "metrics": {
+        "accepted": 29,
+        "accepted_accuracy": 0.6896551724137931,
+        "accepted_correct": 20,
+        "accepted_correct_yield": 0.010070493454179255,
+        "accepted_error_upper_95": 0.4790119100069735,
+        "accepted_errors": 9,
+        "by_class": {
+          "anger": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 5,
+            "accepted_errors": 5,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 12,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 10,
+            "accepted_errors": 2,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.01460221550855992,
+        "median_latency_ms": 0.068583,
+        "p95_latency_ms": 0.08979175,
+        "raw_accuracy": 0.4068479355488419,
+        "review_rate": 0.9853977844914401,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty_diversity-11-400"
+    },
+    {
+      "cases_sha256": "057d9943aea7ecf5a6d62a243a8f0ef14284a17e522afb86d4ac7fb7c4958c40",
+      "metrics": {
+        "accepted": 21,
+        "accepted_accuracy": 0.7619047619047619,
+        "accepted_correct": 16,
+        "accepted_correct_yield": 0.008056394763343404,
+        "accepted_error_upper_95": 0.4369763160312658,
+        "accepted_errors": 5,
+        "by_class": {
+          "anger": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 15,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 2,
+            "accepted_errors": 1,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.010574018126888218,
+        "median_latency_ms": 0.0678125,
+        "p95_latency_ms": 0.08501,
+        "raw_accuracy": 0.43554884189325277,
+        "review_rate": 0.9894259818731118,
+        "screen_pass": false
+      },
+      "name": "ridge-random-29-400"
+    },
+    {
+      "cases_sha256": "0d5a2a6db1519a56460e79c07a8c96500fe8732a507f3e0fd2b09a09c163775b",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0,
+        "median_latency_ms": 0.0655,
+        "p95_latency_ms": 0.0810315,
+        "raw_accuracy": 0.43454179254783487,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "logistic-random-29-400"
+    },
+    {
+      "cases_sha256": "ba5e2487deeed2575c84dd3064a17f93ddd51fe5da7280e9d38df66a72f7f52b",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005035246727089627,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0005035246727089627,
+        "median_latency_ms": 0.06725,
+        "p95_latency_ms": 0.08081225,
+        "raw_accuracy": 0.4164149043303122,
+        "review_rate": 0.999496475327291,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty-29-400"
+    },
+    {
+      "cases_sha256": "fce1aac6e341bb3dd2512c81a014e3d31c693361a33167c72786749987777441",
+      "metrics": {
+        "accepted": 6,
+        "accepted_accuracy": 0.5,
+        "accepted_correct": 3,
+        "accepted_correct_yield": 0.0015105740181268882,
+        "accepted_error_upper_95": 0.8468388820247768,
+        "accepted_errors": 3,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 3,
+            "accepted_errors": 3,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 3,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0030211480362537764,
+        "median_latency_ms": 0.0685625,
+        "p95_latency_ms": 0.0814065,
+        "raw_accuracy": 0.4028197381671702,
+        "review_rate": 0.9969788519637462,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty_diversity-29-400"
+    },
+    {
+      "cases_sha256": "8daa7a5f617effb4b35aba14f81192266961e6e2fb668dd30cd90649ce0013d3",
+      "metrics": {
+        "accepted": 64,
+        "accepted_accuracy": 0.640625,
+        "accepted_correct": 41,
+        "accepted_correct_yield": 0.020644511581067473,
+        "accepted_error_upper_95": 0.46929353647051664,
+        "accepted_errors": 23,
+        "by_class": {
+          "anger": {
+            "accepted": 7,
+            "accepted_errors": 4,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 12,
+            "accepted_errors": 10,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 20,
+            "accepted_errors": 3,
+            "count": 688
+          },
+          "love": {
+            "accepted": 3,
+            "accepted_errors": 3,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 21,
+            "accepted_errors": 2,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.032225579053373615,
+        "median_latency_ms": 0.068417,
+        "p95_latency_ms": 0.08557324999999999,
+        "raw_accuracy": 0.40634441087613293,
+        "review_rate": 0.9677744209466264,
+        "screen_pass": false
+      },
+      "name": "ridge-random-47-400"
+    },
+    {
+      "cases_sha256": "b68efd1fb49dcad5617eb7cd2da70b337b859765df97ce063bc94b728e614362",
+      "metrics": {
+        "accepted": 6,
+        "accepted_accuracy": 0.6666666666666666,
+        "accepted_correct": 4,
+        "accepted_correct_yield": 0.002014098690835851,
+        "accepted_error_upper_95": 0.7286616274802475,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0030211480362537764,
+        "median_latency_ms": 0.06625,
+        "p95_latency_ms": 0.0806145,
+        "raw_accuracy": 0.4164149043303122,
+        "review_rate": 0.9969788519637462,
+        "screen_pass": false
+      },
+      "name": "logistic-random-47-400"
+    },
+    {
+      "cases_sha256": "b9a84095d5a311929be2bd870727dd60262acdcbb652d863b38395a028bf9d22",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005035246727089627,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.0005035246727089627,
+        "median_latency_ms": 0.0677915,
+        "p95_latency_ms": 0.08261450000000001,
+        "raw_accuracy": 0.39677744209466265,
+        "review_rate": 0.999496475327291,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty-47-400"
+    },
+    {
+      "cases_sha256": "bb0331bd342459565df06ca25577d72a1a54602f7f73b2c4a773462006cfda4e",
+      "metrics": {
+        "accepted": 9,
+        "accepted_accuracy": 0.7777777777777778,
+        "accepted_correct": 7,
+        "accepted_correct_yield": 0.003524672708962739,
+        "accepted_error_upper_95": 0.5496416495066101,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 224
+          },
+          "joy": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 688
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 156
+          },
+          "sadness": {
+            "accepted": 4,
+            "accepted_errors": 1,
+            "count": 579
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 65
+          }
+        },
+        "count": 1986,
+        "coverage": 0.004531722054380665,
+        "median_latency_ms": 0.068,
+        "p95_latency_ms": 0.08082275,
+        "raw_accuracy": 0.4199395770392749,
+        "review_rate": 0.9954682779456193,
+        "screen_pass": false
+      },
+      "name": "ridge-uncertainty_diversity-47-400"
+    }
+  ],
+  "scope": "untouched same-source public test; not customer traffic"
+}

@@ -8,7 +8,7 @@ already serving your application.
 This additive workflow is available in **System 1 1.1.0 and newer**:
 
 ```bash
-python -m pip install 'system1>=1.1.0'
+python -m pip install 'system1>=1.2.0'
 ```
 
 The first supported workflow is text classification with one
@@ -235,3 +235,91 @@ Targeted feedback reduced accepted mistakes on its separate holdout, with more
 reviews; every candidate still failed the default zero-error adoption checks.
 That result illustrates why a quality improvement and permission to adopt are
 separate decisions.
+
+
+## Independent qualification
+
+Version 1.2.0 adds a separate one-shot qualification step. Choose the workload
+policy before inspecting the cohort, keep this data outside fitting, calibration,
+and recurring evaluation, and collect independently reviewed representative rows.
+
+```python
+report = session.assess(require_qualification=True)
+# Only a passing development assessment can be qualified.
+fresh = json.loads(Path("fresh-cases.json").read_text())
+qualification = session.qualify(
+    fresh, source="Reserved independently reviewed requests; collection dates and method",
+    min_accepted_accuracy=.95, min_coverage=.8, confidence=.95,
+)
+print(qualification["candidate"], qualification["reasons"])
+# Review the passing evidence before explicitly calling session.adopt().
+```
+
+Each fresh row is an object with `input`, `label`, and optional `group`. Related
+records can have a nonempty `group` in all session splits, but a group cannot cross
+splits. Qualification requires one row per supplied independent group. Omitting
+groups is a declaration that individual rows are independent; the software cannot
+verify that, detect all paraphrases, or establish label correctness.
+
+Both accepted-correctness and coverage lower bounds must pass. The exact one-sided
+binomial bounds share the specified confidence error budget across all attempts
+in this session. The first request fixes the confidence target. Attempt `k`
+allocates `(1 - confidence) / (2 * k * (k + 1))` to each bound, so repeated
+qualification cannot reset the error budget. A few perfect answers
+are insufficient; zero acceptance leaves accepted correctness undefined. These
+bounds assume independent representative units and a fixed candidate. They are
+not a promise under arbitrary changes in traffic. Development bounds are descriptive
+only because checks may be correlated and have influenced repeated revisions.
+
+The request, source, policy, and cohort are frozen before the first prediction.
+A failed or interrupted attempt consumes its rows/groups across this session,
+including later candidates. They cannot be imported as lessons or replaced with
+another policy. Other copies of a session and semantic overlap cannot be controlled
+by software; reserve genuinely fresh data rather than copying inspected tests.
+The confidence scope does not extend to separate session directories. Adoption
+rechecks the exact frozen evidence when qualification is required.
+Default `assess()` retains the existing development-only approval policy.
+
+```bash
+system1 teach .system1/support-session --assess --require-qualification
+system1 teach .system1/support-session --qualification fresh-cases.json --source "Independent collection"
+system1 teach .system1/support-session --adopt
+```
+
+## Approved revisions and recovery
+
+```python
+print(session.history)
+revision = session.history[0]["revision"]
+session.rollback(revision)  # Explicitly restore approved bytes, keeping all lessons.
+print(session.decision_details("Please refund my payment"))
+```
+
+`history` retains artifact digests, approval dates, and whether qualification
+was part of the approval. Recovery validates the artifact, schema, approval policy
+and required qualification. A missing or altered archive is refused. Rollback
+invalidates the pending assessment even if the restored skill was its original
+incumbent. Reassess before another adoption; restore is not automatic promotion.
+An existing 1.1 approved skill is retained during the first 1.2 adoption with its
+legacy status when its earlier assessment is unavailable.
+
+```bash
+system1 teach .system1/support-session --history
+system1 teach .system1/support-session --rollback FULL_APPROVED_REVISION_DIGEST
+system1 teach .system1/support-session --predict "Please refund my payment" --json
+```
+
+## Choose the fitting method
+
+Ridge remains the default. A new session can opt into the existing logistic solver:
+
+```python
+session = TeachingSession(".system1/logistic-session", SupportRoute, choice_solver="logistic")
+```
+
+Install `system1[teaching]` for its SciPy fitting dependency. The chosen setting is
+retained, and reopening with a different supplied setting is refused. Default
+teaching, qualification, rollback, and inference on saved logistic heads need no
+SciPy. Old version-one session state reopens without rewriting; missing solver
+settings mean ridge. Reassess old active candidate reports before adoption. Use
+1.2.0 for directories that now contain the new session contracts.

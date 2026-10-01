@@ -1,0 +1,79 @@
+{
+  "artifacts": [
+    {
+      "budget": 100,
+      "bytes": 90236,
+      "name": "sklearn-random-11-100",
+      "seed": 11,
+      "selection_sha256": "dc2055b000552e48790c56bff02ea6cefcb6abdaa749b39a301778e8962ff6eb",
+      "sha256": "8c6e8fa672f040b67fce5842a3c53afe553ec89320602390dd14371a80058fef"
+    },
+    {
+      "budget": 200,
+      "bytes": 89444,
+      "name": "sklearn-random-11-200",
+      "seed": 11,
+      "selection_sha256": "fd04ed31e3d3ec62446b023ec6b0233f64910deccc75947927ae7d3bb1104343",
+      "sha256": "774fd8c6426c427c9ec5886992a6fc75db5f56e50303addf6ee824a979a23600"
+    },
+    {
+      "budget": 400,
+      "bytes": 88449,
+      "name": "sklearn-random-11-400",
+      "seed": 11,
+      "selection_sha256": "3a7f7c2162c83bee93d201992e680758f913b5ab123a81a3667fb178b90e063b",
+      "sha256": "54586951a56e0e1537cd60a174af10f362f2ade403f6f7729c31b5da6631e5ac"
+    },
+    {
+      "budget": 100,
+      "bytes": 90033,
+      "name": "sklearn-random-29-100",
+      "seed": 29,
+      "selection_sha256": "0a6ba67492bd8ad9e4e2283680219cd1cfc9124c95c3075788ed0cef65855fb0",
+      "sha256": "cf8daae0cf2a90a25b8ec1a80712dd1631774499ee5251ab2e46280ac53ef255"
+    },
+    {
+      "budget": 200,
+      "bytes": 89417,
+      "name": "sklearn-random-29-200",
+      "seed": 29,
+      "selection_sha256": "477deac494769f9927e1b865ce66453c93d4237e77b5e5727a4b6cc431c446d6",
+      "sha256": "43d62c7080748cabadae206f38498f62f9bf8a997e0e7c3944d55c9e1f1bb180"
+    },
+    {
+      "budget": 400,
+      "bytes": 88363,
+      "name": "sklearn-random-29-400",
+      "seed": 29,
+      "selection_sha256": "647542865215ce6ad9a79e9bc1a8ca930710526525eccc596ac74b0aac239d49",
+      "sha256": "652b49c066dd5b96c79aaa85a39d7592127ad74932d9ba4a72889090b7cd9881"
+    },
+    {
+      "budget": 100,
+      "bytes": 89866,
+      "name": "sklearn-random-47-100",
+      "seed": 47,
+      "selection_sha256": "46abb51e227f98128d49115f1e73e4c5658a3a8200afee0acf116faf29d80415",
+      "sha256": "814061bfd700c0692eec87fb0dd0cf0d6c0f8277ce44f80c795b060c5e520ff1"
+    },
+    {
+      "budget": 200,
+      "bytes": 89295,
+      "name": "sklearn-random-47-200",
+      "seed": 47,
+      "selection_sha256": "1ace2a93c56e311040cf391620a9d434f0f72017c5643dfc7baf0eed5748f955",
+      "sha256": "60c7a6fa8bcb865c9a5b27ed10af0dc7b65c8c3181362659dbde218a7dae1db8"
+    },
+    {
+      "budget": 400,
+      "bytes": 88358,
+      "name": "sklearn-random-47-400",
+      "seed": 47,
+      "selection_sha256": "146084975d01e687cb7d16e6533ef528aae73be76debe5e2a21d7736e9979861",
+      "sha256": "afa3c8ac22471fafa6964c1459da6f6b3e1b3f05dfcdfc1f9e7eb240fd22632e"
+    }
+  ],
+  "original_development_sha256": "595d33c304c66b4857a77b229e2690b4daf711ed7c0f747d6375d67d0a41a6fa",
+  "purpose": "Supplemental artifact accounting only; deterministic fitting on already frozen selections, no evaluation predictions or selection changes.",
+  "serialization": "Python pickle protocol5, TF-IDF vectorizer + sklearn logistic; trusted local artifacts only; research weights excluded from release."
+}

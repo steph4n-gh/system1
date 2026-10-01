@@ -1,0 +1,20 @@
+{
+  "cache_switches": "compiled model False and engine False",
+  "device": "CPU",
+  "inference_threads": 1,
+  "large_model_downloads": 0,
+  "machine": "arm64",
+  "network_during_source_preparation": "pinned public corpus download only",
+  "packages": {
+    "numpy": "2.4.6",
+    "pyarrow": "24.0.0",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.17.1",
+    "threadpoolctl": "3.6.0",
+    "torch": "2.12.0",
+    "transformers": "5.9.0"
+  },
+  "paid_teacher_calls": 0,
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "python": "3.14.4"
+}

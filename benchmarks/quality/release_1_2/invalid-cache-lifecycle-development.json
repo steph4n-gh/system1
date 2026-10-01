@@ -1,0 +1,228 @@
+{
+  "corrected": {
+    "calibration_counts": {
+      "calibration": 200,
+      "fit": 1400,
+      "generated": 0,
+      "temperature": 100
+    },
+    "candidate": {
+      "accepted": 43,
+      "accepted_accuracy": 0.8372093023255814,
+      "accepted_correct": 36,
+      "accepted_correctness_lower_bound": 0.6929891276350899,
+      "accepted_errors": 7,
+      "count": 200,
+      "coverage": 0.215,
+      "coverage_lower_bound": 0.1601816953323354,
+      "per_class": {
+        "negative": {
+          "accepted": 26,
+          "accepted_correct": 21,
+          "accepted_errors": 5,
+          "count": 102,
+          "raw_correct": 70,
+          "review": 76
+        },
+        "positive": {
+          "accepted": 17,
+          "accepted_correct": 15,
+          "accepted_errors": 2,
+          "count": 98,
+          "raw_correct": 71,
+          "review": 81
+        }
+      },
+      "raw_accuracy": 0.705,
+      "raw_correct": 141,
+      "review": 157,
+      "review_rate": 0.785
+    },
+    "counts": {
+      "calibrate": 200,
+      "evaluate": 200,
+      "teach": 1400
+    },
+    "diagnostics": [
+      "The candidate chooses wrong labels before review gating; inspect examples and features. More calibration alone does not repair the learned choices.",
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "e783283653e467c3848333897c61e1c29c2af9240023bb50a4b41222527ec5eb",
+      "current": null,
+      "session": "9b9c8e82578860ac5aa3f671647586e17c0ce8c8b4f8ac8f04b713ec9c65c825"
+    },
+    "incumbent": null,
+    "passed": false,
+    "raw_regressions": 0,
+    "reasons": [
+      "Raw accuracy is below the required minimum",
+      "Local acceptance coverage is below the required minimum"
+    ],
+    "regressions": 0,
+    "thresholds": {
+      "max_accepted_errors": 20,
+      "max_regressions": 200,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.5,
+      "require_qualification": false
+    },
+    "version": 1
+  },
+  "corrected_adopted": false,
+  "deployment_assessment": {
+    "calibration_counts": {
+      "calibration": 200,
+      "fit": 1400,
+      "generated": 0,
+      "temperature": 100
+    },
+    "candidate": {
+      "accepted": 43,
+      "accepted_accuracy": 0.8372093023255814,
+      "accepted_correct": 36,
+      "accepted_correctness_lower_bound": 0.6929891276350899,
+      "accepted_errors": 7,
+      "count": 200,
+      "coverage": 0.215,
+      "coverage_lower_bound": 0.1601816953323354,
+      "per_class": {
+        "negative": {
+          "accepted": 26,
+          "accepted_correct": 21,
+          "accepted_errors": 5,
+          "count": 102,
+          "raw_correct": 70,
+          "review": 76
+        },
+        "positive": {
+          "accepted": 17,
+          "accepted_correct": 15,
+          "accepted_errors": 2,
+          "count": 98,
+          "raw_correct": 71,
+          "review": 81
+        }
+      },
+      "raw_accuracy": 0.705,
+      "raw_correct": 141,
+      "review": 157,
+      "review_rate": 0.785
+    },
+    "counts": {
+      "calibrate": 200,
+      "evaluate": 200,
+      "teach": 1400
+    },
+    "diagnostics": [
+      "The candidate chooses wrong labels before review gating; inspect examples and features. More calibration alone does not repair the learned choices.",
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "fa7c67079d0c812bb8c879da7beef66024da6ba17727bd2a116066db65dcbf08",
+      "current": null,
+      "session": "9b9c8e82578860ac5aa3f671647586e17c0ce8c8b4f8ac8f04b713ec9c65c825"
+    },
+    "incumbent": null,
+    "passed": false,
+    "raw_regressions": 0,
+    "reasons": [
+      "Raw accuracy is below the required minimum",
+      "Local acceptance coverage is below the required minimum"
+    ],
+    "regressions": 0,
+    "thresholds": {
+      "max_accepted_errors": 20,
+      "max_regressions": 200,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.5,
+      "require_qualification": true
+    },
+    "version": 1
+  },
+  "feedback_count": 400,
+  "feedback_initial_accepted_errors": 8,
+  "feedback_initial_errors": 99,
+  "history_before_qualification": [],
+  "initial": {
+    "calibration_counts": {
+      "calibration": 200,
+      "fit": 1000,
+      "generated": 0,
+      "temperature": 100
+    },
+    "candidate": {
+      "accepted": 40,
+      "accepted_accuracy": 0.825,
+      "accepted_correct": 33,
+      "accepted_correctness_lower_bound": 0.672209866638414,
+      "accepted_errors": 7,
+      "count": 200,
+      "coverage": 0.2,
+      "coverage_lower_bound": 0.14689448821575724,
+      "per_class": {
+        "negative": {
+          "accepted": 27,
+          "accepted_correct": 21,
+          "accepted_errors": 6,
+          "count": 102,
+          "raw_correct": 71,
+          "review": 75
+        },
+        "positive": {
+          "accepted": 13,
+          "accepted_correct": 12,
+          "accepted_errors": 1,
+          "count": 98,
+          "raw_correct": 70,
+          "review": 85
+        }
+      },
+      "raw_accuracy": 0.705,
+      "raw_correct": 141,
+      "review": 160,
+      "review_rate": 0.8
+    },
+    "counts": {
+      "calibrate": 200,
+      "evaluate": 200,
+      "teach": 1000
+    },
+    "diagnostics": [
+      "The candidate chooses wrong labels before review gating; inspect examples and features. More calibration alone does not repair the learned choices.",
+      "Some checks require review. This measures withheld decisions, not a proven cause; inspect the cases and independent calibration examples.",
+      "These are empirical results on recurring development checks, not a guarantee on new inputs or fresh statistical qualification."
+    ],
+    "evidence_scope": "recurring_development_checks",
+    "identity": {
+      "candidate": "63fcefbed02e7566c4ccfb5ab315518321d2d7356b71b31db2c7f764e59a47a3",
+      "current": null,
+      "session": "612627952654690eee88ea628206047eda2e0a957d7b2833f8f25746bb0bd941"
+    },
+    "incumbent": null,
+    "passed": false,
+    "raw_regressions": 0,
+    "reasons": [
+      "Raw accuracy is below the required minimum",
+      "Local acceptance coverage is below the required minimum"
+    ],
+    "regressions": 0,
+    "thresholds": {
+      "max_accepted_errors": 20,
+      "max_regressions": 200,
+      "min_accuracy": 0.8,
+      "min_coverage": 0.5,
+      "require_qualification": false
+    },
+    "version": 1
+  },
+  "initial_adopted": false,
+  "initial_revision": null,
+  "protocol_sha256": "5f82fea0021b1c66a24b442216fc69db4d5251745b181b14358582878cb72eca",
+  "source": "UCI Sentiment Labelled Sentences; benchmark annotations, not customer feedback",
+  "source_manifest_sha256": "5ee9c2a3f33b06b112e788b2fbdfb5e3acd097a35b88c5cf4173eeebe031eb00"
+}

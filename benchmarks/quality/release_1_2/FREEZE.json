@@ -1,0 +1,84 @@
+{
+  "candidates": [
+    {
+      "name": "ridge-random-11-400",
+      "path": ".system1/release-1.2-research/ridge-random-11-400/candidate.s1m",
+      "selection_sha256": "3a7f7c2162c83bee93d201992e680758f913b5ab123a81a3667fb178b90e063b",
+      "sha256": "03191745352ff78b6b7cdc245af09533b9b1e09b7acfa514261165406d049c55"
+    },
+    {
+      "name": "logistic-random-11-400",
+      "path": ".system1/release-1.2-research/logistic-random-11-400/candidate.s1m",
+      "sha256": "ad9aec7d0f975d87a2876dbe0fc2cb88d02bb88a9f8472ed5c30fb0dd83ab07f"
+    },
+    {
+      "name": "ridge-uncertainty-11-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty-11-400/candidate.s1m",
+      "selection_sha256": "f105e697adf357c498461d6a98eda1563dc7f76898502a827a1a28be07f2cdaa",
+      "sha256": "a3a9bf438370ebb3cc19aac23e135a669f983eb1778810f37c16728744b32e1e"
+    },
+    {
+      "name": "ridge-uncertainty_diversity-11-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty_diversity-11-400/candidate.s1m",
+      "selection_sha256": "623fe92f94621729499c3991d653698bbc938c0090570129799facf123219434",
+      "sha256": "2fdc7b6bad42c2a4d7c920d1013dda31fd50a4d5407ea2587f606d5e75288d9b"
+    },
+    {
+      "name": "ridge-random-29-400",
+      "path": ".system1/release-1.2-research/ridge-random-29-400/candidate.s1m",
+      "selection_sha256": "647542865215ce6ad9a79e9bc1a8ca930710526525eccc596ac74b0aac239d49",
+      "sha256": "db609e49b632d4e3e9d8744afd823f3cb81bdca288ca90c9260f8b1721c8cc9d"
+    },
+    {
+      "name": "logistic-random-29-400",
+      "path": ".system1/release-1.2-research/logistic-random-29-400/candidate.s1m",
+      "sha256": "27dc24f58d8f0916c420b734e320ba46e2bfafff72f6178a59db011f44601d19"
+    },
+    {
+      "name": "ridge-uncertainty-29-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty-29-400/candidate.s1m",
+      "selection_sha256": "4357db3e0a82ec839c0c5477bdd545d8781a76a779af795dd79740303832aad7",
+      "sha256": "fd0c11f3ce1b12780b1599b68a7472f848d369cead00091f94ad981609607620"
+    },
+    {
+      "name": "ridge-uncertainty_diversity-29-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty_diversity-29-400/candidate.s1m",
+      "selection_sha256": "9207285ee7c8500b18fab4ca0ad7221eae948860dba303fe874f126c498df10c",
+      "sha256": "04c738d706fc5cd967531faf803c606aeca3b9d9bc6dd289726f872cc9f224cf"
+    },
+    {
+      "name": "ridge-random-47-400",
+      "path": ".system1/release-1.2-research/ridge-random-47-400/candidate.s1m",
+      "selection_sha256": "146084975d01e687cb7d16e6533ef528aae73be76debe5e2a21d7736e9979861",
+      "sha256": "33c06ead84b01dfe5d3204fd9ee69110d58aa3c26628ef4e7038d23ff24d68b7"
+    },
+    {
+      "name": "logistic-random-47-400",
+      "path": ".system1/release-1.2-research/logistic-random-47-400/candidate.s1m",
+      "sha256": "14eb73bcf37485a15806a8bdda68ecbfd5c8b5381e3167dfa4d39547f9c69828"
+    },
+    {
+      "name": "ridge-uncertainty-47-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty-47-400/candidate.s1m",
+      "selection_sha256": "349c9779ea074d9d4f697b12c0e52693541868ffcabdc01f586f44f17c20aca0",
+      "sha256": "335b172d9b405cdf4326bf7b4c6f6643933fcc63584f29f0278f3b72345c35d4"
+    },
+    {
+      "name": "ridge-uncertainty_diversity-47-400",
+      "path": ".system1/release-1.2-research/ridge-uncertainty_diversity-47-400/candidate.s1m",
+      "selection_sha256": "c7594aab0794b84e3b15d71e9404a8559f5da15f315f6446fbe546d0d34c5b34",
+      "sha256": "bf971302d8f8c37aa11e72a4329acf8fcfd35eaecb23f76d3ae35ae3151c3cbe"
+    }
+  ],
+  "confirmation_consumed": false,
+  "confirmation_scope": "untouched same-source public test; not customer traffic",
+  "development_sha256": "595d33c304c66b4857a77b229e2690b4daf711ed7c0f747d6375d67d0a41a6fa",
+  "manifest_sha256": "f9bb7b5f58e941859d82dd8faa802b057536f04fd217152f25ae09f662301e04",
+  "mean_yields": {
+    "random": 0.009394396913269586,
+    "uncertainty": 0.009562154001006544,
+    "uncertainty_diversity": 0.007884583123636974
+  },
+  "proposed_strategy": "uncertainty",
+  "protocol_sha256": "5f82fea0021b1c66a24b442216fc69db4d5251745b181b14358582878cb72eca"
+}

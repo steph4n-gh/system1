@@ -4,6 +4,17 @@
 
 No changes yet.
 
+## 1.2.0 — 2026-10-01
+
+Extend the teaching workflow through independent qualification, approved revision
+history, and explicit recovery. See [release notes and compatibility](docs/releases/1.2.0.md).
+
+- Add one-shot `TeachingSession.qualify()` with frozen source, cohort, and policy; exact accepted-correctness and coverage bounds share a fixed confidence budget across session attempts. Failed or interrupted cohorts remain consumed. Required qualification is an explicit additional adoption policy; existing development defaults remain unchanged.
+- Retain exact approved artifacts and their evidence. Add history and explicit rollback with artifact, schema, policy, and required-qualification checks; preserve lessons and invalidate pending assessments after recovery. Keep old 1.1 sessions readable without rewriting and retain their current skills during the first new adoption.
+- Keep related lesson groups in one split, expose factual review reasons and per-class assessment counts, and support the existing optional logistic solver in sessions. Ridge remains the default; no new required dependency or saved-skill format.
+- Bring qualification, history, recovery, solver selection, and decision inspection to the CLI and document teaching workspace. Update the guides, architecture, mathematical notes, and package checks for the complete lifecycle.
+- Retain frozen lesson-selection, cached-encoder, and contrastive research comparisons. No candidate earns a new feature: selection gains fail the prespecified gates, and the fresh sentiment lifecycle trial fails development assessment. A separate historical banking replay verifies failed-candidate refusal, exact adoption, reload, and rollback without claiming fresh qualification or a quality gain. Full research evidence stays in Git; only compact protocol and summaries enter the source distribution.
+
 ## 1.1.0 — 2026-09-22
 
 This compatible feature release includes the teaching lifecycle and the additions
