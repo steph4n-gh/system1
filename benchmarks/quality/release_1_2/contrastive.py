@@ -106,6 +106,7 @@ def fit_candidate(fitting,calibration,projector,path):
         calibration_exemplars={"label":[(r["input"],r["label"]) for r in calibration]})
     model.save(path)
     restored=CompiledSystemOneModel.load(path,projector=projector)
+    restored.use_cache=False
     return SystemOneEngine(restored.schema,model=restored,strict_mode=True,use_cache=False),time.perf_counter()-start
 
 
@@ -115,9 +116,15 @@ def develop():
     results,candidates=[],[]
     for seed in SEEDS:
         calibration,initial,pool,splits=role_rows(seed)
-        ids=read(CACHE/f"ridge-random-{seed}-400/selection.json")
-        by_id={r["id"]:r for r in initial+pool}
-        fitting=[by_id[i] for i in ids]
+        # Reproduce the frozen uniform acquisition path without depending on
+        # whether the separate, slower uncertainty run has reached this seed.
+        fitting=list(initial)
+        remaining=list(pool)
+        for budget,count in [(200,100),(400,200)]:
+            indices=np.random.default_rng(seed+budget).permutation(len(remaining))[:count].tolist()
+            selected=set(indices)
+            fitting.extend(remaining[i] for i in indices)
+            remaining=[r for i,r in enumerate(remaining) if i not in selected]
         rows=fitting+calibration+splits["validation"]
         start=time.perf_counter()
         features=encoder.encode([r["input"] for r in rows])
@@ -188,6 +195,7 @@ def confirm():
             projection=np.load(weights,allow_pickle=False)
         projector=Projector(encoder,rows,features,projection)
         restored=CompiledSystemOneModel.load(path,projector=projector)
+        restored.use_cache=False
         current=SystemOneEngine(restored.schema,model=restored,strict_mode=True,use_cache=False)
         metrics,cases=outcomes(current,rows)
         metrics["cached_features_median_latency_ms"]=metrics.pop("median_latency_ms")

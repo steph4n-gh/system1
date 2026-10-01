@@ -1,0 +1,5 @@
+# Invalid development attempt retained
+
+Before any confirmation scores, a runner inspection found that setting the engine cache flag did not disable the compiled model cache. The standalone runner scorer omitted `model.use_cache=False`. This violated the frozen uncached protocol and allowed approximate cache lookup during acquisition/scoring. Preliminary standalone metrics must not support claims.
+
+The entire interrupted attempt, model files, selection IDs, error cases and logs are retained locally in `.system1/release-1.2-research-invalid-cache/`; its completed summary files have the `invalid-cache-` prefix. Source hashes, role assignment, model settings, acquisition rules and thresholds are unchanged. The corrected development attempt explicitly disables both cache switches. Confirmation had not been scored. TeachingSession's own development scorer already disabled both caches; its initial/corrected UCI counts remain valid, but the feedback diagnostic is repeated because it used the standalone scorer.

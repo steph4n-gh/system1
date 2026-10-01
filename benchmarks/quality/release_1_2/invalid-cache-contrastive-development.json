@@ -1,0 +1,462 @@
+{
+  "encoder_identity": {
+    "files": {
+      "README.md": {
+        "bytes": 10502,
+        "sha256": "dcd602d2fd35c203a247304a06fec6654a12f7941b739f9221a064fe8dc3b7f0"
+      },
+      "config.json": {
+        "bytes": 612,
+        "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41"
+      },
+      "config_sentence_transformers.json": {
+        "bytes": 116,
+        "sha256": "061ca9d39661d6c6d6de5ba27f79a1cd5770ea247f8d46412a68a498dc5ac9f3"
+      },
+      "model.safetensors": {
+        "bytes": 90868376,
+        "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"
+      },
+      "modules.json": {
+        "bytes": 349,
+        "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+      },
+      "sentence_bert_config.json": {
+        "bytes": 53,
+        "sha256": "fc1993fde0a95c24ec6c022539d41cf6e2f7c9721e5415d6fb6897472a9cd4b7"
+      },
+      "special_tokens_map.json": {
+        "bytes": 112,
+        "sha256": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3"
+      },
+      "tokenizer.json": {
+        "bytes": 466247,
+        "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+      },
+      "tokenizer_config.json": {
+        "bytes": 350,
+        "sha256": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b"
+      },
+      "vocab.txt": {
+        "bytes": 231508,
+        "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      }
+    },
+    "license": "Apache-2.0",
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+    "runtime": "torch CPU, one thread, max_length256, mean pooling normalized",
+    "source": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+  },
+  "protocol_sha256": "5f82fea0021b1c66a24b442216fc69db4d5251745b181b14358582878cb72eca",
+  "results": [
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 4.073308124905452,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": null,
+      "first_loss": null,
+      "fit_labels": 360,
+      "fit_seconds": 0.03088816604577005,
+      "inspected_total": 400,
+      "kind": "frozen_encoder",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.111875,
+        "cached_features_p95_latency_ms": 0.1369874,
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 2.5599375,
+        "p95_latency_ms": 3.086166349999999,
+        "raw_accuracy": 0.49823855057876193,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 10737,
+      "model_sha256": "ad9ba5c87a2811ab0b9e29688679befd881f1097a81914dffc7b39dbf1c7d45f",
+      "name": "frozen_encoder-11-400",
+      "projection_epochs": 0,
+      "projection_seconds": 0,
+      "seed": 11
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 4.073308124905452,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": 2.7073230743408203,
+      "first_loss": 4.864932537078857,
+      "fit_labels": 360,
+      "fit_seconds": 0.03085512504912913,
+      "inspected_total": 400,
+      "kind": "contrastive_projection",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.103209,
+        "cached_features_p95_latency_ms": 0.12028289999999997,
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 2.8165414999999996,
+        "p95_latency_ms": 3.617877099999998,
+        "raw_accuracy": 0.5203824861600402,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 3638,
+      "model_sha256": "30fc728ae7f1b2c77e2e4dc2c9dbb1c38ce1ccbf5448ded617041f90cc15f573",
+      "name": "contrastive_projection-11-400",
+      "projection_epochs": 20,
+      "projection_seconds": 0.026399791007861495,
+      "seed": 11
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 3.8449918751139194,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": null,
+      "first_loss": null,
+      "fit_labels": 360,
+      "fit_seconds": 0.029152417089790106,
+      "inspected_total": 400,
+      "kind": "frozen_encoder",
+      "metrics": {
+        "accepted": 21,
+        "accepted_accuracy": 0.9047619047619048,
+        "accepted_correct": 19,
+        "accepted_correct_yield": 0.009562154001006542,
+        "accepted_error_upper_95": 0.2705516993045313,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 9,
+            "accepted_errors": 1,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 11,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.11225,
+        "cached_features_p95_latency_ms": 0.14309549999999993,
+        "count": 1987,
+        "coverage": 0.010568696527428284,
+        "median_latency_ms": 2.618646,
+        "p95_latency_ms": 3.13674825,
+        "raw_accuracy": 0.5123301459486663,
+        "review_rate": 0.9894313034725717,
+        "screen_pass": false
+      },
+      "model_bytes": 10732,
+      "model_sha256": "ea9a005742e2ae3983d2e17611288c433e42452d69b7bc7adee1f3b72a3f8d10",
+      "name": "frozen_encoder-29-400",
+      "projection_epochs": 0,
+      "projection_seconds": 0,
+      "seed": 29
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 3.8449918751139194,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": 2.4496726989746094,
+      "first_loss": 5.026995658874512,
+      "fit_labels": 360,
+      "fit_seconds": 0.030518374871462584,
+      "inspected_total": 400,
+      "kind": "contrastive_projection",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005032712632108706,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.104375,
+        "cached_features_p95_latency_ms": 0.12620439999999994,
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 2.674063,
+        "p95_latency_ms": 3.1700919999999995,
+        "raw_accuracy": 0.5410166079516859,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 3641,
+      "model_sha256": "e061652fd99ad87b7d80d8473307470fa26499d3a2d2af0e36e9adbfd3dd166d",
+      "name": "contrastive_projection-29-400",
+      "projection_epochs": 20,
+      "projection_seconds": 0.02342537511140108,
+      "seed": 29
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 3.8200036669149995,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": null,
+      "first_loss": null,
+      "fit_labels": 360,
+      "fit_seconds": 0.029216916067525744,
+      "inspected_total": 400,
+      "kind": "frozen_encoder",
+      "metrics": {
+        "accepted": 23,
+        "accepted_accuracy": 0.782608695652174,
+        "accepted_correct": 18,
+        "accepted_correct_yield": 0.009058882737795673,
+        "accepted_error_upper_95": 0.4038988748746869,
+        "accepted_errors": 5,
+        "by_class": {
+          "anger": {
+            "accepted": 2,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 2,
+            "accepted_errors": 1,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 13,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 4,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.111708,
+        "cached_features_p95_latency_ms": 0.14654999999999996,
+        "count": 1987,
+        "coverage": 0.011575239053850024,
+        "median_latency_ms": 2.726708,
+        "p95_latency_ms": 3.066191949999999,
+        "raw_accuracy": 0.4921992954202315,
+        "review_rate": 0.98842476094615,
+        "screen_pass": false
+      },
+      "model_bytes": 10757,
+      "model_sha256": "1dd2e5aba921063836477f3067a446e6a519ee62506ec3d538484332a8026123",
+      "name": "frozen_encoder-47-400",
+      "projection_epochs": 0,
+      "projection_seconds": 0,
+      "seed": 47
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "embedding_seconds": 3.8200036669149995,
+      "encoder_weights_bytes": 90868376,
+      "external_runtime_required": true,
+      "final_loss": 2.7954161167144775,
+      "first_loss": 4.925599575042725,
+      "fit_labels": 360,
+      "fit_seconds": 0.030550540890544653,
+      "inspected_total": 400,
+      "kind": "contrastive_projection",
+      "metrics": {
+        "accepted": 12,
+        "accepted_accuracy": 0.8333333333333334,
+        "accepted_correct": 10,
+        "accepted_correct_yield": 0.0050327126321087065,
+        "accepted_error_upper_95": 0.43810543511531136,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 5,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 5,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 80
+          }
+        },
+        "cached_features_median_latency_ms": 0.102625,
+        "cached_features_p95_latency_ms": 0.1326794999999997,
+        "count": 1987,
+        "coverage": 0.006039255158530448,
+        "median_latency_ms": 2.6757085,
+        "p95_latency_ms": 3.03545975,
+        "raw_accuracy": 0.5385002516356316,
+        "review_rate": 0.9939607448414696,
+        "screen_pass": false
+      },
+      "model_bytes": 3645,
+      "model_sha256": "a56feee861adbb31414261e10d89b97c5c7498792700fc7a821eca724abada4e",
+      "name": "contrastive_projection-47-400",
+      "projection_epochs": 20,
+      "projection_seconds": 0.022021915996447206,
+      "seed": 47
+    }
+  ]
+}

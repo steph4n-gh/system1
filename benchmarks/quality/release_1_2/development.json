@@ -1,0 +1,2834 @@
+{
+  "manifest_sha256": "f9bb7b5f58e941859d82dd8faa802b057536f04fd217152f25ae09f662301e04",
+  "numpy": "2.4.6",
+  "protocol_sha256": "5f82fea0021b1c66a24b442216fc69db4d5251745b181b14358582878cb72eca",
+  "python": "3.14.4",
+  "results": [
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "6d5c4aedd3143bb792a9a9e7dc84df78472b1a7bea224f62f46f11aead2005ae",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.7568802079185843,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 0.0,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 1,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.068125,
+        "p95_latency_ms": 0.08464179999999999,
+        "raw_accuracy": 0.3276295923502768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42259,
+      "model_sha256": "46b341bbbdf63a17600d4a389e8eeeac0e7226224977d81f4f0e624df76067d9",
+      "name": "ridge-random-11-100",
+      "seed": 11,
+      "selection_seconds": 0.0,
+      "selection_sha256": "dc2055b000552e48790c56bff02ea6cefcb6abdaa749b39a301778e8962ff6eb",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.019295332953333855,
+      "inspected_total": 100,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.065458,
+        "p95_latency_ms": 0.08292049999999998,
+        "raw_accuracy": 0.3532964267740312,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 45187,
+      "model_sha256": "5970a96657b9860dbb68b90deac3ef6d90848a9d6951ec8aaefefbb0bdd7b498",
+      "name": "logistic-random-11-100",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.007130458950996399,
+      "inspected_total": 100,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.1695,
+        "p95_latency_ms": 0.2052375999999999,
+        "raw_accuracy": 0.3623553095118269,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-11-100",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "bcdf7f8873da19c8495933f8742f8f9003f546f7e4b25e8cc8ea8e2b2dcaa6a2",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8818219581153244,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 2,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 2,
+        "accepted_correct_yield": 0.0010065425264217413,
+        "accepted_error_upper_95": 0.776393202250021,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0010065425264217413,
+        "median_latency_ms": 0.070334,
+        "p95_latency_ms": 0.09072509999999999,
+        "raw_accuracy": 0.3145445395067942,
+        "review_rate": 0.9989934574735783,
+        "screen_pass": false
+      },
+      "model_bytes": 48766,
+      "model_sha256": "abe19c664830313f4a8aeb38d484f337f7b5b835452af61288cb01c79711a96b",
+      "name": "ridge-random-11-200",
+      "seed": 11,
+      "selection_seconds": 0.00014641601592302322,
+      "selection_sha256": "fd04ed31e3d3ec62446b023ec6b0233f64910deccc75947927ae7d3bb1104343",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.03124600020237267,
+      "inspected_total": 200,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.06925,
+        "p95_latency_ms": 0.09222509999999999,
+        "raw_accuracy": 0.3220936084549572,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 50469,
+      "model_sha256": "b9eb6667347f805b118cbdd56f7f2a2bc9f72cbdf6c6e035de993618b01791e1",
+      "name": "logistic-random-11-200",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.009806374786421657,
+      "inspected_total": 200,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.174875,
+        "p95_latency_ms": 0.23532489999999998,
+        "raw_accuracy": 0.35027679919476595,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-11-200",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "50bef6c7aec3883bbff8b0c27dce5028dc2bc8815d2ec3a0004f0e6aadf8702e",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.3494360828772187,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.070959,
+        "p95_latency_ms": 0.09243759999999997,
+        "raw_accuracy": 0.4016104680422748,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 54923,
+      "model_sha256": "03191745352ff78b6b7cdc245af09533b9b1e09b7acfa514261165406d049c55",
+      "name": "ridge-random-11-400",
+      "seed": 11,
+      "selection_seconds": 0.0001627500168979168,
+      "selection_sha256": "3a7f7c2162c83bee93d201992e680758f913b5ab123a81a3667fb178b90e063b",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.05358591699041426,
+      "inspected_total": 400,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.066542,
+        "p95_latency_ms": 0.0809874,
+        "raw_accuracy": 0.39909411172622045,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 54664,
+      "model_sha256": "ad9aec7d0f975d87a2876dbe0fc2cb88d02bb88a9f8472ed5c30fb0dd83ab07f",
+      "name": "logistic-random-11-400",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.015903124818578362,
+      "inspected_total": 400,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.186875,
+        "p95_latency_ms": 0.225042,
+        "raw_accuracy": 0.3920483140412682,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-11-400",
+      "seed": 11,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "6d5c4aedd3143bb792a9a9e7dc84df78472b1a7bea224f62f46f11aead2005ae",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.7796768338885158,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 0.0,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 1,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.069541,
+        "p95_latency_ms": 0.09011619999999997,
+        "raw_accuracy": 0.3276295923502768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42258,
+      "model_sha256": "e583ff1877827dbbd69e71f36412fbdf42f5fc2d1f319a388fb43745317f3b32",
+      "name": "ridge-uncertainty-11-100",
+      "seed": 11,
+      "selection_seconds": 0.0,
+      "selection_sha256": "dc2055b000552e48790c56bff02ea6cefcb6abdaa749b39a301778e8962ff6eb",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "8ab568aab9cebca60a24c11f74f3267a50f4669171f4d6327a6d9108959bec7a",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.901279625017196,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 17,
+        "accepted_accuracy": 0.35294117647058826,
+        "accepted_correct": 6,
+        "accepted_correct_yield": 0.003019627579265224,
+        "accepted_error_upper_95": 0.8336373082898462,
+        "accepted_errors": 11,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 7,
+            "accepted_errors": 5,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.008555611474584801,
+        "median_latency_ms": 0.070792,
+        "p95_latency_ms": 0.09189559999999997,
+        "raw_accuracy": 0.3497735279315551,
+        "review_rate": 0.9914443885254152,
+        "screen_pass": false
+      },
+      "model_bytes": 48788,
+      "model_sha256": "95c0b960a2b97d075960cbb145860d4de7025ee071253b8b6f96d454a61564fb",
+      "name": "ridge-uncertainty-11-200",
+      "seed": 11,
+      "selection_seconds": 1.1810676660388708,
+      "selection_sha256": "8fc7a3ebe38840b7ec27b18f319330dd2c2f396626d30f012b2eee8dcc4e9e32",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "457b602cc74c23879a16322af01d088838ad7fc582323969323968bab149bddd",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.2999743330292404,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 71,
+        "accepted_accuracy": 0.7464788732394366,
+        "accepted_correct": 53,
+        "accepted_correct_yield": 0.026673376950176145,
+        "accepted_error_upper_95": 0.35240927994155613,
+        "accepted_errors": 18,
+        "by_class": {
+          "anger": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 3,
+            "accepted_errors": 3,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 39,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 6,
+            "accepted_errors": 5,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 18,
+            "accepted_errors": 6,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 3,
+            "accepted_errors": 2,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.035732259687971814,
+        "median_latency_ms": 0.067792,
+        "p95_latency_ms": 0.0825,
+        "raw_accuracy": 0.41670860593860093,
+        "review_rate": 0.9642677403120282,
+        "screen_pass": false
+      },
+      "model_bytes": 54804,
+      "model_sha256": "a3a9bf438370ebb3cc19aac23e135a669f983eb1778810f37c16728744b32e1e",
+      "name": "ridge-uncertainty-11-400",
+      "seed": 11,
+      "selection_seconds": 1.1819672919809818,
+      "selection_sha256": "f105e697adf357c498461d6a98eda1563dc7f76898502a827a1a28be07f2cdaa",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "6d5c4aedd3143bb792a9a9e7dc84df78472b1a7bea224f62f46f11aead2005ae",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.643863416975364,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 0.0,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 1,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.066708,
+        "p95_latency_ms": 0.0798624,
+        "raw_accuracy": 0.3276295923502768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42259,
+      "model_sha256": "aebae2bfd0bdaba926eac1d805307e5046dc61df5d6a5e6bb2728d7b448676fe",
+      "name": "ridge-uncertainty_diversity-11-100",
+      "seed": 11,
+      "selection_seconds": 0.0,
+      "selection_sha256": "dc2055b000552e48790c56bff02ea6cefcb6abdaa749b39a301778e8962ff6eb",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "781b769802018182d5a89fb309962dde41749d0abfdf92fd63ac6783c0560615",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.796329707838595,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 4,
+        "accepted_accuracy": 0.5,
+        "accepted_correct": 2,
+        "accepted_correct_yield": 0.0010065425264217413,
+        "accepted_error_upper_95": 0.9023885371135856,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 3,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0020130850528434826,
+        "median_latency_ms": 0.067542,
+        "p95_latency_ms": 0.0780714,
+        "raw_accuracy": 0.3573225968797182,
+        "review_rate": 0.9979869149471565,
+        "screen_pass": false
+      },
+      "model_bytes": 49283,
+      "model_sha256": "de7adef83143c4ef7e712dd8f8ee1204bcabee51cd85438ae5b38c81617c5512",
+      "name": "ridge-uncertainty_diversity-11-200",
+      "seed": 11,
+      "selection_seconds": 1.1017647499684244,
+      "selection_sha256": "1c2b0e1e9f0e16f4178ce694f25f6a1b1312b36ee978c4bbbf45a5c2abe3ec21",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "3b2ba30948d6e016cb7a76eb324974a4ca00e25020b63d28d093a5c2ebae389f",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.1276442499365658,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 40,
+        "accepted_accuracy": 0.775,
+        "accepted_correct": 31,
+        "accepted_correct_yield": 0.01560140915953699,
+        "accepted_error_upper_95": 0.3597923909253817,
+        "accepted_errors": 9,
+        "by_class": {
+          "anger": {
+            "accepted": 5,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 16,
+            "accepted_errors": 1,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 15,
+            "accepted_errors": 2,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.020130850528434826,
+        "median_latency_ms": 0.067875,
+        "p95_latency_ms": 0.08157519999999997,
+        "raw_accuracy": 0.3995973829894313,
+        "review_rate": 0.9798691494715652,
+        "screen_pass": false
+      },
+      "model_bytes": 54927,
+      "model_sha256": "2fdc7b6bad42c2a4d7c920d1013dda31fd50a4d5407ea2587f606d5e75288d9b",
+      "name": "ridge-uncertainty_diversity-11-400",
+      "seed": 11,
+      "selection_seconds": 1.1090089578647166,
+      "selection_sha256": "623fe92f94621729499c3991d653698bbc938c0090570129799facf123219434",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "d5eb8736bef5e5fc283950213a7931758fb888533ab927c6faf534c05526f24f",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.6532230419106781,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005032712632108706,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.067833,
+        "p95_latency_ms": 0.07980809999999999,
+        "raw_accuracy": 0.3507800704579768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42225,
+      "model_sha256": "ff911352d1f8e5b5876ea331f3d039bac3636332862d75cbae7e3340764a33fe",
+      "name": "ridge-random-29-100",
+      "seed": 29,
+      "selection_seconds": 0.0,
+      "selection_sha256": "0a6ba67492bd8ad9e4e2283680219cd1cfc9124c95c3075788ed0cef65855fb0",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.019665917148813605,
+      "inspected_total": 100,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.065375,
+        "p95_latency_ms": 0.0785294,
+        "raw_accuracy": 0.35933568193256166,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 45181,
+      "model_sha256": "c37bd3db0366984e1d312a05202c68c89dc3b7d2c0eef036b362be346b1f3a08",
+      "name": "logistic-random-29-100",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.005848915781825781,
+      "inspected_total": 100,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.167666,
+        "p95_latency_ms": 0.1940837,
+        "raw_accuracy": 0.3583291394061399,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-29-100",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "830d5ca45ebe690f0be5b8bff20e4fa89839d1c3ce22261688e7393c3bc0885d",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.872100125066936,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.067792,
+        "p95_latency_ms": 0.07880809999999999,
+        "raw_accuracy": 0.37493709109209866,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 48867,
+      "model_sha256": "c6067fbaded93c74b679c331914afb256998d65b3bc207d5afdba721eebc1f45",
+      "name": "ridge-random-29-200",
+      "seed": 29,
+      "selection_seconds": 0.00013629207387566566,
+      "selection_sha256": "477deac494769f9927e1b865ce66453c93d4237e77b5e5727a4b6cc431c446d6",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.02658824995160103,
+      "inspected_total": 200,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.065417,
+        "p95_latency_ms": 0.076917,
+        "raw_accuracy": 0.37644690488173127,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 50668,
+      "model_sha256": "878e6ae921483d319fa9090e2a6a3e4a36b2c5ac76f0484a86dc0d1ae2128bac",
+      "name": "logistic-random-29-200",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.008903542067855597,
+      "inspected_total": 200,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.168667,
+        "p95_latency_ms": 0.20120789999999994,
+        "raw_accuracy": 0.3583291394061399,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-29-200",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "1f817c6891320fdb6dc5109f70867546ea359193c30c6df1ce2c44ca816c1218",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.116516290931031,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 15,
+        "accepted_accuracy": 0.7333333333333333,
+        "accepted_correct": 11,
+        "accepted_correct_yield": 0.0055359838953195776,
+        "accepted_error_upper_95": 0.510751889594463,
+        "accepted_errors": 4,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 7,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 5,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.00754906894816306,
+        "median_latency_ms": 0.067917,
+        "p95_latency_ms": 0.0858204,
+        "raw_accuracy": 0.4323100150981379,
+        "review_rate": 0.9924509310518369,
+        "screen_pass": false
+      },
+      "model_bytes": 54800,
+      "model_sha256": "db609e49b632d4e3e9d8744afd823f3cb81bdca288ca90c9260f8b1721c8cc9d",
+      "name": "ridge-random-29-400",
+      "seed": 29,
+      "selection_seconds": 0.00014220806770026684,
+      "selection_sha256": "647542865215ce6ad9a79e9bc1a8ca930710526525eccc596ac74b0aac239d49",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.05007187509909272,
+      "inspected_total": 400,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.06575,
+        "p95_latency_ms": 0.0793921,
+        "raw_accuracy": 0.4237544036235531,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 54601,
+      "model_sha256": "27dc24f58d8f0916c420b734e320ba46e2bfafff72f6178a59db011f44601d19",
+      "name": "logistic-random-29-400",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.0143329999409616,
+      "inspected_total": 400,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.170083,
+        "p95_latency_ms": 0.2080707,
+        "raw_accuracy": 0.4151987921489683,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-29-400",
+      "seed": 29,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "d5eb8736bef5e5fc283950213a7931758fb888533ab927c6faf534c05526f24f",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.7095377501100302,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005032712632108706,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.06625,
+        "p95_latency_ms": 0.07761689999999997,
+        "raw_accuracy": 0.3507800704579768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42225,
+      "model_sha256": "40e4f025f82addccc65e4ccdfd04a73db8ab518631585d3b927d45b4a09271b5",
+      "name": "ridge-uncertainty-29-100",
+      "seed": 29,
+      "selection_seconds": 0.0,
+      "selection_sha256": "0a6ba67492bd8ad9e4e2283680219cd1cfc9124c95c3075788ed0cef65855fb0",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "505c75c63446ea3a1ce14798eeddc44edfdabef2092d56eb2d3c566aab765ba5",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8022135409992188,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.067416,
+        "p95_latency_ms": 0.0790704,
+        "raw_accuracy": 0.3532964267740312,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 49224,
+      "model_sha256": "eccbe264f31c53c224e2382856e98c3f9b30b1ac71dc6cc6ce0c17cfe5b10d75",
+      "name": "ridge-uncertainty-29-200",
+      "seed": 29,
+      "selection_seconds": 1.0926772919483483,
+      "selection_sha256": "c0dc28bbb65d0c9a6f48287772c1dfd3e708fa0534e93b4bfbd4461b218d9ebf",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "9de25832c38a0625138b2ceb3210aa0bdbe33819a61c1d66ede4f583e19e0f2c",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.191096791997552,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.069209,
+        "p95_latency_ms": 0.085667,
+        "raw_accuracy": 0.4172118772018118,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 54837,
+      "model_sha256": "fd0c11f3ce1b12780b1599b68a7472f848d369cead00091f94ad981609607620",
+      "name": "ridge-uncertainty-29-400",
+      "seed": 29,
+      "selection_seconds": 1.0806457919534296,
+      "selection_sha256": "4357db3e0a82ec839c0c5477bdd545d8781a76a779af795dd79740303832aad7",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "d5eb8736bef5e5fc283950213a7931758fb888533ab927c6faf534c05526f24f",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.6654724590480328,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005032712632108706,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.06775,
+        "p95_latency_ms": 0.0791124,
+        "raw_accuracy": 0.3507800704579768,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 42225,
+      "model_sha256": "a4740bca04a8d89925a508724356857f75b690ee752e081d9caba5d451360d6a",
+      "name": "ridge-uncertainty_diversity-29-100",
+      "seed": 29,
+      "selection_seconds": 0.0,
+      "selection_sha256": "0a6ba67492bd8ad9e4e2283680219cd1cfc9124c95c3075788ed0cef65855fb0",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "77a941b5502664e3aec1e5fa2927b7d55d13f437919419ad5d608b8cbca0f874",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8130162910092622,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.068041,
+        "p95_latency_ms": 0.09271249999999998,
+        "raw_accuracy": 0.3633618520382486,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 49705,
+      "model_sha256": "4e4788126a6440ef2171db1668d5688ac718cc99541e24fa6c030595a3f1c720",
+      "name": "ridge-uncertainty_diversity-29-200",
+      "seed": 29,
+      "selection_seconds": 1.1180114999879152,
+      "selection_sha256": "fb87fc0e6bac019de1d008eed262006798320e33cfda1b7dbf9dbf96f5fe223c",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "ce6dd87daae2613c4e912ffd9b307c48016a968bdca4e43930dfd548e48a6c0c",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.2092843749560416,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 5,
+        "accepted_accuracy": 0.6,
+        "accepted_correct": 3,
+        "accepted_correct_yield": 0.001509813789632612,
+        "accepted_error_upper_95": 0.8107446225622291,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 3,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0025163563160543532,
+        "median_latency_ms": 0.068667,
+        "p95_latency_ms": 0.08545369999999995,
+        "raw_accuracy": 0.40563663814796175,
+        "review_rate": 0.9974836436839456,
+        "screen_pass": false
+      },
+      "model_bytes": 54934,
+      "model_sha256": "04c738d706fc5cd967531faf803c606aeca3b9d9bc6dd289726f872cc9f224cf",
+      "name": "ridge-uncertainty_diversity-29-400",
+      "seed": 29,
+      "selection_seconds": 1.153540541185066,
+      "selection_sha256": "9207285ee7c8500b18fab4ca0ad7221eae948860dba303fe874f126c498df10c",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "1ffbf5111215e40438a62ff78b4786d6b219a6d681b1fb458ea0887386354be9",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.655396917136386,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 17,
+        "accepted_accuracy": 0.4117647058823529,
+        "accepted_correct": 7,
+        "accepted_correct_yield": 0.0035228988424760945,
+        "accepted_error_upper_95": 0.7880918451804342,
+        "accepted_errors": 10,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 7,
+            "accepted_errors": 7,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 8,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.008555611474584801,
+        "median_latency_ms": 0.066834,
+        "p95_latency_ms": 0.0803624,
+        "raw_accuracy": 0.33568193256165074,
+        "review_rate": 0.9914443885254152,
+        "screen_pass": false
+      },
+      "model_bytes": 41453,
+      "model_sha256": "d997fb682af53c14e830ff9ccd0201177f8bf05017310777f952f89fe4961214",
+      "name": "ridge-random-47-100",
+      "seed": 47,
+      "selection_seconds": 0.0,
+      "selection_sha256": "46abb51e227f98128d49115f1e73e4c5658a3a8200afee0acf116faf29d80415",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.017301500076428056,
+      "inspected_total": 100,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.064708,
+        "p95_latency_ms": 0.07557069999999999,
+        "raw_accuracy": 0.33719174635128335,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 44372,
+      "model_sha256": "bd6199fd8bae1eb752228d1b43ac08b68504e8133262c9dd152fd793d6c1578f",
+      "name": "logistic-random-47-100",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 60,
+      "fit_seconds": 0.005225916858762503,
+      "inspected_total": 100,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.170458,
+        "p95_latency_ms": 0.38106229999999996,
+        "raw_accuracy": 0.3276295923502768,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-47-100",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "3dfd50ab6dfe95d0218fe6ed3627377888aa85673eb348330fe0868fae985e6d",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8699944580439478,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 24,
+        "accepted_accuracy": 0.4166666666666667,
+        "accepted_correct": 10,
+        "accepted_correct_yield": 0.0050327126321087065,
+        "accepted_error_upper_95": 0.7536113708809808,
+        "accepted_errors": 14,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 10,
+            "accepted_errors": 5,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 6,
+            "accepted_errors": 2,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 4,
+            "accepted_errors": 4,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.012078510317060896,
+        "median_latency_ms": 0.067917,
+        "p95_latency_ms": 0.08299189999999998,
+        "raw_accuracy": 0.36285858077503774,
+        "review_rate": 0.9879214896829391,
+        "screen_pass": false
+      },
+      "model_bytes": 48892,
+      "model_sha256": "ef57532de2dbf392ddf7f1660af8b6f17a8bec8a09717d23ef41eaa6487b7e42",
+      "name": "ridge-random-47-200",
+      "seed": 47,
+      "selection_seconds": 0.00014491588808596134,
+      "selection_sha256": "1ace2a93c56e311040cf391620a9d434f0f72017c5643dfc7baf0eed5748f955",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.027834458043798804,
+      "inspected_total": 200,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.068833,
+        "p95_latency_ms": 0.0898204,
+        "raw_accuracy": 0.37845998993457475,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "model_bytes": 50568,
+      "model_sha256": "c9de89d4792c9a7af0bde6ea44b158b762053a481688b8cf43fd425a99470610",
+      "name": "logistic-random-47-200",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 160,
+      "fit_seconds": 0.009407208068296313,
+      "inspected_total": 200,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.168667,
+        "p95_latency_ms": 0.19865819999999998,
+        "raw_accuracy": 0.3744338198288878,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-47-200",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "1df570347e445680088478c6c8e8c0b1834190cc4c0079711cfc6ad97be55b32",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.180257875006646,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 61,
+        "accepted_accuracy": 0.7377049180327869,
+        "accepted_correct": 45,
+        "accepted_correct_yield": 0.02264720684448918,
+        "accepted_error_upper_95": 0.37073078350688643,
+        "accepted_errors": 16,
+        "by_class": {
+          "anger": {
+            "accepted": 5,
+            "accepted_errors": 2,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 4,
+            "accepted_errors": 2,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 24,
+            "accepted_errors": 4,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 25,
+            "accepted_errors": 6,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.03069954705586311,
+        "median_latency_ms": 0.06875,
+        "p95_latency_ms": 0.09131259999999997,
+        "raw_accuracy": 0.41821841972823354,
+        "review_rate": 0.9693004529441369,
+        "screen_pass": false
+      },
+      "model_bytes": 54861,
+      "model_sha256": "33c06ead84b01dfe5d3204fd9ee69110d58aa3c26628ef4e7038d23ff24d68b7",
+      "name": "ridge-random-47-400",
+      "seed": 47,
+      "selection_seconds": 0.00013429182581603527,
+      "selection_sha256": "146084975d01e687cb7d16e6533ef528aae73be76debe5e2a21d7736e9979861",
+      "status": "measured",
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.04765158286318183,
+      "inspected_total": 400,
+      "kind": "system1_logistic",
+      "metrics": {
+        "accepted": 1,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 1,
+        "accepted_correct_yield": 0.0005032712632108706,
+        "accepted_error_upper_95": 0.95,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0005032712632108706,
+        "median_latency_ms": 0.065666,
+        "p95_latency_ms": 0.0771964,
+        "raw_accuracy": 0.4207347760442879,
+        "review_rate": 0.9994967287367891,
+        "screen_pass": false
+      },
+      "model_bytes": 54584,
+      "model_sha256": "14eb73bcf37485a15806a8bdda68ecbfd5c8b5381e3167dfa4d39547f9c69828",
+      "name": "logistic-random-47-400",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "calibration_labels_unused": 40,
+      "fit_labels": 360,
+      "fit_seconds": 0.014697707956656814,
+      "inspected_total": 400,
+      "kind": "sklearn_logistic",
+      "metrics": {
+        "accepted": 0,
+        "accepted_accuracy": null,
+        "accepted_correct": 0,
+        "accepted_correct_yield": 0.0,
+        "accepted_error_upper_95": 1.0,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0,
+        "median_latency_ms": 0.169291,
+        "p95_latency_ms": 0.20387509999999984,
+        "raw_accuracy": 0.40463009562154,
+        "review_rate": 1.0,
+        "screen_pass": false
+      },
+      "name": "sklearn-random-47-400",
+      "seed": 47,
+      "strategy": "random"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "1ffbf5111215e40438a62ff78b4786d6b219a6d681b1fb458ea0887386354be9",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.6633652090094984,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 17,
+        "accepted_accuracy": 0.4117647058823529,
+        "accepted_correct": 7,
+        "accepted_correct_yield": 0.0035228988424760945,
+        "accepted_error_upper_95": 0.7880918451804342,
+        "accepted_errors": 10,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 7,
+            "accepted_errors": 7,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 8,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.008555611474584801,
+        "median_latency_ms": 0.068167,
+        "p95_latency_ms": 0.0833911,
+        "raw_accuracy": 0.33568193256165074,
+        "review_rate": 0.9914443885254152,
+        "screen_pass": false
+      },
+      "model_bytes": 41453,
+      "model_sha256": "5a662f16ada18b91c03b5caf34d0cd44ed15fa25c12861a58ea48e7c5d095aea",
+      "name": "ridge-uncertainty-47-100",
+      "seed": 47,
+      "selection_seconds": 0.0,
+      "selection_sha256": "46abb51e227f98128d49115f1e73e4c5658a3a8200afee0acf116faf29d80415",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "0d9a13d8f9c5087b1f4d42c426e215e6a256b7e4474d2daa11d89c621e18f609",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8444492919370532,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 5,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 5,
+        "accepted_correct_yield": 0.0025163563160543532,
+        "accepted_error_upper_95": 0.450719728346941,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0025163563160543532,
+        "median_latency_ms": 0.067375,
+        "p95_latency_ms": 0.08117049999999998,
+        "raw_accuracy": 0.32813286361348765,
+        "review_rate": 0.9974836436839456,
+        "screen_pass": false
+      },
+      "model_bytes": 49119,
+      "model_sha256": "088d29fe0acae24363d6597da00833f30c4932f3fad0808ea1d83b8e1d84ae06",
+      "name": "ridge-uncertainty-47-200",
+      "seed": 47,
+      "selection_seconds": 1.11810954217799,
+      "selection_sha256": "01fa2b5aacc5c248a9559744297cb95bcf5ef59131126e3ddaa39c7180f2cdcf",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "a3d34ee3f90f8f9f57314b3909af99281250afc778f13af1339788d2c3f8da99",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.127423374913633,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 4,
+        "accepted_accuracy": 1.0,
+        "accepted_correct": 4,
+        "accepted_correct_yield": 0.0020130850528434826,
+        "accepted_error_upper_95": 0.527129195498412,
+        "accepted_errors": 0,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.0020130850528434826,
+        "median_latency_ms": 0.067,
+        "p95_latency_ms": 0.0787377,
+        "raw_accuracy": 0.3995973829894313,
+        "review_rate": 0.9979869149471565,
+        "screen_pass": false
+      },
+      "model_bytes": 54952,
+      "model_sha256": "335b172d9b405cdf4326bf7b4c6f6643933fcc63584f29f0278f3b72345c35d4",
+      "name": "ridge-uncertainty-47-400",
+      "seed": 47,
+      "selection_seconds": 1.0802277501206845,
+      "selection_sha256": "349c9779ea074d9d4f697b12c0e52693541868ffcabdc01f586f44f17c20aca0",
+      "status": "measured",
+      "strategy": "uncertainty"
+    },
+    {
+      "budget": 100,
+      "calibration_labels": 40,
+      "cases_sha256": "1ffbf5111215e40438a62ff78b4786d6b219a6d681b1fb458ea0887386354be9",
+      "evaluation_labels": 1987,
+      "fit_labels": 60,
+      "fit_seconds": 1.6318495830055326,
+      "inspected_total": 100,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 17,
+        "accepted_accuracy": 0.4117647058823529,
+        "accepted_correct": 7,
+        "accepted_correct_yield": 0.0035228988424760945,
+        "accepted_error_upper_95": 0.7880918451804342,
+        "accepted_errors": 10,
+        "by_class": {
+          "anger": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 7,
+            "accepted_errors": 7,
+            "count": 700
+          },
+          "love": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 8,
+            "accepted_errors": 1,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.008555611474584801,
+        "median_latency_ms": 0.068375,
+        "p95_latency_ms": 0.09034619999999993,
+        "raw_accuracy": 0.33568193256165074,
+        "review_rate": 0.9914443885254152,
+        "screen_pass": false
+      },
+      "model_bytes": 41453,
+      "model_sha256": "2b8b3e8e05d819483dc85036dd1b67e47510714febabe7d0f21391d777ed39f2",
+      "name": "ridge-uncertainty_diversity-47-100",
+      "seed": 47,
+      "selection_seconds": 0.0,
+      "selection_sha256": "46abb51e227f98128d49115f1e73e4c5658a3a8200afee0acf116faf29d80415",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 200,
+      "calibration_labels": 40,
+      "cases_sha256": "43e406ef524728b3e6eef4b80a2e3b402cace5d49c9d00d20dfc24a4c104b897",
+      "evaluation_labels": 1987,
+      "fit_labels": 160,
+      "fit_seconds": 1.8086892501451075,
+      "inspected_total": 200,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 8,
+        "accepted_accuracy": 0.625,
+        "accepted_correct": 5,
+        "accepted_correct_yield": 0.0025163563160543532,
+        "accepted_error_upper_95": 0.7107591834981906,
+        "accepted_errors": 3,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 2,
+            "accepted_errors": 1,
+            "count": 700
+          },
+          "love": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 4,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 1,
+            "accepted_errors": 1,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.004026170105686965,
+        "median_latency_ms": 0.068375,
+        "p95_latency_ms": 0.08635009999999999,
+        "raw_accuracy": 0.33719174635128335,
+        "review_rate": 0.995973829894313,
+        "screen_pass": false
+      },
+      "model_bytes": 48431,
+      "model_sha256": "cc733e3d70f56a839937f53743a91d504c95fe055b862a2df64d8fa1808e8cad",
+      "name": "ridge-uncertainty_diversity-47-200",
+      "seed": 47,
+      "selection_seconds": 1.1231311250012368,
+      "selection_sha256": "c19a7ce04a4cb9d35b77dbbd0599f81a90c0b34d44f34fe5327afb8be65f4615",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    },
+    {
+      "budget": 400,
+      "calibration_labels": 40,
+      "cases_sha256": "479adc03a7331fa2c506629bd2cbbb1f9315d101060eee70ae0c1922226b198d",
+      "evaluation_labels": 1987,
+      "fit_labels": 360,
+      "fit_seconds": 2.1868650841061026,
+      "inspected_total": 400,
+      "kind": "system1_ridge",
+      "metrics": {
+        "accepted": 15,
+        "accepted_accuracy": 0.8666666666666667,
+        "accepted_correct": 13,
+        "accepted_correct_yield": 0.006542526421741319,
+        "accepted_error_upper_95": 0.36344176554140206,
+        "accepted_errors": 2,
+        "by_class": {
+          "anger": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 274
+          },
+          "fear": {
+            "accepted": 1,
+            "accepted_errors": 0,
+            "count": 211
+          },
+          "joy": {
+            "accepted": 5,
+            "accepted_errors": 0,
+            "count": 700
+          },
+          "love": {
+            "accepted": 2,
+            "accepted_errors": 2,
+            "count": 173
+          },
+          "sadness": {
+            "accepted": 7,
+            "accepted_errors": 0,
+            "count": 549
+          },
+          "surprise": {
+            "accepted": 0,
+            "accepted_errors": 0,
+            "count": 80
+          }
+        },
+        "count": 1987,
+        "coverage": 0.00754906894816306,
+        "median_latency_ms": 0.069458,
+        "p95_latency_ms": 0.08918379999999998,
+        "raw_accuracy": 0.41771514846502267,
+        "review_rate": 0.9924509310518369,
+        "screen_pass": false
+      },
+      "model_bytes": 54778,
+      "model_sha256": "bf971302d8f8c37aa11e72a4329acf8fcfd35eaecb23f76d3ae35ae3151c3cbe",
+      "name": "ridge-uncertainty_diversity-47-400",
+      "seed": 47,
+      "selection_seconds": 1.134631457971409,
+      "selection_sha256": "c7594aab0794b84e3b15d71e9404a8559f5da15f315f6446fbe546d0d34c5b34",
+      "status": "measured",
+      "strategy": "uncertainty_diversity"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "candidate_sha256": "4c0b21f656c51bdc26abc41a3d2e7741f98fe1bfce5167e96448b0272d8fc18c",
+  "development_passed": false,
+  "development_sha256": "22e246032013c8fe67e2320b7a9f9b9642afaadc685196ba0d2dceabeb9d78b2",
+  "initial_revision": null,
+  "policy": {
+    "confidence": 0.95,
+    "min_accepted_accuracy": 0.95,
+    "min_coverage": 0.8
+  },
+  "protocol_sha256": "5f82fea0021b1c66a24b442216fc69db4d5251745b181b14358582878cb72eca",
+  "qualification_ids_sha256": "9c6e4d2b67e2b218052bff7fca8535fda9de956cb19866d9be3e9a3b66735c89",
+  "session_sha256": "972c52b79a9ed950d52b60eb12043d2b8dfbd35db499f97133e0e9a58563a7cf",
+  "source": "UCI CC BY 4.0: untouched Yelp source-shift after Amazon+IMDb development",
+  "source_manifest_sha256": "5ee9c2a3f33b06b112e788b2fbdfb5e3acd097a35b88c5cf4173eeebe031eb00"
+}

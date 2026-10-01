@@ -176,6 +176,8 @@ def role_rows(seed):
 
 def engine(path, projector=None):
     model = CompiledSystemOneModel.load(path, projector=projector)
+    # The compiled model has a separate cache switch from the engine's cache.
+    model.use_cache = False
     return SystemOneEngine(model.schema, model=model, strict_mode=True, use_cache=False)
 
 
