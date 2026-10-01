@@ -107,11 +107,11 @@ efficiency. No second search against consumed confirmation.
 
 UCI Amazon+IMDb provide grouped fit, calibration and recurring development
 inputs; untouched Yelp is source-shift qualification. Fixed SHA-based order,
-seed20261001: 100 fit, 200 calibration, 200 development initially; add 400
+seed20261001: 1,000 fit, 200 calibration, 200 development initially; add 400
 remaining training corrections without inspecting development labels for
 selection. Preserve all inspected labels and provenance. Base and corrected
 models use max_features=1024, regularization=.1 and ridge. Development adoption
-policy: raw accuracy >= .80, coverage >= .20, accepted-error count <=20,
+policy: raw accuracy >= .80, coverage >= .50, accepted-error count <=20,
 regressions <=200; these are explicit rehearsal checks, not deployment gates.
 Qualification policy declared before scoring: .95 one-sided lower bound on
 accepted accuracy, coverage >= .80, confidence=.95. Only one qualification
@@ -121,3 +121,8 @@ prediction, exact artifact adoption if eligible, and rollback of an approved
 development revision; label a development-only replay honestly. If initial
 development checks fail, preserve them and report the unavailable steps rather
 than relaxing thresholds or manufacturing successful qualification.
+
+Prospective amendment before any scoring: the 1,000 initial fitting labels and
+.50 development coverage requirement replace the original 100/.20 rehearsal
+settings. Duplicate removal may leave fewer than 400 correction rows; retain
+all available rows and report the exact count. No scores informed this change.
