@@ -66,6 +66,9 @@ The conventional scikit-learn TF-IDF/logistic baseline achieved 40.40% mean
 development raw accuracy at 400 labels. Its frozen .90 probability acceptance
 policy accepted zero rows. Because that policy differs from System1's conformal
 policy, its acceptance figures do not establish a matched risk comparison.
+Vectorizer/classifier bundle sizes are retained in
+[baseline-artifacts.json](baseline-artifacts.json); this supplemental accounting
+refits only the already frozen selections and scores no evaluation inputs.
 
 Uncached TF-IDF decisions took approximately .07 ms median; the cached-on-disk
 MiniLM encoder required approximately 2.6–2.7 ms for complete uncached
@@ -75,6 +78,7 @@ counted separately from the compiled head. No model download or new product
 dependency was introduced. Fitting-time fields for TeachingSession include
 session recording and development assessment, not solely a matrix fit. Human
 inspection time and installation/startup time were not measured.
+The actual runtime/package versions are retained in [environment.json](environment.json).
 
 Full per-seed/budget results: [development](development.json),
 [confirmation](confirmation.json), [contrastive development](contrastive-development.json),

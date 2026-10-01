@@ -47,6 +47,11 @@
       "screen_pass": false
     }
   ],
+  "conventional_comparator_400_artifact_bytes": [
+    88449,
+    88363,
+    88358
+  ],
   "conventional_comparator_400_development": {
     "accepted_correct_yield": 0.0,
     "coverage": 0.0,
@@ -63,12 +68,14 @@
   },
   "evidence_files": {
     "FREEZE.json": "a6c9010f6ddfa03ce8038efcf13893229537b6673801bbee13f1d85b8943e525",
+    "baseline-artifacts.json": "95cb1c9083f09bb2b0129c31334ce79ade03475ce79c46489e089f2e974d854e",
     "confirmation.json": "6ba6bc8f06526b43e7fca9494c51ecebb6663d831925c9030405e956f1c45623",
     "contrastive-FREEZE.json": "35b1bf864911c3995166afe247c40930f773bbab73741269de871fee15bed9e9",
     "contrastive-confirmation.json": "de62614d7cb11b01d193f5ba6dd36322c145b913f0bc53e489ea35f2572644c5",
     "contrastive-development.json": "65324ea90ad3d750c6040ad889518c6bfe474290ab91143a3c1833b9dc0b195f",
     "development.json": "595d33c304c66b4857a77b229e2690b4daf711ed7c0f747d6375d67d0a41a6fa",
     "encoder-source-manifest.json": "15f4449c4eb583425be0a9617c1900be8fdb082f1c1676c411d68fa390472de7",
+    "environment.json": "5bcf2bdae11b8f5b28211210d29a2657a26dcaf1ffc81dfb4a01ea0c253756df",
     "historical-replay.json": "115f7f599209e9ab783f9831f5adb2a8848f00a0cc4c35a3dcb6812e9acb7d90",
     "invalid-cache-contrastive-FREEZE.json": "401dfe6afbab2c770f733829a5e5140887b74f8420eeca0c78c4393218a7e427",
     "invalid-cache-contrastive-development.json": "6ac9f0983971c8902f02378ad1f5b05c2c3c0177fb612a4043b8e9ef00645953",
