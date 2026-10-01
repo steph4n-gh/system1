@@ -78,7 +78,7 @@ cached local encoder assets and dependencies already exist: fixed frozen
 MiniLM-L6 embeddings plus 20 epochs of a 384->64 linear normalized projection,
 supervised contrastive loss temperature=.1, Adam lr=.001, batch64, seeds as
 above; System1 ridge head fitted afterwards. Limit to 400 random-label budget
-and three seeds. Count embedding latency, dependencies and weights. If assets
+and three seeds. Include the unchanged frozen encoder with identical ridge head as the objective control. Count embedding latency, dependencies and weights. If assets
 are absent or import fails, retain a skipped candidate and reason. This tests a
 different task and learning objective, but prior encoder-adaptation failures
 remain relevant; a win here does not repair the full assistant/banking gates.
