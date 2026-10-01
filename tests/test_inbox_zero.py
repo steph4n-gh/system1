@@ -129,7 +129,8 @@ def asgi_request(app, body, *, token=TOKEN, method="POST", path="/v1/classify", 
     (b"{}", {"method": "GET"}, 405), (b"{}", {"content_type": "text/plain"}, 415),
     (b"x" * (MAX_REQUEST_BYTES + 1), {}, 413), (b"{bad json", {}, 400),
     (b"[]", {}, 400), (b'{"state": {}, "questions": {}}', {}, 400),
-])
+], ids=["unauthorized", "unknown-path", "wrong-method", "wrong-content-type",
+        "oversized-body", "malformed-json", "non-object-json", "missing-fields"])
 def test_http_rejects_invalid_requests(classifier, body, options, status):
     app = InboxZeroApp(classifier, TOKEN)
     assert asgi_request(app, body, **options)[0] == status
