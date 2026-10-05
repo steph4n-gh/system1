@@ -1,0 +1,271 @@
+{
+  "reviewed_commit": "7ad7213e29846f07e9d7ec9a66c72dec32d60e8c",
+  "report_sha256": "436458f967948ccc77cd6631b19bdd918f077d06cd7e03744780d028297200ba",
+  "freeze_sha256": "7382e46c8c9a8e637087b72edf2a1eb6e1ae9a96b8c961fbb5993a9e3a949610",
+  "source_skill_manifest_matches": "pass",
+  "rows_arithmetic_physics_and_exact_paired_actions_checked": 560,
+  "full_rule_actions_checked": 1410,
+  "hybrid_expert_actions_checked": 153,
+  "paired_parity_misses": [],
+  "combined": {
+    "strict/0": {
+      "completed": 27,
+      "expert_attempts": 0,
+      "native_rule_calls": 0,
+      "model_calls": 11016,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 21.442438010126352,
+      "total_wait_ms": 0.0
+    },
+    "full_rules/0": {
+      "completed": 40,
+      "expert_attempts": 0,
+      "native_rule_calls": 1410,
+      "model_calls": 0,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 0.14658295549452305,
+      "total_wait_ms": 0.0
+    },
+    "immediate/0": {
+      "completed": 27,
+      "expert_attempts": 0,
+      "native_rule_calls": 0,
+      "model_calls": 11016,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 21.149728912860155,
+      "total_wait_ms": 0.0
+    },
+    "immediate/1": {
+      "completed": 35,
+      "expert_attempts": 13,
+      "native_rule_calls": 13,
+      "model_calls": 13338,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 23.78927043173462,
+      "total_wait_ms": 0.0
+    },
+    "immediate/8": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 24.30704142898321,
+      "total_wait_ms": 0.0
+    },
+    "immediate/256": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 24.497333448380232,
+      "total_wait_ms": 0.0
+    },
+    "bounded_wait/0": {
+      "completed": 27,
+      "expert_attempts": 0,
+      "native_rule_calls": 0,
+      "model_calls": 11016,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 22.225812426768243,
+      "total_wait_ms": 0.0
+    },
+    "bounded_wait/1": {
+      "completed": 35,
+      "expert_attempts": 13,
+      "native_rule_calls": 13,
+      "model_calls": 13338,
+      "wait_polls": 39,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 25.92435455881059,
+      "total_wait_ms": 45.8175044041127
+    },
+    "bounded_wait/8": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 57,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 26.89447905868292,
+      "total_wait_ms": 66.37083785608411
+    },
+    "bounded_wait/256": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 57,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 27.113312389701605,
+      "total_wait_ms": 66.38441793620586
+    },
+    "progress/0": {
+      "completed": 27,
+      "expert_attempts": 0,
+      "native_rule_calls": 0,
+      "model_calls": 11016,
+      "wait_polls": 0,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 22.29945850558579,
+      "total_wait_ms": 0.0
+    },
+    "progress/1": {
+      "completed": 35,
+      "expert_attempts": 13,
+      "native_rule_calls": 13,
+      "model_calls": 13338,
+      "wait_polls": 13,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 24.68939556274563,
+      "total_wait_ms": 15.261999564245343
+    },
+    "progress/8": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 19,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 26.358354021795094,
+      "total_wait_ms": 22.13487820699811
+    },
+    "progress/256": {
+      "completed": 40,
+      "expert_attempts": 19,
+      "native_rule_calls": 19,
+      "model_calls": 14022,
+      "wait_polls": 19,
+      "unsafe_proposed": 0,
+      "unsafe_executed": 0,
+      "maps": 40,
+      "deaths": 0,
+      "median_episode_wall_ms": 26.525624562054873,
+      "total_wait_ms": 22.245043190196157
+    }
+  },
+  "structural_groups_excluding_seed": 40,
+  "base_geometry_groups": 20,
+  "base_role_groups": 20,
+  "structural_duplicate_groups": [],
+  "base_role_multiplicities": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "timing_limit": "Full-suite activity overlapped this cohort on shared host. Timings are descriptive; no isolated latency or portable speedup claim. Selection relies on exact paired outcomes/calls/safety and prescribed waits.",
+  "scope_limit": "Fresh map-seed confirmation within a small structured simulator, familiar local facts, paired terrain conditions; no paid expert, new language understanding or deployed customer jobs.",
+  "reviewer": "Independent agent workflow_review",
+  "review_date": "2026-10-05",
+  "pre_score_review": "No remaining material correctness/safety bug found within explicit trusted read-only asynchronous callback and independent permission/validation contract. Two exception telemetry bugs were fixed and independently probed before this cohort.",
+  "source_sha256": {
+    "examples/gaming/skill_playground/review_fallback.py": "98b0b15c0ed240707851cc839819c2c8b8c12f516e163fec68c4b3d40b9f481d",
+    "tests/test_courier_review_fallback.py": "e8e1af2663745df55b8a7f2ab940b8555e1105812f07fce2ddf4e277c01ce00c",
+    "benchmarks/quality/courier_review/run.py": "a9cb2878f1070339d81c49405fc302786db977d68dd0039d7fab4624a703656f",
+    "benchmarks/quality/courier_review/PROTOCOL.md": "23848c3d261b6ff5378a44d3e4ef55f4f417a166572d681f9d4d69802487f776"
+  },
+  "focused_tests_passed": 39,
+  "additional_failure_probes_passed": 7,
+  "prior_overlap_counts": {
+    "fit_calibration_0_149": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 5
+    },
+    "isolated_objective_extra_600_699": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 1
+    },
+    "failed_evaluation_3000_3039": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 1
+    },
+    "revised_evaluation_4000_4039": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 2
+    },
+    "objective_development_5000_5009": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 0
+    },
+    "objective_evaluation_6000_6039": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 2
+    },
+    "preliminary_selection_98200_98219": {
+      "exact_complete_geometry_matches": 0,
+      "exact_base_geometry_matches": 0,
+      "base_role_matches": 0
+    }
+  },
+  "attestation": "Textual independent review record; no remaining material bug found within documented read-only asynchronous callback and separate synchronous current-context permission/validation contract; not cryptographic signing or merge approval."
+}

@@ -121,3 +121,15 @@ composition and interfaces are written by us. Automatic discovery of missing
 skills, automatic graph growth, transfer to unrelated environments and stronger
 end-to-end uncertainty handling remain research questions. Classical policies
 are the simpler choice when the rules are already known and easily maintained.
+
+## Optional strict review recovery
+
+The separate [strict courier runner](review_fallback.py) stops before every
+reviewed action. Explicitly enable its bounded local rule expert with
+`python -m examples.gaming.skill_playground.review_fallback --enable-rule-expert --expert-budget 8`.
+Answers require independent current-context validation. This opt-in command
+does not change the GUI or existing simulation behavior. The
+[equal-budget comparison](../../../benchmarks/quality/courier_review/README.md)
+selects immediate fallback because progress tracking adds no completion, safety
+or call-budget benefit in this workflow. Direct known rules remain the strongest
+cheap baseline.
