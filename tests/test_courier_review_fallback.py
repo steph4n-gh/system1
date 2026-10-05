@@ -156,6 +156,19 @@ async def test_failed_network_has_unknown_calls_and_never_dispatches():
 
 
 @pytest.mark.asyncio
+async def test_failed_network_episode_stops_with_unknown_call_telemetry():
+    from examples.gaming.skill_playground.review_fallback import run
+    network = Network()
+    def failed(w):
+        raise RuntimeError("private network failure")
+    network.decide = failed
+    result = await run(network, 98200)
+    assert result["review_stop"] and result["actions"] == [None]
+    assert result["model_calls"] is None and result["known_model_calls"] == 0
+    assert result["model_calls_unknown_turns"] == 1 and result["expert_attempts"] == 0
+
+
+@pytest.mark.asyncio
 async def test_timeout_does_not_expose_a_late_answer():
     gate = asyncio.Event()
     finished = asyncio.Event()

@@ -186,7 +186,8 @@ async def run(network, seed, *, changed=False, enable_rule_expert=False, expert_
                 world.step(decision["action"])
         return {"seed": seed, "changed": changed, "completed": world.success,
                 "alive": world.alive, "steps": world.ticks, "review_stop": world.paused_for_review,
-                "expert_attempts": runner.attempts, "model_calls": calls,
+                "expert_attempts": runner.attempts,
+                "model_calls": calls if not unknown_calls else None, "known_model_calls": calls,
                 "model_calls_unknown_turns": unknown_calls,
                 "actions": actions, "reasons": reasons,
                 "wall_ms": (time.perf_counter() - started) * 1000}
