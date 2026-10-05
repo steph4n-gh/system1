@@ -64,6 +64,46 @@ that executes flagged argmax predictions.
 
 ## Confirmation and reproduction
 
+An independent reviewer froze the committed implementation and scored seeds
+99300–99319 once in both terrain conditions. All hybrid trajectories, model
+calls, expert attempts and safety outcomes matched per map at every cap.
+
+| Per-map expert cap | Strict stop | Each fallback policy | Actual fallback calls across 40 maps |
+|---|---:|---:|---:|
+| 0 | 27/40 | 27/40 | 0 |
+| 1 | 27/40 | 35/40 | 13 |
+| 8 | 27/40 | 40/40 | 19 |
+| 256 | 27/40 | 40/40 | 19 |
+
+No unsafe proposal/dispatch, death or paired difference occurred. These forty
+complete worlds use twenty base geometries with paired terrain conditions.
+Five role layouts recur in fitting/calibration maps; familiar effective inputs
+also recur. This is fresh map-seed execution evidence, not forty independent
+new concepts, classifier qualification or real customer traffic.
+
+| Cap-eight policy | Median episode elapsed | Actual rule invocations | Model calls | Waiting polls |
+|---|---:|---:|---:|---:|
+| Immediate | 24.31 ms | 19 | 14,022 | 0 |
+| Progress | 26.36 ms | 19 | 14,022 | 19 |
+| Plain bounded wait | 26.89 ms | 19 | 14,022 | 57 |
+| Direct known rules, separate cheap baseline | 0.15 ms | 1,410 | 0 | 0 |
+
+Full-suite activity overlapped this shared-host run, and waiting includes chosen
+one-millisecond sleeps. These elapsed times are descriptive; they establish no
+isolated speedup, production latency saving or paid API benefit. The decision
+rests on identical outcomes/resources and unnecessary imposed waits. Direct
+known rules remain strongest when their knowledge is available.
+
+The [independent review](INDEPENDENT_REVIEW.md) replayed all 560 comparisons,
+checked every native rule answer and reconciled counters and source/skill hashes.
+[Summary and freeze](results/SUMMARY.json),
+[complete compressed report](results/confirmation.json.gz), and
+[machine-readable review](results/INDEPENDENT_REVIEW.json) retain the results.
+The gzip SHA-256 is
+`a9d00a8127d94ed15bcbfb3c6ad82da006044e21b3e0395ae6cd9783dba4d699`.
+Complete trajectories remain in Git; the installable source archive includes
+the compact reports and reproducible runner.
+
 The [prospective protocol](PROTOCOL.md) fixes the independent seeds, budgets,
 controls and selection rule. Run it in a fresh output directory:
 
