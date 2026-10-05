@@ -1,8 +1,11 @@
 """Opt-in recovery must preserve strict review and reject unsafe/late answers."""
 import asyncio
+from pathlib import Path
+import sys
 
 import pytest
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from examples.gaming.skill_playground import teacher
 from examples.gaming.skill_playground.review_fallback import StrictCourier, permitted_move
 from examples.gaming.skill_playground.world import World

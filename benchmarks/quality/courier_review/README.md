@@ -104,6 +104,13 @@ The gzip SHA-256 is
 Complete trajectories remain in Git; the installable source archive includes
 the compact reports and reproducible runner.
 
+After scoring, CI exposed a test collection difference between the console
+`pytest` command and `python -m pytest`. The new test module now adds the checkout
+root to its import path, matching the existing courier tests. Callback, model,
+benchmark and policy code are unchanged. Archived hashes retain the exact source
+used for confirmation; this test-setup correction does not create another fresh
+quality run or replace the frozen observations.
+
 The [prospective protocol](PROTOCOL.md) fixes the independent seeds, budgets,
 controls and selection rule. Run it in a fresh output directory:
 
